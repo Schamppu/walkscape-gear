@@ -1,14 +1,15 @@
 <script setup>
 import { ref, computed } from "vue";
+import { useActivityStore } from "../stores/activity";
 import TabContentWrapper from "./common/TabContentWrapper.vue";
 import Dropdown from "./common/Dropdown.vue";
 import { getSkills, search } from "../utils/axios/activities";
 
+const activityStore = useActivityStore();
+
 const skillKey = ref(0);
-const chosenSkill = ref(null);
 const skills = ref([]);
 
-const chosenActivity = ref(null);
 const activities = ref([]);
 
 getSkills().then(({ data: skillList }) => {
@@ -31,20 +32,21 @@ const loadActivities = ({ skill, name } = {}) => {
 loadActivities();
 
 const handleSkillChange = (skill) => {
-  chosenSkill.value = skill;
+  activityStore.setSkill(skill);
   loadActivities({ skill: skill.name });
 };
 
 const handleActivityChange = (activity) => {
   // update activity
-  chosenActivity.value = activity;
+  activityStore.setActivity(activity);
 
   // update selected skill to match
   const [skill] = activity.skills;
-  chosenSkill.value = {
+
+  activityStore.setSkill({
     name: skill,
     value: skill,
-  };
+  });
 
   // force skill dropdown update
   skillKey.value = skillKey + 1;
@@ -59,7 +61,7 @@ const handleActivityChange = (activity) => {
         <dropdown
           :key="`skill-${skillKey}`"
           :options="skills"
-          :selectedOption="chosenSkill"
+          :selectedOption="activityStore.skill"
           @change="handleSkillChange"
         />
       </div>
