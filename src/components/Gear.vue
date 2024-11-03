@@ -1,7 +1,10 @@
 <script setup>
+  import TabContentWrapper from "./common/TabContentWrapper.vue";
   // No special setup needed here, unless you have props or other composition logic.
 </script>
 
 <template>
-  <div class="tab-content">Content for Gear Tab</div>
+  <tab-content-wrapper>
+    <div class="tab-content">Content for Gear Tab</div>
+  </tab-content-wrapper>
 </template>

@@ -1,10 +1,9 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from "vue";
-import TabContentWrapper from "./components/Common/TabContentWrapper.vue";
 import Activity from "./components/Activity.vue";
 import Gear from "./components/Gear.vue";
 import Stats from "./components/Stats.vue";
-import Footer from "./components/Footer/Footer.vue";
+import Footer from "./components/footer/Footer.vue";
 
 // Reactive variables
 const activeTab = ref("Activity");
@@ -37,24 +36,16 @@ onUnmounted(() => {
   <div v-if="isMobile" class="mobile-layout">
     <!-- Dynamically render the selected component for the active tab -->
     <div class="mobile-content">
-      <tab-content-wrapper>
-        <component :is="activeTabComponent" />
-      </tab-content-wrapper>
+      <component :is="activeTabComponent" />
     </div>
     <Footer @selectTab="activeTab = $event" />
   </div>
 
   <!-- Desktop View: Side-by-Side Layout -->
   <div v-else class="desktop-layout">
-    <tab-content-wrapper>
-      <Activity />
-    </tab-content-wrapper>
-    <tab-content-wrapper>
-      <Gear />
-    </tab-content-wrapper>
-    <tab-content-wrapper>
-      <Stats />
-    </tab-content-wrapper>
+    <Activity />
+    <Gear />
+    <Stats />
   </div>
 </template>
 
