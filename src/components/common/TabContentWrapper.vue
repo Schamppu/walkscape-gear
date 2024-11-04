@@ -10,12 +10,10 @@
 @use "@/styles/utils/variables.scss";
 
 .tab-wrapper {
-  width: 100%;
-
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  justify-items: center;
+  justify-content: center;
 
   background-color: variables.$boxDarkBackground;
 
