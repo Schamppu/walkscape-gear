@@ -12,7 +12,10 @@ const props = defineProps({
 </script>
 
 <template>
-  <label :for="labelFor" class="typography-label">
+  <label v-if="labelFor" :for="labelFor" class="typography-label">
+    {{ label }}
+  </label>
+  <label v-else class="typography-label">
     {{ label }}
   </label>
 </template>
