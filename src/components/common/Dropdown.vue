@@ -79,7 +79,6 @@ const handleChange = (option) => {
 
 .dropdown-main {
   cursor: pointer;
-  padding: $xs;
 
   width: var(--dropdown-width);
 
@@ -89,6 +88,7 @@ const handleChange = (option) => {
 
   .el-dropdown {
     width: var(--dropdown-width);
+    padding: $xs;
   }
 
   span {
