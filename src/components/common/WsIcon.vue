@@ -28,7 +28,7 @@ const fetchIcon = async () => {
     iconSrc.value = URL.createObjectURL(response.data);
   } catch (error) {
     console.error("Failed to load icon:", error);
-    iconSrc.value = "/path/to/default-icon.svg"; // Fallback image in case of an error
+    iconSrc.value = "/nac_shop.png"; // Fallback image in case of an error
   }
   loading.value = false;
 };
