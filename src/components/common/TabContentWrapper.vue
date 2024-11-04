@@ -2,7 +2,7 @@
 
 <template>
   <div class="tab-wrapper">
-    <slot />
+    <slot></slot>
   </div>
 </template>
 

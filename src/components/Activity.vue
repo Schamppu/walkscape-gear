@@ -1,10 +1,10 @@
 <script setup>
 import { ref, computed } from "vue";
-import { useActivityStore } from "../stores/activity";
+import { useActivityStore } from "@/stores/activity";
 import TabContentWrapper from "./common/TabContentWrapper.vue";
 import Dropdown from "./common/Dropdown.vue";
-import { getSkills, search } from "../utils/axios/activities";
-import { capitalize } from "../utils/string";
+import { getSkills, search } from "@/utils/axios/activities";
+import { capitalize } from "@/utils/string";
 
 const activityStore = useActivityStore();
 
