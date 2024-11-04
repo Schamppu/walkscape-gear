@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed } from "vue";
-import { storeToRefs } from 'pinia';
+import { storeToRefs } from "pinia";
 import { useActivityStore } from "@/stores/activity";
 import TabContentWrapper from "../common/TabContentWrapper.vue";
 import WsLabel from "../common/WsLabel.vue";
@@ -41,6 +41,8 @@ loadActivities();
 
 const handleSkillChange = (skill) => {
   activityStore.setSkill(skill);
+  if (skill !== activityStore.skill)
+    handleActivityChange({ name: "None", value: -1 });
   loadActivities({ skill: skill.value });
 };
 
