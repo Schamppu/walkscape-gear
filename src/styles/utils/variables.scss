@@ -1,1 +1,10 @@
-@use './colors';
+@import './colors';
+
+$font-family: 'Notototo', 'Worksans', Helvetica, Arial, sans-serif;
+
+$xxs: 0.5rem;   // 8px
+$xs: 0.626rem;  // 10px
+$sm: 0.75rem;   // 12px
+$md: 0.875rem;  // 14px
+$base: 1rem;    // 16px
+$lg: 1.25rem;   // 20px

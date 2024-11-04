@@ -1,6 +1,5 @@
 import { createApp } from "vue";
 import { createPinia } from 'pinia';
-import "./style.css";
 import App from "./App.vue";
 
 // Import Element Plus and its CSS
