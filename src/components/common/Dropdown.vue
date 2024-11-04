@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 
 const props = defineProps({
   options: Array,
@@ -41,6 +41,13 @@ const handleChange = (option) => {
   selection.value = option;
   emit("change", option);
 };
+
+watch(
+  () => props.selectedOption,
+  (sel) => {
+    handleChange(sel);
+  }
+);
 </script>
 
 <template>
