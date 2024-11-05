@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from "vue";
+import { ref } from "vue";
 import { storeToRefs } from "pinia";
 import { useActivityStore } from "@/stores/activity";
 import TabContentWrapper from "../common/TabContentWrapper.vue";
