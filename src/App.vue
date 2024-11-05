@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from "vue";
 import Activity from "./components/activity/Activity.vue";
-import Gear from "./components/Gear.vue";
+import Gear from "./components/gear/Gear.vue";
 import Stats from "./components/Stats.vue";
 import Footer from "./components/footer/Footer.vue";
 
