@@ -25,5 +25,9 @@ const changeTab = (tabName) => {
   justify-content: space-around;
   border-top: 1px solid variables.$chipOutline;
   padding: 0;
+
+  flex-shrink: 0;
+  position: sticky;
+  bottom: 0;
 }
 </style>

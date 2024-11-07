@@ -19,6 +19,6 @@ const emit = defineEmits(['click']);
 }
 
 .tab:hover {
-  background-color: variables.$boxTransparentPrimaryBackground;
+  background-color: variables.$boxPrimaryBackground;
 }
 </style>

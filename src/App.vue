@@ -58,7 +58,7 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   min-height: 100dvh;
-  width: 100vw;
+  width: 100%;
 }
 
 .mobile-content {
@@ -67,6 +67,8 @@ onUnmounted(() => {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+
+  overflow: hidden;
 
   padding: 20px;
 }
