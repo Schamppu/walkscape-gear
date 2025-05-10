@@ -1,7 +1,15 @@
 <script setup>
 import Tab from "./Tab.vue";
 
+const props = defineProps({
+  tabs: {
+    type: Object,
+    required: true,
+  },
+});
 const emit = defineEmits(["selectTab"]);
+
+const tabNames = Object.keys(props.tabs);
 
 const changeTab = (tabName) => {
   emit("selectTab", tabName);
@@ -9,11 +17,14 @@ const changeTab = (tabName) => {
 </script>
 
 <template>
-  <footer class="footer">
-    <tab name="Activity" @click="changeTab"></tab>
-    <tab name="Gear" @click="changeTab"></tab>
-    <tab name="Stats" @click="changeTab"></tab>
-  </footer>
+  <div class="footer">
+    <tab
+      v-for="name in tabNames"
+      :key="name"
+      :name="name"
+      @click="changeTab"
+    ></tab>
+  </div>
 </template>
 
 <style lang="scss" scoped>

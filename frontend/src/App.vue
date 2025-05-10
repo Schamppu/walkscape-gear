@@ -1,24 +1,22 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from "vue";
+import Hub from "./components/hub/Hub.vue";
 import Activity from "./components/activity/Activity.vue";
 import Gear from "./components/gear/Gear.vue";
 import Stats from "./components/Stats.vue";
 import Footer from "./components/footer/Footer.vue";
 
 // Reactive variables
-const activeTab = ref("Activity");
+const activeTab = ref("Hub");
 const isMobile = ref(window.innerWidth <= 768);
 
 const checkScreenSize = () => {
   isMobile.value = window.innerWidth <= 768;
 };
 
+const tabs = { Hub, Activity, Gear, Stats };
 const activeTabComponent = computed(() => {
-  return {
-    Activity,
-    Gear,
-    Stats,
-  }[activeTab.value];
+  return tabs[activeTab.value];
 });
 
 onMounted(() => {
@@ -38,21 +36,22 @@ onUnmounted(() => {
     <div class="mobile-content">
       <component :is="activeTabComponent" />
     </div>
-    <Footer @selectTab="activeTab = $event" />
+    <Footer :tabs="tabs" @selectTab="activeTab = $event" />
   </div>
 
   <!-- Desktop View: Side-by-Side Layout -->
   <div v-else class="desktop-layout">
-    <Activity />
-    <Gear />
-    <Stats />
+    <Hub />
+    <!-- <Activity /> -->
+    <!-- <Gear />
+    <Stats /> -->
   </div>
 </template>
 
 <style lang="scss">
-@forward 'styles/app';
-@forward 'styles/globals/typography';
-@forward 'styles/globals/tailorings';
+@forward "styles/app";
+@forward "styles/globals/typography";
+@forward "styles/globals/tailorings";
 
 .mobile-layout {
   display: flex;
