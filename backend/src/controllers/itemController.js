@@ -14,13 +14,13 @@ export const getItem = wrapController(
 );
 
 export const getCollectibles = wrapController(() => {
-  return itemService.search({ type: "collectible" });
+  return itemService.search({ type: "collectible", detailed: true });
 });
 
 export const getCrafted = wrapController(() => {
-  return itemService.search({ type: "crafted" });
+  return itemService.search({ type: "crafted", detailed: true });
 });
 
 export const getLoot = wrapController(() => {
-  return itemService.search({ type: "loot" });
+  return itemService.search({ type: "loot", detailed: true });
 });
