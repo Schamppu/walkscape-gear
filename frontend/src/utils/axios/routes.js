@@ -23,6 +23,18 @@ export function getKeyword({ id }) {
   });
 }
 
+export function getCollectibles() {
+  return axios.get(`${getHost()}/items/collectibles`);
+}
+
+export function getCrafted() {
+  return axios.get(`${getHost()}/items/crafted`);
+}
+
+export function getLoot() {
+  return axios.get(`${getHost()}/items/loot`);
+}
+
 export function getItem({ name, id, quality }) {
   return axios.get(`${getHost()}/items`, {
     params: { name, id, quality },
