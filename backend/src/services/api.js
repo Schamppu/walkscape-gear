@@ -7,7 +7,6 @@ const api = axios.create({
   timeout: 5000,
 });
 
-console.log("isProd", isProd, process.env.NODE_ENV);
 if (isProd) {
   api.interceptors.request.use((config) => {
     config.headers["Authorization"] = `Bearer ${process.env.API_SECRET}`;
