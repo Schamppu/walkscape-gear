@@ -12,3 +12,15 @@ export const getItem = wrapController(
     notFoundMessage: "Item not found",
   }
 );
+
+export const getCollectibles = wrapController(() => {
+  return itemService.search({ type: "collectible" });
+});
+
+export const getCrafted = wrapController(() => {
+  return itemService.search({ type: "crafted" });
+});
+
+export const getLoot = wrapController(() => {
+  return itemService.search({ type: "loot" });
+});
