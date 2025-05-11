@@ -2,15 +2,12 @@ import { defineStore } from "pinia";
 
 export const useItemsStore = defineStore("itemStore", {
   state: () => ({
-    collectibles: [],
-    crafted: [],
-    loot: [],
+    itemsByCategory: {},
   }),
+
   actions: {
     setItems(category, items) {
-      this.$patch({
-        [category]: items,
-      });
+      this.itemsByCategory[category] = items;
     },
   },
 });
