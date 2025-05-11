@@ -5,15 +5,15 @@ import ItemEntry from "./ItemEntry.vue";
 
 const props = defineProps({
   title: String,
+  qualities: Number,
   itemCategory: String,
-  display: Array,
   isOpen: Boolean,
 });
 
-const emit = defineEmits(['toggle']);
+const emit = defineEmits(["toggle"]);
 
 const itemStore = useItemsStore();
-const items = computed(() => itemStore[props.itemCategory]);
+const items = computed(() => itemStore.itemsByCategory[props.itemCategory]);
 </script>
 
 <template>
@@ -27,7 +27,7 @@ const items = computed(() => itemStore[props.itemCategory]);
         v-for="item in items"
         :key="item.id"
         :item="item"
-        :display="display"
+        :qualities="qualities || 0"
       />
     </div>
   </div>
@@ -52,9 +52,8 @@ const items = computed(() => itemStore[props.itemCategory]);
   display: flex;
   flex-direction: column;
   gap: variables.$xxxs;
-  
+
   background: variables.$boxDarkOutline;
   padding: variables.$xxxxs;
-  
 }
 </style>
