@@ -41,6 +41,10 @@ export function getItem({ name, id, quality }) {
   });
 }
 
+export function getChestLootTables() {
+  return axios.get(`${getHost()}/loot_tables/chests`);
+}
+
 export function searchItems({ types, gearType, search }) {
   return axios.get(`${getHost()}/items/search`, {
     params: { types, gearType, search },
