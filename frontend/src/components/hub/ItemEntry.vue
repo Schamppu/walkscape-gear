@@ -3,27 +3,23 @@ import WsIcon from "@/components/common/WsIcon.vue";
 
 defineProps({
   item: Object,
-  display: Array,
+  qualities: Number,
 });
 </script>
 
 <template>
   <div class="item-entry" @click="item.checked != item.checked">
-    <input
-      v-if="display.includes('checkbox')"
-      type="checkbox"
-      v-model="item.checked"
-    />
+    <input type="checkbox" v-model="item.checked" />
     <ws-icon :iconPath="item.icon" />
-    <span v-if="display.includes('name')">{{ item.name }}</span>
+    <span>{{ item.name }}</span>
 
-    <select v-if="display.includes('quality')" v-model="item.quality">
+    <select v-if="qualities === 1" v-model="item.quality">
       <option v-for="q in [1, 2, 3, 4, 5, 6]" :key="q" :value="q">
         Q{{ q }}
       </option>
     </select>
 
-    <div v-if="display.includes('quality2')">
+    <div v-if="qualities === 2">
       <select v-model="item.quality1">
         <option v-for="q in [1, 2, 3, 4, 5, 6]" :key="'q1-' + q" :value="q">
           Q{{ q }}
