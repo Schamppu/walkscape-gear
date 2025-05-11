@@ -33,26 +33,46 @@ export const crafted_categories = [
   };
 });
 
+export const resolveActivityCategory = (loot, activitiesTable) => {
+  const activityItems = new Set(activitiesTable.flatMap(({ items }) => items));
+  const filtered = loot.filter(({ id }) => activityItems.has(id));
+
+  console.log(activityItems);
+
+  return {
+    title: "Activity Drops",
+    key: "loot_activities",
+    source: "loot",
+    filter: (item) => filtered.some((i) => i.id === item.id),
+  };
+};
+
+export const resolveShopsCategory = (loot, shops, chestItems) => {
+  const shopItems = new Set(shops.flatMap((shop) => shop.soldItems));
+  const filtered = loot.filter(
+    ({ id }) => shopItems.has(id) && !chestItems.has(id)
+  );
+
+  return {
+    title: "Shop Items",
+    key: "loot_shops",
+    source: "loot",
+    filter: (item) => filtered.some((i) => i.id === item.id),
+  };
+};
+
 export const resolveChestCategories = (loot, chestTables) => {
-  const excludedForMultipleCheck = [
-    "jarvonia chest table",
-    "gdte chest table",
-  ];
+  const excludedForMultipleCheck = ["jarvonia chest table", "gdte chest table"];
   const itemToTablesMap = {};
-  const itemIdToTableNames = new Map();
   const multipleSourcesItems = new Set();
   const chestTableCategories = [];
 
   // Step 1: Build mapping of which item belongs to which chest
   for (const table of chestTables) {
     const tableName = table.name;
-    for (const subTable of table.subTables || []) {
-      for (const row of subTable.tableRows || []) {
-        const itemId = row.rowItemID;
-
-        if (!itemToTablesMap[itemId]) itemToTablesMap[itemId] = [];
-        itemToTablesMap[itemId].push(tableName);
-      }
+    for (const item of table.items) {
+      if (!itemToTablesMap[item]) itemToTablesMap[item] = [];
+      itemToTablesMap[item].push(tableName);
     }
   }
 
@@ -69,11 +89,7 @@ export const resolveChestCategories = (loot, chestTables) => {
   // Step 3: Create chest categories
   for (const table of chestTables) {
     const isExcludedFromMulti = excludedForMultipleCheck.includes(table.name);
-    const itemIds = new Set(
-      table.subTables?.flatMap(
-        (st) => st.tableRows?.map((r) => r.rowItemID) || []
-      ) || []
-    );
+    const itemIds = new Set(table.items);
 
     let filteredItems = loot.filter((item) => itemIds.has(item.id));
 
@@ -113,5 +129,6 @@ export const resolveChestCategories = (loot, chestTables) => {
     });
   }
 
-  return chestTableCategories;
+  const chestItems = new Set(Object.keys(itemToTablesMap));
+  return { chestCategories: chestTableCategories, chestItems };
 };

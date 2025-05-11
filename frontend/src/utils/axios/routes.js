@@ -41,8 +41,16 @@ export function getItem({ name, id, quality }) {
   });
 }
 
-export function getChestLootTables() {
-  return axios.get(`${getHost()}/loot_tables/chests`);
+export function getActivityItems() {
+  return axios.get(`${getHost()}/loot_tables/activity_items`);
+}
+
+export function getChestItems() {
+  return axios.get(`${getHost()}/loot_tables/chest_items`);
+}
+
+export function getShops() {
+  return axios.get(`${getHost()}/shops`);
 }
 
 export function searchItems({ types, gearType, search }) {
