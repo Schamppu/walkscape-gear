@@ -8,6 +8,7 @@ import {
   getActivityItems,
   getChestItems,
   getRewards,
+  getAchievementRewards,
   getShops,
 } from "@/utils/axios/routes";
 import ItemCategoryPanel from "./ItemCategoryPanel.vue";
@@ -16,6 +17,7 @@ import { capitalize } from "@/utils/string.js";
 import {
   resolveActivityCategory,
   resolveRewardsCategories,
+  resolveAchievementRewardCategory,
   resolveShopsCategory,
   resolveChestCategories,
   misc_loot,
@@ -36,6 +38,7 @@ const fetchConfigs = [
   { method: getActivityItems, key: "activity_items" },
   { method: getShops, key: "shops" },
   { method: getRewards, key: "rewards" },
+  { method: getAchievementRewards, key: "achievement_rewards" },
 ];
 
 Promise.all(
@@ -50,9 +53,17 @@ Promise.all(
   const activityItems = itemsStore.itemsByCategory["activity_items"];
   const shopsTable = itemsStore.itemsByCategory["shops"];
   const rewardItems = itemsStore.itemsByCategory["rewards"];
+  const achievementRewardItems =
+    itemsStore.itemsByCategory["achievement_rewards"];
 
   const rewardCategories = resolveRewardsCategories(loot, rewardItems);
   categories.push(...rewardCategories);
+
+  const achivementRewardCategory = resolveAchievementRewardCategory(
+    loot,
+    achievementRewardItems
+  );
+  categories.push(achivementRewardCategory);
 
   const { chestCategories, chestItems } = resolveChestCategories(
     loot,
@@ -108,12 +119,15 @@ const resolveCategories = () => {
     if (!cat.filter) {
       const items = itemsStore.itemsByCategory[cat.source] || [];
       const filtered = items.filter((item) => !matchedItemIds.has(item.id));
-      itemsStore.setItems(cat.key, filtered);
-      console.log(filtered);
+      if (filtered.length) {
+        itemsStore.setItems(cat.key, filtered);
+        cat.items = filtered;
+      }
     }
   }
 
-  resolvedCategories.value = resolved;
+  const finalCategores = resolved.filter((cat) => cat.items.length);
+  resolvedCategories.value = finalCategores;
 };
 
 function toggleCategory(category) {

@@ -37,8 +37,6 @@ export const resolveActivityCategory = (loot, activitiesTable) => {
   const activityItems = new Set(activitiesTable.flatMap(({ items }) => items));
   const filtered = loot.filter(({ id }) => activityItems.has(id));
 
-  console.log(activityItems);
-
   return {
     title: "Activity Drops",
     key: "loot_activities",
@@ -66,17 +64,29 @@ export const resolveRewardsCategories = (loot, rewards) => {
   return [
     {
       title: "Achievement point rewards",
-      key: "achievement_items",
+      key: "achievement_point_rewards",
       source: "loot",
       filter: (item) => achievement_items.some((i) => i.id === item.id),
     },
     {
-      title: "Repuation Rewards",
+      title: "Repuation rewards",
       key: "reputation_rewards",
       source: "loot",
       filter: (item) => reputation_items.some((i) => i.id === item.id),
     },
   ];
+};
+
+export const resolveAchievementRewardCategory = (loot, rewards) => {
+  const rewardItems = new Set(rewards);
+  const filtered = loot.filter(({ id }) => rewardItems.has(id));
+
+  return {
+    title: "Achievement rewards",
+    key: "achievement_rewards",
+    source: "loot",
+    filter: (item) => filtered.some((i) => i.id === item.id),
+  };
 };
 
 export const resolveShopsCategory = (loot, shops, chestItems) => {
