@@ -10,6 +10,7 @@ const keywordService = new BaseService("keywords");
 const locationService = new BaseService("locations");
 const lootTableService = new BaseService("loot_tables");
 const recipeService = new BaseService("recipes");
+const rewardsService = new BaseService("rewards");
 const serviceService = new BaseService("services");
 const shopService = new BaseService("shops");
 const skillService = new SkillService();
@@ -23,6 +24,7 @@ export {
   locationService,
   lootTableService,
   recipeService,
+  rewardsService,
   serviceService,
   shopService,
   skillService,
