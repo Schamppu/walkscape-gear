@@ -168,7 +168,7 @@ function toggleCategory(category) {
             v-for="cat in group.categories"
             :key="cat.title"
             :title="cat.title"
-            :display="cat.display"
+            :qualities="cat.qualities"
             :item-category="cat.key"
             :is-open="openCategory === cat.title"
             @toggle="() => toggleCategory(cat.title)"
