@@ -39,10 +39,7 @@ function sortItems(items) {
 }
 
 const itemStore = useItemsStore();
-const items = computed(() => {
-  const source = itemStore.itemsByCategory[props.itemCategory];
-  return sortItems(source);
-});
+const items = sortItems(itemStore.itemsByCategory[props.itemCategory]);
 </script>
 
 <template>
