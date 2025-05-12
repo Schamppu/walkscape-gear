@@ -1,6 +1,6 @@
 <script setup>
-import { computed, ref, onUnmounted, watch } from "vue";
-import { getIcon } from "@/utils/axios/routes";
+import { computed, ref, onMounted, watch } from "vue";
+import { useIconStore } from "@/store/icon";
 
 // Define props
 const props = defineProps({
@@ -17,29 +17,13 @@ const props = defineProps({
 });
 
 // State variables
-const iconSrc = ref(null);
+const iconStore = useIconStore();
+const iconUrl = ref(null);
 const loading = ref(true);
 
-// Fetch the icon URL when component mounts or iconPath changes
-const fetchIcon = async () => {
-  loading.value = true;
-  try {
-    const response = await getIcon({ iconPath: props.iconPath });
-    iconSrc.value = URL.createObjectURL(response.data);
-  } catch (error) {
-    console.error("Failed to load icon:", error);
-    iconSrc.value = "/nac_shop.png"; // Fallback image in case of an error
-  }
+onMounted(async () => {
+  iconUrl.value = await iconStore.loadIcon(props.iconPath);
   loading.value = false;
-};
-
-fetchIcon();
-
-// Cleanup object URL on component unmount to prevent memory leaks
-onUnmounted(() => {
-  if (iconSrc.value) {
-    URL.revokeObjectURL(iconSrc.value);
-  }
 });
 
 // Map size options to pixel values
@@ -55,7 +39,6 @@ const iconSize = computed(() => {
   };
   return sizeMap[props.size];
 });
-watch(() => props.iconPath, fetchIcon);
 </script>
 
 <template>
@@ -65,7 +48,9 @@ watch(() => props.iconPath, fetchIcon);
     class="ws-icon"
   >
     <img
-      :src="iconSrc"
+      v-if="iconUrl"
+      :src="iconUrl"
+      :alt="iconPath"
       :style="{ width: '100%', height: '100%' }"
     />
   </div>
