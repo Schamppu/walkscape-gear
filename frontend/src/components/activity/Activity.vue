@@ -6,7 +6,7 @@ import TabContentWrapper from "../common/TabContentWrapper.vue";
 import WsLabel from "../common/WsLabel.vue";
 import Dropdown from "../common/Dropdown.vue";
 import ActivityStatPanel from "./ActivityStatPanel.vue";
-import { getSkills, search } from "@/utils/axios/activities";
+import { getSkills } from "@/utils/axios/routes";
 import { capitalize } from "@/utils/string";
 
 const activityStore = useActivityStore();
@@ -25,7 +25,7 @@ getSkills().then(({ data: skillList }) => {
 });
 
 const loadActivities = ({ skill, name } = {}) => {
-  search({ skill }).then(data => console.log(data));
+  // search({ skill }).then(data => console.log(data));
 };
 
 loadActivities();

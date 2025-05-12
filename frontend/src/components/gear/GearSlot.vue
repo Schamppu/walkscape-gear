@@ -3,7 +3,7 @@ import { ref, computed } from "vue";
 import { useGearStore } from "@/store/gear";
 import { useActivityStore } from "@/store/activity";
 import { storeToRefs } from "pinia";
-import { getItem, searchItems } from "@/utils/axios/items";
+import { getItem, searchItems } from "@/utils/axios/routes";
 import WsIcon from "@/components/common/WsIcon.vue";
 
 const emit = defineEmits(["select"]);

@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { getItem, searchItems } from "@/utils/axios/items";
+import { getItem, searchItems } from "@/utils/axios/routes";
 
 export const useGearStore = defineStore("gearStore", {
   state: () => ({

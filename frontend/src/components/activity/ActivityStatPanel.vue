@@ -1,7 +1,7 @@
 <script setup>
 import { ref, watch } from "vue";
 import { useActivityStore } from "@/store/activity";
-import { getActivity } from "@/utils/axios/activities";
+import { getActivity } from "@/utils/axios/routes";
 import ActivityInfoCard from "./ActivityInfoCard.vue";
 
 const activityStore = useActivityStore();
