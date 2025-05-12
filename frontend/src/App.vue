@@ -1,10 +1,15 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from "vue";
+import { usePlayerStore } from "@/store/player";
+import { getOrCreateUserUuid } from "@/utils/user";
 import Hub from "./components/hub/Hub.vue";
 import Activity from "./components/activity/Activity.vue";
 import Gear from "./components/gear/Gear.vue";
 import Stats from "./components/Stats.vue";
 import Footer from "./components/footer/Footer.vue";
+
+const playerStore = usePlayerStore();
+playerStore.setUuid(getOrCreateUserUuid());
 
 // Reactive variables
 const activeTab = ref("Hub");

@@ -1,13 +1,14 @@
-import axios from 'axios';
+import { usePlayerStore } from "@/store/player";
+import axios from "axios";
 
 const AXIOS_TIMEOUT = 30000;
 
-export const measureRequestTime = config => {
+export const measureRequestTime = (config) => {
   config.startTime = Math.round(performance.now());
   return config;
 };
 
-const apiResponse = response => {
+const apiResponse = (response) => {
   if (response) {
     const { config } = response;
     config.stopTime = Math.round(performance.now());
@@ -19,7 +20,17 @@ const apiResponse = response => {
 
 export const createAxiosInstance = () => {
   const instance = axios.create();
-  instance.interceptors.request.use(measureRequestTime);
+
+  instance.interceptors.request.use((config) => {
+    measureRequestTime(config);
+
+    const playerStore = usePlayerStore();
+    if (playerStore.userUuid) {
+      config.headers["X-User-Id"] = playerStore.userUuid;
+    }
+
+    return config;
+  });
 
   instance.interceptors.response.use(apiResponse);
   instance.defaults.timeout = AXIOS_TIMEOUT;
