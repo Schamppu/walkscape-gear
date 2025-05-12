@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from "vue";
+import { computed, ref, watch } from "vue";
 import { useItemsStore } from "@/store/items";
 import ItemEntry from "./ItemEntry.vue";
 
@@ -11,6 +11,7 @@ const props = defineProps({
 });
 
 const emit = defineEmits(["toggle"]);
+const hasLoaded = ref(false);
 
 const qualityOrder = [
   "common",
@@ -40,21 +41,32 @@ function sortItems(items) {
 
 const itemStore = useItemsStore();
 const items = sortItems(itemStore.itemsByCategory[props.itemCategory]);
+
+watch(
+  () => props.isOpen,
+  (newVal) => {
+    if (newVal && !hasLoaded.value) {
+      hasLoaded.value = true;
+    }
+  }
+);
 </script>
 
 <template>
-  <div class="category-panel">
+  <div class="category-panel" :id="title">
     <div class="header" @click="emit('toggle')">
       <h3>{{ title }}</h3>
       <span>{{ isOpen ? "▲" : "▼" }}</span>
     </div>
     <div v-show="isOpen" class="content">
-      <item-entry
-        v-for="item in items"
-        :key="item.id"
-        :item="item"
-        :qualities="qualities || 0"
-      />
+      <div v-if="hasLoaded">
+        <item-entry
+          v-for="item in items"
+          :key="item.id"
+          :item="item"
+          :qualities="qualities || 0"
+        />
+      </div>
     </div>
   </div>
 </template>
