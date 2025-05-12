@@ -53,6 +53,14 @@ export function getShops() {
   return axios.get(`${getHost()}/shops`);
 }
 
+export function getRewards() {
+  return axios.get(`${getHost()}/rewards`);
+}
+
+export function getAchievementRewards() {
+  return axios.get(`${getHost()}/achievements/item_rewards`);
+}
+
 export function searchItems({ types, gearType, search }) {
   return axios.get(`${getHost()}/items/search`, {
     params: { types, gearType, search },
