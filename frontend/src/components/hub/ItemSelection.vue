@@ -27,7 +27,7 @@ import {
 
 const isLoading = ref(true);
 const openCategory = ref(null);
-const resolvedCategories = ref([]);
+const groupedCategories = ref([]);
 const itemsStore = useItemsStore();
 
 const fetchConfigs = [
@@ -42,9 +42,9 @@ const fetchConfigs = [
 ];
 
 Promise.all(
-  fetchConfigs.map(({ method, key }) =>
-    method().then(({ data }) => itemsStore.setItems(key, data))
-  )
+  fetchConfigs.map(({ method, key }) => {
+    return method().then(({ data }) => itemsStore.setItems(key, data));
+  })
 ).then(() => {
   // All loaded – show content
 
@@ -57,13 +57,10 @@ Promise.all(
     itemsStore.itemsByCategory["achievement_rewards"];
 
   const rewardCategories = resolveRewardsCategories(loot, rewardItems);
-  categories.push(...rewardCategories);
-
   const achivementRewardCategory = resolveAchievementRewardCategory(
     loot,
     achievementRewardItems
   );
-  categories.push(achivementRewardCategory);
 
   const { chestCategories, chestItems } = resolveChestCategories(
     loot,
@@ -71,62 +68,81 @@ Promise.all(
   );
 
   const shopsCategory = resolveShopsCategory(loot, shopsTable, chestItems);
-  categories.push(shopsCategory);
-
   const activityCategory = resolveActivityCategory(loot, activityItems);
-  categories.push(activityCategory);
 
-  categories.push(...chestCategories);
-  categories.push(misc_loot);
-  categories.push(...crafted_categories);
-  categories.push(misc_crafted);
+  categoryGroups.push({
+    title: "Loot and Rewards",
+    categories: [
+      ...rewardCategories,
+      achivementRewardCategory,
+      shopsCategory,
+      activityCategory,
+      misc_loot,
+    ],
+  });
+  categoryGroups.push({ title: "Chests", categories: chestCategories });
+  categoryGroups.push({
+    title: "Crafted items",
+    categories: [...crafted_categories, misc_crafted],
+  });
   resolveCategories();
 
   isLoading.value = false;
 });
 
-const categories = [
+const categoryGroups = [
   {
     title: "Collectibles",
-    key: "collectibles",
-    source: "collectibles",
-    filter: () => true,
+    categories: [
+      {
+        title: "All collectibles",
+        key: "collectibles",
+        source: "collectibles",
+        filter: () => true,
+      },
+    ],
   },
 ];
 
 const resolveCategories = () => {
   const matchedItemIds = new Set();
 
-  const resolved = categories.map((cat) => {
-    const items = itemsStore.itemsByCategory[cat.source] || [];
+  const resolved = categoryGroups.map((group) => {
+    const { categories } = group;
+    const mappedCategories = categories.map((cat) => {
+      const items = itemsStore.itemsByCategory[cat.source] || [];
 
-    let filtered = [];
-    if (cat.filter) {
-      filtered = items.filter((item) => {
-        const isMatch = cat.filter(item);
-        if (isMatch) matchedItemIds.add(item.id);
-        return isMatch;
-      });
-    }
+      let filtered = [];
+      if (cat.filter) {
+        filtered = items.filter((item) => {
+          const isMatch = cat.filter(item);
+          if (isMatch) matchedItemIds.add(item.id);
+          return isMatch;
+        });
+      }
 
-    itemsStore.setItems(cat.key, filtered);
-    return { ...cat, items: filtered };
+      itemsStore.setItems(cat.key, filtered);
+      return { ...cat, items: filtered };
+    });
+    return { ...group, categories: mappedCategories };
   });
 
   // Handle miscellaneous categories
-  for (const cat of resolved) {
-    if (!cat.filter) {
-      const items = itemsStore.itemsByCategory[cat.source] || [];
-      const filtered = items.filter((item) => !matchedItemIds.has(item.id));
-      if (filtered.length) {
-        itemsStore.setItems(cat.key, filtered);
-        cat.items = filtered;
+  for (const group of resolved) {
+    for (const cat of group.categories) {
+      if (!cat.filter) {
+        const items = itemsStore.itemsByCategory[cat.source] || [];
+        const filtered = items.filter((item) => !matchedItemIds.has(item.id));
+        if (filtered.length) {
+          itemsStore.setItems(cat.key, filtered);
+          cat.items = filtered;
+        }
       }
     }
+    group.categories = group.categories.filter(({ items }) => items.length);
   }
 
-  const finalCategores = resolved.filter((cat) => cat.items.length);
-  resolvedCategories.value = finalCategores;
+  groupedCategories.value = resolved;
 };
 
 function toggleCategory(category) {
@@ -141,15 +157,24 @@ function toggleCategory(category) {
       <loading-throbber />
     </div>
     <div v-else class="categories">
-      <item-category-panel
-        v-for="cat in resolvedCategories"
-        :key="cat.title"
-        :title="cat.title"
-        :display="cat.display"
-        :item-category="cat.key"
-        :is-open="openCategory === cat.title"
-        @toggle="() => toggleCategory(cat.title)"
-      />
+      <div
+        v-for="group in groupedCategories"
+        :key="group.title"
+        class="detail-groups"
+      >
+        <details class="details">
+          <summary>{{ group.title }}</summary>
+          <item-category-panel
+            v-for="cat in group.categories"
+            :key="cat.title"
+            :title="cat.title"
+            :display="cat.display"
+            :item-category="cat.key"
+            :is-open="openCategory === cat.title"
+            @toggle="() => toggleCategory(cat.title)"
+          />
+        </details>
+      </div>
     </div>
   </div>
 </template>
@@ -160,7 +185,19 @@ function toggleCategory(category) {
 .wrapper {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
+  margin-top: variables.$base;
+
+  .detail-groups {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: variables.$base;
+  }
+}
+
+.details {
+  width: 100%;
 }
 
 .categories {
