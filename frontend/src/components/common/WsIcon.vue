@@ -1,6 +1,7 @@
 <script setup>
 import { computed, ref, onMounted, watch } from "vue";
 import { useIconStore } from "@/store/icon";
+import LoadingThrobber from "./LoadingThrobber.vue";
 
 // Define props
 const props = defineProps({
@@ -42,11 +43,8 @@ const iconSize = computed(() => {
 </script>
 
 <template>
-  <div
-    v-loading="loading"
-    :style="{ width: iconSize, height: iconSize }"
-    class="ws-icon"
-  >
+  <div :style="{ width: iconSize, height: iconSize }" class="ws-icon">
+    <loading-throbber v-if="loading" />
     <img
       v-if="iconUrl"
       :src="iconUrl"
