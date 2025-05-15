@@ -1092,34 +1092,34 @@ export namespace Prisma {
   }
 
   export type UserMinAggregateOutputType = {
-    uuid: string | null
+    userUuid: string | null
     createdAt: Date | null
   }
 
   export type UserMaxAggregateOutputType = {
-    uuid: string | null
+    userUuid: string | null
     createdAt: Date | null
   }
 
   export type UserCountAggregateOutputType = {
-    uuid: number
+    userUuid: number
     createdAt: number
     _all: number
   }
 
 
   export type UserMinAggregateInputType = {
-    uuid?: true
+    userUuid?: true
     createdAt?: true
   }
 
   export type UserMaxAggregateInputType = {
-    uuid?: true
+    userUuid?: true
     createdAt?: true
   }
 
   export type UserCountAggregateInputType = {
-    uuid?: true
+    userUuid?: true
     createdAt?: true
     _all?: true
   }
@@ -1197,7 +1197,7 @@ export namespace Prisma {
   }
 
   export type UserGroupByOutputType = {
-    uuid: string
+    userUuid: string
     createdAt: Date
     _count: UserCountAggregateOutputType | null
     _min: UserMinAggregateOutputType | null
@@ -1219,7 +1219,7 @@ export namespace Prisma {
 
 
   export type UserSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    uuid?: boolean
+    userUuid?: boolean
     createdAt?: boolean
     stats?: boolean | User$statsArgs<ExtArgs>
     items?: boolean | User$itemsArgs<ExtArgs>
@@ -1227,21 +1227,21 @@ export namespace Prisma {
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    uuid?: boolean
+    userUuid?: boolean
     createdAt?: boolean
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    uuid?: boolean
+    userUuid?: boolean
     createdAt?: boolean
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectScalar = {
-    uuid?: boolean
+    userUuid?: boolean
     createdAt?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"uuid" | "createdAt", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"userUuid" | "createdAt", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     stats?: boolean | User$statsArgs<ExtArgs>
     items?: boolean | User$itemsArgs<ExtArgs>
@@ -1257,7 +1257,7 @@ export namespace Prisma {
       items: Prisma.$OwnedItemPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
-      uuid: string
+      userUuid: string
       createdAt: Date
     }, ExtArgs["result"]["user"]>
     composites: {}
@@ -1342,8 +1342,8 @@ export namespace Prisma {
      * // Get first 10 Users
      * const users = await prisma.user.findMany({ take: 10 })
      * 
-     * // Only select the `uuid`
-     * const userWithUuidOnly = await prisma.user.findMany({ select: { uuid: true } })
+     * // Only select the `userUuid`
+     * const userWithUserUuidOnly = await prisma.user.findMany({ select: { userUuid: true } })
      * 
      */
     findMany<T extends UserFindManyArgs>(args?: SelectSubset<T, UserFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
@@ -1387,9 +1387,9 @@ export namespace Prisma {
      *   ]
      * })
      * 
-     * // Create many Users and only return the `uuid`
-     * const userWithUuidOnly = await prisma.user.createManyAndReturn({
-     *   select: { uuid: true },
+     * // Create many Users and only return the `userUuid`
+     * const userWithUserUuidOnly = await prisma.user.createManyAndReturn({
+     *   select: { userUuid: true },
      *   data: [
      *     // ... provide data here
      *   ]
@@ -1478,9 +1478,9 @@ export namespace Prisma {
      *   ]
      * })
      * 
-     * // Update zero or more Users and only return the `uuid`
-     * const userWithUuidOnly = await prisma.user.updateManyAndReturn({
-     *   select: { uuid: true },
+     * // Update zero or more Users and only return the `userUuid`
+     * const userWithUserUuidOnly = await prisma.user.updateManyAndReturn({
+     *   select: { userUuid: true },
      *   where: {
      *     // ... provide filter here
      *   },
@@ -1684,7 +1684,7 @@ export namespace Prisma {
    * Fields of the User model
    */
   interface UserFieldRefs {
-    readonly uuid: FieldRef<"User", 'String'>
+    readonly userUuid: FieldRef<"User", 'String'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
   }
     
@@ -2149,77 +2149,77 @@ export namespace Prisma {
 
   export type PlayerStatsAvgAggregateOutputType = {
     achievementPoints: number | null
-    skillAgility: number | null
-    skillCarpentry: number | null
-    skillCooking: number | null
-    skillCrafting: number | null
-    skillFishing: number | null
-    skillForaging: number | null
-    skillMining: number | null
-    skillSmithing: number | null
-    skillTrinketry: number | null
-    skillWoodcutting: number | null
+    agility: number | null
+    carpentry: number | null
+    cooking: number | null
+    crafting: number | null
+    fishing: number | null
+    foraging: number | null
+    mining: number | null
+    smithing: number | null
+    trinketry: number | null
+    woodcutting: number | null
   }
 
   export type PlayerStatsSumAggregateOutputType = {
     achievementPoints: number | null
-    skillAgility: number | null
-    skillCarpentry: number | null
-    skillCooking: number | null
-    skillCrafting: number | null
-    skillFishing: number | null
-    skillForaging: number | null
-    skillMining: number | null
-    skillSmithing: number | null
-    skillTrinketry: number | null
-    skillWoodcutting: number | null
+    agility: number | null
+    carpentry: number | null
+    cooking: number | null
+    crafting: number | null
+    fishing: number | null
+    foraging: number | null
+    mining: number | null
+    smithing: number | null
+    trinketry: number | null
+    woodcutting: number | null
   }
 
   export type PlayerStatsMinAggregateOutputType = {
-    uuid: string | null
+    userUuid: string | null
     achievementPoints: number | null
-    skillAgility: number | null
-    skillCarpentry: number | null
-    skillCooking: number | null
-    skillCrafting: number | null
-    skillFishing: number | null
-    skillForaging: number | null
-    skillMining: number | null
-    skillSmithing: number | null
-    skillTrinketry: number | null
-    skillWoodcutting: number | null
+    agility: number | null
+    carpentry: number | null
+    cooking: number | null
+    crafting: number | null
+    fishing: number | null
+    foraging: number | null
+    mining: number | null
+    smithing: number | null
+    trinketry: number | null
+    woodcutting: number | null
     updatedAt: Date | null
   }
 
   export type PlayerStatsMaxAggregateOutputType = {
-    uuid: string | null
+    userUuid: string | null
     achievementPoints: number | null
-    skillAgility: number | null
-    skillCarpentry: number | null
-    skillCooking: number | null
-    skillCrafting: number | null
-    skillFishing: number | null
-    skillForaging: number | null
-    skillMining: number | null
-    skillSmithing: number | null
-    skillTrinketry: number | null
-    skillWoodcutting: number | null
+    agility: number | null
+    carpentry: number | null
+    cooking: number | null
+    crafting: number | null
+    fishing: number | null
+    foraging: number | null
+    mining: number | null
+    smithing: number | null
+    trinketry: number | null
+    woodcutting: number | null
     updatedAt: Date | null
   }
 
   export type PlayerStatsCountAggregateOutputType = {
-    uuid: number
+    userUuid: number
     achievementPoints: number
-    skillAgility: number
-    skillCarpentry: number
-    skillCooking: number
-    skillCrafting: number
-    skillFishing: number
-    skillForaging: number
-    skillMining: number
-    skillSmithing: number
-    skillTrinketry: number
-    skillWoodcutting: number
+    agility: number
+    carpentry: number
+    cooking: number
+    crafting: number
+    fishing: number
+    foraging: number
+    mining: number
+    smithing: number
+    trinketry: number
+    woodcutting: number
     updatedAt: number
     _all: number
   }
@@ -2227,77 +2227,77 @@ export namespace Prisma {
 
   export type PlayerStatsAvgAggregateInputType = {
     achievementPoints?: true
-    skillAgility?: true
-    skillCarpentry?: true
-    skillCooking?: true
-    skillCrafting?: true
-    skillFishing?: true
-    skillForaging?: true
-    skillMining?: true
-    skillSmithing?: true
-    skillTrinketry?: true
-    skillWoodcutting?: true
+    agility?: true
+    carpentry?: true
+    cooking?: true
+    crafting?: true
+    fishing?: true
+    foraging?: true
+    mining?: true
+    smithing?: true
+    trinketry?: true
+    woodcutting?: true
   }
 
   export type PlayerStatsSumAggregateInputType = {
     achievementPoints?: true
-    skillAgility?: true
-    skillCarpentry?: true
-    skillCooking?: true
-    skillCrafting?: true
-    skillFishing?: true
-    skillForaging?: true
-    skillMining?: true
-    skillSmithing?: true
-    skillTrinketry?: true
-    skillWoodcutting?: true
+    agility?: true
+    carpentry?: true
+    cooking?: true
+    crafting?: true
+    fishing?: true
+    foraging?: true
+    mining?: true
+    smithing?: true
+    trinketry?: true
+    woodcutting?: true
   }
 
   export type PlayerStatsMinAggregateInputType = {
-    uuid?: true
+    userUuid?: true
     achievementPoints?: true
-    skillAgility?: true
-    skillCarpentry?: true
-    skillCooking?: true
-    skillCrafting?: true
-    skillFishing?: true
-    skillForaging?: true
-    skillMining?: true
-    skillSmithing?: true
-    skillTrinketry?: true
-    skillWoodcutting?: true
+    agility?: true
+    carpentry?: true
+    cooking?: true
+    crafting?: true
+    fishing?: true
+    foraging?: true
+    mining?: true
+    smithing?: true
+    trinketry?: true
+    woodcutting?: true
     updatedAt?: true
   }
 
   export type PlayerStatsMaxAggregateInputType = {
-    uuid?: true
+    userUuid?: true
     achievementPoints?: true
-    skillAgility?: true
-    skillCarpentry?: true
-    skillCooking?: true
-    skillCrafting?: true
-    skillFishing?: true
-    skillForaging?: true
-    skillMining?: true
-    skillSmithing?: true
-    skillTrinketry?: true
-    skillWoodcutting?: true
+    agility?: true
+    carpentry?: true
+    cooking?: true
+    crafting?: true
+    fishing?: true
+    foraging?: true
+    mining?: true
+    smithing?: true
+    trinketry?: true
+    woodcutting?: true
     updatedAt?: true
   }
 
   export type PlayerStatsCountAggregateInputType = {
-    uuid?: true
+    userUuid?: true
     achievementPoints?: true
-    skillAgility?: true
-    skillCarpentry?: true
-    skillCooking?: true
-    skillCrafting?: true
-    skillFishing?: true
-    skillForaging?: true
-    skillMining?: true
-    skillSmithing?: true
-    skillTrinketry?: true
-    skillWoodcutting?: true
+    agility?: true
+    carpentry?: true
+    cooking?: true
+    crafting?: true
+    fishing?: true
+    foraging?: true
+    mining?: true
+    smithing?: true
+    trinketry?: true
+    woodcutting?: true
     updatedAt?: true
     _all?: true
   }
@@ -2389,18 +2389,18 @@ export namespace Prisma {
   }
 
   export type PlayerStatsGroupByOutputType = {
-    uuid: string
+    userUuid: string
     achievementPoints: number
-    skillAgility: number
-    skillCarpentry: number
-    skillCooking: number
-    skillCrafting: number
-    skillFishing: number
-    skillForaging: number
-    skillMining: number
-    skillSmithing: number
-    skillTrinketry: number
-    skillWoodcutting: number
+    agility: number
+    carpentry: number
+    cooking: number
+    crafting: number
+    fishing: number
+    foraging: number
+    mining: number
+    smithing: number
+    trinketry: number
+    woodcutting: number
     updatedAt: Date
     _count: PlayerStatsCountAggregateOutputType | null
     _avg: PlayerStatsAvgAggregateOutputType | null
@@ -2424,73 +2424,73 @@ export namespace Prisma {
 
 
   export type PlayerStatsSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    uuid?: boolean
+    userUuid?: boolean
     achievementPoints?: boolean
-    skillAgility?: boolean
-    skillCarpentry?: boolean
-    skillCooking?: boolean
-    skillCrafting?: boolean
-    skillFishing?: boolean
-    skillForaging?: boolean
-    skillMining?: boolean
-    skillSmithing?: boolean
-    skillTrinketry?: boolean
-    skillWoodcutting?: boolean
+    agility?: boolean
+    carpentry?: boolean
+    cooking?: boolean
+    crafting?: boolean
+    fishing?: boolean
+    foraging?: boolean
+    mining?: boolean
+    smithing?: boolean
+    trinketry?: boolean
+    woodcutting?: boolean
     updatedAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["playerStats"]>
 
   export type PlayerStatsSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    uuid?: boolean
+    userUuid?: boolean
     achievementPoints?: boolean
-    skillAgility?: boolean
-    skillCarpentry?: boolean
-    skillCooking?: boolean
-    skillCrafting?: boolean
-    skillFishing?: boolean
-    skillForaging?: boolean
-    skillMining?: boolean
-    skillSmithing?: boolean
-    skillTrinketry?: boolean
-    skillWoodcutting?: boolean
+    agility?: boolean
+    carpentry?: boolean
+    cooking?: boolean
+    crafting?: boolean
+    fishing?: boolean
+    foraging?: boolean
+    mining?: boolean
+    smithing?: boolean
+    trinketry?: boolean
+    woodcutting?: boolean
     updatedAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["playerStats"]>
 
   export type PlayerStatsSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    uuid?: boolean
+    userUuid?: boolean
     achievementPoints?: boolean
-    skillAgility?: boolean
-    skillCarpentry?: boolean
-    skillCooking?: boolean
-    skillCrafting?: boolean
-    skillFishing?: boolean
-    skillForaging?: boolean
-    skillMining?: boolean
-    skillSmithing?: boolean
-    skillTrinketry?: boolean
-    skillWoodcutting?: boolean
+    agility?: boolean
+    carpentry?: boolean
+    cooking?: boolean
+    crafting?: boolean
+    fishing?: boolean
+    foraging?: boolean
+    mining?: boolean
+    smithing?: boolean
+    trinketry?: boolean
+    woodcutting?: boolean
     updatedAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["playerStats"]>
 
   export type PlayerStatsSelectScalar = {
-    uuid?: boolean
+    userUuid?: boolean
     achievementPoints?: boolean
-    skillAgility?: boolean
-    skillCarpentry?: boolean
-    skillCooking?: boolean
-    skillCrafting?: boolean
-    skillFishing?: boolean
-    skillForaging?: boolean
-    skillMining?: boolean
-    skillSmithing?: boolean
-    skillTrinketry?: boolean
-    skillWoodcutting?: boolean
+    agility?: boolean
+    carpentry?: boolean
+    cooking?: boolean
+    crafting?: boolean
+    fishing?: boolean
+    foraging?: boolean
+    mining?: boolean
+    smithing?: boolean
+    trinketry?: boolean
+    woodcutting?: boolean
     updatedAt?: boolean
   }
 
-  export type PlayerStatsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"uuid" | "achievementPoints" | "skillAgility" | "skillCarpentry" | "skillCooking" | "skillCrafting" | "skillFishing" | "skillForaging" | "skillMining" | "skillSmithing" | "skillTrinketry" | "skillWoodcutting" | "updatedAt", ExtArgs["result"]["playerStats"]>
+  export type PlayerStatsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"userUuid" | "achievementPoints" | "agility" | "carpentry" | "cooking" | "crafting" | "fishing" | "foraging" | "mining" | "smithing" | "trinketry" | "woodcutting" | "updatedAt", ExtArgs["result"]["playerStats"]>
   export type PlayerStatsInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -2507,18 +2507,18 @@ export namespace Prisma {
       user: Prisma.$UserPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
-      uuid: string
+      userUuid: string
       achievementPoints: number
-      skillAgility: number
-      skillCarpentry: number
-      skillCooking: number
-      skillCrafting: number
-      skillFishing: number
-      skillForaging: number
-      skillMining: number
-      skillSmithing: number
-      skillTrinketry: number
-      skillWoodcutting: number
+      agility: number
+      carpentry: number
+      cooking: number
+      crafting: number
+      fishing: number
+      foraging: number
+      mining: number
+      smithing: number
+      trinketry: number
+      woodcutting: number
       updatedAt: Date
     }, ExtArgs["result"]["playerStats"]>
     composites: {}
@@ -2603,8 +2603,8 @@ export namespace Prisma {
      * // Get first 10 PlayerStats
      * const playerStats = await prisma.playerStats.findMany({ take: 10 })
      * 
-     * // Only select the `uuid`
-     * const playerStatsWithUuidOnly = await prisma.playerStats.findMany({ select: { uuid: true } })
+     * // Only select the `userUuid`
+     * const playerStatsWithUserUuidOnly = await prisma.playerStats.findMany({ select: { userUuid: true } })
      * 
      */
     findMany<T extends PlayerStatsFindManyArgs>(args?: SelectSubset<T, PlayerStatsFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PlayerStatsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
@@ -2648,9 +2648,9 @@ export namespace Prisma {
      *   ]
      * })
      * 
-     * // Create many PlayerStats and only return the `uuid`
-     * const playerStatsWithUuidOnly = await prisma.playerStats.createManyAndReturn({
-     *   select: { uuid: true },
+     * // Create many PlayerStats and only return the `userUuid`
+     * const playerStatsWithUserUuidOnly = await prisma.playerStats.createManyAndReturn({
+     *   select: { userUuid: true },
      *   data: [
      *     // ... provide data here
      *   ]
@@ -2739,9 +2739,9 @@ export namespace Prisma {
      *   ]
      * })
      * 
-     * // Update zero or more PlayerStats and only return the `uuid`
-     * const playerStatsWithUuidOnly = await prisma.playerStats.updateManyAndReturn({
-     *   select: { uuid: true },
+     * // Update zero or more PlayerStats and only return the `userUuid`
+     * const playerStatsWithUserUuidOnly = await prisma.playerStats.updateManyAndReturn({
+     *   select: { userUuid: true },
      *   where: {
      *     // ... provide filter here
      *   },
@@ -2944,18 +2944,18 @@ export namespace Prisma {
    * Fields of the PlayerStats model
    */
   interface PlayerStatsFieldRefs {
-    readonly uuid: FieldRef<"PlayerStats", 'String'>
+    readonly userUuid: FieldRef<"PlayerStats", 'String'>
     readonly achievementPoints: FieldRef<"PlayerStats", 'Int'>
-    readonly skillAgility: FieldRef<"PlayerStats", 'Int'>
-    readonly skillCarpentry: FieldRef<"PlayerStats", 'Int'>
-    readonly skillCooking: FieldRef<"PlayerStats", 'Int'>
-    readonly skillCrafting: FieldRef<"PlayerStats", 'Int'>
-    readonly skillFishing: FieldRef<"PlayerStats", 'Int'>
-    readonly skillForaging: FieldRef<"PlayerStats", 'Int'>
-    readonly skillMining: FieldRef<"PlayerStats", 'Int'>
-    readonly skillSmithing: FieldRef<"PlayerStats", 'Int'>
-    readonly skillTrinketry: FieldRef<"PlayerStats", 'Int'>
-    readonly skillWoodcutting: FieldRef<"PlayerStats", 'Int'>
+    readonly agility: FieldRef<"PlayerStats", 'Int'>
+    readonly carpentry: FieldRef<"PlayerStats", 'Int'>
+    readonly cooking: FieldRef<"PlayerStats", 'Int'>
+    readonly crafting: FieldRef<"PlayerStats", 'Int'>
+    readonly fishing: FieldRef<"PlayerStats", 'Int'>
+    readonly foraging: FieldRef<"PlayerStats", 'Int'>
+    readonly mining: FieldRef<"PlayerStats", 'Int'>
+    readonly smithing: FieldRef<"PlayerStats", 'Int'>
+    readonly trinketry: FieldRef<"PlayerStats", 'Int'>
+    readonly woodcutting: FieldRef<"PlayerStats", 'Int'>
     readonly updatedAt: FieldRef<"PlayerStats", 'DateTime'>
   }
     
@@ -3382,21 +3382,21 @@ export namespace Prisma {
   }
 
   export type OwnedItemMinAggregateOutputType = {
-    uuid: string | null
+    userUuid: string | null
     itemId: string | null
     quality1: string | null
     quality2: string | null
   }
 
   export type OwnedItemMaxAggregateOutputType = {
-    uuid: string | null
+    userUuid: string | null
     itemId: string | null
     quality1: string | null
     quality2: string | null
   }
 
   export type OwnedItemCountAggregateOutputType = {
-    uuid: number
+    userUuid: number
     itemId: number
     quality1: number
     quality2: number
@@ -3405,21 +3405,21 @@ export namespace Prisma {
 
 
   export type OwnedItemMinAggregateInputType = {
-    uuid?: true
+    userUuid?: true
     itemId?: true
     quality1?: true
     quality2?: true
   }
 
   export type OwnedItemMaxAggregateInputType = {
-    uuid?: true
+    userUuid?: true
     itemId?: true
     quality1?: true
     quality2?: true
   }
 
   export type OwnedItemCountAggregateInputType = {
-    uuid?: true
+    userUuid?: true
     itemId?: true
     quality1?: true
     quality2?: true
@@ -3499,7 +3499,7 @@ export namespace Prisma {
   }
 
   export type OwnedItemGroupByOutputType = {
-    uuid: string
+    userUuid: string
     itemId: string
     quality1: string | null
     quality2: string | null
@@ -3523,7 +3523,7 @@ export namespace Prisma {
 
 
   export type OwnedItemSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    uuid?: boolean
+    userUuid?: boolean
     itemId?: boolean
     quality1?: boolean
     quality2?: boolean
@@ -3531,7 +3531,7 @@ export namespace Prisma {
   }, ExtArgs["result"]["ownedItem"]>
 
   export type OwnedItemSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    uuid?: boolean
+    userUuid?: boolean
     itemId?: boolean
     quality1?: boolean
     quality2?: boolean
@@ -3539,7 +3539,7 @@ export namespace Prisma {
   }, ExtArgs["result"]["ownedItem"]>
 
   export type OwnedItemSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    uuid?: boolean
+    userUuid?: boolean
     itemId?: boolean
     quality1?: boolean
     quality2?: boolean
@@ -3547,13 +3547,13 @@ export namespace Prisma {
   }, ExtArgs["result"]["ownedItem"]>
 
   export type OwnedItemSelectScalar = {
-    uuid?: boolean
+    userUuid?: boolean
     itemId?: boolean
     quality1?: boolean
     quality2?: boolean
   }
 
-  export type OwnedItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"uuid" | "itemId" | "quality1" | "quality2", ExtArgs["result"]["ownedItem"]>
+  export type OwnedItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"userUuid" | "itemId" | "quality1" | "quality2", ExtArgs["result"]["ownedItem"]>
   export type OwnedItemInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -3570,7 +3570,7 @@ export namespace Prisma {
       user: Prisma.$UserPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
-      uuid: string
+      userUuid: string
       itemId: string
       quality1: string | null
       quality2: string | null
@@ -3657,8 +3657,8 @@ export namespace Prisma {
      * // Get first 10 OwnedItems
      * const ownedItems = await prisma.ownedItem.findMany({ take: 10 })
      * 
-     * // Only select the `uuid`
-     * const ownedItemWithUuidOnly = await prisma.ownedItem.findMany({ select: { uuid: true } })
+     * // Only select the `userUuid`
+     * const ownedItemWithUserUuidOnly = await prisma.ownedItem.findMany({ select: { userUuid: true } })
      * 
      */
     findMany<T extends OwnedItemFindManyArgs>(args?: SelectSubset<T, OwnedItemFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OwnedItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
@@ -3702,9 +3702,9 @@ export namespace Prisma {
      *   ]
      * })
      * 
-     * // Create many OwnedItems and only return the `uuid`
-     * const ownedItemWithUuidOnly = await prisma.ownedItem.createManyAndReturn({
-     *   select: { uuid: true },
+     * // Create many OwnedItems and only return the `userUuid`
+     * const ownedItemWithUserUuidOnly = await prisma.ownedItem.createManyAndReturn({
+     *   select: { userUuid: true },
      *   data: [
      *     // ... provide data here
      *   ]
@@ -3793,9 +3793,9 @@ export namespace Prisma {
      *   ]
      * })
      * 
-     * // Update zero or more OwnedItems and only return the `uuid`
-     * const ownedItemWithUuidOnly = await prisma.ownedItem.updateManyAndReturn({
-     *   select: { uuid: true },
+     * // Update zero or more OwnedItems and only return the `userUuid`
+     * const ownedItemWithUserUuidOnly = await prisma.ownedItem.updateManyAndReturn({
+     *   select: { userUuid: true },
      *   where: {
      *     // ... provide filter here
      *   },
@@ -3998,7 +3998,7 @@ export namespace Prisma {
    * Fields of the OwnedItem model
    */
   interface OwnedItemFieldRefs {
-    readonly uuid: FieldRef<"OwnedItem", 'String'>
+    readonly userUuid: FieldRef<"OwnedItem", 'String'>
     readonly itemId: FieldRef<"OwnedItem", 'String'>
     readonly quality1: FieldRef<"OwnedItem", 'String'>
     readonly quality2: FieldRef<"OwnedItem", 'String'>
@@ -4431,7 +4431,7 @@ export namespace Prisma {
 
 
   export const UserScalarFieldEnum: {
-    uuid: 'uuid',
+    userUuid: 'userUuid',
     createdAt: 'createdAt'
   };
 
@@ -4439,18 +4439,18 @@ export namespace Prisma {
 
 
   export const PlayerStatsScalarFieldEnum: {
-    uuid: 'uuid',
+    userUuid: 'userUuid',
     achievementPoints: 'achievementPoints',
-    skillAgility: 'skillAgility',
-    skillCarpentry: 'skillCarpentry',
-    skillCooking: 'skillCooking',
-    skillCrafting: 'skillCrafting',
-    skillFishing: 'skillFishing',
-    skillForaging: 'skillForaging',
-    skillMining: 'skillMining',
-    skillSmithing: 'skillSmithing',
-    skillTrinketry: 'skillTrinketry',
-    skillWoodcutting: 'skillWoodcutting',
+    agility: 'agility',
+    carpentry: 'carpentry',
+    cooking: 'cooking',
+    crafting: 'crafting',
+    fishing: 'fishing',
+    foraging: 'foraging',
+    mining: 'mining',
+    smithing: 'smithing',
+    trinketry: 'trinketry',
+    woodcutting: 'woodcutting',
     updatedAt: 'updatedAt'
   };
 
@@ -4458,7 +4458,7 @@ export namespace Prisma {
 
 
   export const OwnedItemScalarFieldEnum: {
-    uuid: 'uuid',
+    userUuid: 'userUuid',
     itemId: 'itemId',
     quality1: 'quality1',
     quality2: 'quality2'
@@ -4559,31 +4559,31 @@ export namespace Prisma {
     AND?: UserWhereInput | UserWhereInput[]
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
-    uuid?: StringFilter<"User"> | string
+    userUuid?: StringFilter<"User"> | string
     createdAt?: DateTimeFilter<"User"> | Date | string
     stats?: XOR<PlayerStatsNullableScalarRelationFilter, PlayerStatsWhereInput> | null
     items?: OwnedItemListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
-    uuid?: SortOrder
+    userUuid?: SortOrder
     createdAt?: SortOrder
     stats?: PlayerStatsOrderByWithRelationInput
     items?: OwnedItemOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
-    uuid?: string
+    userUuid?: string
     AND?: UserWhereInput | UserWhereInput[]
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
     createdAt?: DateTimeFilter<"User"> | Date | string
     stats?: XOR<PlayerStatsNullableScalarRelationFilter, PlayerStatsWhereInput> | null
     items?: OwnedItemListRelationFilter
-  }, "uuid">
+  }, "userUuid">
 
   export type UserOrderByWithAggregationInput = {
-    uuid?: SortOrder
+    userUuid?: SortOrder
     createdAt?: SortOrder
     _count?: UserCountOrderByAggregateInput
     _max?: UserMaxOrderByAggregateInput
@@ -4594,7 +4594,7 @@ export namespace Prisma {
     AND?: UserScalarWhereWithAggregatesInput | UserScalarWhereWithAggregatesInput[]
     OR?: UserScalarWhereWithAggregatesInput[]
     NOT?: UserScalarWhereWithAggregatesInput | UserScalarWhereWithAggregatesInput[]
-    uuid?: StringWithAggregatesFilter<"User"> | string
+    userUuid?: StringWithAggregatesFilter<"User"> | string
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
   }
 
@@ -4602,72 +4602,72 @@ export namespace Prisma {
     AND?: PlayerStatsWhereInput | PlayerStatsWhereInput[]
     OR?: PlayerStatsWhereInput[]
     NOT?: PlayerStatsWhereInput | PlayerStatsWhereInput[]
-    uuid?: StringFilter<"PlayerStats"> | string
+    userUuid?: StringFilter<"PlayerStats"> | string
     achievementPoints?: IntFilter<"PlayerStats"> | number
-    skillAgility?: IntFilter<"PlayerStats"> | number
-    skillCarpentry?: IntFilter<"PlayerStats"> | number
-    skillCooking?: IntFilter<"PlayerStats"> | number
-    skillCrafting?: IntFilter<"PlayerStats"> | number
-    skillFishing?: IntFilter<"PlayerStats"> | number
-    skillForaging?: IntFilter<"PlayerStats"> | number
-    skillMining?: IntFilter<"PlayerStats"> | number
-    skillSmithing?: IntFilter<"PlayerStats"> | number
-    skillTrinketry?: IntFilter<"PlayerStats"> | number
-    skillWoodcutting?: IntFilter<"PlayerStats"> | number
+    agility?: IntFilter<"PlayerStats"> | number
+    carpentry?: IntFilter<"PlayerStats"> | number
+    cooking?: IntFilter<"PlayerStats"> | number
+    crafting?: IntFilter<"PlayerStats"> | number
+    fishing?: IntFilter<"PlayerStats"> | number
+    foraging?: IntFilter<"PlayerStats"> | number
+    mining?: IntFilter<"PlayerStats"> | number
+    smithing?: IntFilter<"PlayerStats"> | number
+    trinketry?: IntFilter<"PlayerStats"> | number
+    woodcutting?: IntFilter<"PlayerStats"> | number
     updatedAt?: DateTimeFilter<"PlayerStats"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
   export type PlayerStatsOrderByWithRelationInput = {
-    uuid?: SortOrder
+    userUuid?: SortOrder
     achievementPoints?: SortOrder
-    skillAgility?: SortOrder
-    skillCarpentry?: SortOrder
-    skillCooking?: SortOrder
-    skillCrafting?: SortOrder
-    skillFishing?: SortOrder
-    skillForaging?: SortOrder
-    skillMining?: SortOrder
-    skillSmithing?: SortOrder
-    skillTrinketry?: SortOrder
-    skillWoodcutting?: SortOrder
+    agility?: SortOrder
+    carpentry?: SortOrder
+    cooking?: SortOrder
+    crafting?: SortOrder
+    fishing?: SortOrder
+    foraging?: SortOrder
+    mining?: SortOrder
+    smithing?: SortOrder
+    trinketry?: SortOrder
+    woodcutting?: SortOrder
     updatedAt?: SortOrder
     user?: UserOrderByWithRelationInput
   }
 
   export type PlayerStatsWhereUniqueInput = Prisma.AtLeast<{
-    uuid?: string
+    userUuid?: string
     AND?: PlayerStatsWhereInput | PlayerStatsWhereInput[]
     OR?: PlayerStatsWhereInput[]
     NOT?: PlayerStatsWhereInput | PlayerStatsWhereInput[]
     achievementPoints?: IntFilter<"PlayerStats"> | number
-    skillAgility?: IntFilter<"PlayerStats"> | number
-    skillCarpentry?: IntFilter<"PlayerStats"> | number
-    skillCooking?: IntFilter<"PlayerStats"> | number
-    skillCrafting?: IntFilter<"PlayerStats"> | number
-    skillFishing?: IntFilter<"PlayerStats"> | number
-    skillForaging?: IntFilter<"PlayerStats"> | number
-    skillMining?: IntFilter<"PlayerStats"> | number
-    skillSmithing?: IntFilter<"PlayerStats"> | number
-    skillTrinketry?: IntFilter<"PlayerStats"> | number
-    skillWoodcutting?: IntFilter<"PlayerStats"> | number
+    agility?: IntFilter<"PlayerStats"> | number
+    carpentry?: IntFilter<"PlayerStats"> | number
+    cooking?: IntFilter<"PlayerStats"> | number
+    crafting?: IntFilter<"PlayerStats"> | number
+    fishing?: IntFilter<"PlayerStats"> | number
+    foraging?: IntFilter<"PlayerStats"> | number
+    mining?: IntFilter<"PlayerStats"> | number
+    smithing?: IntFilter<"PlayerStats"> | number
+    trinketry?: IntFilter<"PlayerStats"> | number
+    woodcutting?: IntFilter<"PlayerStats"> | number
     updatedAt?: DateTimeFilter<"PlayerStats"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
-  }, "uuid">
+  }, "userUuid">
 
   export type PlayerStatsOrderByWithAggregationInput = {
-    uuid?: SortOrder
+    userUuid?: SortOrder
     achievementPoints?: SortOrder
-    skillAgility?: SortOrder
-    skillCarpentry?: SortOrder
-    skillCooking?: SortOrder
-    skillCrafting?: SortOrder
-    skillFishing?: SortOrder
-    skillForaging?: SortOrder
-    skillMining?: SortOrder
-    skillSmithing?: SortOrder
-    skillTrinketry?: SortOrder
-    skillWoodcutting?: SortOrder
+    agility?: SortOrder
+    carpentry?: SortOrder
+    cooking?: SortOrder
+    crafting?: SortOrder
+    fishing?: SortOrder
+    foraging?: SortOrder
+    mining?: SortOrder
+    smithing?: SortOrder
+    trinketry?: SortOrder
+    woodcutting?: SortOrder
     updatedAt?: SortOrder
     _count?: PlayerStatsCountOrderByAggregateInput
     _avg?: PlayerStatsAvgOrderByAggregateInput
@@ -4680,18 +4680,18 @@ export namespace Prisma {
     AND?: PlayerStatsScalarWhereWithAggregatesInput | PlayerStatsScalarWhereWithAggregatesInput[]
     OR?: PlayerStatsScalarWhereWithAggregatesInput[]
     NOT?: PlayerStatsScalarWhereWithAggregatesInput | PlayerStatsScalarWhereWithAggregatesInput[]
-    uuid?: StringWithAggregatesFilter<"PlayerStats"> | string
+    userUuid?: StringWithAggregatesFilter<"PlayerStats"> | string
     achievementPoints?: IntWithAggregatesFilter<"PlayerStats"> | number
-    skillAgility?: IntWithAggregatesFilter<"PlayerStats"> | number
-    skillCarpentry?: IntWithAggregatesFilter<"PlayerStats"> | number
-    skillCooking?: IntWithAggregatesFilter<"PlayerStats"> | number
-    skillCrafting?: IntWithAggregatesFilter<"PlayerStats"> | number
-    skillFishing?: IntWithAggregatesFilter<"PlayerStats"> | number
-    skillForaging?: IntWithAggregatesFilter<"PlayerStats"> | number
-    skillMining?: IntWithAggregatesFilter<"PlayerStats"> | number
-    skillSmithing?: IntWithAggregatesFilter<"PlayerStats"> | number
-    skillTrinketry?: IntWithAggregatesFilter<"PlayerStats"> | number
-    skillWoodcutting?: IntWithAggregatesFilter<"PlayerStats"> | number
+    agility?: IntWithAggregatesFilter<"PlayerStats"> | number
+    carpentry?: IntWithAggregatesFilter<"PlayerStats"> | number
+    cooking?: IntWithAggregatesFilter<"PlayerStats"> | number
+    crafting?: IntWithAggregatesFilter<"PlayerStats"> | number
+    fishing?: IntWithAggregatesFilter<"PlayerStats"> | number
+    foraging?: IntWithAggregatesFilter<"PlayerStats"> | number
+    mining?: IntWithAggregatesFilter<"PlayerStats"> | number
+    smithing?: IntWithAggregatesFilter<"PlayerStats"> | number
+    trinketry?: IntWithAggregatesFilter<"PlayerStats"> | number
+    woodcutting?: IntWithAggregatesFilter<"PlayerStats"> | number
     updatedAt?: DateTimeWithAggregatesFilter<"PlayerStats"> | Date | string
   }
 
@@ -4699,7 +4699,7 @@ export namespace Prisma {
     AND?: OwnedItemWhereInput | OwnedItemWhereInput[]
     OR?: OwnedItemWhereInput[]
     NOT?: OwnedItemWhereInput | OwnedItemWhereInput[]
-    uuid?: StringFilter<"OwnedItem"> | string
+    userUuid?: StringFilter<"OwnedItem"> | string
     itemId?: StringFilter<"OwnedItem"> | string
     quality1?: StringNullableFilter<"OwnedItem"> | string | null
     quality2?: StringNullableFilter<"OwnedItem"> | string | null
@@ -4707,7 +4707,7 @@ export namespace Prisma {
   }
 
   export type OwnedItemOrderByWithRelationInput = {
-    uuid?: SortOrder
+    userUuid?: SortOrder
     itemId?: SortOrder
     quality1?: SortOrderInput | SortOrder
     quality2?: SortOrderInput | SortOrder
@@ -4715,19 +4715,19 @@ export namespace Prisma {
   }
 
   export type OwnedItemWhereUniqueInput = Prisma.AtLeast<{
-    uuid_itemId?: OwnedItemUuidItemIdCompoundUniqueInput
+    userUuid_itemId?: OwnedItemUserUuidItemIdCompoundUniqueInput
     AND?: OwnedItemWhereInput | OwnedItemWhereInput[]
     OR?: OwnedItemWhereInput[]
     NOT?: OwnedItemWhereInput | OwnedItemWhereInput[]
-    uuid?: StringFilter<"OwnedItem"> | string
+    userUuid?: StringFilter<"OwnedItem"> | string
     itemId?: StringFilter<"OwnedItem"> | string
     quality1?: StringNullableFilter<"OwnedItem"> | string | null
     quality2?: StringNullableFilter<"OwnedItem"> | string | null
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
-  }, "uuid_itemId">
+  }, "userUuid_itemId">
 
   export type OwnedItemOrderByWithAggregationInput = {
-    uuid?: SortOrder
+    userUuid?: SortOrder
     itemId?: SortOrder
     quality1?: SortOrderInput | SortOrder
     quality2?: SortOrderInput | SortOrder
@@ -4740,163 +4740,163 @@ export namespace Prisma {
     AND?: OwnedItemScalarWhereWithAggregatesInput | OwnedItemScalarWhereWithAggregatesInput[]
     OR?: OwnedItemScalarWhereWithAggregatesInput[]
     NOT?: OwnedItemScalarWhereWithAggregatesInput | OwnedItemScalarWhereWithAggregatesInput[]
-    uuid?: StringWithAggregatesFilter<"OwnedItem"> | string
+    userUuid?: StringWithAggregatesFilter<"OwnedItem"> | string
     itemId?: StringWithAggregatesFilter<"OwnedItem"> | string
     quality1?: StringNullableWithAggregatesFilter<"OwnedItem"> | string | null
     quality2?: StringNullableWithAggregatesFilter<"OwnedItem"> | string | null
   }
 
   export type UserCreateInput = {
-    uuid?: string
+    userUuid?: string
     createdAt?: Date | string
     stats?: PlayerStatsCreateNestedOneWithoutUserInput
     items?: OwnedItemCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
-    uuid?: string
+    userUuid?: string
     createdAt?: Date | string
     stats?: PlayerStatsUncheckedCreateNestedOneWithoutUserInput
     items?: OwnedItemUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
-    uuid?: StringFieldUpdateOperationsInput | string
+    userUuid?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     stats?: PlayerStatsUpdateOneWithoutUserNestedInput
     items?: OwnedItemUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
-    uuid?: StringFieldUpdateOperationsInput | string
+    userUuid?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     stats?: PlayerStatsUncheckedUpdateOneWithoutUserNestedInput
     items?: OwnedItemUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
-    uuid?: string
+    userUuid?: string
     createdAt?: Date | string
   }
 
   export type UserUpdateManyMutationInput = {
-    uuid?: StringFieldUpdateOperationsInput | string
+    userUuid?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type UserUncheckedUpdateManyInput = {
-    uuid?: StringFieldUpdateOperationsInput | string
+    userUuid?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type PlayerStatsCreateInput = {
     achievementPoints: number
-    skillAgility: number
-    skillCarpentry: number
-    skillCooking: number
-    skillCrafting: number
-    skillFishing: number
-    skillForaging: number
-    skillMining: number
-    skillSmithing: number
-    skillTrinketry: number
-    skillWoodcutting: number
+    agility: number
+    carpentry: number
+    cooking: number
+    crafting: number
+    fishing: number
+    foraging: number
+    mining: number
+    smithing: number
+    trinketry: number
+    woodcutting: number
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutStatsInput
   }
 
   export type PlayerStatsUncheckedCreateInput = {
-    uuid: string
+    userUuid: string
     achievementPoints: number
-    skillAgility: number
-    skillCarpentry: number
-    skillCooking: number
-    skillCrafting: number
-    skillFishing: number
-    skillForaging: number
-    skillMining: number
-    skillSmithing: number
-    skillTrinketry: number
-    skillWoodcutting: number
+    agility: number
+    carpentry: number
+    cooking: number
+    crafting: number
+    fishing: number
+    foraging: number
+    mining: number
+    smithing: number
+    trinketry: number
+    woodcutting: number
     updatedAt?: Date | string
   }
 
   export type PlayerStatsUpdateInput = {
     achievementPoints?: IntFieldUpdateOperationsInput | number
-    skillAgility?: IntFieldUpdateOperationsInput | number
-    skillCarpentry?: IntFieldUpdateOperationsInput | number
-    skillCooking?: IntFieldUpdateOperationsInput | number
-    skillCrafting?: IntFieldUpdateOperationsInput | number
-    skillFishing?: IntFieldUpdateOperationsInput | number
-    skillForaging?: IntFieldUpdateOperationsInput | number
-    skillMining?: IntFieldUpdateOperationsInput | number
-    skillSmithing?: IntFieldUpdateOperationsInput | number
-    skillTrinketry?: IntFieldUpdateOperationsInput | number
-    skillWoodcutting?: IntFieldUpdateOperationsInput | number
+    agility?: IntFieldUpdateOperationsInput | number
+    carpentry?: IntFieldUpdateOperationsInput | number
+    cooking?: IntFieldUpdateOperationsInput | number
+    crafting?: IntFieldUpdateOperationsInput | number
+    fishing?: IntFieldUpdateOperationsInput | number
+    foraging?: IntFieldUpdateOperationsInput | number
+    mining?: IntFieldUpdateOperationsInput | number
+    smithing?: IntFieldUpdateOperationsInput | number
+    trinketry?: IntFieldUpdateOperationsInput | number
+    woodcutting?: IntFieldUpdateOperationsInput | number
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutStatsNestedInput
   }
 
   export type PlayerStatsUncheckedUpdateInput = {
-    uuid?: StringFieldUpdateOperationsInput | string
+    userUuid?: StringFieldUpdateOperationsInput | string
     achievementPoints?: IntFieldUpdateOperationsInput | number
-    skillAgility?: IntFieldUpdateOperationsInput | number
-    skillCarpentry?: IntFieldUpdateOperationsInput | number
-    skillCooking?: IntFieldUpdateOperationsInput | number
-    skillCrafting?: IntFieldUpdateOperationsInput | number
-    skillFishing?: IntFieldUpdateOperationsInput | number
-    skillForaging?: IntFieldUpdateOperationsInput | number
-    skillMining?: IntFieldUpdateOperationsInput | number
-    skillSmithing?: IntFieldUpdateOperationsInput | number
-    skillTrinketry?: IntFieldUpdateOperationsInput | number
-    skillWoodcutting?: IntFieldUpdateOperationsInput | number
+    agility?: IntFieldUpdateOperationsInput | number
+    carpentry?: IntFieldUpdateOperationsInput | number
+    cooking?: IntFieldUpdateOperationsInput | number
+    crafting?: IntFieldUpdateOperationsInput | number
+    fishing?: IntFieldUpdateOperationsInput | number
+    foraging?: IntFieldUpdateOperationsInput | number
+    mining?: IntFieldUpdateOperationsInput | number
+    smithing?: IntFieldUpdateOperationsInput | number
+    trinketry?: IntFieldUpdateOperationsInput | number
+    woodcutting?: IntFieldUpdateOperationsInput | number
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type PlayerStatsCreateManyInput = {
-    uuid: string
+    userUuid: string
     achievementPoints: number
-    skillAgility: number
-    skillCarpentry: number
-    skillCooking: number
-    skillCrafting: number
-    skillFishing: number
-    skillForaging: number
-    skillMining: number
-    skillSmithing: number
-    skillTrinketry: number
-    skillWoodcutting: number
+    agility: number
+    carpentry: number
+    cooking: number
+    crafting: number
+    fishing: number
+    foraging: number
+    mining: number
+    smithing: number
+    trinketry: number
+    woodcutting: number
     updatedAt?: Date | string
   }
 
   export type PlayerStatsUpdateManyMutationInput = {
     achievementPoints?: IntFieldUpdateOperationsInput | number
-    skillAgility?: IntFieldUpdateOperationsInput | number
-    skillCarpentry?: IntFieldUpdateOperationsInput | number
-    skillCooking?: IntFieldUpdateOperationsInput | number
-    skillCrafting?: IntFieldUpdateOperationsInput | number
-    skillFishing?: IntFieldUpdateOperationsInput | number
-    skillForaging?: IntFieldUpdateOperationsInput | number
-    skillMining?: IntFieldUpdateOperationsInput | number
-    skillSmithing?: IntFieldUpdateOperationsInput | number
-    skillTrinketry?: IntFieldUpdateOperationsInput | number
-    skillWoodcutting?: IntFieldUpdateOperationsInput | number
+    agility?: IntFieldUpdateOperationsInput | number
+    carpentry?: IntFieldUpdateOperationsInput | number
+    cooking?: IntFieldUpdateOperationsInput | number
+    crafting?: IntFieldUpdateOperationsInput | number
+    fishing?: IntFieldUpdateOperationsInput | number
+    foraging?: IntFieldUpdateOperationsInput | number
+    mining?: IntFieldUpdateOperationsInput | number
+    smithing?: IntFieldUpdateOperationsInput | number
+    trinketry?: IntFieldUpdateOperationsInput | number
+    woodcutting?: IntFieldUpdateOperationsInput | number
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type PlayerStatsUncheckedUpdateManyInput = {
-    uuid?: StringFieldUpdateOperationsInput | string
+    userUuid?: StringFieldUpdateOperationsInput | string
     achievementPoints?: IntFieldUpdateOperationsInput | number
-    skillAgility?: IntFieldUpdateOperationsInput | number
-    skillCarpentry?: IntFieldUpdateOperationsInput | number
-    skillCooking?: IntFieldUpdateOperationsInput | number
-    skillCrafting?: IntFieldUpdateOperationsInput | number
-    skillFishing?: IntFieldUpdateOperationsInput | number
-    skillForaging?: IntFieldUpdateOperationsInput | number
-    skillMining?: IntFieldUpdateOperationsInput | number
-    skillSmithing?: IntFieldUpdateOperationsInput | number
-    skillTrinketry?: IntFieldUpdateOperationsInput | number
-    skillWoodcutting?: IntFieldUpdateOperationsInput | number
+    agility?: IntFieldUpdateOperationsInput | number
+    carpentry?: IntFieldUpdateOperationsInput | number
+    cooking?: IntFieldUpdateOperationsInput | number
+    crafting?: IntFieldUpdateOperationsInput | number
+    fishing?: IntFieldUpdateOperationsInput | number
+    foraging?: IntFieldUpdateOperationsInput | number
+    mining?: IntFieldUpdateOperationsInput | number
+    smithing?: IntFieldUpdateOperationsInput | number
+    trinketry?: IntFieldUpdateOperationsInput | number
+    woodcutting?: IntFieldUpdateOperationsInput | number
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -4908,7 +4908,7 @@ export namespace Prisma {
   }
 
   export type OwnedItemUncheckedCreateInput = {
-    uuid: string
+    userUuid: string
     itemId: string
     quality1?: string | null
     quality2?: string | null
@@ -4922,14 +4922,14 @@ export namespace Prisma {
   }
 
   export type OwnedItemUncheckedUpdateInput = {
-    uuid?: StringFieldUpdateOperationsInput | string
+    userUuid?: StringFieldUpdateOperationsInput | string
     itemId?: StringFieldUpdateOperationsInput | string
     quality1?: NullableStringFieldUpdateOperationsInput | string | null
     quality2?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type OwnedItemCreateManyInput = {
-    uuid: string
+    userUuid: string
     itemId: string
     quality1?: string | null
     quality2?: string | null
@@ -4942,7 +4942,7 @@ export namespace Prisma {
   }
 
   export type OwnedItemUncheckedUpdateManyInput = {
-    uuid?: StringFieldUpdateOperationsInput | string
+    userUuid?: StringFieldUpdateOperationsInput | string
     itemId?: StringFieldUpdateOperationsInput | string
     quality1?: NullableStringFieldUpdateOperationsInput | string | null
     quality2?: NullableStringFieldUpdateOperationsInput | string | null
@@ -4990,17 +4990,17 @@ export namespace Prisma {
   }
 
   export type UserCountOrderByAggregateInput = {
-    uuid?: SortOrder
+    userUuid?: SortOrder
     createdAt?: SortOrder
   }
 
   export type UserMaxOrderByAggregateInput = {
-    uuid?: SortOrder
+    userUuid?: SortOrder
     createdAt?: SortOrder
   }
 
   export type UserMinOrderByAggregateInput = {
-    uuid?: SortOrder
+    userUuid?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -5053,79 +5053,79 @@ export namespace Prisma {
   }
 
   export type PlayerStatsCountOrderByAggregateInput = {
-    uuid?: SortOrder
+    userUuid?: SortOrder
     achievementPoints?: SortOrder
-    skillAgility?: SortOrder
-    skillCarpentry?: SortOrder
-    skillCooking?: SortOrder
-    skillCrafting?: SortOrder
-    skillFishing?: SortOrder
-    skillForaging?: SortOrder
-    skillMining?: SortOrder
-    skillSmithing?: SortOrder
-    skillTrinketry?: SortOrder
-    skillWoodcutting?: SortOrder
+    agility?: SortOrder
+    carpentry?: SortOrder
+    cooking?: SortOrder
+    crafting?: SortOrder
+    fishing?: SortOrder
+    foraging?: SortOrder
+    mining?: SortOrder
+    smithing?: SortOrder
+    trinketry?: SortOrder
+    woodcutting?: SortOrder
     updatedAt?: SortOrder
   }
 
   export type PlayerStatsAvgOrderByAggregateInput = {
     achievementPoints?: SortOrder
-    skillAgility?: SortOrder
-    skillCarpentry?: SortOrder
-    skillCooking?: SortOrder
-    skillCrafting?: SortOrder
-    skillFishing?: SortOrder
-    skillForaging?: SortOrder
-    skillMining?: SortOrder
-    skillSmithing?: SortOrder
-    skillTrinketry?: SortOrder
-    skillWoodcutting?: SortOrder
+    agility?: SortOrder
+    carpentry?: SortOrder
+    cooking?: SortOrder
+    crafting?: SortOrder
+    fishing?: SortOrder
+    foraging?: SortOrder
+    mining?: SortOrder
+    smithing?: SortOrder
+    trinketry?: SortOrder
+    woodcutting?: SortOrder
   }
 
   export type PlayerStatsMaxOrderByAggregateInput = {
-    uuid?: SortOrder
+    userUuid?: SortOrder
     achievementPoints?: SortOrder
-    skillAgility?: SortOrder
-    skillCarpentry?: SortOrder
-    skillCooking?: SortOrder
-    skillCrafting?: SortOrder
-    skillFishing?: SortOrder
-    skillForaging?: SortOrder
-    skillMining?: SortOrder
-    skillSmithing?: SortOrder
-    skillTrinketry?: SortOrder
-    skillWoodcutting?: SortOrder
+    agility?: SortOrder
+    carpentry?: SortOrder
+    cooking?: SortOrder
+    crafting?: SortOrder
+    fishing?: SortOrder
+    foraging?: SortOrder
+    mining?: SortOrder
+    smithing?: SortOrder
+    trinketry?: SortOrder
+    woodcutting?: SortOrder
     updatedAt?: SortOrder
   }
 
   export type PlayerStatsMinOrderByAggregateInput = {
-    uuid?: SortOrder
+    userUuid?: SortOrder
     achievementPoints?: SortOrder
-    skillAgility?: SortOrder
-    skillCarpentry?: SortOrder
-    skillCooking?: SortOrder
-    skillCrafting?: SortOrder
-    skillFishing?: SortOrder
-    skillForaging?: SortOrder
-    skillMining?: SortOrder
-    skillSmithing?: SortOrder
-    skillTrinketry?: SortOrder
-    skillWoodcutting?: SortOrder
+    agility?: SortOrder
+    carpentry?: SortOrder
+    cooking?: SortOrder
+    crafting?: SortOrder
+    fishing?: SortOrder
+    foraging?: SortOrder
+    mining?: SortOrder
+    smithing?: SortOrder
+    trinketry?: SortOrder
+    woodcutting?: SortOrder
     updatedAt?: SortOrder
   }
 
   export type PlayerStatsSumOrderByAggregateInput = {
     achievementPoints?: SortOrder
-    skillAgility?: SortOrder
-    skillCarpentry?: SortOrder
-    skillCooking?: SortOrder
-    skillCrafting?: SortOrder
-    skillFishing?: SortOrder
-    skillForaging?: SortOrder
-    skillMining?: SortOrder
-    skillSmithing?: SortOrder
-    skillTrinketry?: SortOrder
-    skillWoodcutting?: SortOrder
+    agility?: SortOrder
+    carpentry?: SortOrder
+    cooking?: SortOrder
+    crafting?: SortOrder
+    fishing?: SortOrder
+    foraging?: SortOrder
+    mining?: SortOrder
+    smithing?: SortOrder
+    trinketry?: SortOrder
+    woodcutting?: SortOrder
   }
 
   export type IntWithAggregatesFilter<$PrismaModel = never> = {
@@ -5164,27 +5164,27 @@ export namespace Prisma {
     nulls?: NullsOrder
   }
 
-  export type OwnedItemUuidItemIdCompoundUniqueInput = {
-    uuid: string
+  export type OwnedItemUserUuidItemIdCompoundUniqueInput = {
+    userUuid: string
     itemId: string
   }
 
   export type OwnedItemCountOrderByAggregateInput = {
-    uuid?: SortOrder
+    userUuid?: SortOrder
     itemId?: SortOrder
     quality1?: SortOrder
     quality2?: SortOrder
   }
 
   export type OwnedItemMaxOrderByAggregateInput = {
-    uuid?: SortOrder
+    userUuid?: SortOrder
     itemId?: SortOrder
     quality1?: SortOrder
     quality2?: SortOrder
   }
 
   export type OwnedItemMinOrderByAggregateInput = {
-    uuid?: SortOrder
+    userUuid?: SortOrder
     itemId?: SortOrder
     quality1?: SortOrder
     quality2?: SortOrder
@@ -5468,31 +5468,31 @@ export namespace Prisma {
 
   export type PlayerStatsCreateWithoutUserInput = {
     achievementPoints: number
-    skillAgility: number
-    skillCarpentry: number
-    skillCooking: number
-    skillCrafting: number
-    skillFishing: number
-    skillForaging: number
-    skillMining: number
-    skillSmithing: number
-    skillTrinketry: number
-    skillWoodcutting: number
+    agility: number
+    carpentry: number
+    cooking: number
+    crafting: number
+    fishing: number
+    foraging: number
+    mining: number
+    smithing: number
+    trinketry: number
+    woodcutting: number
     updatedAt?: Date | string
   }
 
   export type PlayerStatsUncheckedCreateWithoutUserInput = {
     achievementPoints: number
-    skillAgility: number
-    skillCarpentry: number
-    skillCooking: number
-    skillCrafting: number
-    skillFishing: number
-    skillForaging: number
-    skillMining: number
-    skillSmithing: number
-    skillTrinketry: number
-    skillWoodcutting: number
+    agility: number
+    carpentry: number
+    cooking: number
+    crafting: number
+    fishing: number
+    foraging: number
+    mining: number
+    smithing: number
+    trinketry: number
+    woodcutting: number
     updatedAt?: Date | string
   }
 
@@ -5536,31 +5536,31 @@ export namespace Prisma {
 
   export type PlayerStatsUpdateWithoutUserInput = {
     achievementPoints?: IntFieldUpdateOperationsInput | number
-    skillAgility?: IntFieldUpdateOperationsInput | number
-    skillCarpentry?: IntFieldUpdateOperationsInput | number
-    skillCooking?: IntFieldUpdateOperationsInput | number
-    skillCrafting?: IntFieldUpdateOperationsInput | number
-    skillFishing?: IntFieldUpdateOperationsInput | number
-    skillForaging?: IntFieldUpdateOperationsInput | number
-    skillMining?: IntFieldUpdateOperationsInput | number
-    skillSmithing?: IntFieldUpdateOperationsInput | number
-    skillTrinketry?: IntFieldUpdateOperationsInput | number
-    skillWoodcutting?: IntFieldUpdateOperationsInput | number
+    agility?: IntFieldUpdateOperationsInput | number
+    carpentry?: IntFieldUpdateOperationsInput | number
+    cooking?: IntFieldUpdateOperationsInput | number
+    crafting?: IntFieldUpdateOperationsInput | number
+    fishing?: IntFieldUpdateOperationsInput | number
+    foraging?: IntFieldUpdateOperationsInput | number
+    mining?: IntFieldUpdateOperationsInput | number
+    smithing?: IntFieldUpdateOperationsInput | number
+    trinketry?: IntFieldUpdateOperationsInput | number
+    woodcutting?: IntFieldUpdateOperationsInput | number
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type PlayerStatsUncheckedUpdateWithoutUserInput = {
     achievementPoints?: IntFieldUpdateOperationsInput | number
-    skillAgility?: IntFieldUpdateOperationsInput | number
-    skillCarpentry?: IntFieldUpdateOperationsInput | number
-    skillCooking?: IntFieldUpdateOperationsInput | number
-    skillCrafting?: IntFieldUpdateOperationsInput | number
-    skillFishing?: IntFieldUpdateOperationsInput | number
-    skillForaging?: IntFieldUpdateOperationsInput | number
-    skillMining?: IntFieldUpdateOperationsInput | number
-    skillSmithing?: IntFieldUpdateOperationsInput | number
-    skillTrinketry?: IntFieldUpdateOperationsInput | number
-    skillWoodcutting?: IntFieldUpdateOperationsInput | number
+    agility?: IntFieldUpdateOperationsInput | number
+    carpentry?: IntFieldUpdateOperationsInput | number
+    cooking?: IntFieldUpdateOperationsInput | number
+    crafting?: IntFieldUpdateOperationsInput | number
+    fishing?: IntFieldUpdateOperationsInput | number
+    foraging?: IntFieldUpdateOperationsInput | number
+    mining?: IntFieldUpdateOperationsInput | number
+    smithing?: IntFieldUpdateOperationsInput | number
+    trinketry?: IntFieldUpdateOperationsInput | number
+    woodcutting?: IntFieldUpdateOperationsInput | number
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -5584,20 +5584,20 @@ export namespace Prisma {
     AND?: OwnedItemScalarWhereInput | OwnedItemScalarWhereInput[]
     OR?: OwnedItemScalarWhereInput[]
     NOT?: OwnedItemScalarWhereInput | OwnedItemScalarWhereInput[]
-    uuid?: StringFilter<"OwnedItem"> | string
+    userUuid?: StringFilter<"OwnedItem"> | string
     itemId?: StringFilter<"OwnedItem"> | string
     quality1?: StringNullableFilter<"OwnedItem"> | string | null
     quality2?: StringNullableFilter<"OwnedItem"> | string | null
   }
 
   export type UserCreateWithoutStatsInput = {
-    uuid?: string
+    userUuid?: string
     createdAt?: Date | string
     items?: OwnedItemCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutStatsInput = {
-    uuid?: string
+    userUuid?: string
     createdAt?: Date | string
     items?: OwnedItemUncheckedCreateNestedManyWithoutUserInput
   }
@@ -5619,25 +5619,25 @@ export namespace Prisma {
   }
 
   export type UserUpdateWithoutStatsInput = {
-    uuid?: StringFieldUpdateOperationsInput | string
+    userUuid?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     items?: OwnedItemUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutStatsInput = {
-    uuid?: StringFieldUpdateOperationsInput | string
+    userUuid?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     items?: OwnedItemUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutItemsInput = {
-    uuid?: string
+    userUuid?: string
     createdAt?: Date | string
     stats?: PlayerStatsCreateNestedOneWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutItemsInput = {
-    uuid?: string
+    userUuid?: string
     createdAt?: Date | string
     stats?: PlayerStatsUncheckedCreateNestedOneWithoutUserInput
   }
@@ -5659,13 +5659,13 @@ export namespace Prisma {
   }
 
   export type UserUpdateWithoutItemsInput = {
-    uuid?: StringFieldUpdateOperationsInput | string
+    userUuid?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     stats?: PlayerStatsUpdateOneWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutItemsInput = {
-    uuid?: StringFieldUpdateOperationsInput | string
+    userUuid?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     stats?: PlayerStatsUncheckedUpdateOneWithoutUserNestedInput
   }

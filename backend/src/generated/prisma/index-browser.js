@@ -121,28 +121,28 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
 });
 
 exports.Prisma.UserScalarFieldEnum = {
-  uuid: 'uuid',
+  userUuid: 'userUuid',
   createdAt: 'createdAt'
 };
 
 exports.Prisma.PlayerStatsScalarFieldEnum = {
-  uuid: 'uuid',
+  userUuid: 'userUuid',
   achievementPoints: 'achievementPoints',
-  skillAgility: 'skillAgility',
-  skillCarpentry: 'skillCarpentry',
-  skillCooking: 'skillCooking',
-  skillCrafting: 'skillCrafting',
-  skillFishing: 'skillFishing',
-  skillForaging: 'skillForaging',
-  skillMining: 'skillMining',
-  skillSmithing: 'skillSmithing',
-  skillTrinketry: 'skillTrinketry',
-  skillWoodcutting: 'skillWoodcutting',
+  agility: 'agility',
+  carpentry: 'carpentry',
+  cooking: 'cooking',
+  crafting: 'crafting',
+  fishing: 'fishing',
+  foraging: 'foraging',
+  mining: 'mining',
+  smithing: 'smithing',
+  trinketry: 'trinketry',
+  woodcutting: 'woodcutting',
   updatedAt: 'updatedAt'
 };
 
 exports.Prisma.OwnedItemScalarFieldEnum = {
-  uuid: 'uuid',
+  userUuid: 'userUuid',
   itemId: 'itemId',
   quality1: 'quality1',
   quality2: 'quality2'

@@ -15,36 +15,36 @@ datasource db {
 }
 
 model User {
-  uuid        String   @id @default(uuid())
+  userUuid    String   @id @default(uuid())
   createdAt   DateTime @default(now())
   stats       PlayerStats?
   items       OwnedItem[]
 }
 
 model PlayerStats {
-  uuid                String   @id
-  user                User     @relation(fields: [uuid], references: [uuid])
+  userUuid            String   @id
+  user                User     @relation(fields: [userUuid], references: [userUuid])
   achievementPoints   Int
-  skillAgility        Int
-  skillCarpentry      Int
-  skillCooking        Int
-  skillCrafting       Int
-  skillFishing        Int
-  skillForaging       Int
-  skillMining         Int
-  skillSmithing       Int
-  skillTrinketry      Int
-  skillWoodcutting    Int
+  agility        Int
+  carpentry      Int
+  cooking        Int
+  crafting       Int
+  fishing        Int
+  foraging       Int
+  mining         Int
+  smithing       Int
+  trinketry      Int
+  woodcutting    Int
   updatedAt           DateTime @updatedAt
 }
 
 model OwnedItem {
-  uuid      String
+  userUuid  String
   itemId    String
   quality1  String?
   quality2  String?
 
-  user      User   @relation(fields: [uuid], references: [uuid])
+  user      User   @relation(fields: [userUuid], references: [userUuid])
 
-  @@id([uuid, itemId])
+  @@id([userUuid, itemId])
 }
