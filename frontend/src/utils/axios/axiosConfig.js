@@ -26,7 +26,7 @@ export const createAxiosInstance = () => {
 
     const playerStore = usePlayerStore();
     if (playerStore.userUuid) {
-      config.headers["X-User-Id"] = playerStore.userUuid;
+      config.headers["X-User-Uuid"] = playerStore.userUuid;
     }
 
     return config;

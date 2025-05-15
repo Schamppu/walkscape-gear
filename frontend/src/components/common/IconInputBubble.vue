@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted } from "vue";
+import { computed } from "vue";
 import WsIcon from "@/components/common/WsIcon.vue";
 
 const props = defineProps({
@@ -11,12 +11,6 @@ const props = defineProps({
   max: { type: Number, default: 100 },
   defaultValue: { type: Number, default: 0 },
   borderClass: { type: String, default: null },
-});
-
-onMounted(() => {
-  if (props.getValue(props.id) == null) {
-    props.setValue(props.id, props.defaultValue);
-  }
 });
 
 const value = computed({

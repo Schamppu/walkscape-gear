@@ -10,7 +10,23 @@ services:
       - API_SECRET
     profiles: [prod, dev]
 
+  postgres:
+    image: postgres:17.5
+    container_name: walkscape-gear-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ws-gear-db
+      POSTGRES_USER: ws-gear
+      POSTGRES_PASSWORD: wsgear-db-password
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
 networks:
   default:
     name: ${DOCKER_NETWORK_NAME:-dev_default}
     external: ${USE_EXTERNAL_NETWORK:-false}
+
+volumes:
+  pgdata:

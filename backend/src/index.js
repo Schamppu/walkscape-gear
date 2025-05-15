@@ -1,4 +1,4 @@
-import 'dotenv/config'
+import "dotenv/config";
 import express from "express";
 import morgan from "morgan";
 import cors from "cors";
@@ -15,7 +15,6 @@ app.use(express.json());
 app.use(errorHandler);
 
 registerRoutes(app);
-
 
 app.listen(PORT, () => {
   console.log(`Backend server running on http://localhost:${PORT}`);

@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { achievementRoutes } from "./achievementRoutes.js";
 import { activityRoutes } from "./activityRoutes.js";
+import { dbRoutes } from "./dbRoutes.js";
 import { itemRoutes } from "./itemRoutes.js";
 import { lootTableRoutes } from "./lootTableRoutes.js";
 import { rewardRoutes } from "./rewardsRoutes.js";
@@ -9,16 +10,20 @@ import { skillRoutes } from "./skillRoutes.js";
 import iconRoutes from "./iconRoutes.js";
 
 export function registerRoutes(app) {
-  const router = Router();
+  const apiRouter = Router();
 
-  router.use("/achievements", achievementRoutes);
-  router.use("/activities", activityRoutes);
-  router.use("/icons", iconRoutes);
-  router.use("/items", itemRoutes);
-  router.use("/loot_tables", lootTableRoutes);
-  router.use("/rewards", rewardRoutes);
-  router.use("/shops", shopRoutes);
-  router.use("/skills", skillRoutes);
+  apiRouter.use("/achievements", achievementRoutes);
+  apiRouter.use("/activities", activityRoutes);
+  apiRouter.use("/icons", iconRoutes);
+  apiRouter.use("/items", itemRoutes);
+  apiRouter.use("/loot_tables", lootTableRoutes);
+  apiRouter.use("/rewards", rewardRoutes);
+  apiRouter.use("/shops", shopRoutes);
+  apiRouter.use("/skills", skillRoutes);
 
-  app.use("/api", router);
+  const dbRouter = Router();
+  dbRouter.use("/", dbRoutes);
+
+  app.use("/api", apiRouter);
+  app.use("/db", dbRouter);
 }
