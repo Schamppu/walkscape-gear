@@ -1,14 +1,31 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { getSkills } from "@/utils/axios/api_routes";
+import { fetchPlayerStats } from "@/utils/axios/db_routes";
+import { usePlayerStore } from "@/store/player";
 import TabContentWrapper from "@/components/common/TabContentWrapper.vue";
 import SkillLevelDisplay from "./SkillLevelDisplay.vue";
 import AchievementPointDisplay from "./AchievementPointDisplay.vue";
 import ItemSelection from "./ItemSelection.vue";
 
+const playerStore = usePlayerStore();
 const skills = ref([]);
 
-getSkills().then(({ data }) => (skills.value = data));
+onMounted(async () => {
+  const [skillsResponse, playerStatsResponse] = await Promise.all([
+    getSkills(),
+    fetchPlayerStats(),
+  ]);
+
+  skills.value = skillsResponse.data;
+
+  // Initialize store
+  skillsResponse.data.forEach(({ id }) => {
+    playerStore.setSkillLevel(id, playerStatsResponse[id] ?? 1);
+  });
+
+  playerStore.setAchievementPoints(playerStatsResponse.achievementPoints ?? 0);
+});
 </script>
 
 <template>
