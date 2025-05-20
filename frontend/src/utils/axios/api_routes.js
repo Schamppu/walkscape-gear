@@ -34,21 +34,9 @@ export function getKeyword({ id }) {
   });
 }
 
-export function getCollectibles() {
+export function getCategorizedItems() {
   return proxy({
-    url: "items/collectibles",
-  });
-}
-
-export function getCrafted() {
-  return proxy({
-    url: "items/crafted",
-  });
-}
-
-export function getLoot() {
-  return proxy({
-    url: "items/loot",
+    url: "items/categorized_items",
   });
 }
 
@@ -58,36 +46,6 @@ export function getItem({ name, id, quality }) {
     options: {
       params: { name, id, quality },
     },
-  });
-}
-
-export function getActivityItems() {
-  return proxy({
-    url: "loot_tables/activity_items",
-  });
-}
-
-export function getChestItems() {
-  return proxy({
-    url: "loot_tables/chest_items",
-  });
-}
-
-export function getShops() {
-  return proxy({
-    url: "shops",
-  });
-}
-
-export function getRewards() {
-  return proxy({
-    url: "rewards",
-  });
-}
-
-export function getAchievementRewards() {
-  return proxy({
-    url: "achievements/item_rewards",
   });
 }
 
