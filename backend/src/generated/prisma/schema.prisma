@@ -41,6 +41,7 @@ model PlayerStats {
 model OwnedItem {
   userUuid String
   itemId   String
+  owned    Boolean
   quality1 String?
   quality2 String?
 

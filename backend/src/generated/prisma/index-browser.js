@@ -144,6 +144,7 @@ exports.Prisma.PlayerStatsScalarFieldEnum = {
 exports.Prisma.OwnedItemScalarFieldEnum = {
   userUuid: 'userUuid',
   itemId: 'itemId',
+  owned: 'owned',
   quality1: 'quality1',
   quality2: 'quality2'
 };
