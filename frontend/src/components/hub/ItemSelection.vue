@@ -1,7 +1,8 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useItemsStore } from "@/store/items";
 import { getCategorizedItems } from "@/utils/axios/api_routes";
+import { fetchOwnedItems } from "@/utils/axios/db_routes";
 import ItemCategoryPanel from "./ItemCategoryPanel.vue";
 import LoadingThrobber from "@/components/common/LoadingThrobber.vue";
 
@@ -10,10 +11,16 @@ const openCategory = ref(null);
 const groupedCategories = ref([]);
 const itemsStore = useItemsStore();
 
-getCategorizedItems().then(({ data }) => {
-  groupedCategories.value = data;
+onMounted(async () => {
+  const [{ data: categorizedItems }, ownedItems] = await Promise.all([
+    getCategorizedItems(),
+    fetchOwnedItems(),
+  ]);
 
-  data.forEach(({ categories }) => {
+  itemsStore.setOwnedItems(ownedItems);
+  groupedCategories.value = categorizedItems;
+
+  categorizedItems.forEach(({ categories }) => {
     categories.forEach(({ key, items }) => {
       itemsStore.setItems(key, items);
     });

@@ -1,6 +1,6 @@
 <script setup>
-import { computed } from "vue";
-import { craftingQualityOptions } from "@/utils/quality";
+import { computed, ref, onMounted } from "vue";
+import { craftingQualityOptions, qualityOptions } from "@/utils/quality";
 import { useItemsStore } from "@/store/items";
 import WsIcon from "@/components/common/WsIcon.vue";
 
@@ -9,39 +9,46 @@ const props = defineProps({
   qualities: Number,
 });
 
+const defaultQuality = qualityOptions[0].value;
 const itemsStore = useItemsStore();
+const isOwned = ref(false);
+const quality = ref("");
+const quality2 = ref("");
 
-const isOwned = computed(() => !!itemsStore.ownedItems[props.item.id]);
-const itemState = computed(() => itemsStore.ownedItems[props.item.id] || {});
+onMounted(() => {
+  const entry = itemsStore.ownedItems[props.item.id];
+  isOwned.value = entry?.owned ?? false;
+  quality.value = entry?.quality ?? defaultQuality;
+  quality2.value = entry?.quality2 ?? defaultQuality;
+});
 
-const colorClass = props.item.quality ? `color-${props.item.quality}` : "";
+const colorClass = `color-${quality.value}`;
 const ownedBgClass = computed(() => {
-  return isOwned.value && props.item.quality
-    ? `bg-${props.item.quality}-dark`
-    : "";
+  return isOwned.value && quality.value ? `bg-${quality.value}-dark` : "";
 });
 
 const toggleChecked = () => {
-  const { id, quality, quality2 } = props.item;
-  itemsStore.toggleItem(id, quality, quality2);
+  isOwned.value = !isOwned.value;
+  const { id: itemId } = props.item;
+  itemsStore.toggleItem(itemId, isOwned.value, quality.value, quality2.value);
 };
 
 const updateQuality = () => {
-  const { id, quality, quality2 } = props.item;
-  itemsStore.setItemQuality(id, quality, quality2);
+  const { id: itemId } = props.item;
+  itemsStore.toggleItem(itemId, isOwned.value, quality.value, quality2.value);
 };
 </script>
 
 <template>
   <div :class="['item-entry', colorClass, ownedBgClass]" @click="toggleChecked">
     <div class="base-info">
-      <input type="checkbox" v-model="isOwned" @click.stop />
+      <input type="checkbox" :checked="isOwned" readonly />
       <ws-icon :iconPath="item.icon" />
       <span :class="`color-${item.quality}`">{{ item.name }}</span>
     </div>
 
     <div v-if="qualities > 0" class="quality-inputs">
-      <select v-model="item.quality" @click.stop>
+      <select v-model="quality" @click.stop @change="updateQuality">
         <option
           v-for="q in craftingQualityOptions"
           :key="'q1-' + q.value"
@@ -51,7 +58,12 @@ const updateQuality = () => {
           {{ q.name }}
         </option>
       </select>
-      <select v-if="qualities === 2" v-model="item.quality2" @click.stop>
+      <select
+        v-if="qualities === 2"
+        v-model="quality2"
+        @click.stop
+        @change="updateQuality"
+      >
         <option
           v-for="q in craftingQualityOptions"
           :key="'q2-' + q.value"
