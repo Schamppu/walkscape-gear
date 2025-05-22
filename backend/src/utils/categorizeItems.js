@@ -142,7 +142,6 @@ const resolveChestCategories = (loot, chestTables) => {
     }
   }
 
-  console.log(multipleSourcesItems);
   // Multiple chest sources category
   const multipleItems = loot.filter((item) =>
     multipleSourcesItems.has(item.id)
