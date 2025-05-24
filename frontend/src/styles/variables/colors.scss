@@ -38,11 +38,11 @@ $quality-colors: (
 
 @each $name, $color in $quality-colors {
   .color-#{$name} {
-    color: $color;
+    color: $color !important;
   }
 
   .bg-#{$name} {
-    background: $color;
+    background: $color !important;
   }
 
   .border-#{$name} {
@@ -65,7 +65,7 @@ $skill-colors: (
 
 @each $name, $color in $skill-colors {
   .color-#{$name} {
-    background: $color;
+    background: $color !important;
   }
 
   .border-#{$name} {
