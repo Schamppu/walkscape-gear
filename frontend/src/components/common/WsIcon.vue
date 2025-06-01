@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, onMounted, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import { useIconStore } from "@/store/icon";
 import LoadingThrobber from "./LoadingThrobber.vue";
 
@@ -22,10 +22,17 @@ const iconStore = useIconStore();
 const iconUrl = ref(null);
 const loading = ref(true);
 
-onMounted(async () => {
-  iconUrl.value = await iconStore.loadIcon(props.iconPath);
+const loadIcon = async (icon) => {
+  loading.value = true;
+  iconUrl.value = await iconStore.loadIcon(icon);
   loading.value = false;
-});
+};
+
+watch(
+  () => props.iconPath,
+  (icon) => loadIcon(icon),
+  { immediate: true }
+);
 
 // Map size options to pixel values
 const iconSize = computed(() => {
