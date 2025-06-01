@@ -1,9 +1,7 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, computed } from "vue";
 import WsLabel from "../WsLabel.vue";
-import WsIcon from "../WsIcon.vue";
 import LabelWithIcon from "../LabelWithIcon.vue";
-import DropdownItem from "./DropdownItem.vue";
 import DropdownCategory from "./DropdownCategory.vue";
 
 const props = defineProps({
@@ -16,43 +14,56 @@ const props = defineProps({
 
 const emit = defineEmits(["select"]);
 
-onMounted(() => {
-  document.addEventListener("click", handleClickOutside);
-});
-
-onUnmounted(() => {
-  document.removeEventListener("click", handleClickOutside);
-});
+const handleClickOutside = (event) => {
+  if (dropdownRef.value && !dropdownRef.value.contains(event.target)) {
+    isOpen.value = false;
+  }
+};
 
 const dropdownRef = ref("dropdownRef");
 const isOpen = ref(false);
-const openCategory = ref(-1);
 const selected = ref("");
+const searchTerm = ref("");
 
 const toggle = () => {
+  searchTerm.value = "";
   isOpen.value = !isOpen.value;
 };
 
-const toggleCategory = (index) => {
-  if (index !== openCategory.value) openCategory.value = index;
-  else openCategory.value = -1;
-};
+const filteredData = computed(() => {
+  if (!searchTerm.value.trim()) return props.data;
+
+  const term = searchTerm.value.toLowerCase();
+
+  return props.data
+    .map((category) => {
+      const matchesCategory = category.value.toLowerCase().includes(term);
+
+      const matchingItems = category.items.filter((item) =>
+        item.value.toLowerCase().includes(term)
+      );
+
+      if (matchesCategory || matchingItems.length > 0) {
+        return {
+          ...category,
+          items: matchesCategory ? category.items : matchingItems,
+        };
+      }
+
+      return null;
+    })
+    .filter(Boolean);
+});
 
 const selectItem = (item) => {
   isOpen.value = false;
   selected.value = item;
   emit("select", item);
 };
-
-const handleClickOutside = (event) => {
-  if (dropdownRef.value && !dropdownRef.value.contains(event.target)) {
-    isOpen.value = false;
-  }
-};
 </script>
   
 <template>
-  <div class="wrapper" ref="dropdownRef">
+  <div v-clickOutside="handleClickOutside" class="wrapper" ref="dropdownRef">
     <div class="header">
       <ws-label :label="label" label-for="dropdown-trigger" />
       <div class="dropdown-trigger" @click="toggle">
@@ -64,36 +75,22 @@ const handleClickOutside = (event) => {
       </div>
     </div>
 
-    <!-- <div v-if="isOpen" class="dropdown-menu">
-      <ul class="category-list">
-        <li class="category-li" v-for="(category, index) in data" :key="index">
-          <div class="category-item" @click="toggleCategory(index)">
-            <label-with-icon
-              :text="category.value"
-              :icon="category.icon"
-            ></label-with-icon>
-            <span class="chevron" :class="{ isOpen: openCategory === index }"
-              >▼</span
-            >
-          </div>
-
-          <ul v-if="openCategory === index" class="item-list">
-            <dropdown-item 
-              v-for="(item, idx) in category.items"
-              :key="idx"
-              @select="selectItem(item)"
-            />
-          </ul>
-        </li>
-      </ul>
-    </div> -->
-  
     <div v-if="isOpen" class="dropdown-menu">
+      <input
+        v-focus
+        ref="searchInput"
+        v-model="searchTerm"
+        type="text"
+        placeholder="Search..."
+        class="dropdown-search"
+      />
+
       <ul class="category-list">
         <DropdownCategory
-          v-for="(category, index) in data"
+          v-for="(category, index) in filteredData"
           :key="index"
           :category="category"
+          :force-open="searchTerm !== ''"
           :no-border="index === 0"
           @select="selectItem"
         />
@@ -146,9 +143,19 @@ ul {
   border: 1px solid $boxPrimaryOutline;
   border-radius: $md;
   background-color: $boxTransparentPrimaryBackground;
+  overflow: hidden;
 
-  .category-list,
-  .item-list {
+  .dropdown-search {
+    width: 100%;
+    padding: $sm;
+    border-bottom: 1px solid $boxPrimaryOutline;
+
+    &:focus {
+      outline: 1px solid $chipOutline;
+    }
+  }
+
+  .category-list {
     .category-li {
       border-bottom: 1px solid $boxPrimaryOutline;
     }
@@ -158,5 +165,4 @@ ul {
     }
   }
 }
-
 </style>
