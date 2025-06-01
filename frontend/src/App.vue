@@ -19,7 +19,7 @@ const checkScreenSize = () => {
   isMobile.value = window.innerWidth <= 768;
 };
 
-const tabs = { Hub, Activity, Gear, Stats };
+const tabs = { Hub, Activity };
 const activeTabComponent = computed(() => {
   return tabs[activeTab.value];
 });
@@ -47,7 +47,7 @@ onUnmounted(() => {
   <!-- Desktop View: Side-by-Side Layout -->
   <div v-else class="desktop-layout">
     <Hub />
-    <!-- <Activity /> -->
+    <Activity />
     <!-- <Gear />
     <Stats /> -->
   </div>
