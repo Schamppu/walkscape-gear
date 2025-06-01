@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import WsLabel from "../WsLabel.vue";
 import LabelWithIcon from "../LabelWithIcon.vue";
 import DropdownCategory from "./DropdownCategory.vue";
@@ -24,6 +24,12 @@ const dropdownRef = ref("dropdownRef");
 const isOpen = ref(false);
 const selected = ref("");
 const searchTerm = ref("");
+
+onMounted(() => {
+  const noneOption = props.data
+    .filter(({ value }) => value === "None")
+  if (noneOption.length) selected.value = noneOption[0];
+});
 
 const toggle = () => {
   searchTerm.value = "";

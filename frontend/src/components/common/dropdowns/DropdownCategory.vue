@@ -20,6 +20,7 @@ const props = defineProps({
 const emit = defineEmits(["select"]);
 
 const isOpen = ref(false);
+const isNone = props.category.value === "None";
 
 function toggle() {
   isOpen.value = !isOpen.value;
@@ -43,10 +44,10 @@ watch(
     <div
       class="category-header"
       :class="{ 'no-border': noBorder }"
-      @click="toggle"
+      @click="isNone ? handleSelect(category) : toggle()"
     >
       <LabelWithIcon :icon="category.icon" :text="category.value" />
-      <span class="chevron" :class="{ open: isOpen }">▼</span>
+      <span v-if="!isNone" class="chevron" :class="{ open: isOpen }">▼</span>
     </div>
 
     <ul v-if="isOpen" class="item-list">
