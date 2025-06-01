@@ -36,7 +36,6 @@ const getRequirementText = (base, requirements) => {
   const reqToText = (prev, req) => {
     const reqPar = req[0];
     const { type, opposite, requirement } = reqPar;
-    console.log(requirement);
     const { value, isPercentage, skill, keywordNames, quantity, realmName } =
       requirement;
     const not = opposite ? "NOT " : "";

@@ -56,7 +56,6 @@ onMounted(async () => {
 });
 
 const selectActivity = (activity) => {
-  console.log(activity.id);
   activityStore.loadActivity(activity.id);
 };
 </script>

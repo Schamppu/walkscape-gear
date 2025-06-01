@@ -25,7 +25,6 @@ export const useActivityStore = defineStore("activity", {
     },
     async loadActivity(id) {
       const activity = await getActivity({ id });
-      console.log(activity);
       this.setActivity(activity);
     },
   },
