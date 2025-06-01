@@ -1,13 +1,12 @@
 import { Router } from "express";
 import {
-  getActivities,
-  searchActivities,
+  listActivities,
+  getActivity,
 } from "../controllers/activityController.js";
 
 const router = Router();
 
-router.get("/", getActivities);
-router.get("/:id", getActivities);
-router.get("/search", searchActivities)
+router.get("/", listActivities);
+router.get("/id/:id", getActivity);
 
 export { router as activityRoutes };
