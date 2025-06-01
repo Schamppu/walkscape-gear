@@ -39,7 +39,9 @@ onUnmounted(() => {
   <div v-if="isMobile" class="mobile-layout">
     <!-- Dynamically render the selected component for the active tab -->
     <div class="mobile-content">
-      <component :is="activeTabComponent" />
+      <keep-alive>
+        <component :is="activeTabComponent" />
+      </keep-alive>
     </div>
     <Footer :tabs="tabs" @selectTab="activeTab = $event" />
   </div>
