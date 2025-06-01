@@ -5,16 +5,11 @@ import { useActivityStore } from "@/store/activity";
 import TabContentWrapper from "../common/TabContentWrapper.vue";
 import LoadingThrobber from "@/components/common/LoadingThrobber.vue";
 import NestedDropdown from "@/components/common/dropdowns/NestedDropdown.vue";
-import WsLabel from "../common/WsLabel.vue";
-import Dropdown from "../common/Dropdown.vue";
-import ActivityStatPanel from "./ActivityStatPanel.vue";
 import { getSkills, getActivities } from "@/utils/axios/api_routes";
-import { capitalize } from "@/utils/string";
+import Gear from "../gear/Gear.vue";
 
 const activityStore = useActivityStore();
-const { activitySelected } = storeToRefs(activityStore);
 
-const skillKey = ref(0);
 const skills = ref([]);
 const isLoading = ref(true);
 
@@ -34,6 +29,12 @@ onMounted(async () => {
   }));
 
   const { data: activities } = activitiesResponse;
+
+  const noneActivity = activities
+    .filter(({ id }) => id === "activity-none")
+    .map((item) => {
+      return { ...item, value: item.name, items: [] };
+    })[0];
   const categorized = skillList.map((skill) => {
     const { id, name: value } = skill;
     return {
@@ -51,7 +52,7 @@ onMounted(async () => {
         }),
     };
   });
-  activitiesBySkill.value = categorized;
+  activitiesBySkill.value = [noneActivity, ...categorized];
   isLoading.value = false;
 });
 
@@ -71,6 +72,12 @@ const selectActivity = (activity) => {
         :data="activitiesBySkill"
         @select="selectActivity"
       />
+
+      <details class="details">
+        <summary>Gear Set</summary>
+        <gear />
+
+      </details>
       <!-- <div class="row">
         <div class="label-wrapper">
           <ws-label class="label" label="Skill" />
@@ -103,6 +110,11 @@ const selectActivity = (activity) => {
   display: flex;
   flex-direction: column;
   gap: $xlg;
+}
+
+.details {
+  width: 100%;
+  text-align: start;
 }
 
 .row {
