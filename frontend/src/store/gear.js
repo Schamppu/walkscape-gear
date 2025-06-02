@@ -24,6 +24,7 @@ export const useGearStore = defineStore("gearStore", {
     potion: null,
     consumable: null,
     service: null,
+    useOwned: true,
   }),
   actions: {
     get(slot) {
