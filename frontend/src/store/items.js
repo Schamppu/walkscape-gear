@@ -6,11 +6,15 @@ export const useItemsStore = defineStore("itemStore", {
   state: () => ({
     itemsByCategory: {},
     ownedItems: {},
+    allItems: {},
     changedOwnedItems: {},
   }),
   actions: {
     setItems(category, items) {
       this.itemsByCategory[category] = items;
+      items.forEach((item) => {
+        this.allItems[item.id] = item;
+      });
     },
     setOwned(itemId, data) {
       this.ownedItems[itemId] = data;
