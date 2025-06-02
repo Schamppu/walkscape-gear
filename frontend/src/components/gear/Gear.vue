@@ -1,8 +1,18 @@
 <script setup>
 import { ref } from "vue";
+import { useActivityStore } from "@/store/activity";
 import TabContentWrapper from "../common/TabContentWrapper.vue";
 import GearSlot from "./GearSlot.vue";
 import GearModal from "./GearModal.vue";
+
+const props = defineProps({
+  isRecipe: {
+    type: Boolean,
+    default: false,
+  },
+});
+
+const activityStore = useActivityStore();
 
 const showGearModal = ref(false);
 const gearType = ref(null);
@@ -62,7 +72,11 @@ const updateVisible = (visibility) => {
       <div class="row">
         <gear-slot gearType="potion" @select="handleGearSlotSelect" />
         <gear-slot gearType="consumable" @select="handleGearSlotSelect" />
-        <gear-slot gearType="service" @select="handleGearSlotSelect" />
+        <gear-slot
+          v-if="isRecipe"
+          gearType="service"
+          @select="handleGearSlotSelect"
+        />
       </div>
       <div v-if="showGearModal">
         <gear-modal
@@ -76,7 +90,6 @@ const updateVisible = (visibility) => {
 </template>
 
 <style lang="scss" scoped>
-
 .tab-content {
   flex-grow: 1;
 
