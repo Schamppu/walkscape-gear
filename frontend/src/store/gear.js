@@ -50,36 +50,18 @@ export const useGearStore = defineStore("gearStore", {
       if (slot === "service") return () => ({ name: "None", id: "-1" });
       return searchItems;
     },
-    async loadItem(itemSlot, id, quality) {
-      const previousItem = this[itemSlot];
-      if (id) {
-        await getItem({ id, quality }).then(({ data }) => {
-          if (data) {
-            previousItem && previousItem.id
-              ? this.updateStats(itemSlot, data)
-              : this.setGearSlot(itemSlot, data);
-          }
-        });
-      } else {
+    async loadItem(itemSlot, id) {
+      if (!id) {
         console.error("no id provided");
       }
-    },
-    async itemSearch({ gearType, searchKey } = {}) {
-      const types = this.getSlotTypes(gearType);
-      const usedGearType = ["service", "consumable", "potion"].includes(
-        gearType
-      )
-        ? null
-        : gearType;
-      // const searchEndpoint = search;
-      const data = await searchItems({
-        types,
-        search: searchKey,
-        gearType: usedGearType,
-      }).then(({ data }) => {
-        return data;
+      const previousItem = this[itemSlot];
+      if (previousItem?.id === id) return;
+
+      await getItem({ id }).then(({ data }) => {
+        if (data) {
+          this.setGearSlot(itemSlot, data);
+        }
       });
-      return data;
     },
   },
 });
