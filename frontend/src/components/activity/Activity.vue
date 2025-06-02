@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { storeToRefs } from "pinia";
 import { useActivityStore } from "@/store/activity";
+import { useGearStore } from "@/store/gear";
 import TabContentWrapper from "../common/TabContentWrapper.vue";
 import LoadingThrobber from "@/components/common/LoadingThrobber.vue";
 import NestedDropdown from "@/components/common/dropdowns/NestedDropdown.vue";
@@ -9,6 +9,7 @@ import { getSkills, getActivities } from "@/utils/axios/api_routes";
 import Gear from "../gear/Gear.vue";
 
 const activityStore = useActivityStore();
+const gearStore = useGearStore();
 
 const skills = ref([]);
 const isLoading = ref(true);
@@ -75,8 +76,15 @@ const selectActivity = (activity) => {
 
       <details class="details">
         <summary>Gear Set</summary>
-        <gear />
-
+        <section class="gear">
+          <div class="gear-options">
+            <label>
+              <input type="checkbox" v-model="gearStore.useOwned" />
+              Show only owned items
+            </label>
+          </div>
+          <gear />
+        </section>
       </details>
       <!-- <div class="row">
         <div class="label-wrapper">
@@ -117,20 +125,13 @@ const selectActivity = (activity) => {
   text-align: start;
 }
 
-.row {
-  display: flex;
-  align-items: center;
-  gap: $base;
-}
+.gear {
+  gap: $sm;
 
-.label-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-
-  gap: $xxs;
-  .label {
-    margin-left: $xxs;
+  .gear-options {
+    display: flex;
+    gap: $sm;
+    padding: $sm 0;
   }
 }
 </style>
