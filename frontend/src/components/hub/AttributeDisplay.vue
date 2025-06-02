@@ -31,7 +31,7 @@ const getRequirementText = (base, requirements) => {
   if (!requirements.length) return `Global ${base}`;
 
   const reqTypes = requirements.flatMap((r) => r.map((ri) => ri.type));
-  let text = reqTypes.includes("mainSkill") ? `Global ${base}` : base;
+  let text = !reqTypes.includes("mainSkill") ? `Global ${base}` : base;
 
   const reqToText = (prev, req) => {
     const reqPar = req[0];
