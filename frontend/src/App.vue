@@ -5,7 +5,6 @@ import { getOrCreateUserUuid } from "@/utils/user";
 import Hub from "./components/hub/Hub.vue";
 import Activity from "./components/activity/Activity.vue";
 import Gear from "./components/gear/Gear.vue";
-import Stats from "./components/Stats.vue";
 import Footer from "./components/footer/Footer.vue";
 
 const playerStore = usePlayerStore();
@@ -19,7 +18,7 @@ const checkScreenSize = () => {
   isMobile.value = window.innerWidth <= 768;
 };
 
-const tabs = { Hub, Activity };
+const tabs = { Hub, Gear, Activity };
 const activeTabComponent = computed(() => {
   return tabs[activeTab.value];
 });
@@ -49,9 +48,9 @@ onUnmounted(() => {
   <!-- Desktop View: Side-by-Side Layout -->
   <div v-else class="desktop-layout">
     <Hub />
+    <Gear />
     <Activity />
-    <!-- <Gear />
-    <Stats /> -->
+    <!-- <Stats /> -->
   </div>
 </template>
 

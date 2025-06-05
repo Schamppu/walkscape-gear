@@ -1,14 +1,11 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useActivityStore } from "@/store/activity";
-import { useGearStore } from "@/store/gear";
 import TabContentWrapper from "../common/TabContentWrapper.vue";
 import NestedDropdown from "@/components/common/dropdowns/NestedDropdown.vue";
 import { getSkills, getActivities } from "@/utils/axios/api_routes";
-import Gear from "../gear/Gear.vue";
 
 const activityStore = useActivityStore();
-const gearStore = useGearStore();
 
 const skills = ref([]);
 const isLoading = ref(true);
@@ -75,15 +72,5 @@ const selectActivity = (activity) => {
 .details {
   width: 100%;
   text-align: start;
-}
-
-.gear {
-  gap: $sm;
-
-  .gear-options {
-    display: flex;
-    gap: $sm;
-    padding: $sm 0;
-  }
 }
 </style>
