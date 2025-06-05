@@ -15,6 +15,7 @@ const rewardsService = new BaseService("rewards");
 const serviceService = new BaseService("services");
 const shopService = new BaseService("shops");
 const skillService = new SkillService();
+const statService = new BaseService("stats");
 
 export {
   achievementService,
@@ -30,4 +31,5 @@ export {
   serviceService,
   shopService,
   skillService,
+  statService,
 };

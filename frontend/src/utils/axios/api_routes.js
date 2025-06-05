@@ -66,3 +66,9 @@ export function getActivity({ id }) {
     url: `activities/id/${id}`,
   });
 }
+
+export function getStats() {
+  return proxy({
+    url: "stats",
+  });
+}

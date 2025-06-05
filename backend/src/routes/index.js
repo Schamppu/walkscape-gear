@@ -7,6 +7,7 @@ import { lootTableRoutes } from "./lootTableRoutes.js";
 import { rewardRoutes } from "./rewardsRoutes.js";
 import { shopRoutes } from "./shopRoutes.js";
 import { skillRoutes } from "./skillRoutes.js";
+import { statRoutes } from "./statRoutes.js";
 import iconRoutes from "./iconRoutes.js";
 
 export function registerRoutes(app) {
@@ -20,6 +21,7 @@ export function registerRoutes(app) {
   apiRouter.use("/rewards", rewardRoutes);
   apiRouter.use("/shops", shopRoutes);
   apiRouter.use("/skills", skillRoutes);
+  apiRouter.use("/stats", statRoutes);
 
   const dbRouter = Router();
   dbRouter.use("/", dbRoutes);
