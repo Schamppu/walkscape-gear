@@ -27,10 +27,9 @@ export function getSkills() {
   });
 }
 
-export function getKeyword({ id }) {
+export function getKeywords() {
   return proxy({
     url: "keywords",
-    options: { params: { id } },
   });
 }
 

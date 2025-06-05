@@ -3,6 +3,7 @@ import { achievementRoutes } from "./achievementRoutes.js";
 import { activityRoutes } from "./activityRoutes.js";
 import { dbRoutes } from "./dbRoutes.js";
 import { itemRoutes } from "./itemRoutes.js";
+import { keywordRoutes } from "./keywordRoutes.js";
 import { lootTableRoutes } from "./lootTableRoutes.js";
 import { rewardRoutes } from "./rewardsRoutes.js";
 import { shopRoutes } from "./shopRoutes.js";
@@ -17,6 +18,7 @@ export function registerRoutes(app) {
   apiRouter.use("/activities", activityRoutes);
   apiRouter.use("/icons", iconRoutes);
   apiRouter.use("/items", itemRoutes);
+  apiRouter.use("/keywords", keywordRoutes)
   apiRouter.use("/loot_tables", lootTableRoutes);
   apiRouter.use("/rewards", rewardRoutes);
   apiRouter.use("/shops", shopRoutes);
