@@ -62,7 +62,12 @@ const toggleOpen = () => {
 
       <div class="quality-and-attributes">
         <div v-if="qualities > 0" class="quality-inputs">
-          <select v-model="quality" @click.stop @change="updateQuality">
+          <select
+            v-model="quality"
+            class="quality-input"
+            @click.stop
+            @change="updateQuality"
+          >
             <option
               v-for="q in craftingQualityOptions"
               :key="'q1-' + q.value"
@@ -75,6 +80,7 @@ const toggleOpen = () => {
           <select
             v-if="qualities === 2"
             v-model="quality2"
+            class="quality-input"
             @click.stop
             @change="updateQuality"
           >
@@ -148,6 +154,12 @@ const toggleOpen = () => {
     display: flex;
     align-items: center;
     gap: $xs;
+    
+    .quality-input {
+      background-color: $boxDarkBackground;
+      cursor: pointer;
+    }
+
   }
 }
 </style>

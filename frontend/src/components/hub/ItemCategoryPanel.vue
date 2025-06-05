@@ -77,7 +77,7 @@ watch(
   cursor: pointer;
   display: flex;
   justify-content: space-between;
-  background: $boxPrimaryBackground;
+  background: $boxDarkBackground;
 
   border: 1px solid $bgPrimary;
   padding: $xxs;
@@ -89,7 +89,6 @@ watch(
   flex-direction: column;
   gap: $xxxs;
 
-  background: $boxDarkOutline;
   padding: $xxxxs;
 }
 </style>

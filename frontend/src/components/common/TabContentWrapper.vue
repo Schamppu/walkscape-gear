@@ -34,11 +34,8 @@ const loading = toRef(props, "isLoading");
   flex-direction: column;
   gap: $base;
 
-  background-color: $boxDarkBackground;
-
+  background-color: $bgPrimary;
   padding: $xlg;
-  border-radius: $base;
-  border: 2px solid $boxDarkOutline;
 }
 
 .tab-content {

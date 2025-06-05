@@ -44,7 +44,7 @@ select,
 textarea {
   font-family: typography.$font-family;
   @extend %typography-body1;
-  background-color: variables.$bgPrimary;
+  background-color: rgb(0, 0, 0);
   color: variables.$txPrimary;
   border: none;
 }

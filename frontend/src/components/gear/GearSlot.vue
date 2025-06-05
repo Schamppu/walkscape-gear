@@ -41,8 +41,7 @@ const handleClick = () => emit("select", props.gearType, storeKey);
 .gear-slot-wrapper {
   width: 80px;
   height: 80px;
-  background-color: $boxDarkBackground;
-  border: 1px solid $boxDarkOutline;
+  border: 1px solid $boxPrimaryOutline;
   border-radius: $md;
 
   cursor: pointer;
