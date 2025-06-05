@@ -1,7 +1,6 @@
 <script setup>
 import { computed } from "vue";
 import { useGearStore } from "@/store/gear";
-import { storeToRefs } from "pinia";
 import WsIcon from "@/components/common/WsIcon.vue";
 
 const emit = defineEmits(["select"]);
