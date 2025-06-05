@@ -1,5 +1,4 @@
 <script setup>
-import { ref } from "vue";
 import InfoBubble from "./InfoBubble.vue";
 
 const props = defineProps({
@@ -16,8 +15,8 @@ const props = defineProps({
 
 const iconPath =
   props.skill !== "steps"
-    ? `assets/icons/text/skill_icons/${props.skill}.svg`
-    : "assets/icons/text/general_icons/steps.svg";
+    ? `assets/icons/text/skill_icons/${props.skill}.png`
+    : "assets/icons/text/general_icons/steps.png";
 const borderClass =
   props.useColorBorder && props.skill !== "steps"
     ? `border-${props.skill}`
