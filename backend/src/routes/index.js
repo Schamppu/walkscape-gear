@@ -7,6 +7,7 @@ import iconRoutes from "./iconRoutes.js";
 import {
   activityService,
   keywordService,
+  locationService,
   skillService,
   statService,
 } from "../services/index.js";
@@ -18,6 +19,7 @@ export function registerRoutes(app) {
   apiRouter.use("/icons", iconRoutes);
   apiRouter.use("/items", itemRoutes);
   apiRouter.use("/keywords", createBaseRouter("Keyword", keywordService));
+  apiRouter.use("/locations", createBaseRouter("Location", locationService));
   apiRouter.use("/skills", createBaseRouter("Skill", skillService));
   apiRouter.use("/stats", createBaseRouter("Stat", statService));
 
