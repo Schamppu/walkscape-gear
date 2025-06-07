@@ -9,6 +9,7 @@ import { isEmpty } from "@/utils/isEmpty";
 const props = defineProps({
   activity: Object,
   keywords: Array,
+  locations: Array,
 });
 
 const borderClass = computed(
@@ -46,8 +47,6 @@ const sections = computed(() => {
     requirements,
     xpRewardsMap,
   } = props.activity;
-  console.log(props.activity);
-
   return [
     {
       label: "Info",
@@ -80,6 +79,13 @@ const sections = computed(() => {
       label: "XP rewards (base)",
       data: xpRewardsMap,
       display: "skill-bubbles",
+    },
+    {
+      label: "Locations",
+      data: props.locations.map(({ name: text, icon }) => {
+        return { text, icon };
+      }),
+      display: "bubbles",
     },
   ].filter(({ data }) => !isEmpty(data));
 });

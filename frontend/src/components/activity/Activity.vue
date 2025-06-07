@@ -15,6 +15,7 @@ const activityStore = useActivityStore();
 const skills = ref([]);
 const keywords = ref([]);
 const isLoading = ref(true);
+const loadingActivity = ref(false);
 
 const activitiesBySkill = ref([]);
 
@@ -60,8 +61,13 @@ onMounted(async () => {
   isLoading.value = false;
 });
 
-const selectActivity = (activity) => {
-  activityStore.loadActivity(activity.id);
+const selectActivity = async (activity) => {
+  loadingActivity.value = true;
+  await Promise.all([
+    activityStore.loadActivity(activity.id),
+    activityStore.loadActivityLocations(activity.id),
+  ]);
+  loadingActivity.value = false;
 };
 </script>
 
@@ -73,9 +79,10 @@ const selectActivity = (activity) => {
       @select="selectActivity"
     />
     <activity-info
-      v-if="activityStore.activitySelected"
+      v-if="!loadingActivity && activityStore.activitySelected"
       :activity="activityStore.activity"
       :keywords="keywords"
+      :locations="activityStore.locations"
     />
   </tab-content-wrapper>
 </template>
