@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { getItem, searchItems } from "@/utils/axios/api_routes";
+import { useItemsStore } from "./items";
 
 export const useGearStore = defineStore("gearStore", {
   state: () => ({
@@ -30,7 +31,7 @@ export const useGearStore = defineStore("gearStore", {
   }),
   getters: {
     filledGearSlots: (state) => {
-      return Object.values(state.gearSlots).filter(Boolean);
+      return Object.values(state.gearSlots).filter(Boolean) || [];
     },
   },
   actions: {
@@ -57,16 +58,17 @@ export const useGearStore = defineStore("gearStore", {
       if (slot === "service") return () => ({ name: "None", id: "-1" });
       return searchItems;
     },
-    async loadItem(itemSlot, id) {
+    async loadItem(itemSlot, id, quality) {
       if (!id) {
         console.error("no id provided");
+        return;
       }
       const previousItem = this.gearSlots[itemSlot];
       if (previousItem?.id === id) return;
 
       await getItem({ id }).then(({ data }) => {
         if (data) {
-          this.setGearSlot(itemSlot, data);
+          this.setGearSlot(itemSlot, { ...data, quality });
         }
       });
     },

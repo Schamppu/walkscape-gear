@@ -37,7 +37,9 @@ const filteredItems = computed(() => {
     const { id } = item;
     const owned = id in itemsStore.ownedItems;
     const quality = owned ? itemsStore.ownedItems[id].quality : item.quality;
-    return (activity && showItemForActivity(item, activity, quality)) || !activity;
+    return (
+      (activity && showItemForActivity(item, activity, quality)) || !activity
+    );
   };
   const filterSearch = ({ name }) =>
     (term && name.toLowerCase().includes(term)) || !term;
@@ -50,7 +52,7 @@ const filteredItems = computed(() => {
 });
 
 const handleClick = (item) => {
-  emit("selectItem", item.id);
+  emit("selectItem", item);
 };
 </script>
 
