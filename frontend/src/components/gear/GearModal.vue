@@ -42,7 +42,7 @@ const selectedTab = ref(gearStore.slotFilled(props.slotName) ? 0 : 1);
 
 const handleSelectItem = async (id) => {
   await gearStore.loadItem(props.slotName, id);
-  selectTab(0);
+  closeDialog();
 };
 </script>
 
