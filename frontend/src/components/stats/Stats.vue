@@ -4,6 +4,7 @@ import { getStats } from "@/utils/axios/api_routes";
 import { useGearStore } from "@/store/gear";
 import { useItemsStore } from "@/store/items";
 import { useActivityStore } from "@/store/activity";
+import { usePlayerStore } from "@/store/player";
 import { sumAttrs } from "@/utils/qualityAttrs";
 import LoadingThrobber from "@/components//common/LoadingThrobber.vue";
 import StatDisplay from "./StatDisplay.vue";
@@ -23,9 +24,9 @@ onMounted(async () => {
 const gearStore = useGearStore();
 const itemsStore = useItemsStore();
 const activityStore = useActivityStore();
+const playerStore = usePlayerStore();
 
 const owned = itemsStore.ownedItems;
-const activity = activityStore.activeActivity;
 
 const allItems = computed(() => {
   if (!stats.value.length) return [];
@@ -89,6 +90,15 @@ const statKeys = computed(() =>
       );
     })
 );
+
+const data = computed(() => {
+  return {
+    activity: activityStore.activity,
+    location: activityStore.location,
+    achievementPoints: playerStore.achievementPoints,
+    gear: gearStore.filledGearSlots,
+  };
+});
 </script>
 
 <template>
@@ -101,7 +111,7 @@ const statKeys = computed(() =>
       :stat="stat"
       :attrs="attrs"
       :is-percent="percent"
-      :activity="activity"
+      :data="data"
     />
   </section>
 </template>
