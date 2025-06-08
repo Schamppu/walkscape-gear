@@ -4,11 +4,11 @@ export const checkRequirements = (reqs, data) => {
   if (!reqs || !reqs.length) return true;
 
   return reqs.every((requirements) =>
-    requirementsFulfilled(requirements, data)
+    checkRequirement(requirements, data)
   );
 };
 
-const requirementsFulfilled = (req, data) => {
+const checkRequirement = (req, data) => {
   const { type, opposite, requirement } = req;
   const { activity, location, achievementPoints, gear } = data;
   const equippedKeywordCounts = gear
