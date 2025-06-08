@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from "vue";
 import { checkRequirements } from "@/utils/requirements";
+import { useEffectiveAttrs } from "@/utils/useEffectiveAttrs";
 import WsIcon from "@/components/common/WsIcon.vue";
 
 const props = defineProps({
@@ -8,30 +9,31 @@ const props = defineProps({
     type: Object,
     required: true,
   },
-  attrs: Array,
   isPercent: Boolean,
-  data: Object,
 });
+
+const { allAttrs, effectiveAttrs } = useEffectiveAttrs();
+const { isPercent } = props.stat;
 
 const sumStats = (stats) => {
   return stats.reduce((a, { value: b }) => a + b, 0);
 };
 
-const attrStats = computed(() => {
-  return props.attrs.map(({ stats }) => stats[0]);
-});
+const filterStat = (attr) => {
+  const { stat: statId, isPercent: percent } = attr.stats[0];
+  return statId == props.stat.id && percent === props.isPercent;
+};
 
 const sumTotal = computed(() => {
-  const total = sumStats(attrStats.value);
+  const statAttrs = allAttrs.value.filter(filterStat);
+  const total = sumStats(statAttrs.map((attr) => attr.stats[0]));
   const value = Math.round(props.isPercent ? 100 * total : total);
   return props.isPercent ? `${value}%` : value;
 });
 
 const sumApplicable = computed(() => {
-  const applicableAttrs = props.attrs
-    .filter(({ requirements }) => checkRequirements(requirements, props.data))
-    .map(({ stats }) => stats[0]);
-  const total = sumStats(applicableAttrs);
+  const statAttrs = effectiveAttrs.value.filter(filterStat);
+  const total = sumStats(statAttrs.map((attr) => attr.stats[0]));
   const value = Math.round(props.isPercent ? 100 * total : total);
   return props.isPercent ? `${value}%` : value;
 });
