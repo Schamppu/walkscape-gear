@@ -4,6 +4,7 @@ import { getActivity, searchLocations } from "@/utils/axios/api_routes";
 export const useActivityStore = defineStore("activity", {
   state: () => ({
     activity: null,
+    location: null,
     locations: null,
   }),
   getters: {
@@ -18,6 +19,9 @@ export const useActivityStore = defineStore("activity", {
     setLocations(locations) {
       this.locations = locations;
     },
+    setLocation(location) {
+      this.location = location;
+    },
     async loadActivity(id) {
       const { data: activity } = await getActivity({ id });
       this.setActivity(activity);
@@ -25,6 +29,7 @@ export const useActivityStore = defineStore("activity", {
     async loadActivityLocations(id) {
       const { data: locations } = await searchLocations({ activityList: id });
       this.setLocations(locations);
+      if (locations.length) this.setLocation(locations[0]);
     },
   },
 });
