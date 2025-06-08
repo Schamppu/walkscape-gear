@@ -1,4 +1,5 @@
 import { qualityOptions } from "@/utils/quality";
+import { toDeepRaw } from "./rawData";
 
 export const sumAttrs = (itemAttrs, qualityAttrs, quality) => {
   const qIndex = Math.min(
@@ -6,7 +7,7 @@ export const sumAttrs = (itemAttrs, qualityAttrs, quality) => {
     qualityOptions.findIndex(({ value }) => value === quality)
   );
 
-  const attrs = [...itemAttrs.slice()].map((attribute) => {
+  const attrs = itemAttrs.map(toDeepRaw).map((attribute) => {
     return {
       ...attribute,
       stats: attribute.stats,
@@ -14,7 +15,7 @@ export const sumAttrs = (itemAttrs, qualityAttrs, quality) => {
   });
 
   for (let qi = 0; qi < qIndex; qi++) {
-    const { attributes } = qualityAttrs[qi];
+    const { attributes } = toDeepRaw(qualityAttrs[qi]);
     const statIds = attrs.map(({ stats }) => {
       return stats[0].stat;
     });
