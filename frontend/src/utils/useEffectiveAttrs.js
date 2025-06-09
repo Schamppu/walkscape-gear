@@ -36,6 +36,16 @@ export function useEffectiveAttrs() {
       .filter(({ attrs }) => attrs.length);
   });
 
+  const equippedKeywords = computed(() => {
+    const gearSet = gear.filledGearSlots;
+    return gearSet
+      .flatMap(({ keywords }) => keywords)
+      .reduce((acc, val) => {
+        acc[val] = (acc[val] || 0) + 1;
+        return acc;
+      }, {});
+  });
+
   const allAttrs = computed(() => {
     return allItems.value.flatMap((item) => {
       return item.attrs.map((attr) => {
@@ -80,6 +90,7 @@ export function useEffectiveAttrs() {
     allItems,
     allAttrs,
     effectiveAttrs,
+    equippedKeywords,
     totalsByStat,
   };
 }
