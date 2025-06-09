@@ -16,7 +16,7 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(["select-quality"]);
+const emit = defineEmits(["unequip"]);
 
 const gearStore = useGearStore();
 const itemsStore = useItemsStore();
@@ -28,13 +28,16 @@ const quality = owned ? itemsStore.ownedItems[item.id].quality : item.quality;
 
 <template>
   <div v-if="gearStore.slotFilled(slotName)" class="preview-wrapper">
-    <div class="base-info">
-      <ws-icon :icon-path="item.icon" />
-      <p>
-        {{ item.name }} (<a :href="getWikiUrl(item.name)" target="_blank"
-          >wiki</a
-        >)
-      </p>
+    <div class="header">
+      <div class="base-info">
+        <ws-icon :icon-path="item.icon" />
+        <p>
+          {{ item.name }} (<a :href="getWikiUrl(item.name)" target="_blank"
+            >wiki</a
+          >)
+        </p>
+      </div>
+      <button class="unequip" @click="emit('unequip')">Unequip</button>
     </div>
     <attribute-display
       :itemAttrs="item.itemAttrs"
@@ -53,12 +56,34 @@ const quality = owned ? itemsStore.ownedItems[item.id].quality : item.quality;
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: $lg;
 
-  .base-info {
-    padding: $md;
+  .header {
+    width: 100%;
     display: flex;
-    align-items: center;
-    gap: $md;
+    justify-content: center;
+    gap: $xxlg;
+
+    .base-info {
+      padding: 0;
+      display: flex;
+      align-items: center;
+      align-self: center;
+      gap: $md;
+    }
+  }
+}
+
+.unequip {
+  cursor: pointer;
+  border: 1px solid $txNegative;
+  color: $txNegative;
+  padding: $xxs $sm;
+  border-radius: $sm;
+  background: $boxDarkBackground;
+
+  &:hover {
+    background: $boxDarkOutline;
   }
 }
 

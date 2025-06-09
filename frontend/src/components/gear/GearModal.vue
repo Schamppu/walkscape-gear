@@ -48,6 +48,11 @@ const handleSelectItem = async (item) => {
   await gearStore.loadItem(props.slotName, item.id, quality);
   closeDialog();
 };
+
+const unequipItem = (slotName) => {
+  gearStore.setGearSlot(slotName, null);
+  closeDialog();
+};
 </script>
 
 <template>
@@ -76,6 +81,7 @@ const handleSelectItem = async (item) => {
           :gear-type="gearType"
           :slot-name="slotName"
           @select-item="handleSelectItem"
+          @unequip="unequipItem(slotName)"
         />
       </div>
     </div>
