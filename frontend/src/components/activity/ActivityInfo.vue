@@ -4,6 +4,7 @@ import WsLabel from "@/components/common/WsLabel.vue";
 import InfoBubble from "@/components/common/InfoBubble.vue";
 import SkillBubble from "@/components/common/SkillBubble.vue";
 import KeywordDisplay from "@/components/common/KeywordDisplay.vue";
+import { useEffectiveAttrs } from "@/utils/useEffectiveAttrs";
 import { isEmpty } from "@/utils/isEmpty";
 
 const props = defineProps({
@@ -11,6 +12,8 @@ const props = defineProps({
   keywords: Array,
   locations: Array,
 });
+
+const { totalsByStat } = useEffectiveAttrs();
 
 const borderClass = computed(
   () => `border-${props.activity?.relatedSkillsList[0]}`
@@ -38,6 +41,14 @@ const getRequirementKeywords = (requirements) => {
     .flatMap(({ requirement }) => getKeyword(requirement));
 };
 
+const getStat = (stat, key = "percent") => {
+  return stat in totalsByStat.value
+    ? key in totalsByStat.value[stat]
+      ? totalsByStat.value[stat][key]
+      : 0
+    : 0;
+};
+
 const sections = computed(() => {
   const {
     id,
@@ -50,18 +61,31 @@ const sections = computed(() => {
   } = props.activity;
 
   const isTravel = id === "activity-travelling";
-  
+  const we = getStat("workEfficiency");
+  const steps = Math.max(10, Math.ceil((workRequired || 1000) / (1 + we)));
+
+  const flatXp = getStat("bonusExperience", "flat");
+  const percentXp = getStat("bonusExperience");
+  const xpRewards = Object.fromEntries(
+    Object.entries(xpRewardsMap).map(([key, base]) => [
+      key,
+      `${(1 + percentXp) * base + flatXp} / ${base}`,
+    ])
+  );
+
   return [
     {
-      label: "Info",
+      label: "Stats (current / base)",
       display: "bubbles",
       data: [
         {
-          text: workRequired || 1000,
+          text: `${steps} / ${workRequired || 1000}`,
           icon: "assets/icons/text/general_icons/steps.png",
         },
         {
-          text: `${Math.round(maxWorkEfficiency * 100) - 100}%`,
+          text: `${Math.round(we * 100)} / ${
+            Math.round(maxWorkEfficiency * 100) - 100
+          }%`,
           icon: "assets/icons/text/stats/skilling/work_efficiency.png",
         },
       ],
@@ -80,13 +104,13 @@ const sections = computed(() => {
       display: "keywords",
     },
     {
-      label: "XP rewards (base)",
-      data: xpRewardsMap,
+      label: "XP rewards (current / base)",
+      data: xpRewards,
       display: "skill-bubbles",
     },
     {
       label: "Locations",
-      data: isTravel
+      data: !isTravel
         ? props.locations.map(({ name: text, icon }) => {
             return { text, icon };
           })
