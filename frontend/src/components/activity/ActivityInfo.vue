@@ -66,12 +66,25 @@ const sections = computed(() => {
 
   const flatXp = getStat("bonusExperience", "flat");
   const percentXp = getStat("bonusExperience");
-  const xpRewards = Object.fromEntries(
-    Object.entries(xpRewardsMap).map(([key, base]) => [
-      key,
-      `${(1 + percentXp) * base + flatXp} / ${base}`,
-    ])
-  );
+  const xpRewardsArr = Object.entries(xpRewardsMap).map(([skill, base]) => {
+    const current = (1 + percentXp) * base + flatXp;
+    return {
+      skill,
+      base,
+      current,
+    };
+  });
+
+  let xpRewards = [...xpRewardsArr];
+  if (xpRewardsArr.length > 1) {
+    const totalBase = xpRewardsArr.reduce((sum, r) => sum + r.base, 0);
+    const totalCurrent = xpRewardsArr.reduce((sum, r) => sum + r.current, 0);
+    xpRewards.push({
+      skill: "xp",
+      base: totalBase,
+      current: totalCurrent,
+    });
+  }
 
   return [
     {
@@ -114,9 +127,11 @@ const sections = computed(() => {
     {
       label: "XP rewards (current / base)",
       component: SkillBubble,
-      items: Object.entries(xpRewards).map(([skill, text]) => ({
+      items: xpRewards.map(({ skill, current, base }) => ({
         skill,
-        text,
+        text: `${Math.round(current)} / ${base}`,
+        current,
+        base,
       })),
       itemProps: (item) => ({ ...item }),
     },
