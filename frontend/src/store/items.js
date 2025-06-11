@@ -23,6 +23,7 @@ export const useItemsStore = defineStore("itemStore", {
       items.forEach(({ itemId, ...data }) => this.setOwned(itemId, data));
     },
     toggleItem(itemId, owned = true, quality = null, quality2 = null) {
+      this.ownedItems[itemId] = { owned, quality, quality2 };
       this.changedOwnedItems[itemId] = { owned, quality, quality2 };
       this.scheduleOwnedItemsFlush();
     },
@@ -47,7 +48,7 @@ export const useItemsStore = defineStore("itemStore", {
       function () {
         this.flushChangedOwnedItems();
       },
-      500,
+      5000,
       this
     ),
   },
