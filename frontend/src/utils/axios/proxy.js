@@ -1,4 +1,4 @@
-import getHost from "../getHost";
+import getHost from "./getHost";
 import { axiosInstance as axios } from "./axiosConfig";
 
 export function createProxyInstance(basePath = "/api") {
