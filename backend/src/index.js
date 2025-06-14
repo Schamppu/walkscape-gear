@@ -7,7 +7,7 @@ import { registerRoutes } from "./routes/index.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.BACKEND_PORT || 3001;
 
 app.use(cors());
 app.use(morgan("dev"));
