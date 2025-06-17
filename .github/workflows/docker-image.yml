@@ -36,7 +36,7 @@ jobs:
         id: meta
         run: |
           SERVICE=${{ matrix.service }}
-          REPO=schamppu/walkscape-gear-${SERVICE}
+          REPO=ghcr.io/schamppu/walkscape-gear-${SERVICE}
 
           if [[ "${GITHUB_REF##*/}" == "main" ]]; then
             echo "TAGS=${REPO}:main,${REPO}:latest" >> $GITHUB_OUTPUT
