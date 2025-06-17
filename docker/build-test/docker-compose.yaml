@@ -1,0 +1,54 @@
+services:
+  frontend:
+    build:
+      context: ../../frontend
+      dockerfile: Dockerfile
+    container_name: walkscape-gear-frontend
+    restart: always
+    ports:
+      - "80:80"
+
+  backend:
+    build:
+      context: ../../backend
+      dockerfile: Dockerfile
+    container_name: walkscape-gear-backend
+    depends_on:
+      - postgres
+    restart: always
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV
+      - BACKEND_PORT
+      - DATABASE_URL
+      - API_BASE_URL
+
+  walkscape-tools-server:
+    image: ghcr.io/schamppu/walkscape-tools-server:dev
+    container_name: walkscape-tools-server
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV
+
+  postgres:
+    image: postgres:17.5
+    container_name: walkscape-gear-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ws-gear-db
+      POSTGRES_USER: ws-gear
+      POSTGRES_PASSWORD: wsgear-db-password
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+networks:
+  default:
+    name: dev_default
+
+volumes:
+  pgdata:
