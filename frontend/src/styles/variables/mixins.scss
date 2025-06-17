@@ -1,0 +1,15 @@
+@mixin hover-focus($color: $link-text) {
+  cursor: pointer;
+  color: $link-text;
+  text-decoration: none;
+
+  &:hover {
+    color: $link-hover;
+    text-decoration: underline;
+  }
+
+  &:focus {
+    color: $link-focus;
+    text-decoration: underline;
+  }
+}

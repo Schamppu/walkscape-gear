@@ -1,0 +1,52 @@
+services:
+  frontend:
+    image: ghcr.io/schamppu/walkscape-gear-frontend:dev
+    container_name: walkscape-gear-frontend-${NAME_SUFFIX}
+    restart: always
+    networks:
+      - default
+      - ws-gear
+    ports:
+      - "80:80"
+
+  backend:
+    image: ghcr.io/schamppu/walkscape-gear-backend:dev
+    container_name: walkscape-gear-backend
+    depends_on:
+      - postgres
+    restart: always
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV
+      - API_SECRET
+      - DATABASE_URL
+      - API_BASE_URL
+    networks:
+      - ws-gear
+
+  postgres:
+    image: postgres:17.5
+    container_name: walkscape-gear-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ws-gear-db
+      POSTGRES_USER: ws-gear
+      POSTGRES_PASSWORD: wsgear-db-password
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - ws-gear
+
+networks:
+  default:
+    name: ${EXTERNAL_NETWORK_NAME:-dev_default}
+    external: ${USE_EXTERNAL_NETWORK:-false}
+
+  ws-gear:
+    name: ${INTERNAL_NETWORK_NAME:-ws_gear}
+
+volumes:
+  pgdata:

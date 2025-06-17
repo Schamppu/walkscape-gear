@@ -1,0 +1,74 @@
+$bgPrimary: rgb(6, 12, 15);
+
+$boxPrimaryBackground: rgb(25, 31, 34);
+$boxTransparentPrimaryBackground: rgba(25, 31, 34, 0.7);
+$boxPrimaryOutline: rgb(47, 58, 63);
+$boxDarkBackground: rgb(15, 29, 36);
+$boxTransparentDarkBackground: rgba(15, 29, 36, 0.7);
+$boxDarkOutline: rgb(31, 52, 63);
+$boxTransparentDarkOutline: rgba(31, 52, 63, 0.7);
+
+$chipBackground: rgb(66, 65, 62);
+$chipOutline: rgb(90, 89, 85);
+
+$txLighter: rgb(218, 207, 191);
+$txPrimary: rgb(171, 160, 144);
+$txDarker: rgb(145, 134, 117);
+
+$txPositive: rgb(142, 228, 123);
+$positiveDark: rgb(97, 145, 86);
+$txNegative: rgb(209, 111, 116);
+$txHighlight: rgb(223, 209, 189);
+$txTransparentHighlight: rgba(223, 209, 189, 0.7);
+
+$quality-colors: (
+  "common": $txPrimary,
+  "common-dark": $boxDarkBackground,
+  "uncommon": rgb(184, 255, 151),
+  "uncommon-dark": rgb(36, 70, 30),
+  "rare": rgb(163, 184, 255),
+  "rare-dark": rgb(31, 49, 71),
+  "epic": rgb(218, 162, 255),
+  "epic-dark": rgb(62, 26, 68),
+  "legendary": rgb(255, 200, 128),
+  "legendary-dark": rgb(80, 59, 31),
+  "ethereal": rgb(255, 95, 95),
+  "ethereal-dark": rgb(77, 32, 32),
+);
+
+@each $name, $color in $quality-colors {
+  .color-#{$name} {
+    color: $color !important;
+  }
+
+  .bg-#{$name} {
+    background: $color !important;
+  }
+
+  .border-#{$name} {
+    border: 2px solid $color !important;
+  }
+}
+
+$skill-colors: (
+  "agility": rgb(241, 95, 192),
+  "carpentry": rgb(241, 141, 95),
+  "cooking": rgb(241, 173, 95),
+  "crafting": rgb(233, 71, 125),
+  "fishing": rgb(95, 219, 241),
+  "foraging": rgb(170, 211, 160),
+  "mining": rgb(140, 165, 211),
+  "smithing": rgb(226, 167, 167),
+  "trinketry": rgb(255, 222, 177),
+  "woodcutting": rgb(95, 241, 107),
+);
+
+@each $name, $color in $skill-colors {
+  .color-#{$name} {
+    background: $color !important;
+  }
+
+  .border-#{$name} {
+    border: 2px solid $color !important;
+  }
+}
