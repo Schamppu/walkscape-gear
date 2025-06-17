@@ -11,7 +11,7 @@ services:
 
   backend:
     image: ghcr.io/schamppu/walkscape-gear-backend:dev
-    container_name: walkscape-gear-backend
+    container_name: walkscape-gear-backend-${NAME_SUFFIX}
     depends_on:
       - postgres
     restart: always
@@ -27,7 +27,7 @@ services:
 
   postgres:
     image: postgres:17.5
-    container_name: walkscape-gear-postgres
+    container_name: walkscape-gear-postgres-${NAME_SUFFIX}
     restart: unless-stopped
     environment:
       POSTGRES_DB: ws-gear-db
