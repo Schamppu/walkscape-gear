@@ -67,6 +67,10 @@ export function categorizeItems({
     categories: resolveCraftedCategories(crafted),
   });
 
+  categoryGroups.forEach(({ categories }) => {
+    categories.sort((a, b) => a.title.localeCompare(b.title));
+  });
+
   return categoryGroups;
 }
 
