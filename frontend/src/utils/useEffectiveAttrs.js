@@ -1,19 +1,16 @@
 import { computed } from "vue";
-import { useActivityStore } from "@/store/activity";
 import { useGearStore } from "@/store/gear";
 import { useItemsStore } from "@/store/items";
-import { usePlayerStore } from "@/store/player";
-import { checkRequirements } from "./requirements";
+import { useRequirements } from "./useRequirements";
 import { sumAttrs } from "./qualityAttrs";
 import { toDeepRaw } from "./rawData";
 
 export function useEffectiveAttrs() {
-  const activity = useActivityStore();
+  const { checkRequirements } = useRequirements();
   const gear = useGearStore();
   const items = useItemsStore();
-  const player = usePlayerStore();
 
-  const allItems = computed(() => {
+  const allEquippedItems = computed(() => {
     const owned = items.ownedItems;
     const gearSet = gear.filledGearSlots;
 
@@ -47,7 +44,7 @@ export function useEffectiveAttrs() {
   });
 
   const allAttrs = computed(() => {
-    return allItems.value.flatMap((item) => {
+    return allEquippedItems.value.flatMap((item) => {
       return item.attrs.map((attr) => {
         return { ...attr, item };
       });
@@ -55,15 +52,8 @@ export function useEffectiveAttrs() {
   });
 
   const effectiveAttrs = computed(() => {
-    const data = {
-      activity: activity.activity,
-      location: activity.location,
-      achievementPoints: player.achievementPoints,
-      gear: gear.filledGearSlots,
-    };
-
     return allAttrs.value.filter(({ requirements }) =>
-      checkRequirements(requirements, data)
+      checkRequirements(requirements)
     );
   });
 
@@ -87,7 +77,7 @@ export function useEffectiveAttrs() {
   });
 
   return {
-    allItems,
+    allEquippedItems,
     allAttrs,
     effectiveAttrs,
     equippedKeywords,
