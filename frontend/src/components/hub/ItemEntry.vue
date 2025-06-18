@@ -78,11 +78,11 @@ const toggleOpen = () => {
 <template>
   <section class="item">
     <section :class="['item-entry', colorClass, ownedBgClass]">
-      <div class="group">
+      <div class="group" @click="toggleChecked">
         <input type="checkbox" :checked="isOwned" readonly />
         <ws-icon :iconPath="item.icon" :outline-class="`outline-${quality}`" />
 
-        <div class="rows" @click="toggleChecked">
+        <div class="rows">
           <span :class="`color-${quality}`">{{ item.name }}</span>
           <div v-if="qualities > 0" class="group">
             <select
@@ -164,9 +164,11 @@ const toggleOpen = () => {
   }
 
   .group {
+    cursor: pointer;
     display: flex;
     align-items: center;
     gap: $xxs;
+    flex-grow: 1;
   }
 
   .toggle {
