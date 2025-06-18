@@ -30,20 +30,19 @@ export function categorizeItems({
     loot,
     achievementRewardItems
   );
-
-  const { chestCategories, chestItemsList } = resolveChestCategories(
-    loot,
-    chestItems,
-    containers
-  );
-
-  const shopsCategory = resolveShopsCategory(loot, shopItems, chestItemsList);
+  const shopsCategory = resolveShopsCategory(loot, shopItems);
   const lootAndRewardsCategories = [
     ...rewardCategories,
     achivementRewardCategory,
     shopsCategory,
     activityCategory,
   ];
+
+  const { chestCategories } = resolveChestCategories(
+    loot,
+    chestItems,
+    containers
+  );
 
   const miscLootItems = resolveMiscItems(loot, [
     ...lootAndRewardsCategories,
@@ -187,12 +186,12 @@ const resolveRewardsCategories = (loot, rewards) => {
   ];
 };
 
-const resolveShopsCategory = (loot, shopItems, chestItems) => {
+const resolveShopsCategory = (loot, shopItems) => {
   const shopSet = new Set(shopItems);
 
   return {
     title: "Shop Items",
     key: "loot_shops",
-    items: loot.filter(({ id }) => shopSet.has(id) && !chestItems.has(id)),
+    items: loot.filter(({ id }) => shopSet.has(id)),
   };
 };
