@@ -18,10 +18,18 @@ export const showItemForActivity = (itemProxy, activity, quality) => {
 
 const usefulKeywords = (item, activity) => {
   if (!activity) return false;
-  const { requiredKeywords: kw } = activity;
-  if (!kw) return false;
-  const kws = kw.map(({ keyword }) => keyword);
-  return item.keywords.filter((keyword) => kws.includes(keyword));
+  const { requiredKeywords: kw, requirements } = activity;
+
+  const kws = kw?.map(({ keyword }) => keyword) ?? [];
+  const kwEquipped =
+    requirements
+      ?.filter((req) => req.type === "distinctKeywordItemsEquipped")
+      .flatMap(({ requirement }) => requirement.keywords) ?? [];
+
+  if (!(kws || kwEquipped)) return false;
+  return item.keywords.filter(
+    (keyword) => kws.includes(keyword) || kwEquipped.includes(keyword)
+  );
 };
 
 const usefulAttrs = (item, activity, quality, isRecipe) => {
