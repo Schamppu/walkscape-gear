@@ -78,54 +78,51 @@ const toggleOpen = () => {
 <template>
   <section class="item">
     <section :class="['item-entry', colorClass, ownedBgClass]">
-      <div class="base-info" @click="toggleChecked">
+      <div class="group">
         <input type="checkbox" :checked="isOwned" readonly />
-        <ws-icon
-          :iconPath="item.icon"
-          :outline-class="`outline-${quality}`"
-        />
-        <span :class="`color-${quality}`">{{ item.name }}</span>
-      </div>
+        <ws-icon :iconPath="item.icon" :outline-class="`outline-${quality}`" />
 
-      <div class="quality-and-attributes">
-        <div v-if="qualities > 0" class="quality-inputs">
-          <select
-            v-model="quality"
-            class="quality-input"
-            @click.stop
-            @change="updateQuality"
-          >
-            <option
-              v-for="q in craftingQualityOptions"
-              :key="'q1-' + q.value"
-              :value="q.value"
-              :class="`color-${q.value}`"
+        <div class="rows" @click="toggleChecked">
+          <span :class="`color-${quality}`">{{ item.name }}</span>
+          <div v-if="qualities > 0" class="group">
+            <select
+              v-model="quality"
+              class="quality-input"
+              @click.stop
+              @change="updateQuality"
             >
-              {{ q.name }}
-            </option>
-          </select>
-          <select
-            v-if="qualities === 2"
-            v-model="quality2"
-            class="quality-input"
-            @click.stop
-            @change="updateQuality"
-          >
-            <option
-              v-for="q in craftingQualityOptions"
-              :key="'q2-' + q.value"
-              :value="q.value"
-              :class="`color-${q.value}`"
+              <option
+                v-for="q in craftingQualityOptions"
+                :key="'q1-' + q.value"
+                :value="q.value"
+                :class="`color-${q.value}`"
+              >
+                {{ q.name }}
+              </option>
+            </select>
+            <select
+              v-if="qualities === 2"
+              v-model="quality2"
+              class="quality-input"
+              @click.stop
+              @change="updateQuality"
             >
-              {{ q.name }}
-            </option>
-          </select>
+              <option
+                v-for="q in craftingQualityOptions"
+                :key="'q2-' + q.value"
+                :value="q.value"
+                :class="`color-${q.value}`"
+              >
+                {{ q.name }}
+              </option>
+            </select>
+          </div>
         </div>
-
-        <span class="toggle" v-if="hasAttrs" @click="toggleOpen">{{
-          isOpen ? "▲" : "▼"
-        }}</span>
       </div>
+
+      <span class="toggle" v-if="hasAttrs" @click="toggleOpen">{{
+        isOpen ? "▲" : "▼"
+      }}</span>
     </section>
 
     <section v-if="hasAttrs && isOpen">
@@ -151,44 +148,31 @@ const toggleOpen = () => {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  text-align: left;
 
   background-color: $boxDarkBackground;
   border-radius: $sm;
   border: 1px solid $bgPrimary;
+  gap: $xxs;
 
   padding: $xxxs $xxs;
 
-  .base-info {
+  .rows {
+    display: flex;
+    flex-direction: column;
+    gap: $xxxs;
+  }
+
+  .group {
     display: flex;
     align-items: center;
-    text-align: left;
     gap: $xxs;
+  }
+
+  .toggle {
     cursor: pointer;
-  }
-
-  .quality-and-attributes {
-    display: flex;
-    align-items: center;
-    gap: $xs;
-
-    .toggle {
-      cursor: pointer;
-      padding: 0 $xs;
-      color: $txPrimary !important;
-    }
-  }
-
-  .quality-inputs {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: $xs;
-    justify-content: flex-end;
-
-    .quality-input {
-      background-color: $boxDarkBackground;
-      cursor: pointer;
-    }
+    padding: 0 $xs;
+    color: $txPrimary !important;
   }
 }
 </style>
