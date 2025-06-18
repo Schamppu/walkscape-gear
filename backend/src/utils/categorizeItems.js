@@ -4,6 +4,7 @@ export function categorizeItems({
   collectibles,
   crafted,
   loot,
+  containers,
   chestItems,
   itemRewards,
   achievementRewardItems,
@@ -32,7 +33,8 @@ export function categorizeItems({
 
   const { chestCategories, chestItemsList } = resolveChestCategories(
     loot,
-    chestItems
+    chestItems,
+    containers
   );
 
   const shopsCategory = resolveShopsCategory(loot, shopItems, chestItemsList);
@@ -88,19 +90,26 @@ const resolveActivityCategory = (loot, activitiesTable) => {
   };
 };
 
-const resolveChestCategories = (loot, chestTables) => {
+const resolveChestCategories = (loot, chestTables, containers) => {
   const chestItemsList = new Set();
   const chestTableCategories = [];
+  const nameLookup = Object.fromEntries(
+    containers.flatMap(({ tables, name }) =>
+      tables.flatMap(({ tables: ts }) => ts.map((id) => [id, name]))
+    )
+  );
 
   for (const table of chestTables) {
     const itemIds = new Set(table.items);
+    const containerName =
+      nameLookup[table.id] || `${capitalize(table.name.split(" ")[0])} chest`;
 
     let filteredItems = loot.filter((item) => itemIds.has(item.id));
     filteredItems.forEach((item) => chestItemsList.add(item.id));
 
     if (filteredItems.length > 0) {
       chestTableCategories.push({
-        title: `${capitalize(table.name.split(" ")[0])} chest`,
+        title: containerName,
         key: `chest_${table.name.toLowerCase().replace(/\s+/g, "_")}`,
         items: filteredItems,
       });
