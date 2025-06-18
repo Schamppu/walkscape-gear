@@ -37,7 +37,6 @@ export const useItemsStore = defineStore("itemStore", {
 
       try {
         await upsertOwnedItems({ items: changed });
-        this.setOwned(changed);
       } catch (error) {
         console.error("error updating owned items", error);
       }
