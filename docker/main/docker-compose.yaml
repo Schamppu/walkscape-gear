@@ -23,6 +23,7 @@ services:
       - DATABASE_URL
       - API_BASE_URL
     networks:
+      - default
       - ws-gear
 
   postgres:
