@@ -1,6 +1,5 @@
 <script setup>
 import { computed } from "vue";
-import { checkRequirements } from "@/utils/requirements";
 import { useEffectiveAttrs } from "@/utils/useEffectiveAttrs";
 import WsIcon from "@/components/common/WsIcon.vue";
 

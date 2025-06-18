@@ -1,6 +1,6 @@
 import { getRawData } from "./rawData";
 import { sumAttrs } from "./qualityAttrs";
-import { intersect } from "./intersect";
+import { useRequirements } from "./useRequirements";
 
 export const showItemForActivity = (itemProxy, activity, quality) => {
   const item = getRawData(itemProxy);
@@ -40,29 +40,10 @@ const usefulAttrs = (item, activity, quality, isRecipe) => {
     return isRecipe || (!isRecipe && attr.statText !== "Crafting outcome");
   };
 
-  const filterGlobal = (attr) => {
-    return attr.requirements?.every(({ type }) => {
-      const filteredTypes = ["mainSkill", "traveling"];
-      return !intersect([type], filteredTypes).length;
-    });
-  };
-
-  const filterSkill = (attr) => {
-    return attr.requirements?.some((req) => {
-      return (
-        (req.type === "mainSkill" && req.requirement.skill === skill) ||
-        (req.type === "traveling" && isTravel)
-      );
-    });
-  };
-
-  return baseAttrs.filter((attr) => {
-    const co = filterCO(attr);
-    const global = filterGlobal(attr);
-    const skill = filterSkill(attr);
-
-    return co && (global || skill);
-  });
+  const { checkRequirements } = useRequirements();
+  return baseAttrs.filter(
+    (attr) => filterCO(attr) && checkRequirements(attr.requirements)
+  );
 };
 
 const checksSkillRequirements = (item, skill) => {
