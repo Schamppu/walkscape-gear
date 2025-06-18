@@ -3,9 +3,7 @@ import { intersect } from "./intersect";
 export const checkRequirements = (reqs, data) => {
   if (!reqs || !reqs.length) return true;
 
-  return reqs.every((requirements) =>
-    checkRequirement(requirements, data)
-  );
+  return reqs.every((requirements) => checkRequirement(requirements, data));
 };
 
 const checkRequirement = (req, data) => {
@@ -43,7 +41,10 @@ const checkRequirement = (req, data) => {
       value = true;
       break;
     case "realm":
-      if (location) value = location.faction === requirement.realm;
+      if (location)
+        value =
+          location.faction === requirement.realm ||
+          location.subFactions?.includes(requirement.realm);
       break;
     case "traveling":
       if (activity) value = activity.id === "activity-travelling";
