@@ -180,7 +180,7 @@ const resolveRewardsCategories = (loot, rewards) => {
       items: loot.filter(({ id }) => achievement_rewards.has(id)),
     },
     {
-      title: "Repuation rewards",
+      title: "Reputation rewards",
       key: "reputation_rewards",
       items: loot.filter(({ id }) => reputation_rewards.has(id)),
     },
