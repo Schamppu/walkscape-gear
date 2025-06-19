@@ -9,6 +9,7 @@ import {
 import TabContentWrapper from "../common/TabContentWrapper.vue";
 import NestedDropdown from "@/components/common/dropdowns/NestedDropdown.vue";
 import ActivityInfo from "./ActivityInfo.vue";
+import DropsInfo from "./DropsInfo.vue";
 
 const activityStore = useActivityStore();
 
@@ -83,6 +84,10 @@ const selectActivity = async (activity) => {
       :activity="activityStore.activity"
       :keywords="keywords"
       :locations="activityStore.locations"
+    />
+    <drops-info
+      v-if="!loadingActivity && activityStore.activitySelected"
+      :activity="activityStore.activity"
     />
   </tab-content-wrapper>
 </template>
