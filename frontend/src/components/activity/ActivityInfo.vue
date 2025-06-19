@@ -2,6 +2,7 @@
 import { computed } from "vue";
 import WsLabel from "@/components/common/WsLabel.vue";
 import InfoBubble from "@/components/common/InfoBubble.vue";
+import LocationBubble from "@/components/common/LocationBubble.vue";
 import SkillBubble from "@/components/common/SkillBubble.vue";
 import KeywordDisplay from "@/components/common/KeywordDisplay.vue";
 import { useEffectiveAttrs } from "@/utils/useEffectiveAttrs";
@@ -143,13 +144,9 @@ const sections = computed(() => {
     },
     {
       label: "Locations",
-      component: InfoBubble,
-      items: !isTravel
-        ? props.locations.map(({ name: text, icon: iconPath }) => {
-            return { text, iconPath };
-          })
-        : [],
-      itemProps: (item) => ({ ...item }),
+      component: LocationBubble,
+      items: !isTravel ? props.locations : [],
+      itemProps: (item) => ({ location: item }),
     },
   ].filter(({ items }) => !isEmpty(items));
 });
