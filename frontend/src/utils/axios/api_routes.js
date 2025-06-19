@@ -80,9 +80,9 @@ export function getStats() {
 export function getMultipleLootTables(ids) {
   return proxy({
     method: "POST",
-    url: "loot_tables/multiple",
+    url: "lootTables/multiple",
     options: {
-      body: { ids },
+      ids,
     },
   });
 }
