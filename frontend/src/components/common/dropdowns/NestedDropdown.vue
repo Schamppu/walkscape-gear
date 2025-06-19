@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, onBeforeUnmount } from "vue";
 import WsLabel from "../WsLabel.vue";
 import LabelWithIcon from "../LabelWithIcon.vue";
 import DropdownCategory from "./DropdownCategory.vue";
@@ -28,6 +28,17 @@ const searchTerm = ref("");
 onMounted(() => {
   const noneOption = props.data.filter(({ value }) => value === "None");
   if (noneOption.length) selectItem(noneOption[0]);
+
+  const onEsc = (e) => {
+    if (e.key === "Escape" || e.key === "Esc") {
+      isOpen.value = false;
+    }
+  };
+  window.addEventListener("keydown", onEsc);
+  // Clean up
+  onBeforeUnmount(() => {
+    window.removeEventListener("keydown", onEsc);
+  });
 });
 
 const toggle = () => {
@@ -66,7 +77,7 @@ const selectItem = (item) => {
   emit("select", item);
 };
 </script>
-  
+
 <template>
   <div v-clickOutside="handleClickOutside" class="wrapper" ref="dropdownRef">
     <div class="header">
