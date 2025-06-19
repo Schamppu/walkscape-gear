@@ -71,13 +71,13 @@ const selectItem = (item) => {
   <div v-clickOutside="handleClickOutside" class="wrapper" ref="dropdownRef">
     <div class="header">
       <ws-label :label="label" label-for="dropdown-trigger" />
-      <div class="dropdown-trigger" @click="toggle">
+      <button class="dropdown-trigger" @click="toggle">
         <label-with-icon
           :text="selected.value || 'Select an item'"
           :icon="selected.icon"
         ></label-with-icon>
         <span class="chevron" :class="{ isOpen }">▼</span>
-      </div>
+      </button>
     </div>
 
     <div v-if="isOpen" class="dropdown-menu">

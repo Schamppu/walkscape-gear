@@ -41,14 +41,14 @@ watch(
 
 <template>
   <li class="dropdown-category">
-    <div
+    <button
       class="category-header"
       :class="{ 'no-border': noBorder }"
       @click="isNone ? handleSelect(category) : toggle()"
     >
       <LabelWithIcon :icon="category.icon" :text="category.value" />
       <span v-if="!isNone" class="chevron" :class="{ open: isOpen }">▼</span>
-    </div>
+    </button>
 
     <ul v-if="isOpen" class="item-list">
       <DropdownItem
@@ -73,6 +73,8 @@ watch(
 
 .dropdown-category {
   .category-header {
+    width: 100%;
+    display: flex;
     padding: $xxs $xs;
     background-color: $boxTransparentDarkBackground;
     cursor: pointer;
