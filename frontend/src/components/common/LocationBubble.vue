@@ -20,7 +20,7 @@ const isSelected = computed(() => {
 });
 
 function handleClick() {
-  activityStore.setLocation(props.location);
+  if (!isSelected.value) activityStore.setLocation(props.location);
 }
 </script>
 
