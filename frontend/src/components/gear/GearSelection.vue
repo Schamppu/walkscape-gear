@@ -87,7 +87,6 @@ const updateVisible = (visibility) => {
 .tab-content {
   flex-grow: 1;
 
-  min-width: 25rem;
   overflow-y: auto;
 
   justify-content: center;

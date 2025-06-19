@@ -27,11 +27,20 @@ const handleClick = () => emit("select", props.gearType, storeKey);
 
 <template>
   <div class="gear-slot-wrapper" @click="handleClick">
-    <p v-if="!gearRef" class="typography-label label">{{ gearType }}</p>
+    <p
+      v-if="!gearRef"
+      class="typography-label label"
+      :style="[
+        gearType.length >= 7 ? 'font-size: 0.6rem;' : '',
+        gearType.length >= 9 ? 'font-size: 0.5rem;' : '',
+      ]"
+    >
+      {{ gearType }}
+    </p>
     <div v-else class="content">
       <ws-icon
         :icon-path="gearRef.icon"
-        size="xl"
+        size="lg"
         :outline-class="`outline-${gearRef.quality}`"
       />
     </div>
@@ -40,8 +49,8 @@ const handleClick = () => emit("select", props.gearType, storeKey);
 
 <style lang="scss" scoped>
 .gear-slot-wrapper {
-  width: 80px;
-  height: 80px;
+  width: 64px;
+  height: 64px;
   border: 1px solid $boxPrimaryOutline;
   border-radius: $md;
 
