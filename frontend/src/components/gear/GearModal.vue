@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted, onBeforeUnmount } from "vue";
 import { useGearStore } from "@/store/gear";
 import { useItemsStore } from "@/store/items";
 import GearPreview from "./GearPreview.vue";
@@ -17,6 +17,19 @@ const props = defineProps({
 });
 
 const emit = defineEmits(["update:visible"]);
+
+onMounted(() => {
+  const onEsc = (e) => {
+    if (e.key === "Escape" || e.key === "Esc") {
+      closeDialog();
+    }
+  };
+  window.addEventListener("keydown", onEsc);
+  // Clean up
+  onBeforeUnmount(() => {
+    window.removeEventListener("keydown", onEsc);
+  });
+});
 
 // Define tabs and map them to their components
 const tabs = [
