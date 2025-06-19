@@ -16,7 +16,7 @@ const emit = defineEmits(["click"]);
 <style lang="scss" scoped>
 .tab {
   width: 100%;
-  padding: $xxxlg;
+  padding: $lg;
 
   &:hover {
     background-color: $boxPrimaryBackground;
