@@ -62,7 +62,7 @@ const toggleChecked = (e) => {
 const updateQuality = () => {
   const data = {
     itemId: props.item.id,
-    owned: props.selected,
+    owned: true,
     quality: quality.value,
     quality2: quality2.value,
   };
