@@ -1,6 +1,7 @@
 import { createBaseRouter } from "./baseRouter.js";
 
 import { Router } from "express";
+import { achievementRoutes } from "./achievementRoutes.js";
 import { dbRoutes } from "./dbRoutes.js";
 import { itemRoutes } from "./itemRoutes.js";
 import iconRoutes from "./iconRoutes.js";
@@ -16,6 +17,7 @@ import {
 export function registerRoutes(app) {
   const apiRouter = Router();
 
+  apiRouter.use("/achievements", achievementRoutes);
   apiRouter.use("/activities", createBaseRouter("Activity", activityService));
   apiRouter.use("/icons", iconRoutes);
   apiRouter.use("/items", itemRoutes);

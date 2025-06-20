@@ -18,7 +18,7 @@ export const getItem = wrapController(
   }
 );
 
-const fetchCollectibles = () =>
+export const fetchCollectibles = () =>
   itemService.search({ type: "collectible", detailed: true });
 const fetchCrafted = () =>
   itemService.search({ type: "crafted", detailed: true });
