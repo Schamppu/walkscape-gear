@@ -40,8 +40,11 @@ const changeTab = (index) => {
   padding: 0;
 
   flex-shrink: 0;
-  position: sticky;
+  position: fixed;
+  left: 0;
   bottom: 0;
+  background-color: $boxDarkBackground;
+  height: 64px;
 
   z-index: 500;
 }
