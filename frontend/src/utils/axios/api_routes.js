@@ -86,3 +86,9 @@ export function getMultipleLootTables(ids) {
     },
   });
 }
+
+export function getApInfo() {
+  return proxy({
+    url: "achievements/ap",
+  });
+}
