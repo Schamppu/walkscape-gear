@@ -17,7 +17,7 @@ function handleClick() {
 
 <template>
   <li>
-    <button class="dropdown-item" @click="handleClick"  >
+    <button class="dropdown-item" @click="handleClick">
       <LabelWithIcon :icon="item.icon" :text="item.value" />
     </button>
   </li>
@@ -26,6 +26,7 @@ function handleClick() {
 <style lang="scss" scoped>
 .dropdown-item {
   cursor: pointer;
+  width: 100%;
   padding: $xxs 0;
   transition: background 0.2s ease;
   background-color: $boxTransparentDarkBackground;
