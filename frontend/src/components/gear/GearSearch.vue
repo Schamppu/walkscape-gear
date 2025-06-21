@@ -36,16 +36,14 @@ const filteredItems = computed(() => {
   const showUseful = gearStore.showUseful;
 
   const filterActivity = (item) => {
-    const { id } = item;
-    const owned = id in itemsStore.ownedItems;
-    const quality = owned ? itemsStore.ownedItems[id].quality : item.quality;
-
     if (!activity || !showUseful) {
       return true;
     }
 
     return (
-      showUseful && activity && showItemForActivity(item, activity, quality)
+      showUseful &&
+      activity &&
+      showItemForActivity(item, activity, item.quality)
     );
   };
   const filterSearch = ({ name }) =>
@@ -54,6 +52,15 @@ const filteredItems = computed(() => {
     (showOwned && item.id in itemsStore.ownedItems) || !showOwned;
 
   return slotItems
+    .map((item) => {
+      const { id } = item;
+      const owned = id in itemsStore.ownedItems;
+      const quality = owned ? itemsStore.ownedItems[id].quality : item.quality;
+      return {
+        ...item,
+        quality,
+      };
+    })
     .filter(
       (item) => filterActivity(item) && filterSearch(item) && filterOwned(item)
     )
