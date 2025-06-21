@@ -28,7 +28,7 @@ const filterStat = (attr) => {
 const sumTotal = computed(() => {
   const statAttrs = allAttrs.value.filter(filterStat);
   const total = sumStats(statAttrs.map((attr) => attr.stats[0]));
-  const roundedValue = Math.round(props.isPercent ? 100 * total : total);
+  const roundedValue = Math.round(props.isPercent ? 10000 * total : 100 * total) / 100;
   const value = roundedValue <= 0 ? roundedValue : `+${roundedValue}`;
   return props.isPercent ? `${value}%` : value;
 });
@@ -47,7 +47,7 @@ const sumApplicable = computed(() => {
   const { sum, positive, negative } = totalObj;
 
   const isNegative = Math.abs(negative) > Math.abs(positive);
-  const roundedVal = Math.round(props.isPercent ? 100 * sum : sum);
+  const roundedVal = Math.round(props.isPercent ? 10000 * sum : 100 * sum) / 100;
   const signedVal = roundedVal <= 0 ? roundedVal : `+${roundedVal}`;
   const value = props.isPercent ? `${signedVal}%` : signedVal;
   return { value, isNegative };
