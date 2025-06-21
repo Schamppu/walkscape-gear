@@ -29,7 +29,11 @@ const statList = computed(() => {
 
 <template>
   <ul>
-    <li v-for="({ item, stat, effective }, index) in statList" :key="index">
+    <li
+      class="li-item"
+      v-for="({ item, stat, effective }, index) in statList"
+      :key="index"
+    >
       <p :class="stat.isNegative ? 'negative' : 'positive'" class="stat-line">
         <span v-if="stat.isPercent">
           <span v-if="!(stat.value <= 0)">+</span
@@ -53,6 +57,10 @@ const statList = computed(() => {
 </template>
 
 <style lang="scss" scoped>
+.li-item {
+  list-style-type: none;
+}
+
 .stat-line {
   display: flex;
   padding: $sm;
