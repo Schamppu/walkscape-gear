@@ -26,7 +26,8 @@ const activityStore = useActivityStore();
 
 const searchTerm = ref("");
 const slotItems = Object.values(itemsStore.allItems).filter(
-  ({ gearType }) => gearType === props.gearType
+  ({ gearType, type }) =>
+    gearType === props.gearType || type === props.gearType
 );
 
 const filteredItems = computed(() => {
