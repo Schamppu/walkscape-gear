@@ -65,6 +65,7 @@ export function useSkillModifiers() {
       const value = (1 + xpPercent.value) * base + xpFlat.value;
       return {
         skill,
+        skillText: skill,
         base,
         value,
       };
@@ -75,6 +76,7 @@ export function useSkillModifiers() {
       const value = xpRewardsArr.reduce((sum, r) => sum + r.value, 0);
       xpRewardsArr.push({
         skill: "xp",
+        skillText: "total",
         base: totalBase,
         value,
       });
@@ -84,9 +86,10 @@ export function useSkillModifiers() {
   });
 
   const xpPerStep = computed(() => {
-    return xpRewards.value.map(({ skill, value }) => {
+    return xpRewards.value.map(({ skill, skillText, value }) => {
       return {
         skill,
+        skillText,
         value: value / stepsPerAction.value,
         displayedValue: value / stepsPerCompletion.value,
       };

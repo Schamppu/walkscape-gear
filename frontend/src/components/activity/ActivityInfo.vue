@@ -26,6 +26,10 @@ const borderClass = computed(
   () => `border-${props.activity?.relatedSkillsList[0]}`
 );
 
+const n = (value) => {
+  return parseFloat(value.toFixed(2));
+};
+
 const getKeyword = (kw) => {
   const findKw = (kwId) => props.keywords.find(({ id }) => id === kwId);
 
@@ -70,7 +74,7 @@ const sections = computed(() => {
           iconPath: "assets/icons/text/general_icons/steps.png",
         },
         {
-          text: `${Math.round(workEfficiency.value * 10000) / 100} / ${
+          text: `${n(workEfficiency.value * 100)} / ${
             Math.round(maxWorkEfficiency.value * 100) - 100
           }%`,
           tooltip: `${Math.round(workEfficiency.value * 100)}% work efficiency`,
@@ -103,10 +107,10 @@ const sections = computed(() => {
     {
       label: "XP rewards (current / base)",
       component: SkillBubble,
-      items: xpRewards.value.map(({ skill, value, base }) => ({
+      items: xpRewards.value.map(({ skill, skillText, value, base }) => ({
         skill,
-        text: `${Math.round(100 * value) / 100} / ${base}`,
-        tooltipText: `Rewards ${Math.round(100 * value) / 100} ${skill} XP`,
+        text: `${n(value)} / ${n(base)}`,
+        tooltipText: `Rewards ${n(value)} ${skillText} XP`,
         value,
         base,
       })),
@@ -115,11 +119,13 @@ const sections = computed(() => {
     {
       label: "XP per step (real / displayed)",
       component: SkillBubble,
-      items: xpPerStep.value.map(({ skill, value, displayedValue }) => ({
-        skill,
-        text: `${value.toFixed(2)} /  ${displayedValue.toFixed(2)}`,
-        tooltip: `Gains ${value.toFixed(2)} ${skill} XP per step`,
-      })),
+      items: xpPerStep.value.map(
+        ({ skill, skillText, value, displayedValue }) => ({
+          skill,
+          text: `${n(value)} /  ${n(displayedValue)}`,
+          tooltip: `Gains ${n(value)} ${skillText} XP per step`,
+        })
+      ),
       itemProps: (item) => ({ ...item }),
     },
     {
