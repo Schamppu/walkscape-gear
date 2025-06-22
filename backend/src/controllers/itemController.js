@@ -23,7 +23,10 @@ export const fetchCollectibles = () =>
 const fetchCrafted = () =>
   itemService.search({ type: "crafted", detailed: true });
 const fetchLoot = () => itemService.search({ type: "loot", detailed: true });
-const fetchContainers = () => itemService.search({ type: "container", detailed: true });
+const fetchContainers = () =>
+  itemService.search({ type: "container", detailed: true });
+const fetchConsumables = () =>
+  itemService.search({ type: "consumable", detailed: true });
 
 export async function getCategorizedItems(req, res) {
   try {
@@ -32,6 +35,7 @@ export async function getCategorizedItems(req, res) {
       crafted,
       loot,
       containers,
+      consumables,
       itemRewards,
       achievementRewardItems,
       activityItems,
@@ -42,6 +46,7 @@ export async function getCategorizedItems(req, res) {
       fetchCrafted(),
       fetchLoot(),
       fetchContainers(),
+      fetchConsumables(),
       fetchItemRewards(),
       fetchAchievementRewards(),
       fetchActivityItems(),
@@ -54,6 +59,7 @@ export async function getCategorizedItems(req, res) {
       crafted,
       loot,
       containers,
+      consumables,
       itemRewards,
       achievementRewardItems,
       activityItems,

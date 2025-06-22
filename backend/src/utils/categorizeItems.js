@@ -1,8 +1,15 @@
 import { capitalize } from "./string.js";
 
 export function categorizeItems(data) {
-  const { collectibles, crafted, loot, containers, chestItems, ...sourceInfo } =
-    data;
+  const {
+    collectibles,
+    crafted,
+    loot,
+    containers,
+    consumables,
+    chestItems,
+    ...sourceInfo
+  } = data;
 
   const { chestCategories } = resolveChestCategories(
     loot,
@@ -19,6 +26,10 @@ export function categorizeItems(data) {
   categoryGroups.push({
     title: "Crafted",
     categories: resolveCraftedCategories(crafted),
+  });
+  categoryGroups.splice(1, 0, {
+    title: "Consumables",
+    categories: resolveConsumables(consumables),
   });
 
   categoryGroups.forEach(({ categories }) => {
@@ -183,6 +194,42 @@ const resolveCraftedCategories = (crafted) => {
     });
 
   return categories;
+};
+
+const resolveConsumables = (consumables) => {
+  const filteredConsumables = consumables.filter(
+    ({ consumableType }) => consumableType == "food"
+  );
+
+  const grouped = {};
+  for (const item of filteredConsumables) {
+    // Find the first keyword present in the item's keywords array
+    item.keywords.forEach((keyword) => {
+      if (!keyword) return;
+      if (!grouped[keyword]) grouped[keyword] = [];
+      grouped[keyword].push(item);
+    });
+  }
+
+  // Filter out unwanted categories
+  const categoriesToExclude = [
+    "alcohol",
+    "beverage",
+    "cookedFish",
+    "food",
+    "sandwich",
+    "search_beverage",
+    "search_food",
+  ];
+  for (const category of categoriesToExclude) {
+    delete grouped[category];
+  }
+
+  return Object.entries(grouped).map(([category, items]) => ({
+    title: `${capitalize(category.replace("search_", ""))} consumables`,
+    key: category,
+    items,
+  }));
 };
 
 const resolveMiscItems = (source, categories) => {
