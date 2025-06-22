@@ -5,7 +5,7 @@ import InfoBubble from "@/components/common/InfoBubble.vue";
 import LocationBubble from "@/components/common/LocationBubble.vue";
 import SkillBubble from "@/components/common/SkillBubble.vue";
 import KeywordDisplay from "@/components/common/KeywordDisplay.vue";
-import { useEffectiveAttrs } from "@/utils/useEffectiveAttrs";
+import { useSkillModifiers } from "@/utils/useSkillModifiers";
 import { isEmpty } from "@/utils/isEmpty";
 
 const props = defineProps({
@@ -14,7 +14,13 @@ const props = defineProps({
   locations: Array,
 });
 
-const { totalsByStat } = useEffectiveAttrs();
+const {
+  maxWorkEfficiency,
+  workEfficiency,
+  stepsPerCompletion,
+  xpRewards,
+  xpPerStep,
+} = useSkillModifiers();
 
 const borderClass = computed(
   () => `border-${props.activity?.relatedSkillsList[0]}`
@@ -42,54 +48,16 @@ const getRequirementKeywords = (requirements) => {
     .flatMap(({ requirement }) => getKeyword(requirement));
 };
 
-const getStat = (stat, key = "percent") => {
-  return stat in totalsByStat.value
-    ? key in totalsByStat.value[stat]
-      ? totalsByStat.value[stat][key]["sum"]
-      : 0
-    : 0;
-};
-
 const sections = computed(() => {
   const {
     id,
     workRequired,
-    maxWorkEfficiency,
     levelRequirementsMap,
     requiredKeywords,
     requirements,
-    xpRewardsMap,
   } = props.activity;
 
   const isTravel = id === "activity-travelling";
-  const we = Math.min(getStat("workEfficiency"), maxWorkEfficiency - 1);
-  const stepsRequired = getStat("stepsRequired", "flat");
-  const steps = Math.max(
-    10,
-    Math.ceil((workRequired || 1000) / (1 + we)) + stepsRequired
-  );
-
-  const flatXp = getStat("bonusExperience", "flat");
-  const percentXp = getStat("bonusExperience");
-  const xpRewardsArr = Object.entries(xpRewardsMap).map(([skill, base]) => {
-    const current = (1 + percentXp) * base + flatXp;
-    return {
-      skill,
-      base,
-      current,
-    };
-  });
-
-  let xpRewards = [...xpRewardsArr];
-  if (xpRewardsArr.length > 1) {
-    const totalBase = xpRewardsArr.reduce((sum, r) => sum + r.base, 0);
-    const totalCurrent = xpRewardsArr.reduce((sum, r) => sum + r.current, 0);
-    xpRewards.push({
-      skill: "xp",
-      base: totalBase,
-      current: totalCurrent,
-    });
-  }
 
   return [
     {
@@ -97,15 +65,15 @@ const sections = computed(() => {
       component: InfoBubble,
       items: [
         {
-          text: `${steps} / ${workRequired || 1000}`,
-          tooltip: `${steps} steps per action`,
+          text: `${stepsPerCompletion.value} / ${workRequired || 1000}`,
+          tooltip: `${stepsPerCompletion.value} steps per action`,
           iconPath: "assets/icons/text/general_icons/steps.png",
         },
         {
-          text: `${Math.round(we * 10000) / 100} / ${
-            Math.round(maxWorkEfficiency * 100) - 100
+          text: `${Math.round(workEfficiency.value * 10000) / 100} / ${
+            Math.round(maxWorkEfficiency.value * 100) - 100
           }%`,
-          tooltip: `${Math.round(we * 100)}% work efficiency`,
+          tooltip: `${Math.round(workEfficiency.value * 100)}% work efficiency`,
           iconPath: "assets/icons/text/stats/skilling/work_efficiency.png",
         },
       ],
@@ -135,11 +103,11 @@ const sections = computed(() => {
     {
       label: "XP rewards (current / base)",
       component: SkillBubble,
-      items: xpRewards.map(({ skill, current, base }) => ({
+      items: xpRewards.value.map(({ skill, value, base }) => ({
         skill,
-        text: `${Math.round(100 * current) / 100} / ${base}`,
-        tooltipText: `Rewards ${Math.round(100 * current) / 100} ${skill} XP`,
-        current,
+        text: `${Math.round(100 * value) / 100} / ${base}`,
+        tooltipText: `Rewards ${Math.round(100 * value) / 100} ${skill} XP`,
+        value,
         base,
       })),
       itemProps: (item) => ({ ...item }),
