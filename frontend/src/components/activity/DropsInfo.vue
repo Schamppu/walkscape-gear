@@ -23,7 +23,6 @@ onMounted(async () => {
   });
 
   resolvedLootTables.value = resolvedTables;
-  // console.log(resolvedLootTables.value);
 });
 </script>
 
