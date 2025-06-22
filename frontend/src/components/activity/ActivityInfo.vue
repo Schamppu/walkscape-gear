@@ -113,6 +113,16 @@ const sections = computed(() => {
       itemProps: (item) => ({ ...item }),
     },
     {
+      label: "XP per step (real / displayed)",
+      component: SkillBubble,
+      items: xpPerStep.value.map(({ skill, value, displayedValue }) => ({
+        skill,
+        text: `${value.toFixed(2)} /  ${displayedValue.toFixed(2)}`,
+        tooltip: `Gains ${value.toFixed(2)} ${skill} XP per step`,
+      })),
+      itemProps: (item) => ({ ...item }),
+    },
+    {
       label: "Locations",
       component: LocationBubble,
       items: !isTravel ? props.locations : [],
