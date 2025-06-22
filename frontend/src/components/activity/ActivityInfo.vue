@@ -27,7 +27,7 @@ const borderClass = computed(
 );
 
 const n = (value) => {
-  return parseFloat(value.toFixed(2));
+  return parseFloat(value.toFixed(3));
 };
 
 const getKeyword = (kw) => {
