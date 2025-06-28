@@ -38,3 +38,23 @@ export const sumAttrs = (itemAttrs, qualityAttrs, quality) => {
 
   return attrs;
 };
+
+export const sumBuffAttrs = (buffs, quality) => {
+  const buffData = buffs.flatMap(({ data }) =>
+    data.flatMap(({ buffs }) => buffs)
+  );
+  if (!buffData || buffData.length === 0) {
+    return [];
+  }
+
+  const mapAttrs = (attribute) => {
+    return {
+      ...attribute,
+      stats: attribute.stats,
+    };
+  };
+
+  const attrs = buffData[0].attributes.map(mapAttrs);
+  const fineAttrs = buffData[0].fineAttributes.map(mapAttrs);
+  return quality === "common" ? attrs : fineAttrs;
+};

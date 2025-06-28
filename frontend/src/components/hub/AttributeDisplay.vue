@@ -1,19 +1,25 @@
 <script setup>
 import { computed } from "vue";
 import { toDeepRaw } from "@/utils/rawData";
-import { sumAttrs } from "@/utils/qualityAttrs";
+import { sumAttrs, sumBuffAttrs } from "@/utils/qualityAttrs";
 
 const props = defineProps({
   itemAttrs: Array,
   qualityAttrs: Array,
   quality: String,
+  isConsumable: {
+    type: Boolean,
+    default: false,
+  },
 });
 
-const attrs = sumAttrs(
-  toDeepRaw(props.itemAttrs),
-  toDeepRaw(props.qualityAttrs),
-  props.quality
-);
+const attrs = props.isConsumable
+  ? sumBuffAttrs(toDeepRaw(props.itemAttrs), props.quality)
+  : sumAttrs(
+      toDeepRaw(props.itemAttrs),
+      toDeepRaw(props.qualityAttrs),
+      props.quality
+    );
 
 const getStatText = (stat) => {
   const { value, isPercent, name } = stat;
@@ -35,8 +41,7 @@ const getRequirementText = (base, requirements) => {
 
   const reqToText = (prev, req) => {
     const { type, opposite, requirement } = req;
-    const { value, isPercentage, skill, keywordNames, quantity, realmName } =
-      requirement;
+    const { value, skill, keywordNames, quantity, realmName } = requirement;
     const not = opposite ? "NOT " : "";
     if (type === "achievementPoint")
       return `${prev} when ${value} Achievement Points`;
@@ -46,10 +51,12 @@ const getRequirementText = (base, requirements) => {
       return `${prev} if you have ${quantity} ${keywordNames[0]} equipped`;
     else if (type === "locationHasKeywords")
       return `${prev} while ${not}in ${keywordNames[0]} area`;
-    else if (type === "realm") return `${prev} while ${not}in the ${realmName} area`;
+    else if (type === "realm")
+      return `${prev} while ${not}in the ${realmName} area`;
     return prev;
   };
 
+  console.log('reqs:', requirements);
   requirements.forEach((r) => {
     text = reqToText(text, r);
   });

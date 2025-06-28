@@ -63,6 +63,9 @@ function toggleFine(e) {
   e.stopPropagation();
   fineOwned.value = !fineOwned.value;
 }
+const toggleOpen = () => {
+  isOpen.value = !isOpen.value;
+};
 </script>
 
 <template>
@@ -93,7 +96,7 @@ function toggleFine(e) {
         />
 
         <div class="rows">
-          <span :class="`color-${quality}`">{{ item.name }}</span>
+          <span>{{ item.name }}</span>
         </div>
       </div>
 
@@ -102,21 +105,18 @@ function toggleFine(e) {
       </button>
     </section>
 
-    <!-- <section v-if="hasAttrs && isOpen">
+    <section v-if="hasAttrs && isOpen">
       <attribute-display
-        :itemAttrs="item.itemAttrs"
-        :qualityAttrs="item.itemQualityAttrs"
-        :quality="quality"
-        :key="`attributes-q1-${quality}`"
+        :itemAttrs="item.buffs"
+        :quality="normal"
+        is-consumable
       />
       <attribute-display
-        v-if="qualities === 2 && quality2 && quality !== quality2"
-        :itemAttrs="item.itemAttrs"
-        :qualityAttrs="item.itemQualityAttrs"
-        :quality="quality2"
-        :key="`attributes-q2-${quality2}`"
+        :itemAttrs="item.buffs"
+        :quality="fine"
+        is-consumable
       />
-    </section> -->
+    </section>
   </section>
 </template>
 
