@@ -12,22 +12,19 @@ export function useUrlMap() {
     return {
       ...gearStore.gearSlots,
       activity: activityStore.activity,
-      potion: {},
-      service: {},
     };
   });
 
   function encodeLoadout(indices, bitsPerItem) {
-    const totalBits = bitsPerItem * indices.length;
     const bitString = indices
       .map((i) => i.toString(2).padStart(bitsPerItem, "0"))
       .join("");
 
-    const byteArray = new Uint8Array(Math.ceil(totalBits / 8));
-    for (let i = 0; i < bitString.length; i++) {
-      const byteIndex = Math.floor(i / 8);
-      byteArray[byteIndex] <<= 1;
-      byteArray[byteIndex] |= bitString[i] === "1" ? 1 : 0;
+    const byteArray = new Uint8Array(Math.ceil(bitString.length / 8));
+
+    for (let i = 0; i < byteArray.length; i++) {
+      const byteBits = bitString.slice(i * 8, (i + 1) * 8).padEnd(8, "0");
+      byteArray[i] = parseInt(byteBits, 2);
     }
 
     return btoa(String.fromCharCode(...byteArray));

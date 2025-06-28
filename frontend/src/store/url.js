@@ -29,9 +29,7 @@ export const useUrlStore = defineStore("url", {
       tool4: "tool",
       tool5: "tool",
       tool6: "tool",
-      potion: "potion",
       consumable: "consumable",
-      service: "service",
     },
     isLoaded: false,
   }),
@@ -53,17 +51,18 @@ export const useUrlStore = defineStore("url", {
     },
 
     encodeAndPushToUrl() {
-      const { encodeGearLoadout } = useUrlMap();
+      const { encodeGearLoadout, decodeGearLoadout } = useUrlMap();
       const encoded = encodeGearLoadout();
+      const decoded = decodeGearLoadout(encoded);
 
       const url = new URL(window.location.href);
-      url.searchParams.set("loadout", encoded);
+      url.pathname = "/" + encoded;
       window.history.replaceState({}, "", url);
     },
 
     async decodeFromUrlAndApply() {
-      const params = new URLSearchParams(window.location.search);
-      const encoded = params.get("loadout");
+      const path = window.location.pathname;
+      const encoded = path.slice(1);
       if (!encoded) return;
 
       const { decodeGearLoadout } = useUrlMap();

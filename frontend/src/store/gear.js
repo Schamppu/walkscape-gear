@@ -64,12 +64,15 @@ export const useGearStore = defineStore("gearStore", {
         console.error("no id provided");
         return;
       }
+
+      const itemsStore = useItemsStore();
+      const existsInAll = id in itemsStore.allItems;
+      if (!existsInAll) return;
+
       const previousItem = this.gearSlots[itemSlot];
       if (previousItem?.id === id) return;
 
       await getItem({ id }).then(({ data }) => {
-        const itemsStore = useItemsStore();
-
         const owned = id in itemsStore.ownedItems;
         const quality = owned
           ? itemsStore.ownedItems[id].quality
