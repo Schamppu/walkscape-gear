@@ -13,7 +13,6 @@ export function useUrlMap() {
       ...gearStore.gearSlots,
       activity: activityStore.activity,
       potion: {},
-      consumable: {},
       service: {},
     };
   });
@@ -45,6 +44,7 @@ export function useUrlMap() {
 
       return urlStore.reverseMapping[slotName][itemId] ?? 0;
     });
+
     return encodeLoadout(numbers, 7);
   };
 
