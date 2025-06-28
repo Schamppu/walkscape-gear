@@ -52,6 +52,7 @@ function toggleCategory(category) {
           <item-category-panel
             v-for="cat in group.categories"
             :key="cat.title"
+            :group="group.title"
             :title="cat.title"
             :qualities="cat.qualities"
             :item-category="cat.key"
@@ -65,7 +66,6 @@ function toggleCategory(category) {
 </template>
 
 <style lang="scss" scoped>
-
 .wrapper {
   display: flex;
   flex-direction: column;

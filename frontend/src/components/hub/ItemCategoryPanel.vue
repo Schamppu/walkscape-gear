@@ -2,9 +2,11 @@
 import { computed, ref, watch } from "vue";
 import { useItemsStore } from "@/store/items";
 import ItemEntry from "./ItemEntry.vue";
+import ConsumableEntry from "./ConsumableEntry.vue";
 import { itemQualityNameSort } from "@/utils/quality";
 
 const props = defineProps({
+  group: String,
   title: String,
   qualities: Number,
   itemCategory: String,
@@ -93,8 +95,17 @@ watch(
       <h3>{{ title }}</h3>
       <button class="toggle">{{ isOpen ? "▲" : "▼" }}</button>
     </div>
-    <div v-show="isOpen" class="content">
-      <div v-if="hasLoaded">
+    <div v-show="isOpen && hasLoaded" class="content">
+      <div v-if="group === 'Consumables'">
+        <consumable-entry
+          v-for="item in items"
+          :key="item.id"
+          :item="item"
+          :selected="selectedItems.has(item.id)"
+          @change="toggleItemSelection"
+        />
+      </div>
+      <div v-else>
         <item-entry
           v-for="item in items"
           :key="item.id"
