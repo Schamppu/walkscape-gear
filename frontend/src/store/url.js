@@ -63,16 +63,12 @@ export const useUrlStore = defineStore("url", {
       const encoded = params.get("loadout");
       if (!encoded) return;
 
-      console.log("Encoded Loadout:", encoded);
-
       const { decodeGearLoadout } = useUrlMap();
       const decodedLoadout = decodeGearLoadout(encoded);
 
       const gearStore = useGearStore();
       const activityStore = useActivityStore();
       const itemsStore = useItemsStore();
-
-      console.log("Decoded Loadout:", decodedLoadout);
 
       for (const slot in decodedLoadout) {
         const id = decodedLoadout[slot];
