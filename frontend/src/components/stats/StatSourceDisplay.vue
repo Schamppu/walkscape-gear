@@ -2,6 +2,7 @@
 import { computed } from "vue";
 import { useEffectiveAttrs } from "@/utils/useEffectiveAttrs";
 import WsIcon from "@/components/common/WsIcon.vue";
+import { n } from "@/utils/number";
 
 const props = defineProps({
   stat: {
@@ -37,10 +38,10 @@ const statList = computed(() => {
       <p :class="stat.isNegative ? 'negative' : 'positive'" class="stat-line">
         <span v-if="stat.isPercent">
           <span v-if="!(stat.value <= 0)">+</span
-          >{{ (stat.value * 10000) / 100 }}%
+          >{{ n(100* stat.value, 2) }}%
         </span>
         <span v-else
-          ><span v-if="!(stat.value <= 0)">+</span>{{ stat.value }}
+          ><span v-if="!(stat.value <= 0)">+</span>{{ n(stat.value, 2) }}
         </span>
         <ws-icon
           v-if="item && item.icon"
