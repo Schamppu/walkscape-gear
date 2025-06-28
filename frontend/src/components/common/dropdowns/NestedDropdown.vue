@@ -31,7 +31,7 @@ const searchTerm = ref("");
 
 onMounted(() => {
   const noneOption = props.data.filter(({ value }) => value === "None");
-  if (!selected.value && noneOption.length) selectItem(noneOption[0]);
+  if (!selected.value && noneOption.length) selectItem(noneOption[0], false);
 
   const onEsc = (e) => {
     if (e.key === "Escape" || e.key === "Esc") {
@@ -82,10 +82,10 @@ watch(
   }
 );
 
-const selectItem = (item) => {
+const selectItem = (item, update = true) => {
   isOpen.value = false;
   selected.value = item;
-  emit("select", item);
+  emit("select", item, false);
 };
 </script>
 

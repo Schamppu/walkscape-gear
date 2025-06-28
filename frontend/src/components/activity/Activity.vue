@@ -79,8 +79,12 @@ const selectActivity = async (activity) => {
     activityStore.loadActivity(activity.id),
     activityStore.loadActivityLocations(activity.id),
   ]);
-  urlStore.encodeAndPushToUrl();
   loadingActivity.value = false;
+};
+
+const updateActivityAndUrl = async (activity, update) => {
+  await selectActivity(activity);
+  if (update) urlStore.encodeAndPushToUrl();
 };
 </script>
 
@@ -90,7 +94,7 @@ const selectActivity = async (activity) => {
       label="Activity"
       :data="activitiesBySkill"
       v-model="selectedActivity"
-      @select="selectActivity"
+      @select="updateActivityAndUrl"
     />
     <activity-info
       v-if="!loadingActivity && activityStore.activitySelected"
