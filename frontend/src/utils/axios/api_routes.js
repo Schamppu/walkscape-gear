@@ -92,3 +92,9 @@ export function getApInfo() {
     url: "achievements/ap",
   });
 }
+
+export function getUrlMap() {
+  return proxy({
+    url: "items/url_mapping",
+  });
+}

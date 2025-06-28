@@ -1,6 +1,11 @@
-import { itemService } from "../services/index.js";
+import {
+  itemService,
+  activityService,
+  locationService,
+} from "../services/index.js";
 import { wrapController } from "./wrapController.js";
 import { categorizeItems } from "../utils/categorizeItems.js";
+import { createUrlMapping } from "../utils/createUrlMapping.js";
 import { fetchAchievementRewards } from "./achievementController.js";
 import { fetchItemRewards } from "./rewardsController.js";
 import { fetchActivityItems, fetchChestItems } from "./lootTableController.js";
@@ -71,5 +76,29 @@ export async function getCategorizedItems(req, res) {
   } catch (error) {
     console.error("Error fetching categorized items:", error);
     res.status(500).json({ error: "Failed to fetch items" });
+  }
+}
+
+export async function getUrlMapping(req, res) {
+  try {
+    const [crafted, loot, consumables, activities, locations] =
+      await Promise.all([
+        fetchCrafted(),
+        fetchLoot(),
+        fetchConsumables(),
+        activityService.list(),
+        locationService.list(),
+      ]);
+    const urlMapping = createUrlMapping(
+      [...crafted, ...loot],
+      consumables,
+      activities,
+      locations
+    );
+
+    res.json(urlMapping);
+  } catch (error) {
+    console.error("Error fetching URL mapping:", error);
+    res.status(500).json({ error: "Failed to fetch URL mapping" });
   }
 }
