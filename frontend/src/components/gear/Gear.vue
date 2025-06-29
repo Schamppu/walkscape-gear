@@ -1,6 +1,7 @@
 <script setup>
 import TabContentWrapper from "@/components/common/TabContentWrapper.vue";
 import GearSelection from "./GearSelection.vue";
+import GearSetExport from "./GearSetExport.vue";
 import Stats from "../stats/Stats.vue";
 import { useGearStore } from "@/store/gear";
 
@@ -23,6 +24,7 @@ const gearStore = useGearStore();
           </label>
         </div>
         <gear-selection />
+        <gear-set-export />
       </section>
     </details>
     <details open>
