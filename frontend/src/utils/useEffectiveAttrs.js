@@ -8,7 +8,7 @@ import { toDeepRaw } from "./rawData";
 
 export function useEffectiveAttrs() {
   const { checkRequirements } = useRequirements();
-  const { workEfficiencyBonus } = useLevelBonus();
+  const { workEfficiencyBonus, craftingOutcomeBonus } = useLevelBonus();
 
   const gear = useGearStore();
   const items = useItemsStore();
@@ -59,6 +59,9 @@ export function useEffectiveAttrs() {
     });
     if (workEfficiencyBonus.value) {
       mappedAttrs.push(workEfficiencyBonus.value);
+    }
+    if (craftingOutcomeBonus.value) {
+      mappedAttrs.push(craftingOutcomeBonus.value);
     }
     return mappedAttrs;
   });

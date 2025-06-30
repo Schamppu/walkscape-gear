@@ -58,7 +58,48 @@ export function useLevelBonus() {
     };
   });
 
+  const craftingOutcomeBonus = computed(() => {
+    if (!activityStore.recipeSelected) return null;
+    const recipe = activityStore.recipe;
+    const [itemId] = Object.keys(recipe.itemRewards);
+    if (
+      !(
+        itemId in itemStore.allItems &&
+        itemStore.allItems[itemId].type === "crafted"
+      )
+    )
+      return null;
+
+    const [skill] = recipe.relatedSkills;
+    const levelRequirement = recipeLevelRequirement(recipe);
+    const playerLevel = playerStore.skillLevels[skill] || 1;
+    const value = Math.max(playerLevel - levelRequirement, 0);
+
+    return {
+      id: "crafting_outcome_bonus",
+      requirements: [],
+      stats: [
+        {
+          isMultiplicative: true,
+          isNegative: false,
+          isPercent: false,
+          name: "Crafting Outcome",
+          stat: "stat-crafting_outcome-2a45afff-5426-4d97-80e8-73381d663c25",
+          type: "craftingOutcome",
+          value,
+        },
+      ],
+      item: {
+        id: "crafting_outcome_bonus",
+        name: "From levels above requirement",
+        icon: "",
+      },
+      tables: null,
+    };
+  });
+
   return {
+    craftingOutcomeBonus,
     workEfficiencyBonus,
   };
 }
