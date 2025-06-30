@@ -21,8 +21,8 @@ const emit = defineEmits(["unequip"]);
 const gearStore = useGearStore();
 const itemsStore = useItemsStore();
 
-const item = gearStore.get(props.slotName);
-const owned = item.id in itemsStore.ownedItems;
+const item = gearStore.get(props.slotName) || {};
+const owned = item?.id in itemsStore.ownedItems || false;
 const quality = owned ? itemsStore.ownedItems[item.id].quality : item.quality;
 </script>
 
