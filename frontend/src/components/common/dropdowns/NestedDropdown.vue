@@ -95,7 +95,9 @@ const selectItem = (item, update = true) => {
       <ws-label :label="label" label-for="dropdown-trigger" />
       <button class="dropdown-trigger" @click="toggle">
         <label-with-icon
-          :text="selected.value || 'Select an item'"
+          :text="
+            selected?.id !== 'activity-none' ? selected.value : 'Select an item'
+          "
           :icon="selected.icon"
         ></label-with-icon>
         <span class="chevron" :class="{ isOpen }">▼</span>

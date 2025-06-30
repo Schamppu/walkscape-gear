@@ -16,6 +16,7 @@ const isLoading = ref(true);
 const loadingActivity = ref(false);
 
 const activitiesBySkill = ref([]);
+const recipesBySkill = ref([]);
 
 onMounted(async () => {
   const noneActivity = activityStore.activities
@@ -24,24 +25,35 @@ onMounted(async () => {
       return { ...item, value: item.name, items: [] };
     })[0];
 
-  const categorized = playerStore.skills.map((skill) => {
-    const { id, name: value } = skill;
-    return {
-      ...skill,
-      value,
-      items: activityStore.activities
-        .filter(({ relatedSkillsList }) => {
-          return relatedSkillsList.length && relatedSkillsList[0] === id;
-        })
-        .map((item) => {
-          return {
-            ...item,
-            value: item.name,
-          };
-        }),
-    };
-  });
-  activitiesBySkill.value = [noneActivity, ...categorized];
+  const categorize = (source) =>
+    playerStore.skills
+      .map((skill) => {
+        const { id, name: value } = skill;
+        return {
+          ...skill,
+          value,
+          items: source
+            .filter((item) => {
+              const skillsList =
+                item.relatedSkillsList ?? item.relatedSkills ?? [];
+              return skillsList.length && skillsList[0] === id;
+            })
+            .map((item) => {
+              return {
+                ...item,
+                value: item.name,
+              };
+            })
+            .sort((a, b) => a.name.localeCompare(b.name)),
+        };
+      })
+      .filter(({ items }) => items.length > 0);
+
+  activitiesBySkill.value = [
+    noneActivity,
+    ...categorize(activityStore.activities),
+  ];
+  recipesBySkill.value = [noneActivity, ...categorize(activityStore.recipes)];
   isLoading.value = false;
 });
 
@@ -54,8 +66,24 @@ const selectedActivity = computed({
   },
 });
 
+const selectedRecipe = computed({
+  get: () => activityStore.recipe,
+  set: (val) => {
+    if (val && val.id !== activityStore.recipe?.id) {
+      selectRecipe(val);
+    }
+  },
+});
+
+const selectRecipe = async (recipe) => {
+  loadingActivity.value = true;
+  await activityStore.loadRecipe(recipe.id);
+  loadingActivity.value = false;
+};
+
 const selectActivity = async (activity) => {
   loadingActivity.value = true;
+
   await Promise.all([
     activityStore.loadActivity(activity.id),
     activityStore.loadActivityLocations(activity.id),
@@ -67,6 +95,11 @@ const updateActivityAndUrl = async (activity, update) => {
   await selectActivity(activity);
   if (update) urlStore.encodeAndPushToUrl();
 };
+
+const updateRecipeAndUrl = async (recipe, update) => {
+  await selectRecipe(recipe);
+  if (update) urlStore.encodeAndPushToUrl();
+};
 </script>
 
 <template>
@@ -76,6 +109,12 @@ const updateActivityAndUrl = async (activity, update) => {
       :data="activitiesBySkill"
       v-model="selectedActivity"
       @select="updateActivityAndUrl"
+    />
+    <nested-dropdown
+      label="Recipe"
+      :data="recipesBySkill"
+      v-model="selectedRecipe"
+      @select="updateRecipeAndUrl"
     />
     <activity-info v-if="!loadingActivity && activityStore.activitySelected" />
     <drops-info v-if="!loadingActivity && activityStore.activitySelected" />
