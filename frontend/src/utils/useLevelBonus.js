@@ -11,13 +11,12 @@ export function useLevelBonus() {
   const activityLevelRequirement = (activity, skill) =>
     activity.levelRequirementsMap[skill];
 
-  const recipeLevelRequirement = (recipe, skill) =>
-    recipe.requirements
+  const recipeLevelRequirement = (recipe) => {
+    const [{ level }] = recipe.requirements
       .map(({ requirement }) => requirement)
-      .filter(
-        ({ type, requirement }) =>
-          type === "skillLevel" && requirement.skill === skill
-      )?.[0] || 1;
+      .filter(({ runtimeType }) => runtimeType === "skillLevel");
+    return level || 1;
+  };
 
   const workEfficiencyBonus = computed(() => {
     if (!activityStore.activitySelected && !activityStore.recipeSelected)
@@ -29,7 +28,7 @@ export function useLevelBonus() {
       : activity.relatedSkills;
     const levelRequirement = isActivity
       ? activityLevelRequirement(activity, skill)
-      : recipeLevelRequirement(activity, skill);
+      : recipeLevelRequirement(activity);
     const playerLevel = playerStore.skillLevels[skill] || 1;
 
     const levelDiff = Math.min(20, Math.max(playerLevel - levelRequirement, 0));
