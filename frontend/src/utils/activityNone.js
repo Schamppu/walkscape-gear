@@ -1,0 +1,15 @@
+export const activityNone = {
+  id: "activity-none",
+  nameLocalizationKey: "None",
+  name: "None",
+  value: "None",
+  keywords: [],
+  relatedSkillsList: [],
+  levelRequirementsMap: null,
+  requiredKeywords: null,
+  xpRewardsMap: null,
+  workRequired: null,
+  maxWorkEfficiency: 1,
+  requirements: null,
+  tables: null,
+};
