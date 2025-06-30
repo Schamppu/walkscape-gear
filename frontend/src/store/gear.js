@@ -59,6 +59,29 @@ export const useGearStore = defineStore("gearStore", {
       if (slot === "service") return () => ({ name: "None", id: "-1" });
       return searchItems;
     },
+
+    determineQuality(id, q2 = false) {
+      const itemsStore = useItemsStore();
+      const owned = id in itemsStore.ownedItems;
+      if (!owned)
+        return id in itemsStore.allItems
+          ? itemsStore.allItems[id].quality
+          : "common";
+      const entry = itemsStore.ownedItems[id];
+      let quality = "common";
+      if (entry.quality) quality = entry.quality;
+      if (q2 && entry.quality2) quality = entry.quality2;
+      return quality;
+    },
+
+    async _fetchAndSetItem(itemSlot, id, quality) {
+      await getItem({ id }).then(({ data }) => {
+        if (data) {
+          this.setGearSlot(itemSlot, { ...data, quality });
+        }
+      });
+    },
+
     async loadItem(itemSlot, id, itemQuality = null) {
       if (!id) {
         console.error("no id provided");
@@ -66,26 +89,14 @@ export const useGearStore = defineStore("gearStore", {
       }
 
       const itemsStore = useItemsStore();
-      const existsInAll = id in itemsStore.allItems;
-      if (!existsInAll) return;
+      if (!(id in itemsStore.allItems)) return;
 
       const previousItem = this.gearSlots[itemSlot];
       if (previousItem?.id === id && previousItem.quality === itemQuality)
         return;
 
-      await getItem({ id }).then(({ data }) => {
-        let quality = itemQuality;
-        if (!quality) {
-          const owned = id in itemsStore.ownedItems;
-          quality = owned
-            ? itemsStore.ownedItems[id].quality
-            : itemsStore.allItems[id].quality || "common";
-        }
-
-        if (data) {
-          this.setGearSlot(itemSlot, { ...data, quality });
-        }
-      });
+      const quality = itemQuality || this.determineQuality(id);
+      await this._fetchAndSetItem(itemSlot, id, quality);
     },
   },
 });
