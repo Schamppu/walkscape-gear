@@ -43,7 +43,7 @@ export function useUrlMap() {
       return urlStore.reverseMapping[slotName][itemId] ?? 0;
     });
 
-    return encodeLoadout(numbers, 7);
+    return encodeLoadout(numbers, 8);
   };
 
   function decodeLoadout(encoded, bitsPerItem, numItems) {
@@ -62,7 +62,7 @@ export function useUrlMap() {
   }
   const decodeGearLoadout = (encoded) => {
     const slotOrder = urlStore.order;
-    const numbers = decodeLoadout(encoded, 7, Object.keys(slotOrder).length);
+    const numbers = decodeLoadout(encoded, 8, Object.keys(slotOrder).length);
     const loadout = {};
 
     Object.entries(slotOrder).forEach(([slot, slotName], i) => {
