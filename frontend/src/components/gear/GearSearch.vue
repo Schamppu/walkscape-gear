@@ -26,8 +26,7 @@ const activityStore = useActivityStore();
 
 const searchTerm = ref("");
 const slotItems = Object.values(itemsStore.allItems).filter(
-  ({ gearType, type }) =>
-    gearType === props.gearType || type === props.gearType
+  ({ gearType, type }) => gearType === props.gearType || type === props.gearType
 );
 
 const filteredItems = computed(() => {
@@ -57,11 +56,24 @@ const filteredItems = computed(() => {
       const { id } = item;
       const owned = id in itemsStore.ownedItems;
       const quality = owned ? itemsStore.ownedItems[id].quality : item.quality;
-      return {
-        ...item,
-        quality,
-      };
+      const quality2 = owned ? itemsStore.ownedItems[id].quality2 : null;
+
+      const out = [
+        {
+          ...item,
+          quality,
+        },
+      ];
+      if (quality2 && quality2 !== quality) {
+        out.push({
+          ...item,
+          quality: quality2,
+        });
+      }
+
+      return out;
     })
+    .flat()
     .filter(
       (item) => filterActivity(item) && filterSearch(item) && filterOwned(item)
     )
