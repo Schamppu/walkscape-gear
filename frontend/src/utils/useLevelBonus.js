@@ -11,7 +11,7 @@ export function useLevelBonus() {
   const activityLevelRequirement = (activity, skill) =>
     activity.levelRequirementsMap[skill];
 
-  const recipeLevelRequirement = (recipe) =>
+  const recipeLevelRequirement = (recipe, skill) =>
     recipe.requirements
       .map(({ requirement }) => requirement)
       .filter(
@@ -29,7 +29,7 @@ export function useLevelBonus() {
       : activity.relatedSkills;
     const levelRequirement = isActivity
       ? activityLevelRequirement(activity, skill)
-      : recipeLevelRequirement(activity);
+      : recipeLevelRequirement(activity, skill);
     const playerLevel = playerStore.skillLevels[skill] || 1;
 
     const levelDiff = Math.min(20, Math.max(playerLevel - levelRequirement, 0));
