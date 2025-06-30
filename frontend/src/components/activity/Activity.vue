@@ -6,6 +6,7 @@ import { useUrlStore } from "@/store/url";
 import TabContentWrapper from "../common/TabContentWrapper.vue";
 import NestedDropdown from "@/components/common/dropdowns/NestedDropdown.vue";
 import ActivityInfo from "./ActivityInfo.vue";
+import RecipeInfo from "./RecipeInfo.vue";
 import DropsInfo from "./DropsInfo.vue";
 
 const activityStore = useActivityStore();
@@ -118,6 +119,7 @@ const updateRecipeAndUrl = async (recipe, update) => {
     />
     <activity-info v-if="!loadingActivity && activityStore.activitySelected" />
     <drops-info v-if="!loadingActivity && activityStore.activitySelected" />
+    <recipe-info v-if="!loadingActivity && activityStore.recipeSelected" />
   </tab-content-wrapper>
 </template>
 
