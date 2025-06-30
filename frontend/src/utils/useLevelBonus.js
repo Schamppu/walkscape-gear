@@ -7,7 +7,8 @@ export function useLevelBonus() {
   const playerStore = usePlayerStore();
 
   const workEfficiencyBonus = computed(() => {
-    if (!activityStore.activitySelected) return null;
+    if (!activityStore.activitySelected || !activityStore.recipeSelected)
+      return null;
     const [mainSkill, ..._] = activityStore.activity.relatedSkillsList;
     const levelRequirement =
       activityStore.activity.levelRequirementsMap[mainSkill];
