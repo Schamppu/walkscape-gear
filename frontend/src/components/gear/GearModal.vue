@@ -58,7 +58,7 @@ const selectTab = (index) => {
 const selectedTab = ref(gearStore.slotFilled(props.slotName) ? 0 : 1);
 
 const handleSelectItem = async (item) => {
-  await gearStore.loadItem(props.slotName, item.id);
+  await gearStore.loadItem(props.slotName, item.id, item.quality);
 
   urlStore.encodeAndPushToUrl();
   closeDialog();
