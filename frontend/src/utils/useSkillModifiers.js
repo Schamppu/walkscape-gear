@@ -6,6 +6,13 @@ export function useSkillModifiers() {
   const activityStore = useActivityStore();
   const { totalsByStat } = useEffectiveAttrs();
 
+  const isActivity = computed(() => activityStore.activitySelected);
+  const activity = computed(() => {
+    if (!activityStore.activitySelected && !activityStore.recipeSelected)
+      return null;
+    return isActivity.value ? activityStore.activity : activityStore.recipe;
+  });
+
   const getStat = (stat, key = "percent") => {
     return stat in totalsByStat.value
       ? key in totalsByStat.value[stat]
@@ -15,7 +22,7 @@ export function useSkillModifiers() {
   };
 
   const maxWorkEfficiency = computed(() => {
-    return activityStore.activity?.maxWorkEfficiency || 1;
+    return activity.value?.maxWorkEfficiency || 1;
   });
 
   const workEfficiency = computed(() => {
@@ -60,7 +67,7 @@ export function useSkillModifiers() {
   });
 
   const stepsPerCompletion = computed(() => {
-    const { workRequired } = activityStore.activity || 0;
+    const { workRequired } = activity.value || 0;
     if (!workRequired) return 0;
     const stepsRequired = getStat("stepsRequired", "flat");
     return Math.max(
@@ -78,7 +85,7 @@ export function useSkillModifiers() {
   });
 
   const xpRewards = computed(() => {
-    const { xpRewardsMap } = activityStore.activity || null;
+    const { xpRewardsMap } = activity.value || null;
     if (!xpRewardsMap) return {};
 
     const xpRewardsArr = Object.entries(xpRewardsMap).map(([skill, base]) => {
