@@ -1,4 +1,5 @@
 <script setup>
+import { computed } from "vue";
 import { useGearStore } from "@/store/gear";
 import { useItemsStore } from "@/store/items";
 import WsIcon from "@/components/common/WsIcon.vue";
@@ -21,9 +22,7 @@ const emit = defineEmits(["unequip"]);
 const gearStore = useGearStore();
 const itemsStore = useItemsStore();
 
-const item = gearStore.get(props.slotName) || {};
-const owned = item?.id in itemsStore.ownedItems || false;
-const quality = owned ? itemsStore.ownedItems[item.id].quality : item.quality;
+const item = computed(() => gearStore.gearSlots[props.slotName]);
 </script>
 
 <template>
@@ -43,8 +42,8 @@ const quality = owned ? itemsStore.ownedItems[item.id].quality : item.quality;
       :itemAttrs="item.itemAttrs"
       :qualityAttrs="item.itemQualityAttrs"
       :buffs="item.buffs"
-      :quality="quality"
-      :key="`attributes-q1-${quality}`"
+      :quality="item.quality"
+      :key="`attributes-q1-${item.quality}`"
     />
   </div>
   <div v-else>
