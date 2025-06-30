@@ -77,8 +77,7 @@ const filteredItems = computed(() => {
     .filter(
       (item) => filterActivity(item) && filterSearch(item) && filterOwned(item)
     )
-    .sort(itemQualityNameSort)
-    .reverse();
+    .sort((a, b) => itemQualityNameSort(a, b, true));
 });
 
 const handleClick = (item) => {
