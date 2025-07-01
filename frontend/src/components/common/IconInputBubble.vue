@@ -13,6 +13,7 @@ const props = defineProps({
   max: { type: Number, default: 100 },
   defaultValue: { type: Number, default: 0 },
   borderClass: { type: String, default: null },
+  borderColor: { type: String, default: null },
 });
 
 const localValue = ref(props.getValue(props.id));
@@ -52,7 +53,10 @@ function onBlur() {
 </script>
 
 <template>
-  <div :class="['wrapper', borderClass]">
+  <div
+    :class="['wrapper', borderClass]"
+    :style="borderColor ? { border: `2px solid ${borderColor}` } : undefined"
+  >
     <ws-icon v-if="icon" :iconPath="icon" size="md" />
     <input
       :value="localValue"
