@@ -62,7 +62,7 @@ const upsertUserInfo = async (req, res) => {
 
   try {
     await Promise.all(
-      Object.entries(validEntries).map(([stat, value]) =>
+      validEntries.map(([stat, value]) =>
         prisma.playerStat.upsert({
           where: { userUuid_stat: { userUuid, stat } },
           update: {
@@ -185,7 +185,7 @@ const upsertUserFactionReputations = async (req, res) => {
 
   try {
     await Promise.all(
-      Object.entries(validEntries).map(([reputation, value]) =>
+      validEntries.map(([reputation, value]) =>
         prisma.factionReputation.upsert({
           where: { userUuid_reputation: { userUuid, reputation } },
           update: {
