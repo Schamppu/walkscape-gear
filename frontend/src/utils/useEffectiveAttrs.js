@@ -1,4 +1,5 @@
 import { computed } from "vue";
+import { useActivityStore } from "@/store/activity";
 import { useGearStore } from "@/store/gear";
 import { useItemsStore } from "@/store/items";
 import { useRequirements } from "./useRequirements";
@@ -10,6 +11,7 @@ export function useEffectiveAttrs() {
   const { checkRequirements } = useRequirements();
   const { workEfficiencyBonus, craftingOutcomeBonus } = useLevelBonus();
 
+  const activities = useActivityStore();
   const gear = useGearStore();
   const items = useItemsStore();
 
@@ -62,6 +64,15 @@ export function useEffectiveAttrs() {
     }
     if (craftingOutcomeBonus.value) {
       mappedAttrs.push(craftingOutcomeBonus.value);
+    }
+    if (activities.service?.attributes.length) {
+      const serviceAttrs = activities.service.attributes.map((attr) => {
+        return {
+          ...attr,
+          item: activities.service,
+        };
+      });
+      mappedAttrs.push.apply(mappedAttrs, serviceAttrs);
     }
     return mappedAttrs;
   });

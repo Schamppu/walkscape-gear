@@ -49,6 +49,8 @@ export const useActivityStore = defineStore("activity", {
 
     setActivity(activity) {
       this.recipe = activityNone;
+      this.services = [];
+      this.service = null;
       this.activity = { ...activity, value: activity.name };
     },
     setRecipe(recipe) {
