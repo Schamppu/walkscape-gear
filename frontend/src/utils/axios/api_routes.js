@@ -23,6 +23,12 @@ export function getSkills() {
   });
 }
 
+export function getFactions() {
+  return proxy({
+    url: "factions",
+  });
+}
+
 export function getKeywords() {
   return proxy({
     url: "keywords",
