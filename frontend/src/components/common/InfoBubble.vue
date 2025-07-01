@@ -34,6 +34,7 @@ const props = defineProps({
 
   .bubble {
     width: fit-content;
+    text-align: left;
 
     display: flex;
     gap: $xs;
