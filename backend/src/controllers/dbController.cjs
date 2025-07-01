@@ -39,6 +39,13 @@ const getUserOwnedItems = async (req, res) => {
   const userUuid = req.headers["x-user-uuid"];
   if (!userUuid) return res.status(400).json({ error: "Missing userUuid" });
 
+  // Check if user exists
+  const user = await prisma.user.findUnique({ where: { userUuid } });
+
+  if (!user) {
+    await prisma.user.create({ data: { userUuid } });
+  }
+
   const items = await prisma.ownedItem.findMany({
     where: { userUuid, owned: true },
   });
