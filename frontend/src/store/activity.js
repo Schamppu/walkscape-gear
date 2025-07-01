@@ -3,21 +3,25 @@ import {
   getActivity,
   getRecipe,
   searchLocations,
+  searchServices,
   getActivities,
   getRecipes,
   getKeywords,
 } from "@/utils/axios/api_routes";
+import { filterServicesByTier } from "@/utils/services";
 import { activityNone } from "@/utils/activityNone";
 
 export const useActivityStore = defineStore("activity", {
   state: () => ({
     activities: [],
-    recipes: [],
-    keywords: [],
     activity: null,
+    keywords: [],
+    recipes: [],
     recipe: null,
     location: null,
     locations: null,
+    services: null,
+    service: null,
     showCombined: true,
     isLoaded: false,
   }),
@@ -58,6 +62,9 @@ export const useActivityStore = defineStore("activity", {
     setLocation(location) {
       this.location = location;
     },
+    setService(service) {
+      this.service = service;
+    },
     async loadActivity(id) {
       const { data: activity } = await getActivity({ id });
       this.setActivity(activity);
@@ -74,6 +81,32 @@ export const useActivityStore = defineStore("activity", {
       }
       const { data: recipe } = await getRecipe({ id });
       this.setRecipe(recipe);
+
+      const [skill] = recipe.relatedSkills || [null];
+      const recipeRequirement = recipe.requirements
+        .map(({ requirement }) => requirement)
+        .find((req) => req.runtimeType === "service");
+      await this.loadRecipeServices(skill, recipeRequirement);
+    },
+    async loadRecipeServices(skill, recipeRequirement) {
+      if (!skill) {
+        this.services = [];
+        this.service = null;
+        return;
+      }
+
+      const { data: services } = await searchServices({ skill });
+
+      let filteredServices = services;
+      if (recipeRequirement) {
+        filteredServices = filterServicesByTier(
+          services,
+          recipeRequirement.tier
+        );
+      }
+
+      this.services = filteredServices;
+      if (filteredServices.length) this.service = filteredServices[0];
     },
   },
 });
