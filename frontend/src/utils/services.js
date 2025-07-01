@@ -6,3 +6,7 @@ export const filterServicesByTier = (services, tier) => {
       serviceTiers.indexOf(service.tier) >= serviceTiers.indexOf(tier)
   );
 };
+
+export const sortServicesByTier = (a, b) =>
+  serviceTiers.indexOf(a.tier) - serviceTiers.indexOf(b.tier) ||
+  a.name.localeCompare(b.name);

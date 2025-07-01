@@ -8,7 +8,7 @@ import {
   getRecipes,
   getKeywords,
 } from "@/utils/axios/api_routes";
-import { filterServicesByTier } from "@/utils/services";
+import { filterServicesByTier, sortServicesByTier } from "@/utils/services";
 import { activityNone } from "@/utils/activityNone";
 
 export const useActivityStore = defineStore("activity", {
@@ -105,7 +105,7 @@ export const useActivityStore = defineStore("activity", {
         );
       }
 
-      this.services = filteredServices;
+      this.services = filteredServices.sort(sortServicesByTier);
       if (filteredServices.length) this.service = filteredServices[0];
     },
   },
