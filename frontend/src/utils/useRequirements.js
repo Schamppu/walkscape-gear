@@ -17,6 +17,7 @@ export function useRequirements() {
       location: activity.location,
       achievementPoints: player.achievementPoints,
       gear: gear.filledGearSlots,
+      factionReputation: player.factionReputation,
     };
 
     return reqs.every((requirements) => checkRequirement(requirements, data));
@@ -24,7 +25,14 @@ export function useRequirements() {
 
   const checkRequirement = (req, data) => {
     const { type, opposite, requirement } = req;
-    const { activity, recipe, location, achievementPoints, gear } = data;
+    const {
+      activity,
+      recipe,
+      location,
+      achievementPoints,
+      gear,
+      factionReputation,
+    } = data;
     const equippedKeywordCounts = gear
       ? gear
           .flatMap(({ keywords }) => keywords)
@@ -66,6 +74,13 @@ export function useRequirements() {
         break;
       case "traveling":
         if (activity) value = activity.id === "activity-travelling";
+        break;
+      case "gameData":
+        if (factionReputation) {
+          const { data, gameDataId } = requirement;
+          const rep = JSON.parse(data).double || 0;
+          value = factionReputation[gameDataId] >= rep;
+        }
         break;
       default:
         console.log(type, requirement);
