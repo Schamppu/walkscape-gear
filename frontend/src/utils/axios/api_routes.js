@@ -83,6 +83,15 @@ export function getRecipe({ id }) {
   });
 }
 
+export function searchServices({ skill }) {
+  return proxy({
+    url: "services/search",
+    options: {
+      params: { relatedSkills: skill, detailed: true },
+    },
+  });
+}
+
 export function getStats() {
   return proxy({
     url: "stats",
