@@ -11,6 +11,7 @@ import {
   keywordService,
   locationService,
   recipeService,
+  serviceService,
   skillService,
   statService,
 } from "../services/index.js";
@@ -26,6 +27,7 @@ export function registerRoutes(app) {
   apiRouter.use("/locations", createBaseRouter("Location", locationService));
   apiRouter.use("/lootTables", lootTableRoutes);
   apiRouter.use("/recipes", createBaseRouter("Recipe", recipeService))
+  apiRouter.use("/services", createBaseRouter("Service", serviceService))
   apiRouter.use("/skills", createBaseRouter("Skill", skillService));
   apiRouter.use("/stats", createBaseRouter("Stat", statService));
 
