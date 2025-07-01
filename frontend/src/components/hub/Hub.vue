@@ -36,8 +36,8 @@ const updatePlayerStats = debounce(postPlayerStats, 1000);
     <div class="faction-bubbles">
       <icon-input-bubble
         v-for="faction in playerStore.factions"
-        :key="faction.id"
-        :id="faction.id"
+        :key="faction.reputation"
+        :id="faction.reputation"
         :icon="faction.icon"
         :get-value="(id) => playerStore.factionReputation[id]"
         :set-value="

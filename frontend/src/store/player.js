@@ -32,8 +32,8 @@ export const usePlayerStore = defineStore("playerStore", {
       this.factions = factions
         .filter(({ reputation }) => reputation !== null)
         .sort((a, b) => a.name.localeCompare(b.name));
-      factions.forEach(({ id }) => {
-        this.setFactionReputation(id, 0);
+      factions.forEach(({ reputation }) => {
+        this.setFactionReputation(reputation, 0);
       });
 
       this.setAchievementPoints(stats.achievementPoints ?? 0);
@@ -45,8 +45,8 @@ export const usePlayerStore = defineStore("playerStore", {
     setAchievementPoints(value) {
       this.achievementPoints = value;
     },
-    setFactionReputation(id, value) {
-      this.factionReputation[id] = value;
+    setFactionReputation(reputation, value) {
+      this.factionReputation[reputation] = value;
     },
     setUuid(uuid) {
       this.userUuid = uuid;
