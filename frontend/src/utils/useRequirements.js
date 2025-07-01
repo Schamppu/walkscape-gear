@@ -12,8 +12,8 @@ export function useRequirements() {
     if (!reqs || !reqs.length) return true;
 
     const data = {
-      activity: activity.activity,
-      recipe: activity.recipe,
+      activity: activity.activitySelected && activity.activity,
+      recipe: activity.recipeSelected && activity.recipe,
       location: activity.location,
       achievementPoints: player.achievementPoints,
       gear: gear.filledGearSlots,

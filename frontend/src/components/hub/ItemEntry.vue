@@ -24,7 +24,8 @@ onMounted(() => {
   const entry = itemsStore.ownedItems[props.item.id];
   isOwned.value = entry?.owned ?? false;
   quality.value = entry?.quality ?? props.item?.quality ?? defaultQuality;
-  quality2.value = entry?.quality2 ?? defaultQuality;
+  quality2.value =
+    props.qualities < 2 ? null : entry?.quality2 ?? defaultQuality;
 });
 
 watch(
