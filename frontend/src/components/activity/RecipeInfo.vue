@@ -3,10 +3,11 @@ import { computed } from "vue";
 import { storeToRefs } from "pinia";
 import WsLabel from "@/components/common/WsLabel.vue";
 import InfoBubble from "@/components/common/InfoBubble.vue";
-import LocationBubble from "@/components/common/LocationBubble.vue";
+import ServiceBubble from "@/components/common/ServiceBubble.vue";
 import SkillBubble from "@/components/common/SkillBubble.vue";
 import { useActivityStore } from "@/store/activity";
 import { useSkillModifiers } from "@/utils/useSkillModifiers";
+import { isEmpty } from "@/utils/isEmpty";
 import { n } from "@/utils/number";
 
 const activityStore = useActivityStore();
@@ -49,7 +50,14 @@ const sections = computed(() => {
     requirements,
   } = activityStore.recipe;
 
-  return [];
+  return [
+    {
+      label: "Services",
+      component: ServiceBubble,
+      items: activityStore.services,
+      itemProps: (item) => ({ service: item }),
+    },
+  ].filter(({ items }) => !isEmpty(items));
 });
 </script>
 
@@ -99,14 +107,14 @@ const sections = computed(() => {
     </div>
     <div v-for="section in sections" class="info-section" :key="section.label">
       <ws-label :label="section.label" />
-      <!-- <div class="info-row">
+      <div class="info-row">
         <component
           v-for="(item, idx) in section.items"
           :is="section.component"
           v-bind="section.itemProps(item)"
           :key="idx"
         />
-      </div> -->
+      </div>
     </div>
   </section>
 </template>
