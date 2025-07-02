@@ -79,6 +79,12 @@ const filteredData = computed(() => {
     .filter(Boolean);
 });
 
+const labelText = computed(() => {
+  return selected.value?.id !== "activity-none"
+    ? selected.value.value
+    : props.defaultText;
+});
+
 watch(
   () => props.modelValue,
   (val) => {
@@ -98,12 +104,7 @@ const selectItem = (item, update = true) => {
     <div class="header">
       <ws-label :label="label" label-for="dropdown-trigger" />
       <button class="dropdown-trigger" @click="toggle">
-        <label-with-icon
-          :text="
-            selected?.id !== 'activity-none' ? selected.value : defaultText
-          "
-          :icon="selected.icon"
-        />
+        <label-with-icon :text="labelText" :icon="selected.icon" />
         <span class="chevron" :class="{ isOpen }">▼</span>
       </button>
     </div>
