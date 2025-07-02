@@ -1,8 +1,14 @@
-import { createWebHashHistory, createRouter } from "vue-router";
+import { createWebHistory, createRouter } from "vue-router";
 
-const routes = [{ path: "/", component: () => import("@/GearTool.vue") }];
+import GearTool from "@/GearTool.vue";
+import ItemLookup from "@/ItemLookup.vue";
+
+const routes = [
+  { path: "/", component: GearTool },
+  { path: "/item-lookup", component: ItemLookup },
+];
 
 export const router = createRouter({
-  history: createWebHashHistory(),
+  history: createWebHistory(),
   routes,
 });

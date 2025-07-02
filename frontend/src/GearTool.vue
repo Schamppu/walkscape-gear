@@ -36,6 +36,8 @@ function scrollToTab(tabName) {
 }
 
 const bootstrap = async () => {
+  if (isLoaded.value) return;
+  
   const activityStore = useActivityStore();
   const playerStore = usePlayerStore();
   const itemsStore = useItemsStore();
