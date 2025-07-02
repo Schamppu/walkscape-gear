@@ -31,19 +31,19 @@ export const usePlayerStore = defineStore("playerStore", {
           return { id, ...rest, value: id };
         })
         .sort((a, b) => a.name.localeCompare(b.name));
-      skills.forEach(({ id }) => {
-        this.setSkillLevel(id, stats[id] ?? 1);
-      });
+      this.skillLevels = Object.fromEntries(
+        skills.map(({ id }) => [id, stats[id] ?? 1])
+      );
       this.factions = factions
         .filter(({ reputation }) => reputation !== null)
         .sort((a, b) => a.name.localeCompare(b.name));
-      factions.forEach(({ reputation }) => {
-        this.setFactionReputation(
-          reputation,
-          factionReputations[reputation] ?? 0
-        );
-      });
 
+      this.factionReputation = Object.fromEntries(
+        factions.map(({ reputation }) => [
+          reputation,
+          factionReputations[reputation] ?? 0,
+        ])
+      );
       this.setAchievementPoints(stats.achievementPoints ?? 0);
       this.isLoaded = true;
     },

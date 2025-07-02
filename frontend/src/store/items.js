@@ -22,20 +22,20 @@ export const useItemsStore = defineStore("itemStore", {
         fetchOwnedItems(),
       ]);
 
-      ownedItems.forEach(
-        ({ itemId, ...data }) => (this.ownedItems[itemId] = data)
+      this.ownedItems = Object.fromEntries(
+        ownedItems.map(({ itemId, ...data }) => [itemId, data])
       );
       this.categorizedItems = categorizedItems;
 
-      categorizedItems.forEach(({ categories }) => {
-        categories.forEach(({ key, items }) => {
-          this.itemsByCategory[key] = items;
-          items.forEach((item) => {
-            this.allItems[item.id] = item;
-          });
-        });
-      });
-
+      const categories = categorizedItems.flatMap(
+        ({ categories }) => categories
+      );
+      this.itemsByCategory = Object.fromEntries(
+        categories.map(({ key, items }) => [key, items])
+      );
+      this.allItems = Object.fromEntries(
+        categories.map((item) => [item.id, item])
+      );
       this.isLoaded = true;
     },
     toggleItem(itemId, owned = true, quality = null, quality2 = null) {
