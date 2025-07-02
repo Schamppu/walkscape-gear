@@ -44,7 +44,7 @@ function handleClick() {
   border-radius: $sm;
 }
 
-::v-deep .selected-border {
+:deep(.selected-border) {
   border-color: $chipOutline;
   box-shadow: 0 0 0 1px $chipOutline;
 }
