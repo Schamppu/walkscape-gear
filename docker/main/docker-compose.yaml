@@ -34,8 +34,6 @@ services:
       POSTGRES_DB: ws-gear-db
       POSTGRES_USER: ws-gear
       POSTGRES_PASSWORD: wsgear-db-password
-    ports:
-      - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     networks:
