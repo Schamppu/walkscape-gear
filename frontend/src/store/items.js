@@ -33,7 +33,6 @@ export const useItemsStore = defineStore("itemStore", {
       this.itemsByCategory = Object.fromEntries(
         categories.map(({ key, items }) => [key, items])
       );
-      console.log(categories);
       this.allItems = Object.fromEntries(
         categories.flatMap(({ items }) => items).map((item) => [item.id, item])
       );
