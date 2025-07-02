@@ -41,6 +41,12 @@ export function getCategorizedItems() {
   });
 }
 
+export function getItems() {
+  return proxy({
+    url: "items",
+  });
+}
+
 export function getItem({ id }) {
   return proxy({
     url: `items/id/${id}`,
