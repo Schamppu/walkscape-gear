@@ -2,7 +2,7 @@ import { qualityOptions, consumableQualityOptions } from "@/utils/quality";
 import { toDeepRaw } from "./rawData";
 
 export const sumAttrs = (itemAttrs, qualityAttrs, buffs, quality) => {
-  if (quality.includes("consumable")) return sumBuffAttrs(buffs, quality);
+  if (quality && quality.includes("consumable")) return sumBuffAttrs(buffs, quality);
 
   const qIndex = Math.min(
     qualityAttrs?.length || 0,
