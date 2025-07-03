@@ -3,6 +3,7 @@ import { ref, computed } from "vue";
 import { useGearStore } from "@/store/gear";
 import { useItemsStore } from "@/store/items";
 import { useActivityStore } from "@/store/activity";
+import { usePlayerStore } from "@/store/player";
 import { showItemForActivity } from "@/utils/gear";
 import { itemQualityNameSort } from "@/utils/quality";
 import WsIcon from "@/components/common/WsIcon.vue";
@@ -24,8 +25,15 @@ const emit = defineEmits(["selectItem"]);
 const gearStore = useGearStore();
 const itemsStore = useItemsStore();
 const activityStore = useActivityStore();
+const playerStore = usePlayerStore();
 
 const searchTerm = ref("");
+const selectedStat = ref("none");
+const filterStat = computed(() => {
+  if (selectedStat.value === "none") return null;
+  return playerStore.stats.find(({ type }) => type === selectedStat.value);
+});
+
 const slotItems = Object.values(itemsStore.allItems).filter(
   ({ gearType, type }) => gearType === props.gearType || type === props.gearType
 );
@@ -104,6 +112,25 @@ const handleClick = (item) => {
 
 <template>
   <div class="search-wrapper">
+    <div class="stat-filter-select">
+      <label for="stat-filter">Filter stat:</label>
+      <ws-icon
+        v-if="selectedStat !== 'none'"
+        :icon-path="filterStat.icon"
+        size="sm"
+      />
+      <select id="stat-filter" v-model="selectedStat">
+        <option value="none">None</option>
+        <option
+          v-for="stat in playerStore.stats"
+          :key="stat"
+          :value="stat.type"
+        >
+          {{ stat.name }}
+        </option>
+      </select>
+    </div>
+
     <input
       v-focus
       ref="searchInput"
@@ -132,6 +159,26 @@ const handleClick = (item) => {
 
   &:focus {
     outline: 1px solid $chipOutline;
+  }
+}
+
+.stat-filter-select {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: $xxs;
+  padding: $xxs;
+  box-sizing: border-box;
+
+  select {
+    padding: $xxxs $xxs;
+    border-radius: $sm;
+    border: 1px solid $boxPrimaryOutline;
+    background-color: $bgPrimary;
+
+    &:focus {
+      outline: 1px solid $chipOutline;
+    }
   }
 }
 
