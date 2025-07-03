@@ -30,8 +30,8 @@ function copyExportCode() {
   <div class="export-wrapper">
     <button @click="copyExportCode" class="export-button">
       <ws-icon
-        icon-path="assets\icons\text\button_icons\deposit.png"
-        size="md"
+        icon-path="assets/icons/text/button_icons/deposit.png"
+        size="sm"
       />
       Export
     </button>
@@ -55,11 +55,16 @@ function copyExportCode() {
   display: flex;
   align-items: center;
   align-self: center;
-  gap: $xs;
-  padding: $sm;
+  gap: $xxxxs;
+  padding: $xxs;
 
   background-color: $boxDarkBackground;
   border: 1px solid $boxDarkOutline;
   border-radius: $md;
+
+  &:hover,
+  &:focus {
+    background-color: $boxTransparentDarkOutline;
+  }
 }
 </style>
