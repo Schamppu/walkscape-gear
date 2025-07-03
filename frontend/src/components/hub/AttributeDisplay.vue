@@ -1,7 +1,7 @@
 <script setup>
 import { computed } from "vue";
 import { toDeepRaw } from "@/utils/rawData";
-import { sumAttrs, sumBuffAttrs } from "@/utils/qualityAttrs";
+import { sumAttrs } from "@/utils/qualityAttrs";
 
 const props = defineProps({
   itemAttrs: Array,
