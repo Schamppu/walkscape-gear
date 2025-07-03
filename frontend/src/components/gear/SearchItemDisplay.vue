@@ -101,7 +101,7 @@ const toggle = () => {
   .chevron-button {
     justify-self: flex-end;
     display: inline-block;
-    padding: 0 $sm;
+    padding: 0 $lg;
 
     background-color: inherit;
 
@@ -118,6 +118,6 @@ const toggle = () => {
   flex-direction: column;
   box-sizing: border-box;
 
-  background-color: $boxDarkBackground;
+  background-color: $bgPrimary;
 }
 </style>
