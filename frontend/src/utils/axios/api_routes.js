@@ -10,6 +10,14 @@ export function getIcon({ iconPath }) {
   });
 }
 
+export function getIconsBatch({ iconPaths }) {
+  return proxy({
+    method: "POST",
+    url: "icons/batch",
+    options: { iconPaths },
+  });
+}
+
 export function getLocalization({ key, locale = en }) {
   return proxy({
     url: "translate",
