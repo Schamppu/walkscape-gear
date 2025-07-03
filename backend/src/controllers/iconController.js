@@ -13,3 +13,18 @@ export async function getIcon(req, res) {
     res.status(404).json({ message: "Icon not found" });
   }
 }
+
+export async function batch(req, res) {
+  const { iconPaths } = req.body;
+
+  if (!Array.isArray(iconPaths)) {
+    return res.status(400).json({ error: "iconPaths must be an array" });
+  }
+
+  try {
+    const icons = await iconService.getIconsBatch(iconPaths);
+    res.json(icons);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching icons" });
+  }
+}

@@ -1,8 +1,9 @@
 import express from "express";
-import { getIcon } from "../controllers/iconController.js";
+import { getIcon, batch } from "../controllers/iconController.js";
 
 const router = express.Router();
 
 router.get("/:iconPath(*)", getIcon);
+router.post("/batch", batch);
 
 export default router;
