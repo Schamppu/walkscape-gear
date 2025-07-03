@@ -3,6 +3,7 @@ import { ref, computed } from "vue";
 import { useGearStore } from "@/store/gear";
 import { useItemsStore } from "@/store/items";
 import { useActivityStore } from "@/store/activity";
+import { useDataStore } from "@/store/data";
 import { usePlayerStore } from "@/store/player";
 import { showItemForActivity } from "@/utils/gear";
 import { itemQualityNameSort } from "@/utils/quality";
@@ -26,12 +27,13 @@ const gearStore = useGearStore();
 const itemsStore = useItemsStore();
 const activityStore = useActivityStore();
 const playerStore = usePlayerStore();
+const dataStore = useDataStore();
 
 const searchTerm = ref("");
 const selectedStat = ref("none");
 const filterStat = computed(() => {
   if (selectedStat.value === "none") return null;
-  return playerStore.stats.find(({ type }) => type === selectedStat.value);
+  return dataStore.stats.find(({ type }) => type === selectedStat.value);
 });
 
 const slotItems = Object.values(itemsStore.allItems).filter(
@@ -121,11 +123,7 @@ const handleClick = (item) => {
       />
       <select id="stat-filter" v-model="selectedStat">
         <option value="none">None</option>
-        <option
-          v-for="stat in playerStore.stats"
-          :key="stat"
-          :value="stat.type"
-        >
+        <option v-for="stat in dataStore.stats" :key="stat" :value="stat.type">
           {{ stat.name }}
         </option>
       </select>

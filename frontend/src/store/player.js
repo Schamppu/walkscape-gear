@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { getSkills, getFactions, getStats } from "@/utils/axios/api_routes";
+import { getSkills, getFactions } from "@/utils/axios/api_routes";
 import {
   fetchPlayerStats,
   fetchFactionRepuations,
@@ -8,6 +8,7 @@ import {
 export const usePlayerStore = defineStore("playerStore", {
   state: () => ({
     skills: [],
+    skillsMap: {},
     skillLevels: {},
     factions: [],
     factionReputation: {},
@@ -22,13 +23,11 @@ export const usePlayerStore = defineStore("playerStore", {
       const [
         { data: skills },
         { data: factions },
-        { data: statList },
         playerStats,
         factionReputations,
       ] = await Promise.all([
         getSkills(),
         getFactions(),
-        getStats(),
         fetchPlayerStats(),
         fetchFactionRepuations(),
       ]);
@@ -38,6 +37,9 @@ export const usePlayerStore = defineStore("playerStore", {
           return { id, ...rest, value: id };
         })
         .sort((a, b) => a.name.localeCompare(b.name));
+      this.skillsMap = Object.fromEntries(
+        skills.map(({ id, icon, name }) => [id, { icon, name }])
+      );
       this.skillLevels = Object.fromEntries(
         skills.map(({ id }) => [id, playerStats[id] ?? 1])
       );
@@ -53,8 +55,6 @@ export const usePlayerStore = defineStore("playerStore", {
         ])
       );
 
-      const filteredStats = ["skillLevel", "travelingDistance"];
-      this.stats = statList.filter(({ type }) => !filteredStats.includes(type));
       this.isLoaded = true;
     },
     setSkillLevel(id, value) {
