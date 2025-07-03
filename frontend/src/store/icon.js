@@ -107,6 +107,6 @@ export const useIconStore = defineStore("iconStore", {
 
     _debouncedFetchIcons: debounce(function () {
       this._fetchIcons();
-    }, 50),
+    }, 10),
   },
 });
