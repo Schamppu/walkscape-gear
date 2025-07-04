@@ -138,6 +138,7 @@ const toggleOpen = () => {
         :item="props.item"
         :quality="quality2"
         show-quality-border
+        hide-keywords
       />
     </section>
   </section>

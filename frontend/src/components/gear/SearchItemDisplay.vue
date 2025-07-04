@@ -2,22 +2,15 @@
 import { ref } from "vue";
 import WsIcon from "@/components/common/WsIcon.vue";
 import StatsDisplay from "../common/StatsDisplay.vue";
-import KeywordDisplay from "@/components/common/KeywordDisplay.vue";
-import { useDataStore } from "@/store/data";
 
 const props = defineProps({
   item: {
     type: Object,
     required: true,
   },
-  hideKeywords: {
-    type: Boolean,
-    default: false,
-  },
 });
 
 const emit = defineEmits(["click"]);
-const dataStore = useDataStore();
 
 const isOpen = ref(false);
 
@@ -25,11 +18,6 @@ const toggle = () => {
   isOpen.value = !isOpen.value;
 };
 
-const keywords = props.hideKeywords
-  ? []
-  : props.item.keywords
-      .map((keyword) => dataStore.getKeywordById(keyword))
-      .filter((k) => k.icon);
 </script>
 
 <template>
@@ -48,16 +36,11 @@ const keywords = props.hideKeywords
         <span>{{ isOpen ? "▲" : "▼" }}</span>
       </button>
     </div>
-    <div v-if="isOpen" class="stats-display">
-      <div class="keywords">
-        <keyword-display
-          v-for="(keyword, index) in keywords"
-          :key="index"
-          :keyword="keyword"
-        />
-      </div>
-      <stats-display :item="props.item" :quality="props.item.quality" />
-    </div>
+    <stats-display
+      v-if="isOpen"
+      :item="props.item"
+      :quality="props.item.quality"
+    />
   </div>
 </template>
 
@@ -112,21 +95,5 @@ const keywords = props.hideKeywords
       background-color: $boxTransparentDarkOutline;
     }
   }
-}
-
-.stats-display {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-
-  background-color: $bgPrimary;
-}
-
-.keywords {
-  display: flex;
-  justify-content: center;
-  gap: $xxs;
-  flex-wrap: wrap;
 }
 </style>

@@ -7,6 +7,13 @@ const props = defineProps({
 </script>
 
 <template>
+  <div class="keywords">
+    <keyword-display
+      v-for="(keyword, index) in keywords"
+      :key="index"
+      :keyword="keyword"
+    />
+  </div>
   <div class="keyword-display">
     <ws-icon v-if="keyword.icon" :iconPath="keyword.icon" size="sm" />
     <p class="text">
