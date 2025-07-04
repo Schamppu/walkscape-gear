@@ -1,4 +1,5 @@
 <script setup>
+import { computed } from "vue";
 import { useDataStore } from "@/store/data";
 import { toDeepRaw } from "@/utils/rawData";
 import { sumAttrs } from "@/utils/qualityAttrs";
@@ -19,6 +20,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  filterStat: {
+    type: String,
+    default: "",
+  },
 });
 
 const dataStore = useDataStore();
@@ -36,14 +41,21 @@ const mapAttrs = (quality) => {
     itemCopy.itemQualityAttrs,
     itemCopy.buffs,
     quality
-  ).flatMap(({ stats, requirements }) => {
-    return stats.flatMap((stat) => {
-      return { stat, requirements: requirements || [] };
+  )
+    .flatMap(({ stats, requirements }) => {
+      return stats.flatMap((stat) => {
+        return { stat, requirements: requirements || [] };
+      });
+    })
+    .filter(({ stat }) => {
+      if (props.filterStat) {
+        return stat.type === props.filterStat;
+      }
+      return true;
     });
-  });
 };
 
-const attrs = mapAttrs(props.quality);
+const attrs = computed(() => mapAttrs(props.quality));
 </script>
 
 <template>

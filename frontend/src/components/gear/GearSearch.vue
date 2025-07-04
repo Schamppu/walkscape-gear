@@ -132,7 +132,11 @@ const handleClick = (item) => {
       />
       <select id="stat-filter" v-model="dataStore.selectedStat">
         <option value="none">None</option>
-        <option v-for="stat in dataStore.mainStats" :key="stat" :value="stat.type">
+        <option
+          v-for="stat in dataStore.mainStats"
+          :key="stat"
+          :value="stat.type"
+        >
           {{ stat.name }}
         </option>
       </select>
@@ -150,6 +154,7 @@ const handleClick = (item) => {
         v-for="item in filteredItems"
         :key="item.id"
         :item="item"
+        :highlight-stat="dataStore.selectedStat"
         @click="handleClick(item)"
       />
     </div>

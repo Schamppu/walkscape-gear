@@ -8,6 +8,10 @@ const props = defineProps({
     type: Object,
     required: true,
   },
+  highlightStat: {
+    type: String,
+    default: "",
+  },
 });
 
 const emit = defineEmits(["click"]);
@@ -17,7 +21,6 @@ const isOpen = ref(false);
 const toggle = () => {
   isOpen.value = !isOpen.value;
 };
-
 </script>
 
 <template>
@@ -40,6 +43,13 @@ const toggle = () => {
       v-if="isOpen"
       :item="props.item"
       :quality="props.item.quality"
+    />
+    <stats-display
+      v-if="!isOpen && props.highlightStat !== 'none'"
+      :item="props.item"
+      :quality="props.item.quality"
+      :filter-stat="props.highlightStat === 'none' ? '' : props.highlightStat"
+      hide-keywords
     />
   </div>
 </template>
