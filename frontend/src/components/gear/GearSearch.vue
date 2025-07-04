@@ -132,7 +132,6 @@ const handleClick = (item) => {
     </div>
 
     <input
-      v-focus
       ref="searchInput"
       v-model="searchTerm"
       type="text"
