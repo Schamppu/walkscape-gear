@@ -28,7 +28,7 @@ const attrs = sumAttrs(
   props.item.quality
 ).flatMap(({ stats, requirements }) => {
   return stats.flatMap((stat) => {
-    return { stat, requirements };
+    return { stat, requirements: requirements || [] };
   });
 });
 

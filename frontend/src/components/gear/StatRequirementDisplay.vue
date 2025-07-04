@@ -13,7 +13,7 @@ const props = defineProps({
   },
   requirements: {
     type: Array,
-    required: true,
+    default: [],
   },
 });
 

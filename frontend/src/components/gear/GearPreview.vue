@@ -33,7 +33,7 @@ const attrs = computed(() => {
     itemCopy.quality
   ).flatMap(({ stats, requirements }) => {
     return stats.flatMap((stat) => {
-      return { stat, requirements };
+      return { stat, requirements: requirements || [] };
     });
   });
 });
