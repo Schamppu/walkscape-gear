@@ -2,6 +2,8 @@
 import { ref } from "vue";
 import WsIcon from "@/components/common/WsIcon.vue";
 import StatRequirementDisplay from "./StatRequirementDisplay.vue";
+import KeywordDisplay from "@/components/common/KeywordDisplay.vue";
+import { useDataStore } from "@/store/data";
 import { toDeepRaw } from "@/utils/rawData";
 import { sumAttrs } from "@/utils/qualityAttrs";
 
@@ -10,9 +12,14 @@ const props = defineProps({
     type: Object,
     required: true,
   },
+  hideKeywords: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const emit = defineEmits(["click"]);
+const dataStore = useDataStore();
 
 const attrs = sumAttrs(
   toDeepRaw(props.item.itemAttrs),
@@ -30,6 +37,12 @@ const isOpen = ref(false);
 const toggle = () => {
   isOpen.value = !isOpen.value;
 };
+
+const keywords = props.hideKeywords
+  ? []
+  : props.item.keywords
+      .map((keyword) => dataStore.getKeywordById(keyword))
+      .filter((k) => k.icon);
 </script>
 
 <template>
@@ -49,6 +62,13 @@ const toggle = () => {
       </button>
     </div>
     <div v-if="isOpen" class="stats-display">
+      <div class="keywords">
+        <keyword-display
+          v-for="(keyword, index) in keywords"
+          :key="index"
+          :keyword="keyword"
+        />
+      </div>
       <stat-requirement-display
         v-for="({ stat, requirements }, key) in attrs"
         :key="key"
@@ -119,5 +139,12 @@ const toggle = () => {
   box-sizing: border-box;
 
   background-color: $bgPrimary;
+}
+
+.keywords {
+  display: flex;
+  justify-content: center;
+  gap: $xxs;
+  flex-wrap: wrap;
 }
 </style>

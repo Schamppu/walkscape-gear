@@ -4,7 +4,7 @@ import WsLabel from "@/components/common/WsLabel.vue";
 import InfoBubble from "@/components/common/InfoBubble.vue";
 import LocationBubble from "@/components/common/LocationBubble.vue";
 import SkillBubble from "@/components/common/SkillBubble.vue";
-import KeywordDisplay from "@/components/common/KeywordDisplay.vue";
+import EquippedKeywordDisplay from "@/components/common/EquippedKeywordDisplay.vue";
 import { useActivityStore } from "@/store/activity";
 import { useDataStore } from "@/store/data";
 import { useSkillModifiers } from "@/utils/useSkillModifiers";
@@ -91,7 +91,7 @@ const sections = computed(() => {
     },
     {
       label: "Keyword requirements",
-      component: KeywordDisplay,
+      component: EquippedKeywordDisplay,
       items: [
         ...(requiredKeywords || []).map(getKeyword),
         ...getRequirementKeywords(requirements),
