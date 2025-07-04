@@ -35,21 +35,17 @@ const reqs = props.requirements.map((req) => {
   console.log("type", type);
   if (type === "mainSkill") {
     const skill = playerStore.skillsMap[requirement.skill];
-    return [
-      {
-        text: skill.name,
-        icon: skill.icon,
-        opposite,
-      },
-    ];
+    return {
+      text: skill.name,
+      icon: skill.icon,
+      opposite,
+    };
   } else if (type === "traveling") {
-    return [
-      {
-        text: "Traveling",
-        icon: "",
-        opposite,
-      },
-    ];
+    return {
+      text: "Traveling",
+      icon: "",
+      opposite,
+    };
   } else if (type === "locationHasKeywords") {
     return requirement.keywords
       .map(dataStore.getKeywordById)
@@ -58,17 +54,15 @@ const reqs = props.requirements.map((req) => {
         text: name,
         icon,
         opposite,
-      }));
+      }))[0];
   } else if (type === "realm") {
     const realm = playerStore.factionsMap[requirement.realm];
-    return [
-      {
-        prefix: "in",
-        text: realm.name,
-        icon: realm.icon,
-        opposite,
-      },
-    ];
+    return {
+      prefix: "in",
+      text: `${realm.name} area`,
+      icon: realm.icon,
+      opposite,
+    };
   } else if (type === "distinctKeywordItemsEquipped") {
     const { quantity } = requirement;
     return requirement.keywords
@@ -79,24 +73,20 @@ const reqs = props.requirements.map((req) => {
         text: name,
         icon,
         opposite,
-      }));
+      }))[0];
   } else if (type === "achievementPoint") {
-    return [
-      {
-        prefix: "have",
-        text: `${requirement.value} achievement points`,
-        icon: "assets/icons/text/general_icons/achievement_point.png",
-        opposite,
-      },
-    ];
-  }
-  return [
-    {
-      text: requirement,
-      icon: "",
+    return {
+      prefix: "have",
+      text: `${requirement.value} achievement points`,
+      icon: "assets/icons/text/general_icons/achievement_point.png",
       opposite,
-    },
-  ];
+    };
+  }
+  return {
+    text: requirement,
+    icon: "",
+    opposite,
+  };
 });
 
 const toggle = () => {
@@ -126,19 +116,16 @@ const toggle = () => {
       <span class="stat-name">{{ stat.name }}</span>
     </button>
     <div v-if="isOpen" class="requirements-list">
-      <p v-for="(req, index) in reqs" :key="index" class="requirement">
+      <p
+        v-for="({ prefix, text, icon, opposite }, index) in reqs"
+        :key="index"
+        class="requirement"
+      >
         While
-        <span
-          v-for="({ prefix, text, icon, opposite }, i) in req"
-          :key="i"
-          class="req"
-        >
-          <template v-if="i > 0">AND </template>
-          <template v-if="opposite">NOT </template>
-          <template v-if="prefix">{{ prefix }} </template>
-          <ws-icon v-if="icon" :iconPath="icon" size="sm" />
-          {{ text }}
-        </span>
+        <template v-if="opposite">NOT </template>
+        <template v-if="prefix">{{ prefix }} </template>
+        <ws-icon v-if="icon" :iconPath="icon" size="sm" />
+        {{ text }}
       </p>
     </div>
   </div>
@@ -178,26 +165,19 @@ const toggle = () => {
 
   .requirement {
     display: flex;
+    justify-content: flex-start;
+    text-align: left;
     align-items: center;
     padding: $xxxxs $xs;
     gap: $xxs;
     border-radius: $lg;
+    flex-wrap: wrap;
 
     background-color: $boxDarkBackground;
     border: 1px solid $boxDarkOutline;
 
-    .req {
-      display: flex;
-      justify-content: flex-start;
-      align-items: center;
-      text-align: left;
-      gap: $xxs;
-      flex-wrap: wrap;
-
-      span,
-      ws-icon {
-        display: inline;
-      }
+    ws-icon {
+      display: inline;
     }
   }
 }
