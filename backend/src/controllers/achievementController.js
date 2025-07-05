@@ -1,5 +1,4 @@
-import { achievementService } from "../services/index.js";
-import { fetchCollectibles } from "./itemController.js";
+import { achievementService, itemService } from "../services/index.js";
 
 export const fetchAchievementRewards = () =>
   achievementService
@@ -29,7 +28,7 @@ export async function getAchievementPointsMax(req, res) {
 
   try {
     const [collectibles, achievements] = await Promise.all([
-      fetchCollectibles(),
+      itemService.fetchCollectibles(),
       achievementService.list(),
     ]);
 
