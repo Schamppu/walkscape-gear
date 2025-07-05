@@ -36,6 +36,7 @@ model OwnedItem {
   userUuid String
   itemId   String
   owned    Boolean
+  hidden   Boolean @default(false)
   quality  String?
   quality2 String?
 
