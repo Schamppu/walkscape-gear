@@ -16,7 +16,7 @@ const [normal, fine] = consumableQualityOptions.map((q) => q.value);
 const itemsStore = useItemsStore();
 const normalOwned = ref(false);
 const fineOwned = ref(false);
-const hidden = ref(false);
+const isHidden = ref(false);
 const isOpen = ref(false);
 
 function updateOwnedFromStore() {
@@ -29,6 +29,7 @@ function updateOwnedFromStore() {
     entry &&
     (entry.quality === fine || entry.quality2 === fine)
   );
+  isHidden.value = entry?.hidden ?? false;
 }
 
 onMounted(updateOwnedFromStore);
@@ -41,9 +42,9 @@ watch(
   { deep: true }
 );
 
-watch([normalOwned, fineOwned, hidden], () => {
+watch([normalOwned, fineOwned, isHidden], () => {
   let owned = normalOwned.value || fineOwned.value;
-  let hidden = hidden.value;
+  let hidden = isHidden.value;
   let quality = null;
   let quality2 = null;
   if (owned) {
@@ -77,7 +78,7 @@ function toggleFine(e) {
 }
 function toggleHidden(e) {
   e.stopPropagation();
-  hidden.value = !hidden.value;
+  isHidden.value = !isHidden.value;
 }
 const toggleOpen = () => {
   isOpen.value = !isOpen.value;
@@ -88,23 +89,21 @@ const toggleOpen = () => {
   <section class="item">
     <section class="item-entry">
       <div class="group">
-        <div class="checkbox-item" @click="toggleNormal">
-          <label for="normal-checkbox">Normal</label>
-          <input
-            id="normal-checkbox"
-            type="checkbox"
-            :checked="normalOwned"
-            readonly
-          />
+        <div>
+          <label class="checkbox-item"
+            >Normal
+            <input
+              type="checkbox"
+              v-model="normalOwned"
+              @click="toggleNormal"
+            />
+          </label>
         </div>
-        <div class="checkbox-item" @click="toggleFine">
-          <label for="fine-checkbox" class="color-fine">Fine</label>
-          <input
-            id="fine-checkbox"
-            type="checkbox"
-            :checked="fineOwned"
-            readonly
-          />
+        <div>
+          <label class="color-fine checkbox-item"
+            >Fine
+            <input type="checkbox" v-model="fineOwned" @click="toggleFine"
+          /></label>
         </div>
         <ws-icon
           :iconPath="item.icon"
