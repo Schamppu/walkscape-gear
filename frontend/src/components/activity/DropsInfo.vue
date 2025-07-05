@@ -17,7 +17,7 @@ watchEffect(async () => {
     const attrs = sumAttrs(
       item.itemAttrs,
       item.itemQualityAttrs,
-      item.itemBuffs,
+      item.buffs,
       item.quality
     )
       .filter((item) => Array.isArray(item.tables) && item.tables.length > 0)
