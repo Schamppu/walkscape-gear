@@ -94,7 +94,7 @@ export const useIconStore = defineStore("iconStore", {
           }
         } catch (e) {
           // On error, resolve all as null
-          console.log("Error fetching icons:", e);
+          console.error("Error fetching icons:", e);
           for (const path of iconsToFetch) {
             (this.pendingResolvers[path] || []).forEach((resolve) =>
               resolve(null)

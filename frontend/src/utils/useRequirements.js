@@ -83,7 +83,7 @@ export function useRequirements() {
         }
         break;
       default:
-        console.log(type, requirement);
+        console.error("unhandled requirement", type, requirement);
     }
 
     return opposite ? !value : value;
