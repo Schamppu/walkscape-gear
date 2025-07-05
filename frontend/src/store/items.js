@@ -38,9 +38,15 @@ export const useItemsStore = defineStore("itemStore", {
       );
       this.isLoaded = true;
     },
-    toggleItem(itemId, owned = true, quality = null, quality2 = null) {
-      this.ownedItems[itemId] = { owned, quality, quality2 };
-      this.changedOwnedItems[itemId] = { owned, quality, quality2 };
+    toggleItem({
+      itemId,
+      owned = true,
+      hidden = false,
+      quality = null,
+      quality2 = null,
+    }) {
+      this.ownedItems[itemId] = { owned, hidden, quality, quality2 };
+      this.changedOwnedItems[itemId] = { owned, hidden, quality, quality2 };
       this.scheduleOwnedItemsFlush();
     },
     async flushChangedOwnedItems() {

@@ -57,6 +57,7 @@ watch([normalOwned, fineOwned], () => {
   emit("change", {
     itemId: props.item.id,
     owned,
+    hidden,
     quality,
     quality2,
   });

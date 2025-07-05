@@ -53,6 +53,20 @@ const toggleChecked = (e) => {
   const data = {
     itemId: props.item.id,
     owned: !props.selected,
+    hidden: props.hidden,
+    quality: quality.value,
+    quality2: quality2.value,
+  };
+
+  emit("change", data);
+};
+
+const toggleHidden = (e) => {
+  e.stopPropagation();
+  const data = {
+    itemId: props.item.id,
+    owned: props.selected,
+    hidden: !props.hidden,
     quality: quality.value,
     quality2: quality2.value,
   };
@@ -64,6 +78,7 @@ const updateQuality = () => {
   const data = {
     itemId: props.item.id,
     owned: true,
+    hidden: props.hidden,
     quality: quality.value,
     quality2: quality2.value,
   };

@@ -39,17 +39,26 @@ const toggleAllConsumables = (e) => {
     const newSet = new Set();
     items.forEach((item) => {
       newSet.add(item.id);
-      itemsStore.toggleItem(
-        item.id,
-        true,
-        consumableQualityOptions[0].value,
-        null
-      );
+      const data = {
+        itemId: item.id,
+        owned: true,
+        hidden: false,
+        quality: consumableQualityOptions[0].value,
+        quality2: null,
+      };
+      itemsStore.toggleItem(data);
     });
     selectedItems.value = newSet;
   } else {
     items.forEach((item) => {
-      itemsStore.toggleItem(item.id, false, null, null);
+      const data = {
+        itemId: item.id,
+        owned: false,
+        hidden: false,
+        quality: null,
+        quality2: null,
+      };
+      itemsStore.toggleItem(data);
     });
     selectedItems.value = new Set();
   }
@@ -60,12 +69,26 @@ const toggleAll = (e) => {
     const newSet = new Set();
     items.forEach((item) => {
       newSet.add(item.id);
-      itemsStore.toggleItem(item.id, true, item.quality, item.quality2);
+      const data = {
+        itemId: item.id,
+        owned: true,
+        hidden: false,
+        quality: item.quality,
+        quality2: item.quality2,
+      };
+      itemsStore.toggleItem(data);
     });
     selectedItems.value = newSet;
   } else {
     items.forEach((item) => {
-      itemsStore.toggleItem(item.id, false, item.quality, item.quality2);
+      const data = {
+        itemId: item.id,
+        owned: false,
+        hidden: false,
+        quality: item.quality,
+        quality2: item.quality2,
+      };
+      itemsStore.toggleItem(data);
     });
     selectedItems.value = new Set();
   }
@@ -80,7 +103,7 @@ function toggleSelectAll(e) {
 }
 
 function toggleItemSelection(data) {
-  const { itemId, owned, quality, quality2 } = data;
+  const { itemId, owned } = data;
   if (owned) {
     selectedItems.value.add(itemId);
   } else {
@@ -88,7 +111,7 @@ function toggleItemSelection(data) {
   }
   // Force reactivity
   selectedItems.value = new Set(selectedItems.value);
-  itemsStore.toggleItem(itemId, owned, quality, quality2);
+  itemsStore.toggleItem(data);
 }
 
 watch(
