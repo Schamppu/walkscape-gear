@@ -11,8 +11,12 @@ export const showItemForActivity = (itemProxy, activity, quality) => {
 
   const hasUsefulKeywords = usefulKeywords(item, activity).length > 0;
   const hasUsefulAttrs = usefulAttrs(item, activity, quality, false).length > 0;
+  const hasTables = itemTables(item).length > 0;
 
-  return !skill || (skill && (skillReq || hasUsefulKeywords || hasUsefulAttrs));
+  return (
+    !skill ||
+    (skill && (skillReq || hasUsefulKeywords || hasUsefulAttrs || hasTables))
+  );
 };
 
 const usefulKeywords = (item, activity) => {
@@ -49,6 +53,10 @@ const usefulAttrs = (item, activity, quality, isRecipe) => {
   return baseAttrs.filter(
     (attr) => filterCO(attr) && checkRequirements(attr.requirements)
   );
+};
+
+const itemTables = (item) => {
+  return item.tables || [];
 };
 
 const checksSkillRequirements = (item, skill) => {
