@@ -30,7 +30,7 @@ const lootTableLabels = computed(() => {
 });
 
 const tableItems = computed(() => {
-  const { rollAmount, type } = props.lootTable;
+  const { rollAmount, type, rollChance } = props.lootTable;
   return props.lootTable?.tables?.flatMap(({ noDropChance, tableRows }) => {
     const mappedRows = tableRows.flatMap((row) => {
       return {
@@ -47,6 +47,7 @@ const tableItems = computed(() => {
           ...row,
           tableWeight,
           rollAmount,
+          rollChance,
           type,
         },
       ];

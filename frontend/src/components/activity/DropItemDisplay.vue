@@ -40,9 +40,11 @@ const dropChanceMultipliers = (type) => {
 };
 
 const sourceDropChance = (source) => {
-  const { rowWeight, tableWeight, noDropChance, type, rollAmount } = source;
+  const { rowWeight, tableWeight, noDropChance, rollChance, type, rollAmount } =
+    source;
   const odds =
     (1 - noDropChance) *
+    (rollChance || 1) *
     (rowWeight / tableWeight) *
     dropChanceMultipliers(type);
 

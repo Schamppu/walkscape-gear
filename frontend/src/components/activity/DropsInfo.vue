@@ -13,17 +13,26 @@ const gearStore = useGearStore();
 const resolvedLootTables = ref([]);
 
 watchEffect(async () => {
-  const gearLootTables = gearStore.filledGearSlots.flatMap((item) =>
-    sumAttrs(
+  const gearLootTables = gearStore.filledGearSlots.flatMap((item) => {
+    const attrs = sumAttrs(
       item.itemAttrs,
       item.itemQualityAttrs,
       item.itemBuffs,
       item.quality
     )
-      .flatMap(({ tables }) => tables)
-      .filter(Boolean)
-      .map((table) => ({ ...table, tableSource: item.name }))
-  );
+      .filter((item) => Array.isArray(item.tables) && item.tables.length > 0)
+      .flatMap(({ tables, stats }) => {
+        return tables.map((table) => {
+          return {
+            ...table,
+            tableSource: item.name,
+            rollChance: stats?.[0]?.value || 1,
+          };
+        });
+      });
+    return attrs;
+  });
+
   const { tables: activityTables, name } = activityStore.activity;
   const activityLootTables = activityTables.map((table) => {
     return {
@@ -38,6 +47,7 @@ watchEffect(async () => {
   const resolvedTables = tables.flatMap((table) => {
     return {
       ...table,
+      rollChance: table.rollChance || 1,
       tables: table.tables.map(dataStore.getDetailedLootTable),
     };
   });
@@ -46,7 +56,7 @@ watchEffect(async () => {
 });
 
 const mapLootTable = (table) => {
-  const { rollAmount, type, tableSource } = table;
+  const { rollAmount, type, tableSource, rollChance } = table;
   return table.tables?.flatMap(({ noDropChance, tableRows }) => {
     const mappedRows = tableRows.map((row) => {
       return {
@@ -64,6 +74,7 @@ const mapLootTable = (table) => {
         rollAmount,
         type,
         tableSource,
+        rollChance,
       };
     });
   });
