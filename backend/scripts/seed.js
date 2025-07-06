@@ -56,7 +56,6 @@ async function seedTestData(userUuid) {
       });
     });
   });
-  // console.log(items);
   await dbService.upsertUserOwnedItems(userUuid, items);
   console.log(`added ${items.length} owned items`);
 
