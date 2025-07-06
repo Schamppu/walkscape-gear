@@ -4,6 +4,7 @@ import { useGearStore } from "@/store/gear";
 import { useItemsStore } from "@/store/items";
 import { useActivityStore } from "@/store/activity";
 import { useDataStore } from "@/store/data";
+import { useRequirements } from "@/utils/useRequirements";
 import { showItemForActivity } from "@/utils/gear";
 import { itemQualityNameSort } from "@/utils/quality";
 import { sumAttrs } from "@/utils/qualityAttrs";
@@ -27,6 +28,7 @@ const gearStore = useGearStore();
 const itemsStore = useItemsStore();
 const activityStore = useActivityStore();
 const dataStore = useDataStore();
+const { checkRequirements } = useRequirements();
 
 const searchTerm = ref("");
 
@@ -74,9 +76,18 @@ const filteredItems = computed(() => {
     !(otherSlotIds.value.length && otherSlotIds.value.includes(item.id));
   const filterStat = (item) => {
     if (dataStore.selectedStat === "none") return true;
-    return item.stats.some((attr) => attr.type === dataStore.selectedStat);
+    return item.attrs.some((attr) => {
+      const req = showUseful ? checkRequirements(attr.requirements) : true;
+      return (
+        req &&
+        attr.stats.some((stats) => {
+          return stats.type === dataStore.selectedStat;
+        })
+      );
+    });
   };
   const filterHidden = (item) => !item.hidden;
+
   return slotItems
     .map((item) => {
       const { id } = item;
@@ -85,20 +96,24 @@ const filteredItems = computed(() => {
       const quality = owned ? itemsStore.ownedItems[id].quality : item.quality;
       const quality2 = owned ? itemsStore.ownedItems[id].quality2 : null;
 
+      let attrs =
+        dataStore.selectedStat !== "none"
+          ? sumAttrs(
+              item.itemAttrs,
+              item.itemQualityAttrs,
+              item.buffs,
+              quality2
+            )
+          : [];
+      let stats = attrs.flatMap(({ stats }) => stats);
+
       const out = [
         {
           ...item,
           hidden,
           quality,
-          stats:
-            dataStore.selectedStat !== "none"
-              ? sumAttrs(
-                  item.itemAttrs,
-                  item.itemQualityAttrs,
-                  item.buffs,
-                  quality
-                ).flatMap(({ stats }) => stats)
-              : [],
+          attrs,
+          stats,
         },
       ];
       if (
@@ -106,19 +121,23 @@ const filteredItems = computed(() => {
         quality2 &&
         quality2 !== quality
       ) {
+        attrs =
+          dataStore.selectedStat !== "none"
+            ? sumAttrs(
+                item.itemAttrs,
+                item.itemQualityAttrs,
+                item.buffs,
+                quality2
+              )
+            : [];
+        stats = attrs.flatMap(({ stats }) => stats);
+
         out.push({
           ...item,
           hidden,
           quality: quality2,
-          stats:
-            dataStore.selectedStat !== "none"
-              ? sumAttrs(
-                  item.itemAttrs,
-                  item.itemQualityAttrs,
-                  item.buffs,
-                  quality2
-                ).flatMap(({ stats }) => stats)
-              : [],
+          attrs,
+          stats,
         });
       }
 

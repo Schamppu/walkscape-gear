@@ -10,7 +10,8 @@ export const showItemForActivity = (itemProxy, activity, quality, isRecipe) => {
   const skillReq = checksSkillRequirements(item, skill);
 
   const hasUsefulKeywords = usefulKeywords(item, activity).length > 0;
-  const hasUsefulAttrs = usefulAttrs(item, activity, quality, isRecipe).length > 0;
+  const hasUsefulAttrs =
+    usefulAttrs(item, activity, quality, isRecipe).length > 0;
   const hasTables = itemTables(item).length > 0;
 
   return (
@@ -48,9 +49,13 @@ const usefulAttrs = (item, activity, quality, isRecipe) => {
   };
 
   const { checkRequirements } = useRequirements();
-  return baseAttrs.filter(
-    (attr) => filterCO(attr) && checkRequirements(attr.requirements)
+  const usefulAttr = baseAttrs.filter(
+    (attr) =>
+      filterCO(attr) &&
+      checkRequirements(attr.requirements) &&
+      attr.stats.some((stat) => !stat.isNegative)
   );
+  return usefulAttr;
 };
 
 const itemTables = (item) => {
