@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { storeToRefs } from "pinia";
 import WsLabel from "@/components/common/WsLabel.vue";
 import InfoBubble from "@/components/common/InfoBubble.vue";
@@ -15,6 +15,7 @@ import { n } from "@/utils/number";
 
 const activityStore = useActivityStore();
 const itemsStore = useItemsStore();
+const useFineMaterials = ref(false);
 
 const { recipe } = storeToRefs(activityStore);
 const stats = computed(() => {
@@ -94,7 +95,7 @@ const craftingOdds = computed(() => {
     [0.05, 0.05],
   ];
 
-  const base = craftingQualityOptions
+  let base = craftingQualityOptions
     .map((quality, index) => ({
       ...quality,
       qualityValue: quality.value,
@@ -121,9 +122,23 @@ const craftingOdds = computed(() => {
       };
     });
 
-  for (let i = base.length - 2; i >= 0; i--) {
-    base[i].weight = Math.max(base[i].weight, base[i + 1].weight);
+  if (!useFineMaterials.value) {
+    for (let i = base.length - 2; i >= 0; i--) {
+      base[i].weight = Math.max(base[i].weight, base[i + 1].weight);
+    }
+  } else {
+    for (let i = 0; i < base.length - 1; i++) {
+      base[i].name = base[i + 1].name;
+      base[i].qualityValue = base[i + 1].qualityValue;
+    }
+    base[4].weight = base[4].weight + base[5].weight;
+    base = base.slice(0, -1);
+
+    for (let i = base.length - 2; i >= 0; i--) {
+      base[i].weight = Math.max(base[i].weight, base[i + 1].weight);
+    }
   }
+
   const totalWeight = base.reduce((acc, item) => acc + item.weight, 0);
   const odds = base
     .map((item) => {
@@ -218,6 +233,10 @@ const craftingOdds = computed(() => {
       </div>
       <div v-if="resultHasCO" class="info-section">
         <ws-label label="Crafting Odds" class="info-row" />
+        <label>
+          <input type="checkbox" v-model="useFineMaterials" />
+          Fine Materials
+        </label>
         <table class="crafting-odds-table">
           <thead>
             <tr>
@@ -228,7 +247,10 @@ const craftingOdds = computed(() => {
             </tr>
           </thead>
           <tbody>
-            <tr v-for="item in craftingOdds" :key="item.name">
+            <tr
+              v-for="(item, index) in craftingOdds"
+              :key="`${item.name}-${index}`"
+            >
               <td :class="`color-${item.qualityValue}`">{{ item.name }}</td>
               <td>{{ item.odds }}</td>
               <td>{{ n(item.crafts, 2) }}</td>
