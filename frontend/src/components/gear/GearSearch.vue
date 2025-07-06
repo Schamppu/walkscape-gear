@@ -76,7 +76,7 @@ const filteredItems = computed(() => {
     .map((item) => {
       const { id } = item;
       const owned = id in itemsStore.ownedItems;
-      const hidden = itemsStore.ownedItems[id].hidden ?? false;
+      const hidden = owned ? itemsStore.ownedItems[id].hidden : false;
       const quality = owned ? itemsStore.ownedItems[id].quality : item.quality;
       const quality2 = owned ? itemsStore.ownedItems[id].quality2 : null;
 
