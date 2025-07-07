@@ -25,6 +25,12 @@ export function useSkillModifiers() {
     return activity.value?.maxWorkEfficiency || 1;
   });
 
+  const effectiveMaxWorkEfficiency = computed(() => {
+    const { workRequired } = activity.value || 1;
+    const minSteps = Math.ceil(workRequired / maxWorkEfficiency.value);
+    return workRequired / minSteps;
+  });
+
   const workEfficiency = computed(() => {
     const workEfficiency = getStat("workEfficiency");
     return Math.min(workEfficiency, maxWorkEfficiency.value - 1);
@@ -145,6 +151,7 @@ export function useSkillModifiers() {
     maxWorkEfficiency,
     workEfficiency,
     uncappedWorkEfficiency,
+    effectiveMaxWorkEfficiency,
     findCollectibles,
     findGems,
     findBirdNests,

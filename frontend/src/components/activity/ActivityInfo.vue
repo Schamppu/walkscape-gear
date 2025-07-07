@@ -18,6 +18,7 @@ const {
   maxWorkEfficiency,
   workEfficiency,
   uncappedWorkEfficiency,
+  effectiveMaxWorkEfficiency,
   stepsPerCompletion,
   xpRewards,
   xpPerStep,
@@ -72,10 +73,17 @@ const sections = computed(() => {
           text: `${n(uncappedWorkEfficiency.value * 100)} / ${
             Math.round(maxWorkEfficiency.value * 100) - 100
           }%`,
-          tooltip: `${Math.round(workEfficiency.value * 100)}% work efficiency`,
+          tooltip: `${Math.round(
+            uncappedWorkEfficiency.value * 100
+          )}% work efficiency\nCapped at ${n(
+            maxWorkEfficiency.value * 100 - 100,
+            0
+          )}%\nMax benefit at ${Math.ceil(
+            effectiveMaxWorkEfficiency.value * 100 - 100
+          )}%`,
           iconPath: "assets/icons/text/stats/skilling/work_efficiency.png",
           borderClass:
-            workEfficiency.value >= maxWorkEfficiency.value - 1
+            workEfficiency.value >= effectiveMaxWorkEfficiency.value - 1
               ? "border-green"
               : "",
         },
