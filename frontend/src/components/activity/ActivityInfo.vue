@@ -70,17 +70,17 @@ const sections = computed(() => {
           iconPath: "assets/icons/text/general_icons/steps.png",
         },
         {
-          text: `${n(uncappedWorkEfficiency.value * 100)} / ${
-            Math.round(maxWorkEfficiency.value * 100) - 100
-          }%`,
-          tooltip: `${Math.round(
-            uncappedWorkEfficiency.value * 100
-          )}% work efficiency\nCapped at ${n(
-            maxWorkEfficiency.value * 100 - 100,
-            0
-          )}%\nMax benefit at ${Math.ceil(
-            effectiveMaxWorkEfficiency.value * 100 - 100
+          text: `${n(uncappedWorkEfficiency.value * 100)} / ${Math.round(
+            (maxWorkEfficiency.value - 1) * 100
           )}%`,
+          tooltip: `Your Work Efficiency: ${Math.round(
+            uncappedWorkEfficiency.value * 100
+          )}%\nMax Work Efficiency: ${n(
+            (maxWorkEfficiency.value - 1) * 100,
+            0
+          )}%\nMax benefit at: ${
+            Math.ceil((effectiveMaxWorkEfficiency.value - 1) * 400) / 4
+          }%`,
           iconPath: "assets/icons/text/stats/skilling/work_efficiency.png",
           borderClass:
             workEfficiency.value >= effectiveMaxWorkEfficiency.value - 1

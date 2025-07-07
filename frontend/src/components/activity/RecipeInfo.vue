@@ -194,17 +194,17 @@ const craftingOdds = computed(() => {
           />
           <info-bubble
             label="Work Efficiency"
-            :text="`${n(stats.uncappedWorkEfficiency * 100)} / ${
-              Math.round(stats.maxWorkEfficiency * 100) - 100
-            }%`"
-            :tooltip="`${Math.round(
-              stats.uncappedWorkEfficiency * 100 - 100
-            )}% work efficiency\nCapped at ${n(
-              stats.maxWorkEfficiency * 100,
-              0
-            )}%\nMax benefit at ${Math.ceil(
-              stats.effectiveMaxWorkEfficiency * 100 - 100
+            :text="`${n(stats.uncappedWorkEfficiency * 100)} / ${Math.round(
+              (stats.maxWorkEfficiency - 1) * 100
             )}%`"
+            :tooltip="`Your Work Efficiency: ${Math.round(
+              stats.uncappedWorkEfficiency * 100
+            )}%\nMax Work Efficiency: ${n(
+              (stats.maxWorkEfficiency - 1) * 100,
+              0
+            )}%\nMax benefit at: ${
+              Math.ceil((stats.effectiveMaxWorkEfficiency - 1) * 400) / 4
+            }%`"
             iconPath="assets/icons/text/stats/skilling/work_efficiency.png"
             :borderClass="
               n(stats.uncappedWorkEfficiency) >=
