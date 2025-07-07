@@ -113,14 +113,14 @@ const stepsPerFine = computed(() => {
           iconPath="assets/icons/text/general_icons/steps.png"
           size="xs"
         />
-        <span>{{ n(stepsPerItem, 1) }}</span>
+        <span>{{ n(stepsPerItem, 0) }}</span>
       </div>
       <div v-if="canDropFine" class="steps-line border-fine">
         <ws-icon
           iconPath="assets/icons/text/general_icons/steps.png"
           size="xs"
         />
-        <span>{{ n(stepsPerFine, 1) }}</span>
+        <span>{{ n(stepsPerFine, 0) }}</span>
       </div>
     </div>
   </div>
