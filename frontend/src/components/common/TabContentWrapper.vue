@@ -35,7 +35,7 @@ const loading = toRef(props, "isLoading");
   gap: $base;
 
   background-color: $bgPrimary;
-  padding: $xlg;
+  padding: $xlg $xxs;
 }
 
 .tab-content {

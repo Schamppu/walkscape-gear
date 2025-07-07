@@ -1,73 +1,70 @@
 import { getRawData } from "./rawData";
 import { sumAttrs } from "./qualityAttrs";
-import { intersect } from "./intersect";
+import { useRequirements } from "./useRequirements";
 
-export const showItemForActivity = (itemProxy, activity, quality) => {
+export const showItemForActivity = (itemProxy, activity, quality, isRecipe) => {
   const item = getRawData(itemProxy);
 
-  const skill = activity?.relatedSkillsList.length
-    ? activity.relatedSkillsList[0]
-    : null;
+  const [skill] = activity.relatedSkillsList ??
+    activity.relatedSkills ?? [null];
   const skillReq = checksSkillRequirements(item, skill);
 
   const hasUsefulKeywords = usefulKeywords(item, activity).length > 0;
-  const hasUsefulAttrs = usefulAttrs(item, activity, quality, false).length > 0;
+  const hasUsefulAttrs =
+    usefulAttrs(item, activity, quality, isRecipe).length > 0;
+  const hasTables = itemTables(item).length > 0;
 
-  return !skill || (skill && (skillReq || hasUsefulKeywords || hasUsefulAttrs));
+  return (
+    !skill ||
+    (skill && (skillReq || hasUsefulKeywords || hasUsefulAttrs || hasTables))
+  );
 };
 
 const usefulKeywords = (item, activity) => {
   if (!activity) return false;
-  const { requiredKeywords: kw } = activity;
-  if (!kw) return false;
-  const kws = kw.map(({ keyword }) => keyword);
-  return item.keywords.filter((keyword) => kws.includes(keyword));
+  const { requiredKeywords: kw, requirements } = activity;
+
+  const kws = kw?.map(({ keyword }) => keyword) ?? [];
+  const kwEquipped =
+    requirements
+      ?.filter((req) => req.type === "distinctKeywordItemsEquipped")
+      .flatMap(({ requirement }) => requirement.keywords) ?? [];
+
+  if (!(kws || kwEquipped)) return false;
+  return item.keywords.filter(
+    (keyword) => kws.includes(keyword) || kwEquipped.includes(keyword)
+  );
 };
 
 const usefulAttrs = (item, activity, quality, isRecipe) => {
   const baseAttrs = sumAttrs(
     item.itemAttrs,
     item.itemQualityAttrs || [],
+    item.buffs || [],
     quality
   );
-
-  const isTravel = activity?.id === "activity-travelling";
-  const skill = activity?.relatedSkillsList.length
-    ? activity.relatedSkillsList[0]
-    : null;
 
   const filterCO = (attr) => {
     return isRecipe || (!isRecipe && attr.statText !== "Crafting outcome");
   };
 
-  const filterGlobal = (attr) => {
-    return attr.requirements?.every(({ type }) => {
-      const filteredTypes = ["mainSkill", "traveling"];
-      return !intersect([type], filteredTypes).length;
-    });
-  };
+  const { checkRequirements } = useRequirements();
+  const usefulAttr = baseAttrs.filter(
+    (attr) =>
+      filterCO(attr) &&
+      checkRequirements(attr.requirements) &&
+      attr.stats.some((stat) => !stat.isNegative)
+  );
+  return usefulAttr;
+};
 
-  const filterSkill = (attr) => {
-    return attr.requirements?.some((req) => {
-      return (
-        (req.type === "mainSkill" && req.requirement.skill === skill) ||
-        (req.type === "traveling" && isTravel)
-      );
-    });
-  };
-
-  return baseAttrs.filter((attr) => {
-    const co = filterCO(attr);
-    const global = filterGlobal(attr);
-    const skill = filterSkill(attr);
-
-    return co && (global || skill);
-  });
+const itemTables = (item) => {
+  return item.tables || [];
 };
 
 const checksSkillRequirements = (item, skill) => {
   const skillReqs = skillsInRequirements(item);
-  const requiredSkills = skillReqs.map(({ skill }) => skill);
+  const requiredSkills = skillReqs.map(({ requirement }) => requirement.skill);
   const usesSkill = requiredSkills.includes(skill);
   return usesSkill;
 };

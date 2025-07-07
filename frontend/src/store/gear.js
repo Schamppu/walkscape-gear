@@ -5,16 +5,16 @@ import { useItemsStore } from "./items";
 export const useGearStore = defineStore("gearStore", {
   state: () => ({
     gearSlots: {
+      head: null,
       cape: null,
       back: null,
-      neck: null,
-      hands: null,
-      head: null,
       chest: null,
-      legs: null,
-      feet: null,
       primary: null,
       secondary: null,
+      hands: null,
+      legs: null,
+      neck: null,
+      feet: null,
       ring1: null,
       ring2: null,
       tool1: null,
@@ -27,7 +27,8 @@ export const useGearStore = defineStore("gearStore", {
       consumable: null,
       service: null,
     },
-    useOwned: true,
+    showOwned: true,
+    showUseful: true,
   }),
   getters: {
     filledGearSlots: (state) => {
@@ -58,19 +59,44 @@ export const useGearStore = defineStore("gearStore", {
       if (slot === "service") return () => ({ name: "None", id: "-1" });
       return searchItems;
     },
-    async loadItem(itemSlot, id, quality) {
-      if (!id) {
-        console.error("no id provided");
-        return;
-      }
-      const previousItem = this.gearSlots[itemSlot];
-      if (previousItem?.id === id) return;
 
+    determineQuality(id, q2 = false) {
+      const itemsStore = useItemsStore();
+      const owned = id in itemsStore.ownedItems;
+      if (!owned)
+        return id in itemsStore.allItems
+          ? itemsStore.allItems[id].quality
+          : "common";
+      const entry = itemsStore.ownedItems[id];
+      let quality = "common";
+      if (entry.quality) quality = entry.quality;
+      if (q2 && entry.quality2) quality = entry.quality2;
+      return quality;
+    },
+
+    async _fetchAndSetItem(itemSlot, id, quality) {
       await getItem({ id }).then(({ data }) => {
         if (data) {
           this.setGearSlot(itemSlot, { ...data, quality });
         }
       });
+    },
+
+    async loadItem(itemSlot, id, itemQuality = null) {
+      if (!id) {
+        console.error("no id provided");
+        return;
+      }
+
+      const itemsStore = useItemsStore();
+      if (!(id in itemsStore.allItems)) return;
+
+      const previousItem = this.gearSlots[itemSlot];
+      if (previousItem?.id === id && previousItem.quality === itemQuality)
+        return;
+
+      const quality = itemQuality || this.determineQuality(id);
+      await this._fetchAndSetItem(itemSlot, id, quality);
     },
   },
 });

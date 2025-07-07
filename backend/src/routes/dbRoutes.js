@@ -4,7 +4,9 @@ import {
   upsertUserInfo,
   getUserOwnedItems,
   upsertUserOwnedItems,
-} from "../controllers/dbController.cjs";
+  getUserFactionReputations,
+  upsertUserFactionReputations,
+} from "../controllers/dbController.js";
 
 const router = Router();
 
@@ -12,5 +14,7 @@ router.get("/user_stats", getUserInfo);
 router.post("/user_stats", upsertUserInfo);
 router.get("/owned_items", getUserOwnedItems);
 router.post("/owned_items", upsertUserOwnedItems);
+router.get("/faction_reputations", getUserFactionReputations);
+router.post("/faction_reputations", upsertUserFactionReputations);
 
 export { router as dbRoutes };

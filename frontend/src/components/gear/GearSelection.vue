@@ -65,13 +65,8 @@ const updateVisible = (visibility) => {
       </div>
     </div>
     <div class="row">
-      <gear-slot gearType="potion" @select="handleGearSlotSelect" />
       <gear-slot gearType="consumable" @select="handleGearSlotSelect" />
-      <gear-slot
-        v-if="isRecipe"
-        gearType="service"
-        @select="handleGearSlotSelect"
-      />
+      <gear-slot gearType="potion" @select="handleGearSlotSelect" />
     </div>
     <div v-if="showGearModal">
       <gear-modal
@@ -87,7 +82,6 @@ const updateVisible = (visibility) => {
 .tab-content {
   flex-grow: 1;
 
-  min-width: 25rem;
   overflow-y: auto;
 
   justify-content: center;
@@ -124,7 +118,7 @@ const updateVisible = (visibility) => {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: $lg;
+  row-gap: $lg;
   flex-wrap: wrap;
 
   .tool-wrapper {

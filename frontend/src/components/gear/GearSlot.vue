@@ -26,18 +26,35 @@ const handleClick = () => emit("select", props.gearType, storeKey);
 </script>
 
 <template>
-  <div class="gear-slot-wrapper" @click="handleClick">
-    <p v-if="!gearRef" class="typography-label label">{{ gearType }}</p>
+  <button class="gear-slot-wrapper" @click="handleClick">
+    <p
+      v-if="!gearRef"
+      class="typography-label label"
+      :style="[
+        gearType.length >= 7 ? 'font-size: 0.6rem;' : '',
+        gearType.length >= 9 ? 'font-size: 0.5rem;' : '',
+      ]"
+    >
+      {{ gearType }}
+    </p>
     <div v-else class="content">
-      <ws-icon :icon-path="gearRef.icon" size="xl" />
+      <ws-icon
+        :icon-path="gearRef.icon"
+        size="lg"
+        :outline-class="`outline-${gearRef.quality}`"
+      />
     </div>
-  </div>
+  </button>
 </template>
 
 <style lang="scss" scoped>
 .gear-slot-wrapper {
-  width: 80px;
-  height: 80px;
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+
+  width: 72px;
+  height: 72px;
   border: 1px solid $boxPrimaryOutline;
   border-radius: $md;
 
@@ -55,6 +72,7 @@ const handleClick = () => emit("select", props.gearType, storeKey);
 }
 
 .label {
+  width: 100%;
   margin-top: $md;
   text-align: center;
 }

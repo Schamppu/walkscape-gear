@@ -2,32 +2,39 @@
 import { computed } from "vue";
 import WsLabel from "@/components/common/WsLabel.vue";
 import InfoBubble from "@/components/common/InfoBubble.vue";
+import LocationBubble from "@/components/common/LocationBubble.vue";
 import SkillBubble from "@/components/common/SkillBubble.vue";
-import KeywordDisplay from "@/components/common/KeywordDisplay.vue";
-import { useEffectiveAttrs } from "@/utils/useEffectiveAttrs";
+import EquippedKeywordDisplay from "@/components/common/EquippedKeywordDisplay.vue";
+import { useActivityStore } from "@/store/activity";
+import { useDataStore } from "@/store/data";
+import { useSkillModifiers } from "@/utils/useSkillModifiers";
 import { isEmpty } from "@/utils/isEmpty";
+import { n } from "@/utils/number";
 
-const props = defineProps({
-  activity: Object,
-  keywords: Array,
-  locations: Array,
-});
+const activityStore = useActivityStore();
+const dataStore = useDataStore();
 
-const { totalsByStat } = useEffectiveAttrs();
+const {
+  maxWorkEfficiency,
+  workEfficiency,
+  uncappedWorkEfficiency,
+  effectiveMaxWorkEfficiency,
+  stepsPerCompletion,
+  xpRewards,
+  xpPerStep,
+} = useSkillModifiers();
 
 const borderClass = computed(
-  () => `border-${props.activity?.relatedSkillsList[0]}`
+  () => `border-${activityStore.activity?.relatedSkillsList[0]}`
 );
 
 const getKeyword = (kw) => {
-  const findKw = (kwId) => props.keywords.find(({ id }) => id === kwId);
-
   if ("keyword" in kw) {
-    return findKw(kw["keyword"]);
+    return dataStore.getKeywordById(kw["keyword"]);
   } else if ("keywords" in kw) {
     const { quantity, keywords } = kw;
     return keywords.map((kwId) => {
-      return { ...findKw(kwId), quantity };
+      return { ...dataStore.getKeywordById(kwId), quantity };
     });
   }
   return null;
@@ -41,54 +48,16 @@ const getRequirementKeywords = (requirements) => {
     .flatMap(({ requirement }) => getKeyword(requirement));
 };
 
-const getStat = (stat, key = "percent") => {
-  return stat in totalsByStat.value
-    ? key in totalsByStat.value[stat]
-      ? totalsByStat.value[stat][key]
-      : 0
-    : 0;
-};
-
 const sections = computed(() => {
   const {
     id,
     workRequired,
-    maxWorkEfficiency,
     levelRequirementsMap,
     requiredKeywords,
     requirements,
-    xpRewardsMap,
-  } = props.activity;
+  } = activityStore.activity;
 
   const isTravel = id === "activity-travelling";
-  const we = Math.min(
-    getStat("workEfficiency"),
-    maxWorkEfficiency - 1
-  );
-  const stepsRequired = getStat("stepsRequired", "flat");
-  const steps = Math.max(10, Math.ceil((workRequired || 1000) / (1 + we)) + stepsRequired);
-
-  const flatXp = getStat("bonusExperience", "flat");
-  const percentXp = getStat("bonusExperience");
-  const xpRewardsArr = Object.entries(xpRewardsMap).map(([skill, base]) => {
-    const current = (1 + percentXp) * base + flatXp;
-    return {
-      skill,
-      base,
-      current,
-    };
-  });
-
-  let xpRewards = [...xpRewardsArr];
-  if (xpRewardsArr.length > 1) {
-    const totalBase = xpRewardsArr.reduce((sum, r) => sum + r.base, 0);
-    const totalCurrent = xpRewardsArr.reduce((sum, r) => sum + r.current, 0);
-    xpRewards.push({
-      skill: "xp",
-      base: totalBase,
-      current: totalCurrent,
-    });
-  }
 
   return [
     {
@@ -96,14 +65,27 @@ const sections = computed(() => {
       component: InfoBubble,
       items: [
         {
-          text: `${steps} / ${workRequired || 1000}`,
+          text: `${stepsPerCompletion.value} / ${workRequired || 1000}`,
+          tooltip: `${stepsPerCompletion.value} steps per action`,
           iconPath: "assets/icons/text/general_icons/steps.png",
         },
         {
-          text: `${Math.round(we * 100)} / ${
-            Math.round(maxWorkEfficiency * 100) - 100
+          text: `${n(uncappedWorkEfficiency.value * 100)} / ${Math.round(
+            (maxWorkEfficiency.value - 1) * 100
+          )}%`,
+          tooltip: `Your Work Efficiency: ${Math.round(
+            uncappedWorkEfficiency.value * 100
+          )}%\nMax Work Efficiency: ${n(
+            (maxWorkEfficiency.value - 1) * 100,
+            0
+          )}%\nMax benefit at: ${
+            Math.ceil((effectiveMaxWorkEfficiency.value - 1) * 400) / 4
           }%`,
           iconPath: "assets/icons/text/stats/skilling/work_efficiency.png",
+          borderClass:
+            workEfficiency.value >= effectiveMaxWorkEfficiency.value - 1
+              ? "border-green"
+              : "",
         },
       ],
       itemProps: (item) => ({ ...item }),
@@ -115,13 +97,14 @@ const sections = computed(() => {
         ([skill, level]) => ({
           skill,
           text: level.toString(),
+          tooltipText: `Requires ${level} ${skill}`,
         })
       ),
       itemProps: (item) => ({ ...item }),
     },
     {
       label: "Keyword requirements",
-      component: KeywordDisplay,
+      component: EquippedKeywordDisplay,
       items: [
         ...(requiredKeywords || []).map(getKeyword),
         ...getRequirementKeywords(requirements),
@@ -131,42 +114,59 @@ const sections = computed(() => {
     {
       label: "XP rewards (current / base)",
       component: SkillBubble,
-      items: xpRewards.map(({ skill, current, base }) => ({
+      items: xpRewards.value.map(({ skill, skillText, value, base }) => ({
         skill,
-        text: `${Math.round(100 * current) / 100} / ${base}`,
-        current,
+        text: `${n(value)} / ${n(base)}`,
+        tooltipText: `Rewards ${n(value)} ${skillText} XP`,
+        value,
         base,
       })),
       itemProps: (item) => ({ ...item }),
     },
     {
-      label: "Locations",
-      component: InfoBubble,
-      items: !isTravel
-        ? props.locations.map(({ name: text, icon: iconPath }) => {
-            return { text, iconPath };
-          })
-        : [],
+      label: "XP per step (real / displayed)",
+      component: SkillBubble,
+      items: xpPerStep.value.map(
+        ({ skill, skillText, value, displayedValue }) => ({
+          skill,
+          text: `${n(value)} /  ${n(displayedValue)}`,
+          tooltip: `Gains ${n(value)} ${skillText} XP per step`,
+        })
+      ),
       itemProps: (item) => ({ ...item }),
+    },
+    {
+      label: "Locations",
+      component: LocationBubble,
+      items: !isTravel ? activityStore.locations : [],
+      itemProps: (item) => ({ location: item }),
     },
   ].filter(({ items }) => !isEmpty(items));
 });
 </script>
 
 <template>
-  <section :class="['activity-info', borderClass]">
-    <div v-for="section in sections" class="info-section" :key="section.label">
-      <ws-label :label="section.label" />
-      <div class="info-row">
-        <component
-          v-for="(item, idx) in section.items"
-          :is="section.component"
-          v-bind="section.itemProps(item)"
-          :key="idx"
-        />
+  <details open>
+    <summary>Activity Info</summary>
+
+    <section :class="['activity-info', borderClass]">
+      <div
+        v-for="section in sections"
+        class="info-section"
+        :key="section.label"
+      >
+        <ws-label :label="section.label" />
+        <div class="info-row">
+          <component
+            v-for="(item, idx) in section.items"
+            :is="section.component"
+            v-bind="section.itemProps(item)"
+            :key="idx"
+          />
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
+  </details>
 </template>
 
 <style lang="scss" scoped>

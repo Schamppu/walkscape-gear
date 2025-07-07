@@ -7,6 +7,7 @@ const props = defineProps({
     required: true,
   },
   text: String,
+  tooltipText: String,
   useColorBorder: {
     type: Boolean,
     default: true,
@@ -26,7 +27,12 @@ const borderClass =
 </script>
 
 <template>
-  <info-bubble :icon-path="iconPath" :text="text" :class="borderClass" />
+  <info-bubble
+    :icon-path="iconPath"
+    :text="text"
+    :tooltip="tooltipText"
+    :border-class="borderClass"
+  />
 </template>
 
 <style lang="scss" scoped></style>

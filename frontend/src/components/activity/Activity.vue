@@ -1,73 +1,105 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { useActivityStore } from "@/store/activity";
-import {
-  getSkills,
-  getActivities,
-  getKeywords,
-} from "@/utils/axios/api_routes";
+import { usePlayerStore } from "@/store/player";
+import { useUrlStore } from "@/store/url";
 import TabContentWrapper from "../common/TabContentWrapper.vue";
 import NestedDropdown from "@/components/common/dropdowns/NestedDropdown.vue";
 import ActivityInfo from "./ActivityInfo.vue";
+import RecipeInfo from "./RecipeInfo.vue";
+import DropsInfo from "./DropsInfo.vue";
 
 const activityStore = useActivityStore();
+const playerStore = usePlayerStore();
+const urlStore = useUrlStore();
 
-const skills = ref([]);
-const keywords = ref([]);
 const isLoading = ref(true);
 const loadingActivity = ref(false);
 
 const activitiesBySkill = ref([]);
+const recipesBySkill = ref([]);
 
 onMounted(async () => {
-  const [skillsResponse, activitiesResponse, keywordsResponse] =
-    await Promise.all([getSkills(), getActivities(), getKeywords()]);
-
-  const { data: skillList } = skillsResponse;
-  skills.value = skillList.map(({ name, id, icon }) => ({
-    name,
-    value: id,
-    icon,
-  }));
-
-  const { data: keywordList } = keywordsResponse;
-  keywords.value = keywordList;
-
-  const { data: activities } = activitiesResponse;
-
-  const noneActivity = activities
+  const noneActivity = activityStore.activities
     .filter(({ id }) => id === "activity-none")
     .map((item) => {
       return { ...item, value: item.name, items: [] };
     })[0];
-  const categorized = skillList.map((skill) => {
-    const { id, name: value } = skill;
-    return {
-      ...skill,
-      value,
-      items: activities
-        .filter(({ relatedSkillsList }) => {
-          return relatedSkillsList.length && relatedSkillsList[0] === id;
-        })
-        .map((item) => {
-          return {
-            ...item,
-            value: item.name,
-          };
-        }),
-    };
-  });
-  activitiesBySkill.value = [noneActivity, ...categorized];
+
+  const categorize = (source) =>
+    playerStore.skills
+      .map((skill) => {
+        const { id, name: value } = skill;
+        return {
+          ...skill,
+          value,
+          items: source
+            .filter((item) => {
+              const skillsList =
+                item.relatedSkillsList ?? item.relatedSkills ?? [];
+              return skillsList.length && skillsList[0] === id;
+            })
+            .map((item) => {
+              return {
+                ...item,
+                value: item.name,
+              };
+            })
+            .sort((a, b) => a.name.localeCompare(b.name)),
+        };
+      })
+      .filter(({ items }) => items.length > 0);
+
+  activitiesBySkill.value = [
+    noneActivity,
+    ...categorize(activityStore.activities),
+  ];
+  recipesBySkill.value = [noneActivity, ...categorize(activityStore.recipes)];
   isLoading.value = false;
 });
 
+const selectedActivity = computed({
+  get: () => activityStore.activity,
+  set: (val) => {
+    if (val && val.id !== activityStore.activity?.id) {
+      selectActivity(val);
+    }
+  },
+});
+
+const selectedRecipe = computed({
+  get: () => activityStore.recipe,
+  set: (val) => {
+    if (val && val.id !== activityStore.recipe?.id) {
+      selectRecipe(val);
+    }
+  },
+});
+
+const selectRecipe = async (recipe) => {
+  loadingActivity.value = true;
+  await activityStore.loadRecipe(recipe.id);
+  loadingActivity.value = false;
+};
+
 const selectActivity = async (activity) => {
   loadingActivity.value = true;
+
   await Promise.all([
     activityStore.loadActivity(activity.id),
     activityStore.loadActivityLocations(activity.id),
   ]);
   loadingActivity.value = false;
+};
+
+const updateActivityAndUrl = async (activity, update) => {
+  await selectActivity(activity);
+  if (update) urlStore.encodeAndPushToUrl();
+};
+
+const updateRecipeAndUrl = async (recipe, update) => {
+  await selectRecipe(recipe);
+  if (update) urlStore.encodeAndPushToUrl();
 };
 </script>
 
@@ -76,14 +108,20 @@ const selectActivity = async (activity) => {
     <nested-dropdown
       label="Activity"
       :data="activitiesBySkill"
-      @select="selectActivity"
+      v-model="selectedActivity"
+      default-text="Select an activity"
+      @select="updateActivityAndUrl"
     />
-    <activity-info
-      v-if="!loadingActivity && activityStore.activitySelected"
-      :activity="activityStore.activity"
-      :keywords="keywords"
-      :locations="activityStore.locations"
+    <nested-dropdown
+      label="Recipe"
+      :data="recipesBySkill"
+      v-model="selectedRecipe"
+      default-text="Select a recipe"
+      @select="updateRecipeAndUrl"
     />
+    <activity-info v-if="!loadingActivity && activityStore.activitySelected" />
+    <drops-info v-if="!loadingActivity && activityStore.activitySelected" />
+    <recipe-info v-if="!loadingActivity && activityStore.recipeSelected" />
   </tab-content-wrapper>
 </template>
 

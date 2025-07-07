@@ -1,6 +1,7 @@
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted, onBeforeUnmount } from "vue";
 import { useGearStore } from "@/store/gear";
+import { useUrlStore } from "@/store/url";
 import { useItemsStore } from "@/store/items";
 import GearPreview from "./GearPreview.vue";
 import GearSearch from "./GearSearch.vue";
@@ -18,6 +19,19 @@ const props = defineProps({
 
 const emit = defineEmits(["update:visible"]);
 
+onMounted(() => {
+  const onEsc = (e) => {
+    if (e.key === "Escape" || e.key === "Esc") {
+      closeDialog();
+    }
+  };
+  window.addEventListener("keydown", onEsc);
+  // Clean up
+  onBeforeUnmount(() => {
+    window.removeEventListener("keydown", onEsc);
+  });
+});
+
 // Define tabs and map them to their components
 const tabs = [
   { label: "Gear Preview", component: GearPreview },
@@ -26,6 +40,7 @@ const tabs = [
 
 const gearStore = useGearStore();
 const itemsStore = useItemsStore();
+const urlStore = useUrlStore();
 
 const closeDialog = () => {
   emit("update:visible", false);
@@ -43,14 +58,16 @@ const selectTab = (index) => {
 const selectedTab = ref(gearStore.slotFilled(props.slotName) ? 0 : 1);
 
 const handleSelectItem = async (item) => {
-  const owned = item.id in itemsStore.ownedItems;
-  const quality = owned ? itemsStore.ownedItems[item.id].quality : item.quality;
-  await gearStore.loadItem(props.slotName, item.id, quality);
+  await gearStore.loadItem(props.slotName, item.id, item.quality);
+
+  urlStore.encodeAndPushToUrl();
   closeDialog();
 };
 
 const unequipItem = (slotName) => {
   gearStore.setGearSlot(slotName, null);
+
+  urlStore.encodeAndPushToUrl();
   closeDialog();
 };
 </script>
@@ -105,7 +122,7 @@ const unequipItem = (slotName) => {
   left: 50%;
   transform: translateX(-50%);
 
-  height: 60dvh;
+  height: 80dvh;
   width: 100%;
   max-width: 550px;
   padding: 0;
@@ -125,18 +142,6 @@ const unequipItem = (slotName) => {
   flex-direction: column;
   flex-grow: 1;
   overflow-y: auto;
-}
-
-.el-dialog__wrapper {
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
-}
-
-.el-dialog__header,
-.el-dialog__footer {
-  display: none;
 }
 
 /* Slide Up Transition for the Bottom Dialog */

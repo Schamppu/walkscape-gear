@@ -13,7 +13,13 @@ const props = defineProps({
     type: String,
     default: "default",
     validator: (value) =>
-      ["xs", "sm", "md", "lg", "xl", "xxl", "default"].includes(value),
+      ["xxxs", "xxs", "xs", "sm", "md", "lg", "xl", "xxl", "default"].includes(
+        value
+      ),
+  },
+  outlineClass: {
+    type: String,
+    default: "",
   },
 });
 
@@ -37,6 +43,8 @@ watch(
 // Map size options to pixel values
 const iconSize = computed(() => {
   const sizeMap = {
+    xxxs: "8px",
+    xxs: "12px",
     xs: "16px",
     sm: "24px",
     md: "32px",
@@ -50,13 +58,22 @@ const iconSize = computed(() => {
 </script>
 
 <template>
-  <div :style="{ width: iconSize, height: iconSize }" class="ws-icon">
+  <div
+    :style="{
+      width: iconSize,
+      height: iconSize,
+      minWidth: iconSize,
+      minHeight: iconSize,
+    }"
+    class="ws-icon"
+  >
     <loading-throbber v-if="loading" />
     <img
       v-if="iconUrl"
       :src="iconUrl"
       :alt="iconPath"
-      :style="{ width: '100%', height: '100%' }"
+      :style="{ width: '100%', height: '100%', objectFit: 'contain' }"
+      :class="outlineClass"
     />
   </div>
 </template>
@@ -66,5 +83,6 @@ const iconSize = computed(() => {
   display: inline-flex;
   justify-content: center;
   align-items: center;
+  flex: 0 0 auto;
 }
 </style>

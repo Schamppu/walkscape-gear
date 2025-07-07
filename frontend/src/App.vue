@@ -1,16 +1,19 @@
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from "vue";
+import { ref, onMounted, onUnmounted, reactive, nextTick } from "vue";
+import { useActivityStore } from "@/store/activity";
+import { useDataStore } from "@/store/data";
 import { usePlayerStore } from "@/store/player";
+import { useUrlStore } from "@/store/url";
+import { useItemsStore } from "@/store/items";
 import { getOrCreateUserUuid } from "@/utils/user";
 import Hub from "./components/hub/Hub.vue";
 import Activity from "./components/activity/Activity.vue";
 import Gear from "./components/gear/Gear.vue";
 import Footer from "./components/footer/Footer.vue";
+import LoadingThrobber from "./components/common/LoadingThrobber.vue";
 
-const playerStore = usePlayerStore();
-playerStore.setUuid(getOrCreateUserUuid());
-
-// Reactive variables
+const urlStore = useUrlStore();
+const isLoaded = ref(false);
 const activeTab = ref("Hub");
 const isMobile = ref(window.innerWidth <= 768);
 
@@ -19,13 +22,47 @@ const checkScreenSize = () => {
 };
 
 const tabs = { Hub, Gear, Activity };
-const activeTabComponent = computed(() => {
-  return tabs[activeTab.value];
-});
 
-onMounted(() => {
+// Refs for each tab panel
+const tabRefs = reactive({});
+
+function scrollToTab(tabName) {
+  activeTab.value = tabName;
+  nextTick(() => {
+    const el = tabRefs[tabName];
+    if (el && el.scrollIntoView) {
+      el.scrollIntoView({ behavior: "instant", block: "start" });
+    }
+  });
+}
+
+const bootstrap = async () => {
+  if (isLoaded.value) return;
+
+  const activityStore = useActivityStore();
+  const dataStore = useDataStore();
+  const playerStore = usePlayerStore();
+  const itemsStore = useItemsStore();
+
+  playerStore.setUuid(getOrCreateUserUuid());
+
+  await Promise.all([
+    activityStore.fetchActivitiesData(),
+    dataStore.fetchGameData(),
+    playerStore.fetchPlayerData(),
+    urlStore.fetchMapping(),
+    itemsStore.fetchItems(),
+  ]);
+
+  await urlStore.decodeFromUrlAndApply();
+  isLoaded.value = true;
+};
+
+onMounted(async () => {
   checkScreenSize();
   window.addEventListener("resize", checkScreenSize);
+
+  await bootstrap();
 });
 
 onUnmounted(() => {
@@ -34,23 +71,23 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <!-- Mobile View: Tabs -->
-  <div v-if="isMobile" class="mobile-layout">
-    <!-- Dynamically render the selected component for the active tab -->
-    <div class="mobile-content">
-      <keep-alive>
-        <component :is="activeTabComponent" />
-      </keep-alive>
+  <loading-throbber v-if="!isLoaded" />
+  <div v-else :class="isMobile ? 'mobile-layout' : 'desktop-layout'">
+    <div
+      v-for="tabName in Object.keys(tabs)"
+      :key="tabName"
+      :ref="(el) => (tabRefs[tabName] = el)"
+      :class="['tab-panel', { active: activeTab === tabName }]"
+      :tabindex="isMobile ? 0 : undefined"
+    >
+      <component :is="tabs[tabName]" />
     </div>
-    <Footer :tabs="tabs" @selectTab="activeTab = $event" />
-  </div>
-
-  <!-- Desktop View: Side-by-Side Layout -->
-  <div v-else class="desktop-layout">
-    <Hub />
-    <Gear />
-    <Activity />
-    <!-- <Stats /> -->
+    <Footer
+      v-if="isMobile"
+      :tabs="tabs"
+      :active-tab="activeTab"
+      @selectTab="scrollToTab"
+    />
   </div>
 </template>
 
@@ -60,25 +97,34 @@ onUnmounted(() => {
 .mobile-layout {
   display: flex;
   flex-direction: column;
-  min-height: 100dvh;
+  min-height: calc(100dvh - 64px);
   width: 100%;
-}
-
-.mobile-content {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-
-  overflow: hidden;
-
-  padding: 20px;
+  overflow-x: hidden;
+  padding-bottom: 64px;
 }
 
 .desktop-layout {
   display: flex;
+  flex-direction: row;
   gap: 20px;
   min-height: 100dvh;
+}
+
+.tab-panel {
+  width: 100%;
+  transition: opacity 0.2s;
+}
+
+.mobile-layout .tab-panel {
+  display: none;
+  min-height: calc(100dvh - 64px);
+}
+.mobile-layout .tab-panel.active {
+  display: block;
+}
+
+.desktop-layout .tab-panel {
+  display: block;
+  flex: 1 1 0;
 }
 </style>

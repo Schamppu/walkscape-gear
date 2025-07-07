@@ -3,18 +3,19 @@ import { createPinia } from "pinia";
 import directives from "@/directives";
 import App from "./App.vue";
 
-// Import Element Plus and its CSS
-import ElementPlus from "element-plus";
-import "element-plus/dist/index.css";
-
-const app = createApp(App);
 const pinia = createPinia();
 
+const app = createApp(App);
 app.use(pinia);
-app.use(ElementPlus);
 
 Object.entries(directives).forEach(([name, directive]) => {
   app.directive(name, directive);
 });
+
+app.config.errorHandler = (err, vm, info) => {
+  console.error("Vue error:", err);
+  console.error("Component:", vm);
+  console.error("Info:", info);
+};
 
 app.mount("#app");

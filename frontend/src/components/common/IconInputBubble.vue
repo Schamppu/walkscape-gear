@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from "vue";
+import { ref, watch } from "vue";
 import WsIcon from "@/components/common/WsIcon.vue";
 
 const emit = defineEmits(["input"]);
@@ -13,27 +13,64 @@ const props = defineProps({
   max: { type: Number, default: 100 },
   defaultValue: { type: Number, default: 0 },
   borderClass: { type: String, default: null },
+  borderColor: { type: String, default: null },
 });
 
-const value = computed({
-  get: () => props.getValue(props.id),
-  set: (val) => {
-    const clamped = Math.min(props.max, Math.max(props.min, Number(val)));
-    props.setValue(props.id, clamped);
-    emit("input", clamped);
-  },
-});
+const localValue = ref(props.getValue(props.id));
+
+watch(
+  () => props.getValue(props.id),
+  (val) => {
+    if (val !== localValue.value) localValue.value = val;
+  }
+);
+
+function onInput(e) {
+  // Let the user type freely, including out-of-range values
+  localValue.value = e.target.value;
+}
+
+function onBlur() {
+  let val = localValue.value;
+
+  // If empty or invalid, reset to min
+  if (val === "" || isNaN(Number(val))) {
+    localValue.value = props.min;
+    props.setValue(props.id, props.min);
+    emit("input", props.min);
+    return;
+  }
+
+  val = Number(val);
+  // Clamp to min/max
+  const clamped = Math.max(props.min, Math.min(props.max, val));
+  if (clamped !== val) {
+    localValue.value = clamped;
+  }
+  props.setValue(props.id, clamped);
+  emit("input", clamped);
+}
 </script>
 
 <template>
-  <div :class="['wrapper', borderClass]">
+  <div
+    :class="['wrapper', borderClass]"
+    :style="borderColor ? { border: `2px solid ${borderColor}` } : undefined"
+  >
     <ws-icon v-if="icon" :iconPath="icon" size="md" />
-    <input v-model="value" class="input" type="number" :min="min" :max="max" />
+    <input
+      :value="localValue"
+      @input="onInput"
+      @blur="onBlur"
+      class="input"
+      type="number"
+      :min="min"
+      :max="max"
+    />
   </div>
 </template>
 
 <style scoped lang="scss">
-
 .wrapper {
   display: flex;
   padding: $xs;

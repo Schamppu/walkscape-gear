@@ -1,30 +1,52 @@
 import { defineStore } from "pinia";
 import { upsertOwnedItems } from "@/utils/axios/db_routes";
+import { getCategorizedItems } from "@/utils/axios/api_routes";
+import { fetchOwnedItems } from "@/utils/axios/db_routes";
 import debounce from "@/utils/debounce";
 
 export const useItemsStore = defineStore("itemStore", {
   state: () => ({
+    categorizedItems: [],
     itemsByCategory: {},
     ownedItems: {},
     allItems: {},
     changedOwnedItems: {},
+    isLoaded: false,
   }),
   actions: {
-    setItems(category, items) {
-      this.itemsByCategory[category] = items;
-      items.forEach((item) => {
-        this.allItems[item.id] = item;
-      });
+    async fetchItems() {
+      if (this.isLoaded) return;
+
+      const [{ data: categorizedItems }, ownedItems] = await Promise.all([
+        getCategorizedItems(),
+        fetchOwnedItems(),
+      ]);
+
+      this.ownedItems = Object.fromEntries(
+        ownedItems.map(({ itemId, ...data }) => [itemId, data])
+      );
+      this.categorizedItems = categorizedItems;
+
+      const categories = categorizedItems.flatMap(
+        ({ categories }) => categories
+      );
+      this.itemsByCategory = Object.fromEntries(
+        categories.map(({ key, items }) => [key, items])
+      );
+      this.allItems = Object.fromEntries(
+        categories.flatMap(({ items }) => items).map((item) => [item.id, item])
+      );
+      this.isLoaded = true;
     },
-    setOwned(itemId, data) {
-      this.ownedItems[itemId] = data;
-    },
-    setOwnedItems(items) {
-      items.forEach(({ itemId, ...data }) => this.setOwned(itemId, data));
-    },
-    toggleItem(itemId, owned = true, quality = null, quality2 = null) {
-      this.ownedItems[itemId] = { owned, quality, quality2 };
-      this.changedOwnedItems[itemId] = { owned, quality, quality2 };
+    toggleItem({
+      itemId,
+      owned = true,
+      hidden = false,
+      quality = null,
+      quality2 = null,
+    }) {
+      this.ownedItems[itemId] = { owned, hidden, quality, quality2 };
+      this.changedOwnedItems[itemId] = { owned, hidden, quality, quality2 };
       this.scheduleOwnedItemsFlush();
     },
     async flushChangedOwnedItems() {
@@ -37,7 +59,6 @@ export const useItemsStore = defineStore("itemStore", {
 
       try {
         await upsertOwnedItems({ items: changed });
-        this.setOwned(changed);
       } catch (error) {
         console.error("error updating owned items", error);
       }

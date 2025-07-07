@@ -24,6 +24,8 @@ $txTransparentHighlight: rgba(223, 209, 189, 0.7);
 $quality-colors: (
   "common": $txPrimary,
   "common-dark": $boxDarkBackground,
+  "consumableCommon": $txPrimary,
+  "consumableCommon-dark": $boxDarkBackground,
   "uncommon": rgb(184, 255, 151),
   "uncommon-dark": rgb(36, 70, 30),
   "rare": rgb(163, 184, 255),
@@ -34,7 +36,11 @@ $quality-colors: (
   "legendary-dark": rgb(80, 59, 31),
   "ethereal": rgb(255, 95, 95),
   "ethereal-dark": rgb(77, 32, 32),
-);
+  "fine": rgb(176, 247, 238),
+  "consumableFine": rgb(176, 247, 238),
+  "fine-dark": rgb(122, 156, 152),
+  "consumableFine-dark": rgb(122, 156, 152),
+  );
 
 @each $name, $color in $quality-colors {
   .color-#{$name} {
@@ -47,6 +53,14 @@ $quality-colors: (
 
   .border-#{$name} {
     border: 2px solid $color !important;
+  }
+
+  .outline-#{$name} {
+    filter:
+      drop-shadow(1px 0 0 $color)
+      drop-shadow(-1px 0 0 $color)
+      drop-shadow(0 1px 0 $color)
+      drop-shadow(0 -1px 0 $color);
   }
 }
 

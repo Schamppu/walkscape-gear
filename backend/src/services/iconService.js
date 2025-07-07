@@ -7,4 +7,13 @@ export default class IconService {
     });
     return response;
   }
+
+  async getIconsBatch(iconPaths) {
+    const response = await api.post(
+      "/icons/batch",
+      { iconPaths },
+      { responseType: "json" }
+    );
+    return response.data;
+  }
 }

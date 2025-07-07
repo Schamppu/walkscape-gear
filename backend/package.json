@@ -7,7 +7,7 @@
   "scripts": {
     "reset-db-dev": "npx prisma migrate reset --force --skip-seed",
     "dev": "nodemon src/index.js",
-    "serve": "node scripts/init-db.js && node ./src/index.js"
+    "serve": "node scripts/init-db.js && node scripts/seed.js && node ./src/index.js"
   },
   "keywords": [],
   "author": "Juhana Autti",

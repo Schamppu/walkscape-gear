@@ -1,7 +1,10 @@
-import { qualityOptions } from "@/utils/quality";
+import { qualityOptions, consumableQualityOptions } from "@/utils/quality";
 import { toDeepRaw } from "./rawData";
 
-export const sumAttrs = (itemAttrs, qualityAttrs, quality) => {
+export const sumAttrs = (itemAttrs, qualityAttrs, buffs, quality) => {
+  if (quality && quality.includes("consumable"))
+    return sumBuffAttrs(buffs, quality);
+
   const qIndex = Math.min(
     qualityAttrs?.length || 0,
     qualityOptions.findIndex(({ value }) => value === quality)
@@ -16,13 +19,14 @@ export const sumAttrs = (itemAttrs, qualityAttrs, quality) => {
 
   for (let qi = 0; qi < qIndex; qi++) {
     const { attributes } = toDeepRaw(qualityAttrs[qi]);
-    const statIds = attrs.map(({ stats }) => {
-      return stats[0].stat;
+    const statIds = attrs.map(({ stats, skillText }) => {
+      return `${stats[0].type}-${skillText}`;
     });
 
     attributes.forEach((attr) => {
       const stat = structuredClone(attr.stats)[0];
-      const prev = statIds.findIndex((id) => id === stat.stat);
+      const key = `${stat.type}-${attr.skillText}`;
+      const prev = statIds.findIndex((id) => id === key);
       const exists = prev >= 0;
 
       if (!exists) {
@@ -37,4 +41,25 @@ export const sumAttrs = (itemAttrs, qualityAttrs, quality) => {
   }
 
   return attrs;
+};
+
+export const sumBuffAttrs = (buffs, quality) => {
+  const buffData = buffs.flatMap(({ data }) =>
+    data.flatMap(({ buffs }) => buffs)
+  );
+  if (!buffData || buffData.length === 0) {
+    return [];
+  }
+
+  const [normal, _] = consumableQualityOptions.map(({ value }) => value);
+  const mapAttrs = (attribute) => {
+    return {
+      ...attribute,
+      stats: attribute.stats,
+    };
+  };
+
+  const attrs = buffData[0].attributes.map(mapAttrs);
+  const fineAttrs = buffData[0].fineAttributes.map(mapAttrs);
+  return quality === normal ? attrs : fineAttrs;
 };

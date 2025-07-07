@@ -3,7 +3,7 @@ import { computed, ref, onMounted, watch } from "vue";
 import { craftingQualityOptions, qualityOptions } from "@/utils/quality";
 import { useItemsStore } from "@/store/items";
 import WsIcon from "@/components/common/WsIcon.vue";
-import AttributeDisplay from "@/components/hub/AttributeDisplay.vue";
+import StatsDisplay from "../common/StatsDisplay.vue";
 
 const props = defineProps({
   item: Object,
@@ -16,6 +16,7 @@ const emit = defineEmits(["change"]);
 const defaultQuality = qualityOptions[0].value;
 const itemsStore = useItemsStore();
 const isOwned = ref(false);
+const isHidden = ref(false);
 const quality = ref("");
 const quality2 = ref("");
 const isOpen = ref(false);
@@ -23,8 +24,10 @@ const isOpen = ref(false);
 onMounted(() => {
   const entry = itemsStore.ownedItems[props.item.id];
   isOwned.value = entry?.owned ?? false;
+  isHidden.value = entry?.hidden ?? false;
   quality.value = entry?.quality ?? props.item?.quality ?? defaultQuality;
-  quality2.value = entry?.quality2 ?? defaultQuality;
+  quality2.value =
+    props.qualities < 2 ? null : entry?.quality2 ?? defaultQuality;
 });
 
 watch(
@@ -44,100 +47,106 @@ const ownedBgClass = computed(() => {
 });
 
 const hasAttrs = computed(() => {
-  return props.item.itemAttrs.length > 0;
+  return props.item.itemAttrs.length > 0 || props.item.keywords.length > 0;
 });
+
+function emitChange(overrides = {}) {
+  emit("change", {
+    itemId: props.item.id,
+    owned: isOwned.value,
+    hidden: isHidden.value,
+    quality: quality.value,
+    quality2: quality2.value,
+    ...overrides,
+  });
+}
 
 const toggleChecked = (e) => {
   e.stopPropagation();
-  const data = {
-    itemId: props.item.id,
-    owned: !props.selected,
-    quality: quality.value,
-    quality2: quality2.value,
-  };
+  isOwned.value = !isOwned.value;
+  emitChange({ owned: isOwned.value });
+};
 
-  emit("change", data);
+const toggleHidden = (e) => {
+  e.stopPropagation();
+  isHidden.value = !isHidden.value;
+  emitChange({ hidden: isHidden.value });
 };
 
 const updateQuality = () => {
-  const data = {
-    itemId: props.item.id,
-    owned: props.selected,
-    quality: quality.value,
-    quality2: quality2.value,
-  };
-
-  emit("change", data);
+  isOwned.value = true;
+  emitChange({ owned: isOwned.value });
 };
 
 const toggleOpen = () => {
   isOpen.value = !isOpen.value;
 };
+
+const qualityInputs = computed(() => {
+  const arr = [{ model: quality, label: "q1" }];
+  if (props.qualities === 2) arr.push({ model: quality2, label: "q2" });
+  return arr;
+});
 </script>
 
 <template>
   <section class="item">
     <section :class="['item-entry', colorClass, ownedBgClass]">
-      <div class="base-info" @click="toggleChecked">
+      <div class="group" @click="toggleChecked">
         <input type="checkbox" :checked="isOwned" readonly />
-        <ws-icon :iconPath="item.icon" />
-        <span :class="`color-${quality}`">{{ item.name }}</span>
-      </div>
+        <ws-icon :iconPath="item.icon" :outline-class="`outline-${quality}`" />
 
-      <div class="quality-and-attributes">
-        <div v-if="qualities > 0" class="quality-inputs">
-          <select
-            v-model="quality"
-            class="quality-input"
-            @click.stop
-            @change="updateQuality"
-          >
-            <option
-              v-for="q in craftingQualityOptions"
-              :key="'q1-' + q.value"
-              :value="q.value"
-              :class="`color-${q.value}`"
-            >
-              {{ q.name }}
-            </option>
-          </select>
-          <select
-            v-if="qualities === 2"
-            v-model="quality2"
-            class="quality-input"
-            @click.stop
-            @change="updateQuality"
-          >
-            <option
-              v-for="q in craftingQualityOptions"
-              :key="'q2-' + q.value"
-              :value="q.value"
-              :class="`color-${q.value}`"
-            >
-              {{ q.name }}
-            </option>
-          </select>
+        <div class="rows">
+          <span :class="`color-${quality}`">{{ item.name }}</span>
+          <div v-if="qualities > 0" class="group">
+            <template v-for="qInput in qualityInputs" :key="qInput.label">
+              <select
+                v-model="qInput.model.value"
+                class="quality-input"
+                @click.stop
+                @change="updateQuality"
+              >
+                <option
+                  v-for="q in craftingQualityOptions"
+                  :key="qInput.label + '-' + q.value"
+                  :value="q.value"
+                  :class="`color-${q.value}`"
+                >
+                  {{ q.name }}
+                </option>
+              </select>
+            </template>
+          </div>
         </div>
-
-        <span class="toggle" v-if="hasAttrs" @click="toggleOpen">{{
-          isOpen ? "▲" : "▼"
-        }}</span>
       </div>
+
+      <button v-if="hasAttrs" class="toggle" @click="toggleOpen">
+        {{ isOpen ? "▲" : "▼" }}
+      </button>
     </section>
 
     <section v-if="hasAttrs && isOpen">
-      <attribute-display
-        :itemAttrs="item.itemAttrs"
-        :qualityAttrs="item.itemQualityAttrs"
+      <label class="toggle">
+        <input
+          @click="toggleHidden"
+          type="checkbox"
+          v-model="isHidden"
+          aria-label="Toggle visibility"
+        />
+        Hide
+      </label>
+      <stats-display
+        v-if="isOpen"
+        :item="props.item"
         :quality="quality"
-        :key="`attributes-q1-${quality}`"
+        show-quality-border
       />
-      <attribute-display
-        v-if="qualities === 2 && quality2 && quality !== quality2"
-        :itemAttrs="item.itemAttrs"
-        :qualityAttrs="item.itemQualityAttrs"
+      <stats-display
+        v-if="qualities > 1 && quality2 && quality !== quality2"
+        :item="props.item"
         :quality="quality2"
-        :key="`attributes-q2-${quality2}`"
+        show-quality-border
+        hide-keywords
       />
     </section>
   </section>
@@ -148,41 +157,36 @@ const toggleOpen = () => {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  text-align: left;
 
   background-color: $boxDarkBackground;
   border-radius: $sm;
   border: 1px solid $bgPrimary;
+  gap: $xxs;
 
   padding: $xxxs $xxs;
 
-  .base-info {
+  .rows {
+    display: flex;
+    flex-direction: column;
+    gap: $xxxs;
+  }
+
+  .group {
+    cursor: pointer;
     display: flex;
     align-items: center;
     gap: $xxs;
-    cursor: pointer;
+    flex-grow: 1;
   }
+}
 
-  .quality-and-attributes {
-    display: flex;
-    align-items: center;
-    gap: $xs;
-
-    .toggle {
-      cursor: pointer;
-      padding: 0 $xs;
-      color: $txPrimary !important;
-    }
-  }
-
-  .quality-inputs {
-    display: flex;
-    align-items: center;
-    gap: $xs;
-
-    .quality-input {
-      background-color: $boxDarkBackground;
-      cursor: pointer;
-    }
-  }
+.toggle {
+  cursor: pointer;
+  padding: 0 $xs;
+  color: $txPrimary !important;
+  background: none;
+  border: none;
+  font: inherit;
 }
 </style>

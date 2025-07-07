@@ -1,27 +1,15 @@
 <script setup>
-import { ref, onMounted, computed } from "vue";
-import { getStats } from "@/utils/axios/api_routes";
-import LoadingThrobber from "@/components//common/LoadingThrobber.vue";
+import { computed } from "vue";
 import StatDisplay from "./StatDisplay.vue";
+import { useDataStore } from "@/store/data";
 import { useEffectiveAttrs } from "@/utils/useEffectiveAttrs";
 
-const loading = ref(true);
-const stats = ref([]);
-const statOrder = ref([]);
-
-onMounted(async () => {
-  const { data: statList } = await getStats();
-  const filteredStats = ["skillLevel", "travelingDistance"];
-  stats.value = statList.filter(({ type }) => !filteredStats.includes(type));
-  statOrder.value = stats.value.map(({ id }) => id);
-  loading.value = false;
-});
-
 const { allAttrs } = useEffectiveAttrs();
+const dataStore = useDataStore();
 
 const includedStats = computed(() => {
   const attrStats = allAttrs.value.map(({ stats }) => stats[0]);
-  return stats.value
+  return dataStore.stats
     .flatMap((stat) => {
       return [
         { stat, isPercent: true },
@@ -38,9 +26,7 @@ const includedStats = computed(() => {
 
 <template>
   <section class="stats">
-    <loading-throbber v-if="loading" />
     <stat-display
-      v-else
       v-for="({ stat, isPercent }, index) in includedStats"
       :key="index"
       :stat="stat"

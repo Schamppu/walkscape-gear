@@ -10,6 +10,14 @@ export function getIcon({ iconPath }) {
   });
 }
 
+export function getIconsBatch({ iconPaths }) {
+  return proxy({
+    method: "POST",
+    url: "icons/batch",
+    options: { iconPaths },
+  });
+}
+
 export function getLocalization({ key, locale = en }) {
   return proxy({
     url: "translate",
@@ -20,6 +28,12 @@ export function getLocalization({ key, locale = en }) {
 export function getSkills() {
   return proxy({
     url: "skills",
+  });
+}
+
+export function getFactions() {
+  return proxy({
+    url: "factions",
   });
 }
 
@@ -35,17 +49,23 @@ export function getCategorizedItems() {
   });
 }
 
+export function getItems() {
+  return proxy({
+    url: "items",
+  });
+}
+
 export function getItem({ id }) {
   return proxy({
     url: `items/id/${id}`,
   });
 }
 
-export function searchLocations({ activityList }) {
+export function searchLocations({ activityList, serviceList }) {
   return proxy({
     url: "locations/search",
     options: {
-      params: { activityList, detailed: true },
+      params: { activityList, serviceList, detailed: true },
     },
   });
 }
@@ -71,18 +91,57 @@ export function getActivity({ id }) {
   });
 }
 
+export function getRecipes() {
+  return proxy({
+    url: "recipes",
+  });
+}
+
+export function getRecipe({ id }) {
+  return proxy({
+    url: `recipes/id/${id}`,
+  });
+}
+
+export function searchServices({ skill }) {
+  return proxy({
+    url: "services/search",
+    options: {
+      params: { relatedSkills: skill, detailed: true },
+    },
+  });
+}
+
 export function getStats() {
   return proxy({
     url: "stats",
   });
 }
 
+export function getLootTables() {
+  return proxy({
+    url: "lootTables",
+  });
+}
+
 export function getMultipleLootTables(ids) {
   return proxy({
     method: "POST",
-    url: "loot_tables/multiple",
+    url: "lootTables/multiple",
     options: {
-      body: { ids },
+      ids,
     },
+  });
+}
+
+export function getApInfo() {
+  return proxy({
+    url: "achievements/ap",
+  });
+}
+
+export function getUrlMap() {
+  return proxy({
+    url: "items/url_mapping",
   });
 }

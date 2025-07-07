@@ -1,161 +1,167 @@
 import { capitalize } from "./string.js";
 
-export function categorizeItems({
-  collectibles,
-  crafted,
-  loot,
-  chestItems,
-  itemRewards,
-  achievementRewardItems,
-  activityItems,
-  shopItems,
-}) {
-  const categoryGroups = [
-    {
-      title: "Collectibles",
-      categories: [
-        {
-          title: "All collectibles",
-          key: "collectibles",
-          items: collectibles,
-        },
-      ],
-    },
-  ];
-
-  const activityCategory = resolveActivityCategory(loot, activityItems);
-  const rewardCategories = resolveRewardsCategories(loot, itemRewards);
-  const achivementRewardCategory = resolveAchievementRewardCategory(
+export function categorizeItems(data) {
+  const {
+    collectibles,
+    crafted,
     loot,
+    containers,
+    consumables,
+    chestItems,
+    ...sourceInfo
+  } = data;
+
+  const { chestCategories } = resolveChestCategories(
+    loot,
+    chestItems,
+    containers
+  );
+
+  const categoryGroups = [
+    { title: "Collectibles", source: collectibles, excludedItems: [] },
+    { title: "Loot", source: loot, excludedItems: chestCategories },
+  ].map((cat) => resolveCategories(cat, sourceInfo));
+
+  categoryGroups.push({ title: "Chests", categories: chestCategories });
+  categoryGroups.push({
+    title: "Crafted",
+    categories: resolveCraftedCategories(crafted),
+  });
+  categoryGroups.splice(1, 0, {
+    title: "Consumables",
+    categories: resolveConsumables(consumables),
+  });
+
+  categoryGroups.forEach(({ categories }) => {
+    categories.sort((a, b) => a.title.localeCompare(b.title));
+  });
+
+  return categoryGroups;
+}
+
+const resolveCategories = (category, data) => {
+  const { title, source: items, excludedItems } = category;
+
+  const { activityItems, itemRewards, achievementRewardItems, shopItems } =
+    data;
+  const activityCategory = resolveActivityCategory(category, activityItems);
+  const rewardCategories = resolveRewardsCategories(category, itemRewards);
+  const achivementRewardCategory = resolveAchievementRewardCategory(
+    category,
     achievementRewardItems
   );
-
-  const { chestCategories, chestItemsList } = resolveChestCategories(
-    loot,
-    chestItems
-  );
-
-  const shopsCategory = resolveShopsCategory(loot, shopItems, chestItemsList);
-  const lootAndRewardsCategories = [
+  const shopsCategory = resolveShopsCategory(category, shopItems);
+  const categories = [
     ...rewardCategories,
     achivementRewardCategory,
     shopsCategory,
     activityCategory,
   ];
 
-  const miscLootItems = resolveMiscItems(loot, [
-    ...lootAndRewardsCategories,
-    ...chestCategories,
+  const miscCategory = resolveMiscItems(items, [
+    ...categories,
+    ...excludedItems,
   ]);
-  if (miscLootItems.length) {
-    lootAndRewardsCategories.push({
-      title: "Misc. Loot",
-      key: "misc_loot",
-      items: miscLootItems,
+
+  if (miscCategory.length) {
+    categories.push({
+      title: `Misc. ${title}`,
+      key: `misc_${title.toLowerCase()}`,
+      items: miscCategory,
     });
   }
 
-  categoryGroups.push({
-    title: "Loot and Rewards",
-    categories: lootAndRewardsCategories,
-  });
-  categoryGroups.push({ title: "Chests", categories: chestCategories });
-  categoryGroups.push({
-    title: "Crafted",
-    categories: resolveCraftedCategories(crafted),
-  });
+  return {
+    title,
+    categories: categories.filter(({ items }) => items.length > 0),
+  };
+};
 
-  return categoryGroups;
-}
-
-const resolveAchievementRewardCategory = (loot, rewards) => {
+const resolveAchievementRewardCategory = (category, rewards) => {
+  const { title, source } = category;
   const rewardItems = new Set(rewards);
 
   return {
     title: "Achievement rewards",
-    key: "achievement_rewards",
-    items: loot.filter(({ id }) => rewardItems.has(id)),
+    key: `achievement_rewards_${title.toLowerCase()}`,
+    items: source.filter(({ id }) => rewardItems.has(id)),
   };
 };
 
-const resolveActivityCategory = (loot, activitiesTable) => {
+const resolveActivityCategory = (category, activitiesTable) => {
+  const { title, source } = category;
   const activityItems = new Set(activitiesTable.flatMap(({ items }) => items));
 
   return {
     title: "Activity Drops",
-    key: "loot_activities",
-    items: loot.filter(({ id }) => activityItems.has(id)),
+    key: `activity_drops_${title.toLowerCase()}`,
+    items: source.filter(({ id }) => activityItems.has(id)),
   };
 };
 
-const resolveChestCategories = (loot, chestTables) => {
-  const excludedForMultipleCheck = ["jarvonia chest table", "gdte chest table"];
-  const itemToTablesMap = {};
-  const multipleSourcesItems = new Set();
+const resolveRewardsCategories = (category, rewards) => {
+  const { title, source } = category;
+  const achievement_rewards = new Set(
+    rewards
+      .filter(({ type }) => type === "achievementPoints")
+      .flatMap(({ rewardItems }) => rewardItems)
+  );
+  const reputation_rewards = new Set(
+    rewards
+      .filter(({ type }) => type === "factionReputation")
+      .flatMap(({ rewardItems }) => rewardItems)
+  );
+  return [
+    {
+      title: "Achievement point rewards",
+      key: `achievement_point_rewards_${title.toLowerCase()}`,
+      items: source.filter(({ id }) => achievement_rewards.has(id)),
+    },
+    {
+      title: "Reputation rewards",
+      key: `reputation_rewards_${title.toLowerCase()}`,
+      items: source.filter(({ id }) => reputation_rewards.has(id)),
+    },
+  ];
+};
+
+const resolveShopsCategory = (category, shopItems) => {
+  const { title, source } = category;
+  const shopSet = new Set(shopItems);
+
+  return {
+    title: "Shop Items",
+    key: `shop_items_${title.toLowerCase()}`,
+    items: source.filter(({ id }) => shopSet.has(id)),
+  };
+};
+
+const resolveChestCategories = (loot, chestTables, containers) => {
   const chestTableCategories = [];
 
-  // Step 1: Build mapping of which item belongs to which chest
-  for (const table of chestTables) {
-    const tableName = table.name;
-    for (const item of table.items) {
-      if (!itemToTablesMap[item]) itemToTablesMap[item] = [];
-      itemToTablesMap[item].push(tableName);
-    }
-  }
+  const nameLookup = Object.fromEntries(
+    containers.flatMap(({ tables, name }) =>
+      tables.flatMap(({ tables: ts }) => ts.map((id) => [id, name]))
+    )
+  );
 
-  // Step 2: Identify multiple-source items (excluding Jarvonia and GDTE)
-  for (const [itemId, tables] of Object.entries(itemToTablesMap)) {
-    const nonExcludedTables = tables.filter(
-      (t) => !excludedForMultipleCheck.includes(t)
-    );
-    if (nonExcludedTables.length > 1) {
-      multipleSourcesItems.add(parseInt(itemId));
-    }
-  }
-
-  // Step 3: Create chest categories
   for (const table of chestTables) {
-    const isExcludedFromMulti = excludedForMultipleCheck.includes(table.name);
     const itemIds = new Set(table.items);
+    const containerName =
+      nameLookup[table.id] || `${capitalize(table.name.split(" ")[0])} chest`;
 
     let filteredItems = loot.filter((item) => itemIds.has(item.id));
 
-    // If this is Jarvonia or GDTE, only include items that appear *only* in this chest
-    if (isExcludedFromMulti) {
-      filteredItems = filteredItems.filter((item) => {
-        const tables = itemToTablesMap[item.id] || [];
-        return tables.length === 1 && tables[0] === table.name;
-      });
-    } else {
-      // Otherwise, remove multiple-source items
-      filteredItems = filteredItems.filter(
-        (item) => !multipleSourcesItems.has(item.id)
-      );
-    }
-
     if (filteredItems.length > 0) {
       chestTableCategories.push({
-        title: `${capitalize(table.name.split(" ")[0])} chest`,
+        title: containerName,
         key: `chest_${table.name.toLowerCase().replace(/\s+/g, "_")}`,
         items: filteredItems,
       });
     }
   }
 
-  // Multiple chest sources category
-  const multipleItems = loot.filter((item) =>
-    multipleSourcesItems.has(item.id)
-  );
-  if (multipleItems.length > 0) {
-    chestTableCategories.unshift({
-      title: "Multiple Chest Sources",
-      key: "chest_multiple",
-      items: multipleItems,
-    });
-  }
-
-  const chestItemsList = new Set(Object.keys(itemToTablesMap));
-  return { chestCategories: chestTableCategories, chestItemsList };
+  return { chestCategories: chestTableCategories };
 };
 
 const resolveCraftedCategories = (crafted) => {
@@ -190,44 +196,45 @@ const resolveCraftedCategories = (crafted) => {
   return categories;
 };
 
-const resolveMiscItems = (crafted, categories) => {
+const resolveConsumables = (consumables) => {
+  const filteredConsumables = consumables.filter(
+    ({ consumableType }) => consumableType == "food"
+  );
+
+  const grouped = {};
+  for (const item of filteredConsumables) {
+    // Find the first keyword present in the item's keywords array
+    item.keywords.forEach((keyword) => {
+      if (!keyword) return;
+      if (!grouped[keyword]) grouped[keyword] = [];
+      grouped[keyword].push(item);
+    });
+  }
+
+  // Filter out unwanted categories
+  const categoriesToExclude = [
+    "alcohol",
+    "beverage",
+    "cookedFish",
+    "food",
+    "sandwich",
+    "search_beverage",
+    "search_food",
+  ];
+  for (const category of categoriesToExclude) {
+    delete grouped[category];
+  }
+
+  return Object.entries(grouped).map(([category, items]) => ({
+    title: `${capitalize(category.replace("search_", ""))} consumables`,
+    key: category,
+    items,
+  }));
+};
+
+const resolveMiscItems = (source, categories) => {
   const resolvedItemIds = new Set(
     categories.flatMap(({ items }) => items.map(({ id }) => id))
   );
-  return crafted.filter(({ id }) => !resolvedItemIds.has(id));
-};
-
-const resolveRewardsCategories = (loot, rewards) => {
-  const achievement_rewards = new Set(
-    rewards
-      .filter(({ type }) => type === "achievementPoints")
-      .flatMap(({ rewardItems }) => rewardItems)
-  );
-  const reputation_rewards = new Set(
-    rewards
-      .filter(({ type }) => type === "factionReputation")
-      .flatMap(({ rewardItems }) => rewardItems)
-  );
-  return [
-    {
-      title: "Achievement point rewards",
-      key: "achievement_point_rewards",
-      items: loot.filter(({ id }) => achievement_rewards.has(id)),
-    },
-    {
-      title: "Repuation rewards",
-      key: "reputation_rewards",
-      items: loot.filter(({ id }) => reputation_rewards.has(id)),
-    },
-  ];
-};
-
-const resolveShopsCategory = (loot, shopItems, chestItems) => {
-  const shopSet = new Set(shopItems);
-
-  return {
-    title: "Shop Items",
-    key: "loot_shops",
-    items: loot.filter(({ id }) => shopSet.has(id) && !chestItems.has(id)),
-  };
+  return source.filter(({ id }) => !resolvedItemIds.has(id));
 };

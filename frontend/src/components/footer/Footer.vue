@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { computed } from "vue";
 import Tab from "./Tab.vue";
 
 const props = defineProps({
@@ -7,14 +7,18 @@ const props = defineProps({
     type: Object,
     required: true,
   },
+  activeTab: {
+    type: String,
+    required: true,
+  },
 });
+
 const emit = defineEmits(["selectTab"]);
 
-const activeTab = ref(0);
 const tabNames = Object.keys(props.tabs);
+const activeTabIndex = computed(() => tabNames.indexOf(props.activeTab));
 
 const changeTab = (index) => {
-  activeTab.value = index;
   emit("selectTab", tabNames[index]);
 };
 </script>
@@ -24,7 +28,7 @@ const changeTab = (index) => {
     <tab
       v-for="(name, index) in tabNames"
       :key="name"
-      :active="activeTab === index"
+      :active="activeTabIndex === index"
       :name="name"
       @click="changeTab(index)"
     ></tab>
@@ -40,8 +44,11 @@ const changeTab = (index) => {
   padding: 0;
 
   flex-shrink: 0;
-  position: sticky;
+  position: fixed;
+  left: 0;
   bottom: 0;
+  background-color: $boxDarkBackground;
+  height: 64px;
 
   z-index: 500;
 }

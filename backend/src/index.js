@@ -9,7 +9,11 @@ import { errorHandler } from "./middleware/errorHandler.js";
 const app = express();
 const PORT = process.env.BACKEND_PORT || 3001;
 
-app.use(cors());
+app.use(
+  cors({
+    origin: ["http://localhost:5173", "https://gear.dev.walkscape.app/"],
+  })
+);
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(errorHandler);

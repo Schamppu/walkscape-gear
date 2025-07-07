@@ -1,9 +1,9 @@
 <script setup>
+import { computed } from "vue";
 import { useGearStore } from "@/store/gear";
-import { useItemsStore } from "@/store/items";
-import WsIcon from "@/components/common/WsIcon.vue";
 import { getWikiUrl } from "@/utils/wiki";
-import AttributeDisplay from "@/components/hub/AttributeDisplay.vue";
+import WsIcon from "@/components/common/WsIcon.vue";
+import StatsDisplay from "../common/StatsDisplay.vue";
 
 const props = defineProps({
   gearType: {
@@ -19,11 +19,8 @@ const props = defineProps({
 const emit = defineEmits(["unequip"]);
 
 const gearStore = useGearStore();
-const itemsStore = useItemsStore();
 
-const item = gearStore.get(props.slotName);
-const owned = item.id in itemsStore.ownedItems;
-const quality = owned ? itemsStore.ownedItems[item.id].quality : item.quality;
+const item = computed(() => gearStore.gearSlots[props.slotName]);
 </script>
 
 <template>
@@ -39,12 +36,7 @@ const quality = owned ? itemsStore.ownedItems[item.id].quality : item.quality;
       </div>
       <button class="unequip" @click="emit('unequip')">Unequip</button>
     </div>
-    <attribute-display
-      :itemAttrs="item.itemAttrs"
-      :qualityAttrs="item.itemQualityAttrs"
-      :quality="quality"
-      :key="`attributes-q1-${quality}`"
-    />
+    <stats-display :item="item" :quality="item.quality" />
   </div>
   <div v-else>
     <p>Select an item on the search tab</p>

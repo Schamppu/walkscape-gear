@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, onBeforeUnmount, watch } from "vue";
 import WsLabel from "../WsLabel.vue";
 import LabelWithIcon from "../LabelWithIcon.vue";
 import DropdownCategory from "./DropdownCategory.vue";
@@ -9,6 +9,14 @@ const props = defineProps({
   data: {
     type: Array,
     required: true,
+  },
+  modelValue: {
+    type: [String, Object],
+    default: null,
+  },
+  defaultText: {
+    type: String,
+    default: "Select an item",
   },
 });
 
@@ -22,12 +30,23 @@ const handleClickOutside = (event) => {
 
 const dropdownRef = ref("dropdownRef");
 const isOpen = ref(false);
-const selected = ref("");
+const selected = ref(props.modelValue || "");
 const searchTerm = ref("");
 
 onMounted(() => {
   const noneOption = props.data.filter(({ value }) => value === "None");
-  if (noneOption.length) selectItem(noneOption[0]);
+  if (!selected.value && noneOption.length) selectItem(noneOption[0], false);
+
+  const onEsc = (e) => {
+    if (e.key === "Escape" || e.key === "Esc") {
+      isOpen.value = false;
+    }
+  };
+  window.addEventListener("keydown", onEsc);
+  // Clean up
+  onBeforeUnmount(() => {
+    window.removeEventListener("keydown", onEsc);
+  });
 });
 
 const toggle = () => {
@@ -60,24 +79,34 @@ const filteredData = computed(() => {
     .filter(Boolean);
 });
 
-const selectItem = (item) => {
+const labelText = computed(() => {
+  return selected.value?.id !== "activity-none"
+    ? selected.value.value
+    : props.defaultText;
+});
+
+watch(
+  () => props.modelValue,
+  (val) => {
+    selected.value = val;
+  }
+);
+
+const selectItem = (item, update = true) => {
   isOpen.value = false;
   selected.value = item;
-  emit("select", item);
+  emit("select", item, update);
 };
 </script>
-  
+
 <template>
   <div v-clickOutside="handleClickOutside" class="wrapper" ref="dropdownRef">
     <div class="header">
       <ws-label :label="label" label-for="dropdown-trigger" />
-      <div class="dropdown-trigger" @click="toggle">
-        <label-with-icon
-          :text="selected.value || 'Select an item'"
-          :icon="selected.icon"
-        ></label-with-icon>
+      <button class="dropdown-trigger" @click="toggle">
+        <label-with-icon :text="labelText" :icon="selected.icon" />
         <span class="chevron" :class="{ isOpen }">▼</span>
-      </div>
+      </button>
     </div>
 
     <div v-if="isOpen" class="dropdown-menu">

@@ -3,7 +3,7 @@ import WsIcon from "./WsIcon.vue";
 
 defineProps({
   icon: { type: String, default: null },
-  text: { type: String, required: true },
+  text: { type: String, default: "" },
 });
 </script>
 

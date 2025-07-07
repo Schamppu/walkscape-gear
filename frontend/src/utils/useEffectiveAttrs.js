@@ -2,18 +2,20 @@ import { computed } from "vue";
 import { useActivityStore } from "@/store/activity";
 import { useGearStore } from "@/store/gear";
 import { useItemsStore } from "@/store/items";
-import { usePlayerStore } from "@/store/player";
-import { checkRequirements } from "./requirements";
+import { useRequirements } from "./useRequirements";
+import { useLevelBonus } from "./useLevelBonus";
 import { sumAttrs } from "./qualityAttrs";
 import { toDeepRaw } from "./rawData";
 
 export function useEffectiveAttrs() {
-  const activity = useActivityStore();
+  const { checkRequirements } = useRequirements();
+  const { workEfficiencyBonus, craftingOutcomeBonus } = useLevelBonus();
+
+  const activities = useActivityStore();
   const gear = useGearStore();
   const items = useItemsStore();
-  const player = usePlayerStore();
 
-  const allItems = computed(() => {
+  const allEquippedItems = computed(() => {
     const owned = items.ownedItems;
     const gearSet = gear.filledGearSlots;
 
@@ -27,8 +29,13 @@ export function useEffectiveAttrs() {
         return {
           ...item,
           attrs: toDeepRaw(
-            item.type === "crafted"
-              ? sumAttrs(item.itemAttrs, item.itemQualityAttrs, item.quality)
+            item.type !== "loot"
+              ? sumAttrs(
+                  item.itemAttrs,
+                  item.itemQualityAttrs,
+                  item.buffs,
+                  item.quality
+                )
               : item.itemAttrs
           ),
         };
@@ -47,23 +54,32 @@ export function useEffectiveAttrs() {
   });
 
   const allAttrs = computed(() => {
-    return allItems.value.flatMap((item) => {
+    const mappedAttrs = allEquippedItems.value.flatMap((item) => {
       return item.attrs.map((attr) => {
         return { ...attr, item };
       });
     });
+    if (workEfficiencyBonus.value) {
+      mappedAttrs.push(workEfficiencyBonus.value);
+    }
+    if (craftingOutcomeBonus.value) {
+      mappedAttrs.push(craftingOutcomeBonus.value);
+    }
+    if (activities.service?.attributes.length) {
+      const serviceAttrs = activities.service.attributes.map((attr) => {
+        return {
+          ...attr,
+          item: activities.service,
+        };
+      });
+      mappedAttrs.push.apply(mappedAttrs, serviceAttrs);
+    }
+    return mappedAttrs;
   });
 
   const effectiveAttrs = computed(() => {
-    const data = {
-      activity: activity.activity,
-      location: activity.location,
-      achievementPoints: player.achievementPoints,
-      gear: gear.filledGearSlots,
-    };
-
     return allAttrs.value.filter(({ requirements }) =>
-      checkRequirements(requirements, data)
+      checkRequirements(requirements)
     );
   });
 
@@ -72,14 +88,26 @@ export function useEffectiveAttrs() {
 
     for (const attr of effectiveAttrs.value) {
       for (const stat of attr.stats) {
-        const { type, isPercent, value } = stat;
+        const { type, isPercent, value, isNegative } = stat;
 
         if (!(type in totals)) {
-          totals[type] = { flat: 0, percent: 0 };
+          totals[type] = {
+            flat: {
+              sum: 0,
+              positive: 0,
+              negative: 0,
+            },
+            percent: {
+              sum: 0,
+              positive: 0,
+              negative: 0,
+            },
+          };
         }
 
         const key = isPercent ? "percent" : "flat";
-        totals[type][key] += value;
+        totals[type][key]["sum"] += value;
+        totals[type][key][isNegative ? "negative" : "positive"] += value;
       }
     }
 
@@ -87,7 +115,7 @@ export function useEffectiveAttrs() {
   });
 
   return {
-    allItems,
+    allEquippedItems,
     allAttrs,
     effectiveAttrs,
     equippedKeywords,
