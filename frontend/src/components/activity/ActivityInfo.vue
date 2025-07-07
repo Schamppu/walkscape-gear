@@ -17,6 +17,7 @@ const dataStore = useDataStore();
 const {
   maxWorkEfficiency,
   workEfficiency,
+  uncappedWorkEfficiency,
   stepsPerCompletion,
   xpRewards,
   xpPerStep,
@@ -68,11 +69,15 @@ const sections = computed(() => {
           iconPath: "assets/icons/text/general_icons/steps.png",
         },
         {
-          text: `${n(workEfficiency.value * 100)} / ${
+          text: `${n(uncappedWorkEfficiency.value * 100)} / ${
             Math.round(maxWorkEfficiency.value * 100) - 100
           }%`,
           tooltip: `${Math.round(workEfficiency.value * 100)}% work efficiency`,
           iconPath: "assets/icons/text/stats/skilling/work_efficiency.png",
+          borderClass:
+            workEfficiency.value >= maxWorkEfficiency.value - 1
+              ? "border-green"
+              : "",
         },
       ],
       itemProps: (item) => ({ ...item }),

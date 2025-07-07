@@ -30,6 +30,10 @@ export function useSkillModifiers() {
     return Math.min(workEfficiency, maxWorkEfficiency.value - 1);
   });
 
+  const uncappedWorkEfficiency = computed(() => {
+    return getStat("workEfficiency");
+  });
+
   const xpFlat = computed(() => {
     return getStat("bonusExperience", "flat");
   });
@@ -140,6 +144,7 @@ export function useSkillModifiers() {
   return {
     maxWorkEfficiency,
     workEfficiency,
+    uncappedWorkEfficiency,
     findCollectibles,
     findGems,
     findBirdNests,

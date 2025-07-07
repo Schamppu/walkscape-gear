@@ -43,6 +43,10 @@ const props = defineProps({
 
     border: 2px solid $boxPrimaryOutline;
     background-color: $boxPrimaryBackground;
+
+    &.border-green {
+      border: 1px solid $txPositive;
+    }
   }
 }
 

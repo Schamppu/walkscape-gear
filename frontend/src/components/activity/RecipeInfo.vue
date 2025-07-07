@@ -22,6 +22,7 @@ const stats = computed(() => {
   const {
     maxWorkEfficiency,
     workEfficiency,
+    uncappedWorkEfficiency,
     craftingOutcome,
     stepsPerCompletion,
     craftsPerMaterial,
@@ -34,6 +35,7 @@ const stats = computed(() => {
   return {
     maxWorkEfficiency: maxWorkEfficiency.value,
     workEfficiency: workEfficiency.value,
+    uncappedWorkEfficiency: uncappedWorkEfficiency.value,
     craftingOutcome: craftingOutcome.value,
     stepsPerCompletion: stepsPerCompletion.value,
     craftsPerMaterial: craftsPerMaterial.value,
@@ -190,13 +192,18 @@ const craftingOdds = computed(() => {
           />
           <info-bubble
             label="Work Efficiency"
-            :text="`${n(stats.workEfficiency * 100)} / ${
+            :text="`${n(stats.uncappedWorkEfficiency * 100)} / ${
               Math.round(stats.maxWorkEfficiency * 100) - 100
             }%`"
             :tooltip="`${Math.round(
               stats.workEfficiency * 100
             )}% work efficiency`"
             iconPath="assets/icons/text/stats/skilling/work_efficiency.png"
+            :borderClass="
+              stats.workEfficiency >= (stats.maxWorkEfficiency - 1)
+                ? 'border-green'
+                : ''
+            "
           />
           <skill-bubble
             label="Level"
