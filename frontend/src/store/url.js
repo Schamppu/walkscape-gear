@@ -82,6 +82,7 @@ export const useUrlStore = defineStore("url", {
 
         if (slot === "activity") {
           promises.push(activityStore.loadActivity(id));
+          promises.push(activityStore.loadActivityLocations(id));
         } else if (slot === "recipe") {
           promises.push(activityStore.loadRecipe(id));
         } else {
