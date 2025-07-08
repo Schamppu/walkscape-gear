@@ -61,7 +61,6 @@ export function useEffectiveAttrs() {
   });
 
   const allAttrs = computed(() => {
-    console.log("allEquippedItems", allEquippedItems.value);
     const mappedAttrs = allEquippedItems.value.flatMap((item) => {
       return item.attrs.map((attr) => {
         return { ...attr, item };
