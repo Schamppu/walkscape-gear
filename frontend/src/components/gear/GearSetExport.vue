@@ -12,7 +12,7 @@ function copyExportCode() {
     .then(() => {
       emit("notification", "Export code copied to clipboard!");
     })
-    .catch((err) => {
+    .catch(() => {
       emit("notification", "Failed to copy export code");
     });
 }

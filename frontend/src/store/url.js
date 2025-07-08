@@ -3,7 +3,6 @@ import { getUrlMap } from "@/utils/axios/api_routes";
 import { useUrlMap } from "@/utils/useUrlMap";
 import { useActivityStore } from "./activity";
 import { useGearStore } from "./gear";
-import { useItemsStore } from "./items";
 
 export const useUrlStore = defineStore("url", {
   state: () => ({
@@ -52,7 +51,7 @@ export const useUrlStore = defineStore("url", {
     },
 
     encodeAndPushToUrl() {
-      const { encodeGearLoadout, decodeGearLoadout } = useUrlMap();
+      const { encodeGearLoadout } = useUrlMap();
       const encoded = encodeGearLoadout();
 
       const url = new URL(window.location.href);
@@ -70,7 +69,6 @@ export const useUrlStore = defineStore("url", {
 
       const gearStore = useGearStore();
       const activityStore = useActivityStore();
-      const itemsStore = useItemsStore();
 
       const ringId = decodedLoadout["ring1"];
       const promises = [];

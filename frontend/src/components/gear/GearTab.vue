@@ -2,7 +2,7 @@
 import TabContentWrapper from "@/components/common/TabContentWrapper.vue";
 import GearSelection from "./GearSelection.vue";
 import GearButtons from "./GearButtons.vue";
-import Stats from "../stats/Stats.vue";
+import Stats from "../stats/StatsList.vue";
 import { useGearStore } from "@/store/gear";
 
 const gearStore = useGearStore();

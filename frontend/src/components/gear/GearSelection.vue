@@ -3,7 +3,7 @@ import { ref } from "vue";
 import GearSlot from "./GearSlot.vue";
 import GearModal from "./GearModal.vue";
 
-const props = defineProps({
+defineProps({
   isRecipe: {
     type: Boolean,
     default: false,

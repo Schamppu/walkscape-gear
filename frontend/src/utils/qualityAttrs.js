@@ -51,7 +51,7 @@ export const sumBuffAttrs = (buffs, quality) => {
     return [];
   }
 
-  const [normal, _] = consumableQualityOptions.map(({ value }) => value);
+  const [normal] = consumableQualityOptions.map(({ value }) => value);
   const mapAttrs = (attribute) => {
     return {
       ...attribute,

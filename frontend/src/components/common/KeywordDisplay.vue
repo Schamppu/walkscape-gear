@@ -1,7 +1,7 @@
 <script setup>
 import WsIcon from "./WsIcon.vue";
 
-const props = defineProps({
+defineProps({
   keyword: Object,
 });
 </script>

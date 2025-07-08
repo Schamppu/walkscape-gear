@@ -1,5 +1,5 @@
 <script setup>
-const emit = defineEmits(["back"]);
+defineEmits(["back"]);
 </script>
 
 <template>

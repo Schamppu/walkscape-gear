@@ -4,7 +4,7 @@ import { usePlayerStore } from "@/store/player";
 
 const emit = defineEmits(["input"]);
 
-const props = defineProps({
+defineProps({
   skill: Object,
 });
 

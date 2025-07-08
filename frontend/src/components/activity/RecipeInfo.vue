@@ -64,14 +64,6 @@ const borderClass = computed(
 );
 
 const sections = computed(() => {
-  const {
-    id,
-    workRequired,
-    levelRequirementsMap,
-    requiredKeywords,
-    requirements,
-  } = activityStore.recipe;
-
   return [
     {
       label: "Services",

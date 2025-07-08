@@ -2,7 +2,6 @@
 import { ref, computed, onMounted, onBeforeUnmount } from "vue";
 import { useGearStore } from "@/store/gear";
 import { useUrlStore } from "@/store/url";
-import { useItemsStore } from "@/store/items";
 import GearPreview from "./GearPreview.vue";
 import GearSearch from "./GearSearch.vue";
 
@@ -39,7 +38,6 @@ const tabs = [
 ];
 
 const gearStore = useGearStore();
-const itemsStore = useItemsStore();
 const urlStore = useUrlStore();
 
 const closeDialog = () => {

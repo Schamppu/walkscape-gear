@@ -7,7 +7,7 @@ import { getApInfo } from "@/utils/axios/api_routes";
 const emit = defineEmits(["input"]);
 const store = usePlayerStore();
 
-const getAP = (_) => store.achievementPoints;
+const getAP = () => store.achievementPoints;
 const setAP = (_, val) => store.setAchievementPoints(val);
 
 const maxAP = ref(null);

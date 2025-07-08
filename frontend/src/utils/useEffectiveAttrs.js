@@ -17,10 +17,10 @@ export function useEffectiveAttrs() {
 
   const collectibleIds = computed(() => {
     return Object.entries(items.itemsByCategory)
-      .filter(([category, _]) => {
+      .filter(([category]) => {
         return category.endsWith("collectibles");
       })
-      .flatMap(([_, items]) => items);
+      .flatMap(([,items]) => items);
   });
 
   const allEquippedItems = computed(() => {

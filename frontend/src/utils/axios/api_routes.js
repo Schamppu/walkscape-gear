@@ -18,7 +18,7 @@ export function getIconsBatch({ iconPaths }) {
   });
 }
 
-export function getLocalization({ key, locale = en }) {
+export function getLocalization({ key, locale = 'en' }) {
   return proxy({
     url: "translate",
     options: { params: { key, locale } },

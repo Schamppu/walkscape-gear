@@ -2,7 +2,7 @@
 import WsIcon from "@/components/common/WsIcon.vue";
 import WsLabel from "@/components/common/WsLabel.vue";
 
-const props = defineProps({
+defineProps({
   iconPath: String,
   label: String,
   text: String,

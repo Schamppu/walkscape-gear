@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from "vue";
-import Tab from "./Tab.vue";
+import Tab from "./FooterTab.vue";
 
 const props = defineProps({
   tabs: {

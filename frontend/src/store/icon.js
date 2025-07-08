@@ -63,6 +63,7 @@ export const useIconStore = defineStore("iconStore", {
             resolve(url)
           );
         } catch (e) {
+          console.error("Error fetching icon:", e);
           (this.pendingResolvers[path] || []).forEach((resolve) =>
             resolve(null)
           );

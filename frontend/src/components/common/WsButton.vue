@@ -1,7 +1,7 @@
 <script setup>
 import WsIcon from "@/components/common/WsIcon.vue";
 
-const props = defineProps({
+defineProps({
   text: String,
   iconPath: String,
   iconSize: {
@@ -10,7 +10,7 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(["click"]);
+defineEmits(["click"]);
 </script>
 
 <template>

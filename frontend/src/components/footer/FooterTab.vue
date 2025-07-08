@@ -1,10 +1,10 @@
 <script setup>
-const props = defineProps({
+defineProps({
   name: String,
   active: Boolean,
 });
 
-const emit = defineEmits(["click"]);
+defineEmits(["click"]);
 </script>
 
 <template>
