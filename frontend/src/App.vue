@@ -12,7 +12,7 @@ import Gear from "./components/gear/Gear.vue";
 import Footer from "./components/footer/Footer.vue";
 import About from "./components/about/About.vue";
 import LoadingThrobber from "./components/common/LoadingThrobber.vue";
-import WsIcon from "./components/common/WsIcon.vue";
+import WsButton from "./components/common/WsButton.vue";
 import SettingsModal from "./components/common/SettingsModal.vue";
 
 const urlStore = useUrlStore();
@@ -104,12 +104,12 @@ onUnmounted(() => {
       :class="{ active: activeTab === 'About' }"
       >About</a
     >
-    <button v-if="isLoaded" class="button" @click="showSettings = true">
-      <ws-icon
-        icon-path="assets/icons/text/general_icons/settings.png"
-        size="sm"
-      />
-    </button>
+    <ws-button
+      v-if="isLoaded"
+      @click="showSettings = true"
+      icon-path="assets/icons/text/general_icons/settings.png"
+      icon-size="sm"
+    />
   </header>
   <loading-throbber v-if="!isLoaded" class="throbber" />
   <div v-else :class="isMobile ? 'mobile-layout' : 'desktop-layout'">
@@ -186,6 +186,7 @@ onUnmounted(() => {
 
 .main-header {
   width: 100%;
+  height: $navHeight;
   box-sizing: border-box;
   z-index: 2000;
   background: $bgPrimary;
@@ -216,20 +217,6 @@ onUnmounted(() => {
       opacity: 1;
       text-decoration: underline;
     }
-  }
-}
-
-.button {
-  display: flex;
-  align-content: center;
-  border: 1px solid $boxPrimaryOutline;
-
-  padding: $xxxxs;
-  border-radius: $sm;
-
-  &:hover,
-  &:focus {
-    background-color: $boxDarkBackground;
   }
 }
 </style>

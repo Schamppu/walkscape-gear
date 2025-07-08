@@ -24,7 +24,10 @@ const gearStore = useGearStore();
           </label>
         </div>
         <gear-selection />
-        <gear-set-export />
+        <div class="buttons">
+          <gear-set-export />
+          <gear-unequip-button />
+        </div>
       </section>
     </details>
     <details open>
@@ -46,6 +49,12 @@ const gearStore = useGearStore();
     justify-content: center;
     gap: $sm;
     padding: $sm 0;
+  }
+
+  .buttons {
+    display: flex;
+    justify-content: center;
+    gap: $sm;
   }
 }
 </style>

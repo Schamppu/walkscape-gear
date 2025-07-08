@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import { useGearSetExport } from "@/utils/useGearSetExport";
-import WsIcon from "@/components/common/WsIcon.vue";
+import WsButton from "@/components/common/WsButton.vue";
 
 const notification = ref("");
 const { exportCode } = useGearSetExport();
@@ -28,13 +28,11 @@ function copyExportCode() {
 
 <template>
   <div class="export-wrapper">
-    <button @click="copyExportCode" class="export-button">
-      <ws-icon
-        icon-path="assets/icons/text/button_icons/deposit.png"
-        size="sm"
-      />
-      Export
-    </button>
+    <ws-button
+      @click="copyExportCode"
+      text="Export"
+      icon-path="assets/icons/text/button_icons/deposit.png"
+    />
     <p v-if="notification">{{ notification }}</p>
   </div>
 </template>
@@ -47,24 +45,5 @@ function copyExportCode() {
   gap: $sm;
 
   width: 100%;
-}
-
-.export-button {
-  cursor: pointer;
-
-  display: flex;
-  align-items: center;
-  align-self: center;
-  gap: $xxxxs;
-  padding: $xxs;
-
-  background-color: $boxDarkBackground;
-  border: 1px solid $boxDarkOutline;
-  border-radius: $md;
-
-  &:hover,
-  &:focus {
-    background-color: $boxTransparentDarkOutline;
-  }
 }
 </style>
