@@ -48,6 +48,7 @@ const filteredItems = computed(() => {
   const activity =
     (activityStore.activitySelected && activityStore.activity) ||
     (activityStore.recipeSelected && activityStore.recipe);
+  const service = activityStore.recipeSelected && activityStore.service;
   const term = searchTerm.value.trim().toLowerCase();
   const showOwned = gearStore.showOwned;
   const showUseful = gearStore.showUseful;
@@ -63,6 +64,7 @@ const filteredItems = computed(() => {
       showItemForActivity(
         item,
         activity,
+        service,
         item.quality,
         activityStore.recipeSelected
       )

@@ -2,14 +2,20 @@ import { getRawData } from "./rawData";
 import { sumAttrs } from "./qualityAttrs";
 import { useRequirements } from "./useRequirements";
 
-export const showItemForActivity = (itemProxy, activity, quality, isRecipe) => {
+export const showItemForActivity = (
+  itemProxy,
+  activity,
+  service,
+  quality,
+  isRecipe
+) => {
   const item = getRawData(itemProxy);
 
   const [skill] = activity.relatedSkillsList ??
     activity.relatedSkills ?? [null];
   const skillReq = checksSkillRequirements(item, skill);
 
-  const hasUsefulKeywords = usefulKeywords(item, activity).length > 0;
+  const hasUsefulKeywords = usefulKeywords(item, activity, service).length > 0;
   const hasUsefulAttrs =
     usefulAttrs(item, activity, quality, isRecipe).length > 0;
   const hasTables = itemTables(item).length > 0;
@@ -20,13 +26,14 @@ export const showItemForActivity = (itemProxy, activity, quality, isRecipe) => {
   );
 };
 
-const usefulKeywords = (item, activity) => {
+const usefulKeywords = (item, activity, service) => {
   if (!activity) return false;
   const { requiredKeywords: kw, requirements } = activity;
+  const serviceRequirements = service?.requirements || [];
 
   const kws = kw?.map(({ keyword }) => keyword) ?? [];
   const kwEquipped =
-    requirements
+    [...requirements, ...serviceRequirements]
       ?.filter((req) => req.type === "distinctKeywordItemsEquipped")
       .flatMap(({ requirement }) => requirement.keywords) ?? [];
 

@@ -144,7 +144,12 @@ watch(
         @change="toggleSelectAll"
         aria-label="Select all"
       />
-      <h3>{{ title }}</h3>
+      <h3>
+        {{ title }}
+        <span class="count"
+          >({{ selectedItems.size }} / {{ items.length }})</span
+        >
+      </h3>
       <button class="toggle">{{ isOpen ? "▲" : "▼" }}</button>
     </div>
     <div v-if="isOpen && hasLoaded" class="content">
@@ -180,7 +185,15 @@ watch(
 
   border: 1px solid $bgPrimary;
   padding: $xxs;
-  color: white;
+  color: $txPrimary;
+
+  .count {
+    font-weight: normal;
+    font-size: $md;
+    opacity: 0.7;
+    margin-left: $xxs;
+    white-space: pre;
+  }
 }
 
 .content {
