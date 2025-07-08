@@ -8,7 +8,7 @@ defineEmits(["click"]);
 </script>
 
 <template>
-  <button :class="['tab', { active }]" @click="emit('click')">
+  <button :class="['tab', { active }]" @click="$emit('click')">
     {{ name }}
   </button>
 </template>

@@ -136,7 +136,7 @@ watch(
 
 <template>
   <div class="category-panel" :id="title">
-    <div class="header" @click="emit('toggle')">
+    <div class="header" @click="$emit('toggle')">
       <input
         type="checkbox"
         :checked="allSelected"

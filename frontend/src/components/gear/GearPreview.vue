@@ -34,7 +34,7 @@ const item = computed(() => gearStore.gearSlots[props.slotName]);
           >)
         </p>
       </div>
-      <button class="unequip" @click="emit('unequip')">Unequip</button>
+      <button class="unequip" @click="$emit('unequip')">Unequip</button>
     </div>
     <stats-display :item="item" :quality="item.quality" />
   </div>
