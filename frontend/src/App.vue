@@ -94,13 +94,18 @@ onUnmounted(() => {
 <style lang="scss">
 @use "styles/app";
 
+.throbber {
+  padding-top: 64px !important;
+}
+
 .mobile-layout {
   display: flex;
   flex-direction: column;
-  min-height: calc(100dvh - 64px);
+  min-height: calc(100dvh - $footerHeight - $navHeight);
   width: 100%;
   overflow-x: hidden;
-  padding-bottom: 64px;
+  padding-bottom: $footerHeight;
+  padding-top: $navHeight;
 }
 
 .desktop-layout {
@@ -108,6 +113,7 @@ onUnmounted(() => {
   flex-direction: row;
   gap: 20px;
   min-height: 100dvh;
+  padding-top: $navHeight;
 }
 
 .tab-panel {
@@ -117,7 +123,7 @@ onUnmounted(() => {
 
 .mobile-layout .tab-panel {
   display: none;
-  min-height: calc(100dvh - 64px);
+  min-height: calc(100dvh - $footerHeight - $navHeight);
 }
 .mobile-layout .tab-panel.active {
   display: block;

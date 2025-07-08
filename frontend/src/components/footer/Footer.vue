@@ -48,7 +48,7 @@ const changeTab = (index) => {
   left: 0;
   bottom: 0;
   background-color: $boxDarkBackground;
-  height: 64px;
+  height: $footerHeight;
 
   z-index: 500;
 }
