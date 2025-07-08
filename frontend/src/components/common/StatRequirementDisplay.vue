@@ -100,6 +100,14 @@ const reqs = props.requirements.map((req) => {
       icon: skill.icon,
       opposite,
     };
+  } else if (type === "activityType") {
+    const activity = activityStore.activitiesMap[requirement.activity];
+    return {
+      prefix: "doing",
+      text: `${activity.name} activity`,
+      icon: activity.icon,
+      opposite,
+    };
   }
   return {
     text: requirement,
