@@ -1,7 +1,7 @@
 <script setup>
 import TabContentWrapper from "@/components/common/TabContentWrapper.vue";
 import GearSelection from "./GearSelection.vue";
-import GearSetExport from "./GearSetExport.vue";
+import GearButtons from "./GearButtons.vue";
 import Stats from "../stats/Stats.vue";
 import { useGearStore } from "@/store/gear";
 
@@ -24,10 +24,7 @@ const gearStore = useGearStore();
           </label>
         </div>
         <gear-selection />
-        <div class="buttons">
-          <gear-set-export />
-          <gear-unequip-button />
-        </div>
+        <gear-buttons />
       </section>
     </details>
     <details open>
@@ -49,12 +46,6 @@ const gearStore = useGearStore();
     justify-content: center;
     gap: $sm;
     padding: $sm 0;
-  }
-
-  .buttons {
-    display: flex;
-    justify-content: center;
-    gap: $sm;
   }
 }
 </style>

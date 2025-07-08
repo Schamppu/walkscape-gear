@@ -30,6 +30,8 @@ const emit = defineEmits(["click"]);
   gap: $xxxxs;
   padding: $xxxs;
 
+  word-wrap: nowrap;
+
   background-color: $boxDarkBackground;
   border: 1px solid $boxDarkOutline;
   border-radius: $md;

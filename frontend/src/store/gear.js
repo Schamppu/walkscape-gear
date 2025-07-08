@@ -98,5 +98,12 @@ export const useGearStore = defineStore("gearStore", {
       const quality = itemQuality || this.determineQuality(id);
       await this._fetchAndSetItem(itemSlot, id, quality);
     },
+
+    unequipAll() {
+      const newGearSlots = Object.fromEntries(
+        Object.keys(this.gearSlots).map((slot) => [slot, null])
+      );
+      this.gearSlots = newGearSlots;
+    },
   },
 });
