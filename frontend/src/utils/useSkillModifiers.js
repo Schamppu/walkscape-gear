@@ -113,7 +113,7 @@ export function useSkillModifiers() {
     if (!xpRewardsMap) return {};
 
     const xpRewardsArr = Object.entries(xpRewardsMap).map(([skill, base]) => {
-      const value = (1 + xpPercent.value) * base + xpFlat.value;
+      const value = (1 + xpPercent.value) * (base + xpFlat.value);
       return {
         skill,
         skillText: skill,
