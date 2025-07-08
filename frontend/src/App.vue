@@ -10,10 +10,14 @@ import Hub from "./components/hub/Hub.vue";
 import Activity from "./components/activity/Activity.vue";
 import Gear from "./components/gear/Gear.vue";
 import Footer from "./components/footer/Footer.vue";
+import About from "./components/about/About.vue";
 import LoadingThrobber from "./components/common/LoadingThrobber.vue";
+import WsIcon from "./components/common/WsIcon.vue";
+import SettingsModal from "./components/common/SettingsModal.vue";
 
 const urlStore = useUrlStore();
 const isLoaded = ref(false);
+const showSettings = ref(false);
 const activeTab = ref("Hub");
 const isMobile = ref(window.innerWidth <= 768);
 
@@ -21,9 +25,8 @@ const checkScreenSize = () => {
   isMobile.value = window.innerWidth <= 768;
 };
 
-const tabs = { Hub, Gear, Activity };
-
-// Refs for each tab panel
+const contentTabs = { Hub, Gear, Activity };
+const tabs = { About, ...contentTabs };
 const tabRefs = reactive({});
 
 function scrollToTab(tabName) {
@@ -32,8 +35,17 @@ function scrollToTab(tabName) {
     const el = tabRefs[tabName];
     if (el && el.scrollIntoView) {
       el.scrollIntoView({ behavior: "instant", block: "start" });
+      window.scrollBy({ top: -40, left: 0, behavior: "instant" });
     }
   });
+}
+
+function shouldShowTab(tabName) {
+  if (isMobile.value) {
+    return activeTab.value === tabName;
+  } else {
+    return activeTab.value !== "About";
+  }
 }
 
 const bootstrap = async () => {
@@ -58,6 +70,19 @@ const bootstrap = async () => {
   isLoaded.value = true;
 };
 
+function handleUuidUpdate(newUuid) {
+  localStorage.setItem("userUuid", newUuid);
+
+  const playerStore = usePlayerStore();
+  const itemsStore = useItemsStore();
+
+  playerStore.isLoaded = false;
+  itemsStore.isLoaded = false;
+  isLoaded.value = false;
+
+  bootstrap();
+}
+
 onMounted(async () => {
   checkScreenSize();
   window.addEventListener("resize", checkScreenSize);
@@ -71,36 +96,66 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <loading-throbber v-if="!isLoaded" />
+  <header class="main-header">
+    <a
+      href="#"
+      @click.prevent="scrollToTab('About')"
+      :ref="(el) => (tabRefs['About'] = el)"
+      :class="{ active: activeTab === 'About' }"
+      >About</a
+    >
+    <button v-if="isLoaded" class="button" @click="showSettings = true">
+      <ws-icon
+        icon-path="assets/icons/text/general_icons/settings.png"
+        size="sm"
+      />
+    </button>
+  </header>
+  <loading-throbber v-if="!isLoaded" class="throbber" />
   <div v-else :class="isMobile ? 'mobile-layout' : 'desktop-layout'">
     <div
-      v-for="tabName in Object.keys(tabs)"
+      v-show="activeTab === 'About'"
+      :class="['tab-panel', { active: activeTab === 'About' }]"
+      :tabindex="isMobile ? 0 : undefined"
+    >
+      <About @back="scrollToTab('Hub')" />
+    </div>
+
+    <div
+      v-for="tabName in Object.keys(contentTabs)"
       :key="tabName"
       :ref="(el) => (tabRefs[tabName] = el)"
       :class="['tab-panel', { active: activeTab === tabName }]"
       :tabindex="isMobile ? 0 : undefined"
+      v-show="shouldShowTab(tabName)"
     >
       <component :is="tabs[tabName]" />
     </div>
     <Footer
       v-if="isMobile"
-      :tabs="tabs"
+      :tabs="contentTabs"
       :active-tab="activeTab"
       @selectTab="scrollToTab"
     />
   </div>
+  <SettingsModal v-model="showSettings" @update-uuid="handleUuidUpdate" />
 </template>
 
 <style lang="scss">
 @use "styles/app";
 
+.throbber {
+  padding-top: 64px !important;
+}
+
 .mobile-layout {
   display: flex;
   flex-direction: column;
-  min-height: calc(100dvh - 64px);
+  min-height: calc(100dvh - $footerHeight - $navHeight);
   width: 100%;
   overflow-x: hidden;
-  padding-bottom: 64px;
+  padding-bottom: $footerHeight;
+  padding-top: $navHeight;
 }
 
 .desktop-layout {
@@ -108,6 +163,7 @@ onUnmounted(() => {
   flex-direction: row;
   gap: 20px;
   min-height: 100dvh;
+  padding-top: $navHeight;
 }
 
 .tab-panel {
@@ -117,7 +173,7 @@ onUnmounted(() => {
 
 .mobile-layout .tab-panel {
   display: none;
-  min-height: calc(100dvh - 64px);
+  min-height: calc(100dvh - $footerHeight - $navHeight);
 }
 .mobile-layout .tab-panel.active {
   display: block;
@@ -126,5 +182,54 @@ onUnmounted(() => {
 .desktop-layout .tab-panel {
   display: block;
   flex: 1 1 0;
+}
+
+.main-header {
+  width: 100%;
+  box-sizing: border-box;
+  z-index: 2000;
+  background: $bgPrimary;
+  color: $txPrimary;
+
+  position: fixed;
+  left: 0;
+  top: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: $xxxxs $md;
+  border-bottom: 1px solid $boxPrimaryOutline;
+
+  a {
+    color: $txPrimary;
+    text-decoration: none;
+    opacity: 0.8;
+    padding: $xxxxs $xxs;
+    &.active {
+      opacity: 1;
+      font-weight: bold;
+      border-bottom: 2px solid $txPrimary;
+    }
+    &:hover {
+      opacity: 1;
+      text-decoration: underline;
+    }
+  }
+}
+
+.button {
+  display: flex;
+  align-content: center;
+  border: 1px solid $boxPrimaryOutline;
+
+  padding: $xxxxs;
+  border-radius: $sm;
+
+  &:hover,
+  &:focus {
+    background-color: $boxDarkBackground;
+  }
 }
 </style>

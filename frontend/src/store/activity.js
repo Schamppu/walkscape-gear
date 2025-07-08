@@ -6,7 +6,6 @@ import {
   searchServices,
   getActivities,
   getRecipes,
-  getKeywords,
 } from "@/utils/axios/api_routes";
 import { filterServicesByTier, sortServicesByTier } from "@/utils/services";
 import { activityNone } from "@/utils/activityNone";
