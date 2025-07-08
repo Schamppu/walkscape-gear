@@ -5,6 +5,9 @@ on:
     branches:
       - main
       - dev
+  pull_request:
+    branches:
+      - main
 
 jobs:
   build-and-push:
@@ -48,5 +51,5 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./${{ matrix.service }}
-          push: true
+          push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.TAGS }}
