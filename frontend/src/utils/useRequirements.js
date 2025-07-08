@@ -85,6 +85,9 @@ export function useRequirements() {
       case "skillLevel":
         value = player.skillLevels[requirement.skill] >= requirement.level;
         break;
+      case "activityType":
+        if (activity) value = activity.id === requirement.activity;
+        break;
       default:
         console.error("unhandled requirement", type, requirement);
     }

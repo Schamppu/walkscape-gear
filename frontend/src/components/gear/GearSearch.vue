@@ -96,16 +96,11 @@ const filteredItems = computed(() => {
       const quality = owned ? itemsStore.ownedItems[id].quality : item.quality;
       const quality2 = owned ? itemsStore.ownedItems[id].quality2 : null;
 
-      let attrs =
+      const attrs =
         dataStore.selectedStat !== "none"
-          ? sumAttrs(
-              item.itemAttrs,
-              item.itemQualityAttrs,
-              item.buffs,
-              quality2
-            )
+          ? sumAttrs(item.itemAttrs, item.itemQualityAttrs, item.buffs, quality)
           : [];
-      let stats = attrs.flatMap(({ stats }) => stats);
+      const stats = attrs.flatMap(({ stats }) => stats);
 
       const out = [
         {
@@ -121,7 +116,7 @@ const filteredItems = computed(() => {
         quality2 &&
         quality2 !== quality
       ) {
-        attrs =
+        const attrs2 =
           dataStore.selectedStat !== "none"
             ? sumAttrs(
                 item.itemAttrs,
@@ -130,14 +125,14 @@ const filteredItems = computed(() => {
                 quality2
               )
             : [];
-        stats = attrs.flatMap(({ stats }) => stats);
+        const stats2 = attrs2.flatMap(({ stats }) => stats);
 
         out.push({
           ...item,
           hidden,
           quality: quality2,
-          attrs,
-          stats,
+          attrs: attrs2,
+          stats: stats2,
         });
       }
 
@@ -207,8 +202,8 @@ const handleClick = (item) => {
     />
     <div class="items-wrapper">
       <search-item-display
-        v-for="item in filteredItems"
-        :key="item.id"
+        v-for="(item, index) in filteredItems"
+        :key="`${item.id}-${index}`"
         :item="item"
         :highlight-stat="dataStore.selectedStat"
         @click="handleClick(item)"
