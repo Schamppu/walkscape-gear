@@ -84,8 +84,9 @@ const dropCounts = computed(() => {
 
 const canDropFine = computed(() => {
   return (
-    !props.sources[0].type.includes("chestTable") &&
+    !props.sources[0].icon.includes("openables") &&
     !(item.value.rowItemID in itemsStore.allItems) &&
+    !item.value.isMoney &&
     item.value.rowItemID !==
       "item-adventurer's_guild_token-dad84ad7-050a-4ec2-9bc7-7f2dae5c4a08"
   );
@@ -99,10 +100,10 @@ const stepsPerFine = computed(() => {
 
 <template>
   <div
-    v-if="item && item.name"
+    v-if="item && (item.name || item.isMoney)"
     class="drop-item-display"
-    :title="item.name"
-    :aria-label="item.name"
+    :title="item.isMoney ? 'Gold' : item.name"
+    :aria-label="item.isMoney ? 'Gold' : item.name"
   >
     <ws-icon :icon-path="item.icon" size="md" />
     <span>{{ n(totalDropChance, 3) }}%</span>
@@ -144,6 +145,7 @@ const stepsPerFine = computed(() => {
 }
 
 .step-counts {
+  min-width: 50px;
   display: flex;
   flex-direction: column;
 

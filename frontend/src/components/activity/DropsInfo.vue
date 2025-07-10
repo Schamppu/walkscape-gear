@@ -89,7 +89,8 @@ const combinedItems = computed(() => {
 
   const seen = new Set();
   const uniqueItems = allItems.filter((item) => {
-    const key = `${item.rowItemID}::${item.tableSource}::${item.slot}`;
+    const itemId = item.isMoney ? "gold" : item.rowItemID;
+    const key = `${itemId}::${item.tableSource}::${item.slot}`;
     if (seen.has(key)) return false;
     seen.add(key);
     return true;
@@ -97,7 +98,7 @@ const combinedItems = computed(() => {
 
   const grouped = {};
   for (const item of uniqueItems) {
-    const key = item.rowItemID;
+    const key = item.isMoney ? "gold" : item.rowItemID;
     if (!key) continue;
     if (!grouped[key]) {
       grouped[key] = [];
