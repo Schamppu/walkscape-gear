@@ -151,7 +151,7 @@ onUnmounted(() => {
 .mobile-layout {
   display: flex;
   flex-direction: column;
-  min-height: calc(100dvh - $footerHeight - $navHeight);
+  min-height: calc(100svh - $footerHeight - $navHeight);
   width: 100%;
   overflow-x: hidden;
   padding-bottom: $footerHeight;
@@ -173,7 +173,7 @@ onUnmounted(() => {
 
 .mobile-layout .tab-panel {
   display: none;
-  min-height: calc(100dvh - $footerHeight - $navHeight);
+  min-height: calc(100svh - $footerHeight - $navHeight);
 }
 .mobile-layout .tab-panel.active {
   display: block;
