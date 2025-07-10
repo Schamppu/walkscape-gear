@@ -8,6 +8,7 @@ import { useRequirements } from "@/utils/useRequirements";
 import { useShowItemForActivity } from "@/utils/useShowItemForActivity";
 import { itemQualityNameSort } from "@/utils/quality";
 import { sumAttrs } from "@/utils/qualityAttrs";
+import { intersect } from "@/utils/intersect";
 import WsIcon from "@/components/common/WsIcon.vue";
 import SearchItemDisplay from "./SearchItemDisplay.vue";
 
@@ -58,11 +59,7 @@ const filteredItems = computed(() => {
       return true;
     }
 
-    return (
-      showUseful &&
-      activity &&
-      showItemForActivity(item)
-    );
+    return showUseful && activity && showItemForActivity(item);
   };
   const filterSearch = ({ name }) =>
     (term && name.toLowerCase().includes(term)) || !term;
@@ -81,6 +78,17 @@ const filteredItems = computed(() => {
         })
       );
     });
+  };
+  const filterBannedKeywords = (item) => {
+    const otherSlotsItems = Object.entries(gearStore.gearSlots)
+      .filter(([slot, item]) => item && slot !== props.slotName)
+      .map(([, item]) => item);
+    const equippedKeywords = otherSlotsItems.flatMap((item) => item.keywords);
+    const bannedKeywords = equippedKeywords.flatMap(
+      (keyword) => dataStore.keywordsMap[keyword]?.bannedKeywords || []
+    );
+    const commonKeywords = intersect(item.keywords, bannedKeywords);
+    return commonKeywords.length === 0;
   };
   const filterHidden = (item) => !item.hidden;
 
@@ -142,6 +150,7 @@ const filteredItems = computed(() => {
         filterOwned(item) &&
         filterEquipped(item) &&
         filterStat(item) &&
+        filterBannedKeywords(item) &&
         filterHidden(item)
     )
     .sort((a, b) => {
