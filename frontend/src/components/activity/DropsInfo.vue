@@ -13,7 +13,7 @@ const gearStore = useGearStore();
 const resolvedLootTables = ref([]);
 
 watchEffect(async () => {
-  const gearLootTables = gearStore.filledGearSlots.flatMap((item) => {
+  const gearLootTables = gearStore.filledGearSlots.flatMap(([slot, item]) => {
     const attrs = sumAttrs(
       item.itemAttrs,
       item.itemQualityAttrs,
@@ -26,6 +26,7 @@ watchEffect(async () => {
           return {
             ...table,
             tableSource: item.name,
+            slot,
             rollChance: stats?.[0]?.value || 1,
           };
         });
@@ -56,7 +57,7 @@ watchEffect(async () => {
 });
 
 const mapLootTable = (table) => {
-  const { rollAmount, type, tableSource, rollChance } = table;
+  const { rollAmount, rollChance, slot, type, tableSource } = table;
   return table.tables?.flatMap(({ noDropChance, tableRows }) => {
     const mappedRows = tableRows.map((row) => {
       return {
@@ -72,6 +73,7 @@ const mapLootTable = (table) => {
         ...row,
         tableWeight,
         rollAmount,
+        slot,
         type,
         tableSource,
         rollChance,
@@ -87,7 +89,7 @@ const combinedItems = computed(() => {
 
   const seen = new Set();
   const uniqueItems = allItems.filter((item) => {
-    const key = `${item.rowItemID}::${item.tableSource}`;
+    const key = `${item.rowItemID}::${item.tableSource}::${item.slot}`;
     if (seen.has(key)) return false;
     seen.add(key);
     return true;
