@@ -32,17 +32,13 @@ defineEmits(["back"]);
         </p>
         <p>
           If you've gotten value from it and want to support the project, I
-          really appreciate it - but I'm still figuring out a way to accept
-          support that's legal and simple under Finnish law (donation rules here
-          are a bit tricky).
-        </p>
-        <p>
-          Once I have something set up (likely a small one-time unlock or
-          symbolic perk through a proper platform), I'll update this page.
-        </p>
-        <p>
-          In the meantime, just using the tool, sharing it, or sending feedback
-          is already a big help. 💙
+          really appreciate it - you can support me on
+          <a
+            href="https://buymeacoffee.com/juhanaauttg"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Buy Me a Coffee</a
+          >
         </p>
       </section>
     </details>

@@ -97,13 +97,22 @@ onUnmounted(() => {
 
 <template>
   <header class="main-header">
-    <a
-      href="#"
-      @click.prevent="scrollToTab('About')"
-      :ref="(el) => (tabRefs['About'] = el)"
-      :class="{ active: activeTab === 'About' }"
-      >About</a
-    >
+    <div class="header-group">
+      <a
+        href="#"
+        @click.prevent="scrollToTab('About')"
+        :ref="(el) => (tabRefs['About'] = el)"
+        :class="{ active: activeTab === 'About' }"
+        >About</a
+      >
+      <a
+        href="https://buymeacoffee.com/juhanaauttg"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        BMaC
+      </a>
+    </div>
     <ws-button
       v-if="isLoaded"
       @click="showSettings = true"
@@ -202,6 +211,12 @@ onUnmounted(() => {
 
   padding: $xxxxs $md;
   border-bottom: 1px solid $boxPrimaryOutline;
+
+  .header-group {
+    display: flex;
+    align-items: center;
+    gap: $xlg;
+  }
 
   a {
     color: $txPrimary;
