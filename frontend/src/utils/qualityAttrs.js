@@ -1,5 +1,10 @@
-import { consumableQualityOptions } from "@/utils/quality";
+import { qualityOptions, consumableQualityOptions } from "@/utils/quality";
 import { toDeepRaw } from "./rawData";
+
+// Create a quality rank mapping for sorting
+const qualityRank = Object.fromEntries(
+  qualityOptions.map(({ value }, index) => [value, index])
+);
 
 export const sumAttrs = (itemAttrs, qualityAttrs, buffs, quality) => {
   if (quality && quality.includes("consumable"))
@@ -13,10 +18,18 @@ export const sumAttrs = (itemAttrs, qualityAttrs, buffs, quality) => {
   });
 
   if (!qualityAttrs || qualityAttrs.length === 0) return attrs;
-  const qIndex = qualityAttrs.findIndex(({ quality: q }) => q === quality) ?? 0;
+
+  // Sort qualityAttrs according to qualityOptions order
+  const sortedQualityAttrs = qualityAttrs.sort((a, b) => {
+    const aRank = qualityRank[a.quality] ?? Infinity;
+    const bRank = qualityRank[b.quality] ?? Infinity;
+    return aRank - bRank;
+  });
+  const qIndex =
+    sortedQualityAttrs?.findIndex(({ quality: q }) => q === quality) ?? 0;
 
   for (let qi = 0; qi <= qIndex; qi++) {
-    const { attributes } = toDeepRaw(qualityAttrs[qi]);
+    const { attributes } = toDeepRaw(sortedQualityAttrs[qi]);
     const statIds = attrs.map(({ stats, skillText }) => {
       return `${stats[0].type}-${skillText}`;
     });
