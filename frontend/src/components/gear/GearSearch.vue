@@ -5,9 +5,10 @@ import { useItemsStore } from "@/store/items";
 import { useActivityStore } from "@/store/activity";
 import { useDataStore } from "@/store/data";
 import { useRequirements } from "@/utils/useRequirements";
-import { showItemForActivity } from "@/utils/gear";
+import { useShowItemForActivity } from "@/utils/useShowItemForActivity";
 import { itemQualityNameSort } from "@/utils/quality";
 import { sumAttrs } from "@/utils/qualityAttrs";
+import { intersect } from "@/utils/intersect";
 import WsIcon from "@/components/common/WsIcon.vue";
 import SearchItemDisplay from "./SearchItemDisplay.vue";
 
@@ -29,6 +30,7 @@ const itemsStore = useItemsStore();
 const activityStore = useActivityStore();
 const dataStore = useDataStore();
 const { checkRequirements } = useRequirements();
+const { showItemForActivity } = useShowItemForActivity();
 
 const searchTerm = ref("");
 
@@ -48,7 +50,6 @@ const filteredItems = computed(() => {
   const activity =
     (activityStore.activitySelected && activityStore.activity) ||
     (activityStore.recipeSelected && activityStore.recipe);
-  const service = activityStore.recipeSelected && activityStore.service;
   const term = searchTerm.value.trim().toLowerCase();
   const showOwned = gearStore.showOwned;
   const showUseful = gearStore.showUseful;
@@ -58,17 +59,7 @@ const filteredItems = computed(() => {
       return true;
     }
 
-    return (
-      showUseful &&
-      activity &&
-      showItemForActivity(
-        item,
-        activity,
-        service,
-        item.quality,
-        activityStore.recipeSelected
-      )
-    );
+    return showUseful && activity && showItemForActivity(item);
   };
   const filterSearch = ({ name }) =>
     (term && name.toLowerCase().includes(term)) || !term;
@@ -87,6 +78,17 @@ const filteredItems = computed(() => {
         })
       );
     });
+  };
+  const filterBannedKeywords = (item) => {
+    const otherSlotsItems = Object.entries(gearStore.gearSlots)
+      .filter(([slot, item]) => item && slot !== props.slotName)
+      .map(([, item]) => item);
+    const equippedKeywords = otherSlotsItems.flatMap((item) => item.keywords);
+    const bannedKeywords = equippedKeywords.flatMap(
+      (keyword) => dataStore.keywordsMap[keyword]?.bannedKeywords || []
+    );
+    const commonKeywords = intersect(item.keywords, bannedKeywords);
+    return commonKeywords.length === 0;
   };
   const filterHidden = (item) => !item.hidden;
 
@@ -148,6 +150,7 @@ const filteredItems = computed(() => {
         filterOwned(item) &&
         filterEquipped(item) &&
         filterStat(item) &&
+        filterBannedKeywords(item) &&
         filterHidden(item)
     )
     .sort((a, b) => {
