@@ -9,8 +9,15 @@ const openCategory = ref(null);
 const itemsStore = useItemsStore();
 
 function toggleCategory(group, category) {
-  openCategoryGroup.value = openCategoryGroup.value === group ? null : group;
-  openCategory.value = openCategory.value === category ? null : category;
+  if (openCategoryGroup.value === group && openCategory.value === category) {
+    openCategoryGroup.value = null;
+    openCategory.value = null;
+    return;
+  }
+
+  openCategoryGroup.value = group;
+  openCategory.value = category;
+
   document.getElementById(category).scrollIntoView();
 }
 
