@@ -4,10 +4,12 @@ import { useItemsStore } from "@/store/items";
 import ItemCategoryPanel from "./ItemCategoryPanel.vue";
 import LoadingThrobber from "@/components/common/LoadingThrobber.vue";
 
+const openCategoryGroup = ref(null);
 const openCategory = ref(null);
 const itemsStore = useItemsStore();
 
-function toggleCategory(category) {
+function toggleCategory(group, category) {
+  openCategoryGroup.value = openCategoryGroup.value === group ? null : group;
   openCategory.value = openCategory.value === category ? null : category;
   document.getElementById(category).scrollIntoView();
 }
@@ -52,8 +54,10 @@ const categoryOwnedCount = computed(() => {
             :title="cat.title"
             :qualities="cat.qualities"
             :item-category="cat.key"
-            :is-open="openCategory === cat.title"
-            @toggle="() => toggleCategory(cat.title)"
+            :is-open="
+              openCategoryGroup === group.title && openCategory === cat.title
+            "
+            @toggle="() => toggleCategory(group.title, cat.title)"
           />
         </details>
       </div>
