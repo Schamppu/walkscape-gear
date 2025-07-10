@@ -5,14 +5,15 @@ export const sumAttrs = (itemAttrs, qualityAttrs, buffs, quality) => {
   if (quality && quality.includes("consumable"))
     return sumBuffAttrs(buffs, quality);
 
-  const qIndex = qualityAttrs.findIndex(({ quality: q }) => q === quality) ?? 0;
-
   const attrs = itemAttrs.map(toDeepRaw).map((attribute) => {
     return {
       ...attribute,
       stats: attribute.stats,
     };
   });
+
+  if (!qualityAttrs || qualityAttrs.length === 0) return attrs;
+  const qIndex = qualityAttrs.findIndex(({ quality: q }) => q === quality) ?? 0;
 
   for (let qi = 0; qi <= qIndex; qi++) {
     const { attributes } = toDeepRaw(qualityAttrs[qi]);
