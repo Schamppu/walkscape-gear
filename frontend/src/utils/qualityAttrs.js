@@ -1,14 +1,11 @@
-import { qualityOptions, consumableQualityOptions } from "@/utils/quality";
+import { consumableQualityOptions } from "@/utils/quality";
 import { toDeepRaw } from "./rawData";
 
 export const sumAttrs = (itemAttrs, qualityAttrs, buffs, quality) => {
   if (quality && quality.includes("consumable"))
     return sumBuffAttrs(buffs, quality);
 
-  const qIndex = Math.min(
-    qualityAttrs?.length || 0,
-    qualityOptions.findIndex(({ value }) => value === quality)
-  );
+  const qIndex = qualityAttrs.findIndex(({ quality: q }) => q === quality) ?? 0;
 
   const attrs = itemAttrs.map(toDeepRaw).map((attribute) => {
     return {
@@ -17,7 +14,7 @@ export const sumAttrs = (itemAttrs, qualityAttrs, buffs, quality) => {
     };
   });
 
-  for (let qi = 0; qi < qIndex; qi++) {
+  for (let qi = 0; qi <= qIndex; qi++) {
     const { attributes } = toDeepRaw(qualityAttrs[qi]);
     const statIds = attrs.map(({ stats, skillText }) => {
       return `${stats[0].type}-${skillText}`;
@@ -35,7 +32,8 @@ export const sumAttrs = (itemAttrs, qualityAttrs, buffs, quality) => {
       }
 
       const oldStat = attrs[prev].stats[0];
-      oldStat.value = Math.round(10000 * oldStat.value + 10000 * stat.value) / 10000;
+      oldStat.value =
+        Math.round(10000 * oldStat.value + 10000 * stat.value) / 10000;
       oldStat.isNegative = oldStat.isNegative && oldStat.value < 0;
     });
   }
