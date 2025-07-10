@@ -16,7 +16,7 @@ export function useRequirements() {
       recipe: activity.recipeSelected && activity.recipe,
       location: activity.location,
       achievementPoints: player.achievementPoints,
-      gear: gear.filledGearSlots,
+      gear: gear.equippedGear,
       factionReputation: player.factionReputation,
     };
 

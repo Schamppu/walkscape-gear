@@ -20,12 +20,12 @@ export function useEffectiveAttrs() {
       .filter(([category]) => {
         return category.endsWith("collectibles");
       })
-      .flatMap(([,items]) => items);
+      .flatMap(([, items]) => items);
   });
 
   const allEquippedItems = computed(() => {
     const owned = items.ownedItems;
-    const gearSet = gear.filledGearSlots;
+    const gearSet = gear.equippedGear;
 
     const ownedCollectibles = collectibleIds.value.filter(
       ({ id }) => id in owned
@@ -51,7 +51,7 @@ export function useEffectiveAttrs() {
   });
 
   const equippedKeywords = computed(() => {
-    const gearSet = gear.filledGearSlots;
+    const gearSet = gear.equippedGear;
     return gearSet
       .flatMap(({ keywords }) => keywords)
       .reduce((acc, val) => {
