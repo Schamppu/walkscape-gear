@@ -81,7 +81,10 @@ const filteredItems = computed(() => {
   };
   const filterBannedKeywords = (item) => {
     const otherSlotsItems = Object.entries(gearStore.gearSlots)
-      .filter(([slot, item]) => item && slot !== props.slotName)
+      .filter(
+        ([slot, item]) =>
+          item && slot !== props.slotName && slot.includes(props.gearType)
+      )
       .map(([, item]) => item);
     const equippedKeywords = otherSlotsItems.flatMap((item) => item.keywords);
     const bannedKeywords = equippedKeywords.flatMap(
