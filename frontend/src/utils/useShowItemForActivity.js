@@ -52,14 +52,17 @@ export function useShowItemForActivity() {
       return !recipeOnlyAttrs.includes(attr.statText);
     };
 
-    const filterCO = (item, attr) => {
+    const filterCO = (attr, activity) => {
       const statIsCO = attr.statText === "Crafting outcome";
       if (!statIsCO) return true;
       if (!isRecipe) return false;
 
-      const benefitsCO =
-        item.id in itemStore.allItems &&
-        itemStore.allItems[item.id].type === "crafted";
+      const benefitsCO = Object.keys(activity.itemRewards).some(
+        (itemId) =>
+          itemId in itemStore.allItems &&
+          itemStore.allItems[itemId].type === "crafted"
+      );
+
       return statIsCO && benefitsCO;
     };
 
@@ -67,7 +70,7 @@ export function useShowItemForActivity() {
       (attr) =>
         filterActivityOnlyAttrs(attr) &&
         filterRecipeOnlyAttrs(attr) &&
-        filterCO(item, attr) &&
+        filterCO(attr, activity) &&
         checkRequirements(attr.requirements) &&
         attr.stats.some((stat) => !stat.isNegative)
     );
