@@ -25,7 +25,7 @@ export default class BaseService {
   }
 
   async getById(id) {
-    const response = await api.get(`/${this.resourceName}/id/${id}`);
+    const response = await api.get(`/${this.resourceName}/${id}`);
     return response.data;
   }
 

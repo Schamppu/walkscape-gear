@@ -24,7 +24,7 @@ export default class SkillService {
   }
 
   async get(skill) {
-    const response = await api.get(`/skills/id/${skill}`);
+    const response = await api.get(`/skills/${skill}`);
     return response.data;
   }
 }

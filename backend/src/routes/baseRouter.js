@@ -10,7 +10,15 @@ export const createBaseRouter = (name, service) => {
   );
 
   router.get(
-    "/id/:id",
+    "/search/",
+    wrapController((req) => {
+      const params = req.query;
+      return service.search(params);
+    })
+  );
+
+  router.get(
+    "/:id",
     wrapController(
       (req) => {
         const { id } = req.params;
@@ -20,14 +28,6 @@ export const createBaseRouter = (name, service) => {
         notFoundMessage: `${name} not found`,
       }
     )
-  );
-
-  router.get(
-    "/search/",
-    wrapController((req) => {
-      const params = req.query;
-      return service.search(params);
-    })
   );
 
   return router;
