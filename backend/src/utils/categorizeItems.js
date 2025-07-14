@@ -166,13 +166,13 @@ const resolveChestCategories = (loot, chestTables, containers) => {
 
 const resolveCraftedCategories = (crafted) => {
   const categories = [
-    { suffix: "hatchets", keyword: "woodcuttingHatchet" },
+    { suffix: "hatchets", keyword: "hatchet" },
     { suffix: "pickaxes", keyword: "pickaxe" },
     { suffix: "sickles", keyword: "sickle" },
-    { suffix: "fishing tools", keyword: "fishingTool" },
-    { suffix: "diving gear", keyword: "itemset_diving_gear" },
-    { suffix: "amulets", keyword: "item_amulet" },
-    { suffix: "rings", keyword: "item_ring", qualities: 2 },
+    { suffix: "fishing tools", keyword: "fishing_tool" },
+    { suffix: "diving gear", keyword: "diving_gear" },
+    { suffix: "amulets", keyword: "amulet" },
+    { suffix: "rings", keyword: "ring", qualities: 2 },
     { suffix: "weapons", keyword: "weapon" },
     { suffix: "shields", keyword: "shield" },
   ].map(({ suffix, keyword, qualities }) => {
@@ -215,7 +215,7 @@ const resolveConsumables = (consumables) => {
   const categoriesToExclude = [
     "alcohol",
     "beverage",
-    "cookedFish",
+    "cooked_fish",
     "food",
     "sandwich",
     "search_beverage",
