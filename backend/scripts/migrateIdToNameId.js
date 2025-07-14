@@ -78,7 +78,7 @@ async function migrate() {
     }
   };
   // Process in batches of 10 with 2 second delay between batches
-  const results = await processInBatches(uniqueOldIds, 10, 1000, fetchItem);
+  const results = await processInBatches(uniqueOldIds, 10, 2000, fetchItem);
 
   // Build the ID map from successful results
   let successCount = 0;
