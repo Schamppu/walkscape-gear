@@ -66,14 +66,21 @@ export function useShowItemForActivity() {
       return statIsCO && benefitsCO;
     };
 
-    const usefulAttr = baseAttrs.filter(
-      (attr) =>
+    const unfilteredRequirementTypes = ["distinctKeywordItemsEquipped"];
+
+    const usefulAttr = baseAttrs.filter((attr) => {
+      const usedRequirements = attr.requirements.filter(
+        (req) => !unfilteredRequirementTypes.includes(req.type)
+      );
+
+      return (
         filterActivityOnlyAttrs(attr) &&
         filterRecipeOnlyAttrs(attr) &&
         filterCO(attr, activity) &&
-        checkRequirements(attr.requirements) &&
+        checkRequirements(usedRequirements) &&
         attr.stats.some((stat) => !stat.isNegative)
-    );
+      );
+    });
     return usefulAttr;
   };
 
