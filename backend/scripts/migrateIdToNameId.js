@@ -147,12 +147,13 @@ async function migrate() {
       if (result.oldId === result.newId) {
         // ID hasn't changed, mark as already migrated
         alreadyMigratedCount++;
-        console.log(`ID ${result.oldId} already migrated (no change needed)`);
+        // console.log(`ID ${result.oldId} already migrated (no change needed)`);
       } else {
         idMap.set(result.oldId, result.newId);
         successCount++;
       }
     } else {
+      console.log(`Failed to map ID ${result.oldId}`);
       failCount++;
     }
   }
