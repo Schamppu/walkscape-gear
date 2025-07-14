@@ -137,7 +137,9 @@ const stepsPerFine = computed(() => {
           iconPath="assets/icons/text/general_icons/steps.png"
           size="xs"
         />
-        <span>{{ n(stepsPerItem, 0) }}</span>
+        <span>{{
+          stepsPerItem < 100 ? n(stepsPerItem, 1) : n(stepsPerItem, 0)
+        }}</span>
       </div>
       <div v-if="canDropFine" class="steps-line border-fine">
         <ws-icon
