@@ -7,7 +7,7 @@ function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-// Process items in batches with delay
+// Process items in batches with delay and individual retry logic
 async function processInBatches(items, batchSize, delayMs, processFn) {
   const results = [];
   for (let i = 0; i < items.length; i += batchSize) {
@@ -18,7 +18,13 @@ async function processInBatches(items, batchSize, delayMs, processFn) {
       )}`
     );
 
-    const batchResults = await Promise.all(batch.map(processFn));
+    // Process each item in the batch individually
+    const batchResults = [];
+    for (const item of batch) {
+      const result = await processFn(item);
+      batchResults.push(result);
+    }
+    
     results.push(...batchResults);
 
     // Add delay between batches (except for the last batch)
