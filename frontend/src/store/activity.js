@@ -26,10 +26,10 @@ export const useActivityStore = defineStore("activity", {
   }),
   getters: {
     activitySelected: (state) => {
-      return state.activity !== null && state.activity.id !== "activity-none";
+      return state.activity !== null && state.activity.id !== "none";
     },
     recipeSelected: (state) => {
-      return state.recipe !== null && state.recipe.id !== "activity-none";
+      return state.recipe !== null && state.recipe.id !== "none";
     },
   },
   actions: {
