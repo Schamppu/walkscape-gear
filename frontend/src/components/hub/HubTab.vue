@@ -4,6 +4,7 @@ import {
   upsertFactionReputations,
 } from "@/utils/axios/db_routes";
 import { usePlayerStore } from "@/store/player";
+import { useItemsStore } from "@/store/items";
 import TabContentWrapper from "@/components/common/TabContentWrapper.vue";
 import SkillLevelDisplay from "./SkillLevelDisplay.vue";
 import IconInputBubble from "@/components/common/IconInputBubble.vue";
@@ -12,9 +13,10 @@ import ItemSelection from "./ItemSelection.vue";
 import ImportButton from "./ImportButton.vue";
 import debounce from "@/utils/debounce";
 import { argbToRgba } from "@/utils/argbToRgba";
-import { levelFromXp } from "@/utils/skillXp";
+import { processCharacterImport } from "@/utils/characterImport";
 
 const playerStore = usePlayerStore();
+const itemsStore = useItemsStore();
 
 const postPlayerStats = () => {
   const payload = {
@@ -36,87 +38,40 @@ const postFactionReputation = () => {
 const updateFactionReputation = debounce(postFactionReputation, 1000);
 
 const handleCharacterImport = (data) => {
-  if (!data) return;
-
   try {
-    const parsedData = JSON.parse(data);
+    const result = processCharacterImport(data, playerStore, itemsStore);
+
     let updatedSkills = false;
     let updatedAchievementPoints = false;
 
-    // Process skills safely
-    if (parsedData.skills && typeof parsedData.skills === "object") {
-      // Start with current skill levels as base
-      const updatedSkillLevels = { ...playerStore.skillLevels };
-
-      // Only update skills that exist in player store
-      for (const [skillId, xp] of Object.entries(parsedData.skills)) {
-        // Validate: skill must exist in our store and xp must be a valid number
-        if (
-          skillId in updatedSkillLevels &&
-          typeof xp === "number" &&
-          xp >= 0
-        ) {
-          const level = levelFromXp(xp);
-          updatedSkillLevels[skillId] = level;
-        } else {
-          console.warn(`Skipped invalid skill data: ${skillId} = ${xp}`);
-        }
-      }
-
-      // Batch update all skill levels at once
-      playerStore.setSkillLevels(updatedSkillLevels);
+    // Update skills if processed
+    if (result.skills) {
+      playerStore.setSkillLevels(result.skills);
       updatedSkills = true;
     }
 
-    if (
-      parsedData.achievement_points &&
-      typeof parsedData.achievement_points === "number"
-    ) {
-      playerStore.setAchievementPoints(parsedData.achievement_points);
+    // Update achievement points if processed
+    if (result.achievementPoints !== null) {
+      playerStore.setAchievementPoints(result.achievementPoints);
       updatedAchievementPoints = true;
-    } else {
-      console.warn("Invalid or missing achievement points data.");
     }
 
     if (updatedSkills || updatedAchievementPoints) {
       postPlayerStats();
     }
 
-    let updatedReputation = false;
-
-    // Process faction reputations safely
-    if (parsedData.reputation && typeof parsedData.reputation === "object") {
-      const updatedReputations = { ...playerStore.factionReputation };
-
-      // Only update reputations that exist in the player store
-      for (const [faction, reputation] of Object.entries(
-        parsedData.reputation
-      )) {
-        if (
-          faction in playerStore.factionsMap &&
-          typeof reputation === "number" &&
-          reputation >= 0
-        ) {
-          const factionReputation = playerStore.factionsMap[faction].reputation;
-          updatedReputations[factionReputation] = Math.floor(reputation);
-          updatedReputation = true;
-        } else {
-          console.warn(
-            `Skipped invalid faction data: ${faction} = ${reputation}`
-          );
-        }
-      }
-
-      playerStore.setFactionReputations(updatedReputations);
-    }
-
-    if (updatedReputation) {
+    // Update reputation if processed
+    if (result.reputation) {
+      playerStore.setFactionReputations(result.reputation);
       postFactionReputation();
     }
 
-    // TODO: process items
+    // Update items if processed
+    if (result.items) {
+      itemsStore.batchUpdateOwnedItems(result.items);
+    }
   } catch (error) {
-    console.error("Failed to parse character import data:", error);
+    console.error("Failed to process character import data:", error);
     // TODO: Show user-friendly error message
   }
 };
