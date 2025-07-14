@@ -134,7 +134,7 @@ async function migrate() {
       }
     }
   };
-  // Process in batches of 10 with 2 second delay between batches
+  // Process in batches of 5 with 0.5 second delay between batches
   const results = await processInBatches(uniqueOldIds, 5, 500, fetchItem);
 
   // Build the ID map from successful results
@@ -214,6 +214,9 @@ async function migrate() {
         noChangeCount++;
       } else {
         skippedCount++;
+        console.warn(
+          `Skipping ${ownedItem.userUuid}:${ownedItem.itemId} - no new ID found`
+        );
       }
     }
   }
