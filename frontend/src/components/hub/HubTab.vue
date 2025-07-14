@@ -9,8 +9,10 @@ import SkillLevelDisplay from "./SkillLevelDisplay.vue";
 import IconInputBubble from "@/components/common/IconInputBubble.vue";
 import AchievementPointDisplay from "./AchievementPointDisplay.vue";
 import ItemSelection from "./ItemSelection.vue";
+import ImportButton from "./ImportButton.vue";
 import debounce from "@/utils/debounce";
 import { argbToRgba } from "@/utils/argbToRgba";
+import { XP_TABLE, levelFromXp } from "@/utils/skillXp";
 
 const playerStore = usePlayerStore();
 
@@ -32,10 +34,26 @@ const postFactionReputation = () => {
 };
 
 const updateFactionReputation = debounce(postFactionReputation, 1000);
+
+const handleCharacterImport = (data) => {
+  if (!data) return;
+
+  const parsed_data = JSON.parse(data);
+
+  const { skills } = parsed_data;
+  if (skills) {
+    for (const [skill, xp] of Object.entries(skills)) {
+      const level = levelFromXp(xp);
+      console.log(skill, level);
+      // playerStore.setSkillLevel(skill, level);
+    }
+  }
+};
 </script>
 
 <template>
   <tab-content-wrapper class="sections">
+    <import-button @import-data="handleCharacterImport" />
     <div class="skill-bubbles">
       <skill-level-display
         v-for="skill in playerStore.skills"
@@ -72,6 +90,7 @@ const updateFactionReputation = debounce(postFactionReputation, 1000);
 .sections {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: $xxxlg;
 }
 
