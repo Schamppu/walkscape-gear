@@ -29,6 +29,15 @@ export default class BaseService {
     return response.data;
   }
 
+  async getIds(ids) {
+    const response = await api.post(
+      `/${this.resourceName}/ids`,
+      { ids },
+      { responseType: "json" }
+    );
+    return response.data;
+  }
+
   async search(params) {
     const response = await api.get(`/${this.resourceName}/search`, { params });
     return response.data;

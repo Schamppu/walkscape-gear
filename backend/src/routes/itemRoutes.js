@@ -1,17 +1,15 @@
-import { Router } from "express";
+import { createBaseRouter } from "./baseRouter.js";
+import { itemService } from "../services/index.js";
 import {
-  listItems,
   getItem,
   getCategorizedItems,
   getUrlMapping,
 } from "../controllers/itemController.js";
 
-const router = Router();
+const router = createBaseRouter("items", itemService);
 
-router.get("/", listItems);
 router.get("/categorized_items", getCategorizedItems);
 router.get("/url_mapping", getUrlMapping);
 router.get("/:id", getItem);
 
-
-export { router as itemRoutes };
+export default router;

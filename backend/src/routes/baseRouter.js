@@ -17,6 +17,17 @@ export const createBaseRouter = (name, service) => {
     })
   );
 
+  router.post(
+    "/ids",
+    wrapController((req) => {
+      const { ids } = req.body;
+      if (!Array.isArray(ids)) {
+        throw new Error("ids must be an array");
+      }
+      return service.getIds(ids);
+    })
+  );
+
   router.get(
     "/:id",
     wrapController(

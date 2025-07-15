@@ -3,7 +3,7 @@ import { createBaseRouter } from "./baseRouter.js";
 import { Router } from "express";
 import { achievementRoutes } from "./achievementRoutes.js";
 import { dbRoutes } from "./dbRoutes.js";
-import { itemRoutes } from "./itemRoutes.js";
+import itemRoutes from "./itemRoutes.js";
 import iconRoutes from "./iconRoutes.js";
 import lootTableRoutes from "./lootTableRoutes.js";
 import {
