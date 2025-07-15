@@ -50,8 +50,8 @@ export function useGearSetExport() {
   const importCode = (code) => {
     try {
       // Validate input
-      if (!code || typeof code !== 'string') {
-        throw new Error('Invalid input: code must be a non-empty string');
+      if (!code || typeof code !== "string") {
+        throw new Error("Invalid input: code must be a non-empty string");
       }
 
       // Helper function to convert base64 to Uint8Array
@@ -66,40 +66,43 @@ export function useGearSetExport() {
 
       // Decode base64 to compressed data
       const compressed = base64ToUint8(code.trim());
-      
+
       // Decompress with gzip
-      const decompressed = pako.ungzip(compressed, { to: 'string' });
-      
+      const decompressed = pako.ungzip(compressed, { to: "string" });
+
       // Parse the JSON
       const data = JSON.parse(decompressed);
-      
+
       // Validate the expected structure
-      if (!data || typeof data !== 'object' || !Array.isArray(data.items)) {
-        throw new Error('Invalid gear set format: expected object with items array');
+      if (!data || typeof data !== "object" || !Array.isArray(data.items)) {
+        throw new Error(
+          "Invalid gear set format: expected object with items array"
+        );
       }
-      
+
       return {
         success: true,
         data: data,
-        error: null
+        error: null,
       };
     } catch (error) {
-      let errorMessage = 'Failed to import gear set';
-      
-      if (error.message.includes('Invalid character')) {
-        errorMessage += ': Invalid base64 format';
-      } else if (error.message.includes('incorrect header check')) {
-        errorMessage += ': Invalid compression format';
-      } else if (error.message.includes('Unexpected token')) {
-        errorMessage += ': Invalid JSON format';
+      let errorMessage = "Failed to import gear set";
+      console.log(error);
+
+      if (error.includes("Invalid character")) {
+        errorMessage += ": Invalid base64 format";
+      } else if (error.includes("incorrect header check")) {
+        errorMessage += ": Invalid compression format";
+      } else if (error.includes("Unexpected token")) {
+        errorMessage += ": Invalid JSON format";
       } else {
-        errorMessage += `: ${error.message}`;
+        errorMessage += `: ${error}`;
       }
-      
+
       return {
         success: false,
         data: null,
-        error: errorMessage
+        error: errorMessage,
       };
     }
   };
