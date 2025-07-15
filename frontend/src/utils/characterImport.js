@@ -188,10 +188,7 @@ function determineQualities(qualities, isRing) {
     return { quality: highest, quality2: null };
   }
 
-  // For rings, find second highest that's different from highest
-  const secondHighest = sortedQualities.find(
-    ({ quality, rank }) => quality !== highest && rank < sortedQualities[0].rank
-  );
+  const secondHighest = sortedQualities[1];
 
   return {
     quality: highest,
