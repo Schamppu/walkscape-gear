@@ -61,6 +61,14 @@ export function getItem({ id }) {
   });
 }
 
+export function getNewItemIds(ids) {
+  return proxy({
+    method: "POST",
+    url: "items/ids",
+    options: { ids },
+  });
+}
+
 export function searchLocations({ activityList, serviceList }) {
   return proxy({
     url: "locations/search",

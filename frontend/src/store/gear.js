@@ -110,5 +110,21 @@ export const useGearStore = defineStore("gearStore", {
       );
       this.gearSlots = newGearSlots;
     },
+
+    async equipMultiple(gearSetData, useQuality = false) {
+      const promises = [];
+
+      for (const [slot, item] of Object.entries(gearSetData)) {
+        if (item && item.id) {
+          promises.push(
+            this.loadItem(slot, item.id, useQuality ? item.quality : null)
+          );
+        } else {
+          this.setGearSlot(slot, null);
+        }
+      }
+
+      await Promise.all(promises);
+    },
   },
 });

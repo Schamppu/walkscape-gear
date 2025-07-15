@@ -1,25 +1,22 @@
 <script setup>
+import GearSetImport from "./GearSetImport.vue";
 import GearSetExport from "./GearSetExport.vue";
 import GearUnequipButton from "./GearUnequipButton.vue";
-import { useNotificationStore } from "@/store/notifications";
-
-const notificationStore = useNotificationStore();
-
-function showNotification(text) {
-  notificationStore.success(text);
-}
 </script>
 
 <template>
   <div class="buttons-wrapper">
-    <gear-unequip-button @notification="showNotification" />
-    <gear-set-export @notification="showNotification" />
+    <gear-set-import />
+    <gear-set-export />
+    <gear-unequip-button />
   </div>
 </template>
 
 <style lang="scss" scoped>
 .buttons-wrapper {
   width: 100%;
+
+  flex-wrap: wrap;
 
   display: flex;
   justify-content: space-around;

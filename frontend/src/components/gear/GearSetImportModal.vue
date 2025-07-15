@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, computed } from "vue";
+import { ref, watch } from "vue";
 import BaseModal from "@/components/common/BaseModal.vue";
 import WsButton from "@/components/common/WsButton.vue";
 
@@ -11,24 +11,6 @@ const emit = defineEmits(["update:modelValue", "import-data"]);
 
 const importData = ref("");
 const textareaRef = ref(null);
-
-const jsonValidation = computed(() => {
-  const data = importData.value.trim();
-  if (!data) {
-    return { isValid: true, error: null }; // Empty is valid (just can't submit)
-  }
-
-  try {
-    JSON.parse(data);
-    return { isValid: true, error: null };
-  } catch {
-    return { isValid: false, error: "Invalid JSON format" };
-  }
-});
-
-const canSubmit = computed(() => {
-  return importData.value.trim() && jsonValidation.value.isValid;
-});
 
 // Auto-paste from clipboard when modal opens
 async function tryAutoPaste() {
@@ -60,8 +42,8 @@ watch(
 
 function handleSave() {
   const data = importData.value.trim();
-  if (!canSubmit.value) {
-    return; // Don't save if validation fails or empty data
+  if (!data) {
+    return; // Don't save empty data
   }
 
   emit("import-data", data);
@@ -89,7 +71,7 @@ async function handlePasteClick() {
 <template>
   <base-modal
     :model-value="modelValue"
-    title="Import Data"
+    title="Import Gear Set"
     width="80%"
     max-width="600px"
     min-height="400px"
@@ -97,15 +79,14 @@ async function handlePasteClick() {
   >
     <!-- Main content goes in the default slot -->
     <div class="content">
-      <p class="instructions">Paste your data into the text field below.</p>
+      <p class="instructions">Paste your gear set data into the text field below.</p>
       <p class="instructions">
-        Find your data in the game under settings -> character -> export
-        character data to clipboard.
+        You can copy gear set data from the gear calculator or other sources.
       </p>
 
       <div class="form-group">
         <div class="textarea-header">
-          <label for="import-data">Data to Import:</label>
+          <label for="import-data">Gear Set Data:</label>
           <ws-button
             text="Paste from Clipboard"
             size="sm"
@@ -117,13 +98,9 @@ async function handlePasteClick() {
           ref="textareaRef"
           v-model="importData"
           class="import-textarea"
-          :class="{ error: !jsonValidation.isValid }"
-          placeholder="Paste your data here..."
+          placeholder="Paste your gear set data here..."
           rows="12"
         />
-        <div v-if="!jsonValidation.isValid" class="error-message">
-          {{ jsonValidation.error }}
-        </div>
         <div class="character-count">{{ importData.length }} characters</div>
       </div>
     </div>
@@ -132,7 +109,11 @@ async function handlePasteClick() {
     <template #footer>
       <div class="button-group">
         <ws-button text="Cancel" @click="handleCancel" />
-        <ws-button text="Import" :disabled="!canSubmit" @click="handleSave" />
+        <ws-button
+          text="Import"
+          :disabled="!importData.trim()"
+          @click="handleSave"
+        />
       </div>
     </template>
   </base-modal>
@@ -184,15 +165,6 @@ async function handlePasteClick() {
     outline: 2px solid $chipOutline;
     border-color: $chipOutline;
   }
-
-  &.error {
-    border-color: $txNegative;
-
-    &:focus {
-      outline: 2px solid $txNegative;
-      border-color: $txNegative;
-    }
-  }
 }
 
 .character-count {
@@ -204,11 +176,5 @@ async function handlePasteClick() {
   display: flex;
   gap: $xxs;
   justify-content: flex-end;
-}
-
-.error-message {
-  color: $txNegative;
-  font-size: $xs;
-  margin-top: $xxs;
 }
 </style>

@@ -1,19 +1,20 @@
 <script setup>
 import { useGearSetExport } from "@/utils/useGearSetExport";
+import { useNotificationStore } from "@/store/notifications";
 import WsButton from "@/components/common/WsButton.vue";
 
-const emit = defineEmits(["notification"]);
 const { exportCode } = useGearSetExport();
+const notificationStore = useNotificationStore();
 
 function copyExportCode() {
   const code = exportCode();
   navigator.clipboard
     .writeText(code)
     .then(() => {
-      emit("notification", "Export code copied to clipboard!");
+      notificationStore.success("Export code copied to clipboard!");
     })
     .catch(() => {
-      emit("notification", "Failed to copy export code");
+      notificationStore.error("Failed to copy export code");
     });
 }
 </script>
