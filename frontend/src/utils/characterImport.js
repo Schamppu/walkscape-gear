@@ -255,6 +255,14 @@ function processItems(parsedData, itemsStore) {
 
   // Build updated owned items
   const updatedOwnedItems = { ...itemsStore.ownedItems };
+  Object.entries(updatedOwnedItems).forEach(([id, item]) => {
+    updatedOwnedItems[id] = {
+      ...item,
+      owned: false,
+      quality: "common",
+      quality2: null,
+    };
+  });
 
   for (const [baseId, { qualities }] of Object.entries(itemGroups)) {
     const itemData = itemsStore.allItems[baseId];
