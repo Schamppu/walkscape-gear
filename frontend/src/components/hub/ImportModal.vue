@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch } from "vue";
+import { ref, watch, computed } from "vue";
 import BaseModal from "@/components/common/BaseModal.vue";
 import WsButton from "@/components/common/WsButton.vue";
 
@@ -11,6 +11,25 @@ const emit = defineEmits(["update:modelValue", "import-data"]);
 
 const importData = ref("");
 const textareaRef = ref(null);
+
+// Validate JSON input
+const jsonValidation = computed(() => {
+  const data = importData.value.trim();
+  if (!data) {
+    return { isValid: true, error: null }; // Empty is valid (just can't submit)
+  }
+
+  try {
+    JSON.parse(data);
+    return { isValid: true, error: null };
+  } catch {
+    return { isValid: false, error: "Invalid JSON format" };
+  }
+});
+
+const canSubmit = computed(() => {
+  return importData.value.trim() && jsonValidation.value.isValid;
+});
 
 // Auto-paste from clipboard when modal opens
 async function tryAutoPaste() {
@@ -42,8 +61,8 @@ watch(
 
 function handleSave() {
   const data = importData.value.trim();
-  if (!data) {
-    return; // Don't save empty data
+  if (!canSubmit.value) {
+    return; // Don't save if validation fails or empty data
   }
 
   emit("import-data", data);
@@ -99,9 +118,13 @@ async function handlePasteClick() {
           ref="textareaRef"
           v-model="importData"
           class="import-textarea"
+          :class="{ 'error': !jsonValidation.isValid }"
           placeholder="Paste your data here..."
           rows="12"
         />
+        <div v-if="!jsonValidation.isValid" class="error-message">
+          {{ jsonValidation.error }}
+        </div>
         <div class="character-count">{{ importData.length }} characters</div>
       </div>
     </div>
@@ -112,7 +135,7 @@ async function handlePasteClick() {
         <ws-button text="Cancel" @click="handleCancel" />
         <ws-button
           text="Import"
-          :disabled="!importData.trim()"
+          :disabled="!canSubmit"
           @click="handleSave"
         />
       </div>
@@ -121,6 +144,8 @@ async function handlePasteClick() {
 </template>
 
 <style lang="scss" scoped>
+@use "@/styles/variables" as *;
+
 .content {
   display: flex;
   flex-direction: column;
@@ -164,6 +189,15 @@ async function handlePasteClick() {
     outline: 2px solid $chipOutline;
     border-color: $chipOutline;
   }
+
+  &.error {
+    border-color: $txNegative;
+
+    &:focus {
+      outline: 2px solid $txNegative;
+      border-color: $txNegative;
+    }
+  }
 }
 
 .character-count {
@@ -175,5 +209,11 @@ async function handlePasteClick() {
   display: flex;
   gap: $xxs;
   justify-content: flex-end;
+}
+
+.error-message {
+  color: $txNegative;
+  font-size: $xs;
+  margin-top: $xxs;
 }
 </style>
