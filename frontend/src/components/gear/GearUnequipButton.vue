@@ -1,13 +1,14 @@
 <script setup>
 import WsButton from "@/components/common/WsButton.vue";
 import { useGearStore } from "@/store/gear";
+import { useNotificationStore } from "@/store/notifications";
 
-const emit = defineEmits(["notification"]);
 const gearStore = useGearStore();
+const notificationStore = useNotificationStore();
 
 function handleUnequip() {
   gearStore.unequipAll();
-  emit("notification", "Unequipped all gear");
+  notificationStore.success("Unequipped all gear");
 }
 </script>
 

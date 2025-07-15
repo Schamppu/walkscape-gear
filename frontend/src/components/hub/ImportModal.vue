@@ -12,7 +12,6 @@ const emit = defineEmits(["update:modelValue", "import-data"]);
 const importData = ref("");
 const textareaRef = ref(null);
 
-// Validate JSON input
 const jsonValidation = computed(() => {
   const data = importData.value.trim();
   if (!data) {
@@ -118,7 +117,7 @@ async function handlePasteClick() {
           ref="textareaRef"
           v-model="importData"
           class="import-textarea"
-          :class="{ 'error': !jsonValidation.isValid }"
+          :class="{ error: !jsonValidation.isValid }"
           placeholder="Paste your data here..."
           rows="12"
         />
@@ -133,11 +132,7 @@ async function handlePasteClick() {
     <template #footer>
       <div class="button-group">
         <ws-button text="Cancel" @click="handleCancel" />
-        <ws-button
-          text="Import"
-          :disabled="!canSubmit"
-          @click="handleSave"
-        />
+        <ws-button text="Import" :disabled="!canSubmit" @click="handleSave" />
       </div>
     </template>
   </base-modal>
