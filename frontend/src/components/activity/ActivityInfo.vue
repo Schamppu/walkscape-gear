@@ -29,8 +29,8 @@ const borderClass = computed(
 );
 
 const getKeyword = (kw) => {
-  if ("keyword" in kw) {
-    return dataStore.getKeywordById(kw["keyword"]);
+  if ("id" in kw) {
+    return dataStore.getKeywordById(kw["id"]);
   } else if ("keywords" in kw) {
     const { quantity, keywords } = kw;
     return keywords.map((kwId) => {
@@ -57,7 +57,7 @@ const sections = computed(() => {
     requirements,
   } = activityStore.activity;
 
-  const isTravel = id === "activity-travelling";
+  const isTravel = id === "travelling";
 
   return [
     {

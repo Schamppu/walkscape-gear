@@ -21,7 +21,7 @@ const recipesBySkill = ref([]);
 
 onMounted(async () => {
   const noneActivity = activityStore.activities
-    .filter(({ id }) => id === "activity-none")
+    .filter(({ id }) => id === "none")
     .map((item) => {
       return { ...item, value: item.name, items: [] };
     })[0];

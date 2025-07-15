@@ -3,6 +3,7 @@ import { ref, watch } from "vue";
 import { usePlayerStore } from "@/store/player";
 import WsLabel from "./WsLabel.vue";
 import WsButton from "./WsButton.vue";
+import BaseModal from "./BaseModal.vue";
 
 const props = defineProps({
   modelValue: Boolean,
@@ -24,10 +25,6 @@ watch(
   }
 );
 
-function close() {
-  emit("update:modelValue", false);
-}
-
 function isValidUuid(uuid) {
   // Standard UUID v4 regex
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
@@ -37,7 +34,7 @@ function isValidUuid(uuid) {
 
 function saveUuid() {
   if (uuidInput.value === playerStore.userUuid) {
-    close();
+    emit("update:modelValue", false);
     return;
   }
   if (!isValidUuid(uuidInput.value)) {
@@ -45,72 +42,37 @@ function saveUuid() {
     return;
   }
   emit("update-uuid", uuidInput.value);
-  close();
+  emit("update:modelValue", false);
 }
 </script>
 
 <template>
-  <div v-if="modelValue" class="modal-backdrop" @click.self="close">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2>Settings</h2>
-        <button class="close-btn" @click="close">✕</button>
-      </div>
-      <div class="modal-body">
-        <div class="uuid-settings">
-          <ws-label label="Optimizer User ID" />
-          <input
-            v-model="uuidInput"
-            type="text"
-            class="uuid-input"
-            spellcheck="false"
-            autocomplete="off"
-            maxlength="36"
-          />
-          <p class="text">
-            This ID is only used by this tool. Change it to match between
-            devices, to sync your optimizer data.
-          </p>
-          <ws-button @click="saveUuid" text="Save" />
-          <div v-if="error" class="error-msg">{{ error }}</div>
-        </div>
-      </div>
+  <base-modal 
+    :model-value="modelValue" 
+    title="Settings"
+    @update:model-value="$emit('update:modelValue', $event)"
+  >
+    <div class="uuid-settings">
+      <ws-label label="Optimizer User ID" />
+      <input
+        v-model="uuidInput"
+        type="text"
+        class="uuid-input"
+        spellcheck="false"
+        autocomplete="off"
+        maxlength="36"
+      />
+      <p class="text">
+        This ID is only used by this tool. Change it to match between
+        devices, to sync your optimizer data.
+      </p>
+      <ws-button @click="saveUuid" text="Save" />
+      <div v-if="error" class="error-msg">{{ error }}</div>
     </div>
-  </div>
+  </base-modal>
 </template>
 
 <style lang="scss" scoped>
-.modal-backdrop {
-  position: fixed;
-  inset: 0;
-  background-color: rgba(6, 12, 15, 0.5);
-  z-index: 3000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.modal-content {
-  background: $boxDarkBackground;
-  border: 1px solid $boxDarkOutline;
-  padding: $xxxlg;
-  border-radius: $sm;
-  min-width: 300px;
-  min-height: 200px;
-
-  width: 80%;
-  max-width: 500px;
-  position: relative;
-}
-.close-btn {
-  position: absolute;
-  top: $xxs;
-  right: $xxs;
-  background: none;
-  border: none;
-  font-size: $xlg;
-  cursor: pointer;
-}
-
 .uuid-settings {
   display: flex;
   flex-direction: column;
@@ -129,15 +91,7 @@ function saveUuid() {
   background: $bgPrimary;
   color: $txPrimary;
 }
-.save-btn {
-  margin-bottom: $xxs;
-  padding: $xxs $base;
-  border-radius: $sm;
-  border: 1px solid $boxDarkOutline;
-  background: $boxDarkBackground;
-  color: $txPrimary;
-  cursor: pointer;
-}
+
 .error-msg {
   color: $txNegative;
   margin-top: $xxs;

@@ -72,5 +72,16 @@ export const useItemsStore = defineStore("itemStore", {
       5000,
       this
     ),
+
+    batchUpdateOwnedItems(itemsToUpdate) {
+      // Update the ownedItems state
+      Object.assign(this.ownedItems, itemsToUpdate);
+
+      // Track all changes for database flush
+      Object.assign(this.changedOwnedItems, itemsToUpdate);
+
+      // Schedule a flush to the database
+      this.scheduleOwnedItemsFlush();
+    },
   },
 });

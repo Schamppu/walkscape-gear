@@ -73,7 +73,7 @@ export function useRequirements() {
             location.subFactions?.includes(requirement.realm);
         break;
       case "traveling":
-        if (activity) value = activity.id === "activity-travelling";
+        if (activity) value = activity.id === "travelling";
         break;
       case "gameData":
         if (factionReputation) {

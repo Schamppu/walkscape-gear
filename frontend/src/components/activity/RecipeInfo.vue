@@ -158,7 +158,7 @@ const craftingOdds = computed(() => {
       return {
         ...item,
         odds: `${n(item.value * 100, 2)}%`,
-        materialsNeeded: Math.ceil(item.crafts / stats.value.craftsPerMaterial),
+        materialsNeeded: item.crafts / stats.value.craftsPerMaterial,
       };
     });
 
@@ -268,8 +268,8 @@ const craftingOdds = computed(() => {
             >
               <td :class="`color-${item.qualityValue}`">{{ item.name }}</td>
               <td>{{ item.odds }}</td>
-              <td>{{ n(item.crafts, 2) }}</td>
-              <td>{{ n(item.materialsNeeded) }}</td>
+              <td>{{ n(item.crafts, 1) }}</td>
+              <td>{{ n(item.materialsNeeded, 1) }}</td>
             </tr>
           </tbody>
         </table>

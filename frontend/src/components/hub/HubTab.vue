@@ -4,15 +4,19 @@ import {
   upsertFactionReputations,
 } from "@/utils/axios/db_routes";
 import { usePlayerStore } from "@/store/player";
+import { useItemsStore } from "@/store/items";
 import TabContentWrapper from "@/components/common/TabContentWrapper.vue";
 import SkillLevelDisplay from "./SkillLevelDisplay.vue";
 import IconInputBubble from "@/components/common/IconInputBubble.vue";
 import AchievementPointDisplay from "./AchievementPointDisplay.vue";
 import ItemSelection from "./ItemSelection.vue";
+import ImportButton from "./ImportButton.vue";
 import debounce from "@/utils/debounce";
 import { argbToRgba } from "@/utils/argbToRgba";
+import { processCharacterImport } from "@/utils/characterImport";
 
 const playerStore = usePlayerStore();
+const itemsStore = useItemsStore();
 
 const postPlayerStats = () => {
   const payload = {
@@ -32,10 +36,50 @@ const postFactionReputation = () => {
 };
 
 const updateFactionReputation = debounce(postFactionReputation, 1000);
+
+const handleCharacterImport = (data) => {
+  try {
+    const result = processCharacterImport(data, playerStore, itemsStore);
+
+    let updatedSkills = false;
+    let updatedAchievementPoints = false;
+
+    // Update skills if processed
+    if (result.skills) {
+      playerStore.setSkillLevels(result.skills);
+      updatedSkills = true;
+    }
+
+    // Update achievement points if processed
+    if (result.achievementPoints !== null) {
+      playerStore.setAchievementPoints(result.achievementPoints);
+      updatedAchievementPoints = true;
+    }
+
+    if (updatedSkills || updatedAchievementPoints) {
+      postPlayerStats();
+    }
+
+    // Update reputation if processed
+    if (result.reputation) {
+      playerStore.setFactionReputations(result.reputation);
+      postFactionReputation();
+    }
+
+    // Update items if processed
+    if (result.items) {
+      itemsStore.batchUpdateOwnedItems(result.items);
+    }
+  } catch (error) {
+    console.error("Failed to process character import data:", error);
+    // TODO: Show user-friendly error message
+  }
+};
 </script>
 
 <template>
   <tab-content-wrapper class="sections">
+    <import-button @import-data="handleCharacterImport" />
     <div class="skill-bubbles">
       <skill-level-display
         v-for="skill in playerStore.skills"
@@ -72,6 +116,7 @@ const updateFactionReputation = debounce(postFactionReputation, 1000);
 .sections {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: $xxxlg;
 }
 

@@ -80,7 +80,7 @@ const filteredData = computed(() => {
 });
 
 const labelText = computed(() => {
-  return selected.value?.id !== "activity-none"
+  return selected.value?.id !== "none"
     ? selected.value.value
     : props.defaultText;
 });

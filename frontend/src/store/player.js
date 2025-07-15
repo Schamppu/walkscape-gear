@@ -67,11 +67,17 @@ export const usePlayerStore = defineStore("playerStore", {
     setSkillLevel(id, value) {
       this.skillLevels[id] = value;
     },
+    setSkillLevels(levels) {
+      this.skillLevels = levels;
+    },
     setAchievementPoints(value) {
       this.achievementPoints = value;
     },
     setFactionReputation(reputation, value) {
       this.factionReputation[reputation] = value;
+    },
+    setFactionReputations(reputations) {
+      this.factionReputation = reputations;
     },
     setUuid(uuid) {
       this.userUuid = uuid;

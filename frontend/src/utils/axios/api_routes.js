@@ -18,7 +18,7 @@ export function getIconsBatch({ iconPaths }) {
   });
 }
 
-export function getLocalization({ key, locale = 'en' }) {
+export function getLocalization({ key, locale = "en" }) {
   return proxy({
     url: "translate",
     options: { params: { key, locale } },
@@ -57,7 +57,7 @@ export function getItems() {
 
 export function getItem({ id }) {
   return proxy({
-    url: `items/id/${id}`,
+    url: `items/${id}`,
   });
 }
 
@@ -87,7 +87,7 @@ export function getActivities() {
 
 export function getActivity({ id }) {
   return proxy({
-    url: `activities/id/${id}`,
+    url: `activities/${id}`,
   });
 }
 
@@ -99,7 +99,7 @@ export function getRecipes() {
 
 export function getRecipe({ id }) {
   return proxy({
-    url: `recipes/id/${id}`,
+    url: `recipes/${id}`,
   });
 }
 

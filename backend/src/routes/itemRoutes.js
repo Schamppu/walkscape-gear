@@ -9,9 +9,9 @@ import {
 const router = Router();
 
 router.get("/", listItems);
-router.get("/id/:id", getItem);
 router.get("/categorized_items", getCategorizedItems);
 router.get("/url_mapping", getUrlMapping);
+router.get("/:id", getItem);
 
 
 export { router as itemRoutes };

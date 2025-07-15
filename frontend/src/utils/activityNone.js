@@ -1,5 +1,5 @@
 export const activityNone = {
-  id: "activity-none",
+  id: "none",
   nameLocalizationKey: "None",
   name: "None",
   value: "None",

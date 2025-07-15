@@ -26,10 +26,10 @@ export const useActivityStore = defineStore("activity", {
   }),
   getters: {
     activitySelected: (state) => {
-      return state.activity !== null && state.activity.id !== "activity-none";
+      return state.activity !== null && state.activity.id !== "none";
     },
     recipeSelected: (state) => {
-      return state.recipe !== null && state.recipe.id !== "activity-none";
+      return state.recipe !== null && state.recipe.id !== "none";
     },
   },
   actions: {
@@ -81,7 +81,7 @@ export const useActivityStore = defineStore("activity", {
       if (locations.length) this.setLocation(locations[0]);
     },
     async loadRecipe(id) {
-      if (id === "activity-none") {
+      if (id === "none") {
         this.setRecipe(activityNone);
         return;
       }
