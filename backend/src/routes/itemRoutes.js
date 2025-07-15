@@ -1,15 +1,15 @@
 import { createBaseRouter } from "./baseRouter.js";
 import { itemService } from "../services/index.js";
 import {
-  getItem,
   getCategorizedItems,
   getUrlMapping,
 } from "../controllers/itemController.js";
 
-const router = createBaseRouter("items", itemService);
+const additionalRoutes = [
+  { method: "get", path: "/categorized_items", handler: getCategorizedItems },
+  { method: "get", path: "/url_mapping", handler: getUrlMapping },
+];
 
-router.get("/categorized_items", getCategorizedItems);
-router.get("/url_mapping", getUrlMapping);
-router.get("/:id", getItem);
+const router = createBaseRouter("items", itemService, additionalRoutes);
 
 export default router;

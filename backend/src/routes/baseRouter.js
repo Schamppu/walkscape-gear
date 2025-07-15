@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { wrapController } from "../controllers/wrapController.js";
 
-export const createBaseRouter = (name, service) => {
+export const createBaseRouter = (name, service, additionalRoutes = []) => {
   const router = Router();
 
   router.get(
@@ -27,6 +27,11 @@ export const createBaseRouter = (name, service) => {
       return service.getIds(ids);
     })
   );
+
+  // Add additional routes before the catch-all /:id route
+  additionalRoutes.forEach(({ method, path, handler }) => {
+    router[method](path, handler);
+  });
 
   router.get(
     "/:id",
