@@ -14,6 +14,7 @@ import About from "./components/about/AboutView.vue";
 import LoadingThrobber from "./components/common/LoadingThrobber.vue";
 import WsButton from "./components/common/WsButton.vue";
 import SettingsModal from "./components/common/SettingsModal.vue";
+import NotificationContainer from "./components/common/NotificationContainer.vue";
 
 const urlStore = useUrlStore();
 const isLoaded = ref(false);
@@ -148,6 +149,7 @@ onUnmounted(() => {
     />
   </div>
   <SettingsModal v-model="showSettings" @update-uuid="handleUuidUpdate" />
+  <NotificationContainer />
 </template>
 
 <style lang="scss">
