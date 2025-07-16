@@ -29,10 +29,10 @@ export default class BaseService {
     return response.data;
   }
 
-  async getIds(ids) {
+  async getIds(ids, target) {
     const response = await api.post(
       `/${this.resourceName}/ids`,
-      { ids },
+      { ids, target },
       { responseType: "json" }
     );
     return response.data;

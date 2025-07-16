@@ -69,6 +69,14 @@ export function getNewItemIds(ids) {
   });
 }
 
+export function getOldItemIds(ids) {
+  return proxy({
+    method: "POST",
+    url: "items/ids",
+    options: { ids, target: "old" },
+  });
+}
+
 export function searchLocations({ activityList, serviceList }) {
   return proxy({
     url: "locations/search",
