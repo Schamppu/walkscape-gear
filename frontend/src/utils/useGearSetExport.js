@@ -1,16 +1,17 @@
 import pako from "pako";
 import { useGearStore } from "@/store/gear";
+import { getOldItemIds } from "./axios/api_routes";
 
 export function useGearSetExport() {
   const gearStore = useGearStore();
 
-  const exportItem = (slotName) => {
+  const exportItem = (slotName, itemIdMap) => {
     const match = slotName.match(/^([a-zA-Z]+)(\d+)?$/);
     const [type, index] = match ? [match[1], match[2] - 1 || 0] : ["", ""];
     const slotItem = gearStore.get(slotName);
     const item = slotItem
       ? {
-          id: slotItem?.id,
+          id: itemIdMap[slotItem?.id],
           quality: slotItem.quality,
           tag: null,
         }
@@ -24,13 +25,17 @@ export function useGearSetExport() {
     };
   };
 
-  const exportCode = () => {
+  const exportCode = async () => {
     const excluded = ["consumable", "potion", "service"];
     const slotKeys = Object.keys(gearStore.gearSlots).filter(
       (key) => !excluded.includes(key)
     );
+    const itemIds = slotKeys
+      .map((key) => gearStore.get(key)?.id)
+      .filter(Boolean);
+    const { data: itemIdMap } = await getOldItemIds(itemIds);
 
-    const items = slotKeys.map(exportItem);
+    const items = slotKeys.map((slotName) => exportItem(slotName, itemIdMap));
     const json = JSON.stringify({ items });
     const compressed = pako.gzip(json);
 
