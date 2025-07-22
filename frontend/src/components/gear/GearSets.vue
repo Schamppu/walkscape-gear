@@ -2,6 +2,7 @@
 import { ref, computed } from "vue";
 import { useGearSetStore } from "@/store/gearSet";
 import { useGearStore } from "@/store/gear";
+import GearSetDropdown from "./GearSetDropdown.vue";
 
 const gearSetStore = useGearSetStore();
 const gearStore = useGearStore();
@@ -15,7 +16,7 @@ const selectedSet = computed(() =>
   gearSetStore.gearSets.find((set) => set.id === selectedSetId.value)
 );
 
-function startNewSet() {
+function handleNewSet() {
   isSavingNew.value = true;
   newSetName.value = "";
   newSetTags.value = [];
@@ -63,75 +64,27 @@ function updateCurrentSet() {
 
 <template>
   <div class="gear-set-manager">
-    <select class="gear-set-select" v-model="selectedSetId">
-      <option
-        v-for="set in gearSetStore.gearSets"
-        :key="set.id"
-        :value="set.id"
-      >
-        {{ set.name }}
-      </option>
-    </select>
-    <div>
-      <button class="button" @click="startNewSet">New Gear Set</button>
-    </div>
-
-    <div v-if="selectedSet && !isSavingNew" class="set-actions">
-      <div>
-        <strong>Selected Set:</strong> {{ selectedSet.name }}
-        <span v-if="selectedSet.tags && selectedSet.tags.length">
-          (Tags: {{ selectedSet.tags.join(", ") }})
-        </span>
-      </div>
-      <button @click="updateCurrentSet">Update This Set</button>
-    </div>
-
-    <div v-if="isSavingNew" class="new-set-form">
-      <label>
-        Name:
-        <input v-model="newSetName" placeholder="Enter set name" />
-      </label>
-      <label>
-        Tags:
-        <select v-model="newSetTags" multiple>
-          <option
-            v-for="tag in gearSetStore.gearSetTags"
-            :key="tag"
-            :value="tag"
-          >
-            {{ tag }}
-          </option>
-        </select>
-      </label>
+    <div class="row">
       <button class="button" @click="saveNewSet" :disabled="!newSetName">
-        Save New Set
+        Save
       </button>
-      <button class="button" @click="isSavingNew = false">Cancel</button>
+      <gear-set-dropdown v-model="selectedSetId" @new-set="handleNewSet" />
     </div>
   </div>
 </template>
 
 <style scoped lang="scss">
+@use "@/styles/variables" as *;
+
 .gear-set-manager {
   display: flex;
   flex-direction: column;
   gap: $base;
-}
-.set-actions,
-.new-set-form {
-  margin-top: $base;
-}
 
-.gear-set-select {
-  cursor: pointer;
-  overflow: hidden;
-  border-radius: $sm;
-  background-color: $boxDarkBackground;
-  border: 1px solid $boxDarkOutline;
-  padding: $sm;
-
-  &:hover {
-    background-color: $boxTransparentDarkBackground;
+  .row {
+    display: flex;
+    align-items: center;
+    gap: $base;
   }
 }
 
@@ -140,7 +93,7 @@ function updateCurrentSet() {
   background-color: $boxDarkBackground;
   border: 1px solid $boxDarkOutline;
   border-radius: $md;
-  padding: $xxxs;
+  padding: $sm $xlg;
 
   &:hover {
     background-color: $boxTransparentDarkBackground;
