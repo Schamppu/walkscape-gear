@@ -5,8 +5,23 @@ import {
   factionService,
   itemService,
 } from "../src/services/index.js";
+import { skillTags } from "./tag-data.js";
 
 const prisma = new PrismaClient();
+
+async function seedSkillTags() {
+  console.log("🌱 Seeding default tags...");
+
+  for (const name of skillTags) {
+    await prisma.tag.upsert({
+      where: { name },
+      update: { category: "skill" },
+      create: { name, category: "skill" },
+    });
+  }
+
+  console.log("✅ Tag seed complete.");
+}
 
 async function seedTestData(userUuid) {
   console.log(`Seeding test data for user: ${userUuid}`);
@@ -63,6 +78,8 @@ async function seedTestData(userUuid) {
 }
 
 async function main() {
+  seedSkillTags();
+
   const testUserUuid = "";
   if (testUserUuid) {
     await seedTestData(testUserUuid);
