@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from "vue";
+import { computed } from "vue";
 import { useGearSetStore } from "@/store/gearSet";
 import { useGearStore } from "@/store/gear";
 import GearSetDropdown from "./GearSetDropdown.vue";
@@ -7,20 +7,10 @@ import GearSetDropdown from "./GearSetDropdown.vue";
 const gearSetStore = useGearSetStore();
 const gearStore = useGearStore();
 
-const selectedSetId = ref(null);
-const newSetName = ref("");
-const newSetTags = ref([]);
-const isSavingNew = ref(false);
-
-const selectedSet = computed(() =>
-  gearSetStore.gearSets.find((set) => set.id === selectedSetId.value)
-);
-
-function handleNewSet() {
-  isSavingNew.value = true;
-  newSetName.value = "";
-  newSetTags.value = [];
-}
+// Get current set data from store
+const currentSet = computed(() => gearSetStore.getCurrentSet);
+const canSave = computed(() => gearSetStore.canSave);
+const hasUnsavedChanges = computed(() => gearSetStore.hasUnsavedChanges);
 
 const getSetItems = () => {
   const excluded = ["consumable", "potion", "service"];
@@ -42,40 +32,41 @@ const getSetItems = () => {
     });
 };
 
-function saveNewSet() {
-  gearSetStore.addGearSet({
-    name: newSetName.value,
-    tags: newSetTags.value,
-    items: getSetItems(),
-  });
-  isSavingNew.value = false;
-}
+async function handleSaveGearSet() {
+  try {
+    // Capture current gear configuration
+    const currentGearItems = getSetItems();
+    gearSetStore.updateCurrentSetItems(currentGearItems);
 
-function updateCurrentSet() {
-  gearSetStore.addGearSet({
-    id: selectedSetId.value,
-    name: newSetName.value,
-    tags: newSetTags.value,
-    items: getSetItems(),
-  });
-  isSavingNew.value = false;
+    // Save to backend
+    await gearSetStore.saveCurrentSet();
+
+    // Could show success notification here
+    console.log("Gear set saved successfully!");
+  } catch (error) {
+    console.error("Failed to save gear set:", error);
+    // Could show error notification here
+  }
 }
 </script>
 
 <template>
   <div class="gear-set-manager">
     <div class="row">
-      <button class="button" @click="saveNewSet" :disabled="!newSetName">
+      <button
+        class="button"
+        @click="handleSaveGearSet"
+        :disabled="!canSave"
+        :class="{ 'has-changes': hasUnsavedChanges }"
+      >
         Save
       </button>
-      <gear-set-dropdown v-model="selectedSetId" @new-set="handleNewSet" />
+      <gear-set-dropdown />
     </div>
   </div>
 </template>
 
 <style scoped lang="scss">
-@use "@/styles/variables" as *;
-
 .gear-set-manager {
   display: flex;
   flex-direction: column;
@@ -95,8 +86,41 @@ function updateCurrentSet() {
   border-radius: $md;
   padding: $sm $xlg;
 
-  &:hover {
+  &:hover:not(:disabled) {
     background-color: $boxTransparentDarkBackground;
   }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &.has-changes {
+    border-color: $txPositive;
+    color: $txPositive;
+  }
+}
+
+.current-set-info {
+  padding: $sm;
+  background-color: $boxTransparentDarkBackground;
+  border-radius: $sm;
+  border: 1px solid $boxDarkOutline;
+}
+
+.set-details {
+  color: $txPrimary;
+  font-weight: 500;
+
+  .unsaved-indicator {
+    color: $txPositive;
+    font-weight: bold;
+  }
+}
+
+.set-tags {
+  color: $txDarker;
+  font-size: $sm;
+  margin-top: $xxs;
 }
 </style>

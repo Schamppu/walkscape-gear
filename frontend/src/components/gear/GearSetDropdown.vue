@@ -1,73 +1,39 @@
 <script setup>
-import { ref, computed, watch } from "vue";
+import { ref, computed } from "vue";
 import { useGearSetStore } from "@/store/gearSet";
-
-const props = defineProps({
-  modelValue: {
-    type: [String, Number],
-    default: null,
-  },
-});
-
-const emit = defineEmits(["update:modelValue", "new-set"]);
 
 const gearSetStore = useGearSetStore();
 const isOpen = ref(false);
 const inputRef = ref(null);
 
-const selectedSet = computed(() =>
-  gearSetStore.gearSets.find((set) => set.id === props.modelValue)
+// Use the store's current set instead of local state
+const selectedSet = computed(() => 
+  gearSetStore.currentSet.id 
+    ? gearSetStore.gearSets.find(set => set.id === gearSetStore.currentSet.id)
+    : null
 );
 
-const displayName = ref("");
-
-watch(
-  selectedSet,
-  (newSet) => {
-    if (newSet) {
-      displayName.value = newSet.name;
-    }
-  },
-  { immediate: true }
-);
-
-watch(
-  () => props.modelValue,
-  (newValue) => {
-    if (!newValue) {
-      displayName.value = "";
-    }
-  },
-  { immediate: true }
-);
+const displayName = computed({
+  get: () => gearSetStore.currentSet.name,
+  set: (value) => gearSetStore.updateCurrentSetName(value)
+});
 
 function toggleDropdown() {
   isOpen.value = !isOpen.value;
 }
 
 function selectSet(setId) {
-  emit("update:modelValue", setId);
+  gearSetStore.loadSet(setId);
   isOpen.value = false;
 }
 
 function selectNewSet() {
-  displayName.value = "";
-  emit("update:modelValue", null);
-  emit("new-set");
+  gearSetStore.createNewSet();
   isOpen.value = false;
-
+  // Focus the input after a brief delay to allow the UI to update
   setTimeout(() => {
     inputRef.value?.focus();
   }, 50);
-}
-
-function handleInputChange() {
-  // If there's a selected set, update its name in the store
-  if (selectedSet.value) {
-    // This would require a method in the store to update set names
-    // For now, we'll just emit the change
-    // gearSetStore.updateSetName(selectedSet.value.id, displayName.value);
-  }
 }
 
 function handleClickOutside() {
@@ -83,7 +49,6 @@ function handleClickOutside() {
         v-model="displayName"
         class="dropdown-input"
         :placeholder="selectedSet ? selectedSet.name : 'New Gear Set'"
-        @input="handleInputChange"
         @click.stop
       />
       <div class="chevron" :class="{ open: isOpen }">▼</div>
@@ -98,7 +63,7 @@ function handleClickOutside() {
         v-for="set in gearSetStore.gearSets"
         :key="set.id"
         class="dropdown-item"
-        :class="{ selected: set.id === modelValue }"
+        :class="{ selected: set.id === gearSetStore.currentSet.id }"
         @click="selectSet(set.id)"
       >
         <span class="set-name">{{ set.name }}</span>
@@ -111,8 +76,6 @@ function handleClickOutside() {
 </template>
 
 <style lang="scss" scoped>
-@use "@/styles/variables" as *;
-
 .gear-set-dropdown {
   position: relative;
   width: 100%;
