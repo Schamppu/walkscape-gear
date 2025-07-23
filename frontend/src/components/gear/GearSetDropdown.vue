@@ -1,21 +1,24 @@
 <script setup>
 import { ref, computed } from "vue";
 import { useGearSetStore } from "@/store/gearSet";
+import { useGearStore } from "@/store/gear";
+import { useItemsStore } from "@/store/items";
 
 const gearSetStore = useGearSetStore();
+const gearStore = useGearStore();
 const isOpen = ref(false);
 const inputRef = ref(null);
 
 // Use the store's current set instead of local state
-const selectedSet = computed(() => 
-  gearSetStore.currentSet.id 
-    ? gearSetStore.gearSets.find(set => set.id === gearSetStore.currentSet.id)
+const selectedSet = computed(() =>
+  gearSetStore.currentSet.id
+    ? gearSetStore.gearSets.find((set) => set.id === gearSetStore.currentSet.id)
     : null
 );
 
 const displayName = computed({
   get: () => gearSetStore.currentSet.name,
-  set: (value) => gearSetStore.updateCurrentSetName(value)
+  set: (value) => gearSetStore.updateCurrentSetName(value),
 });
 
 function toggleDropdown() {
@@ -24,6 +27,25 @@ function toggleDropdown() {
 
 function selectSet(setId) {
   gearSetStore.loadSet(setId);
+
+  const gearSet = Object.fromEntries(
+    gearSetStore.getCurrentSet.items.map(
+      ({ itemId, quality, slotIndex, slotType }) => {
+        const slotName = ["ring", "tool"].includes(slotType)
+          ? `${slotType}${slotIndex + 1}`
+          : slotType;
+        return [
+          slotName,
+          {
+            id: itemId,
+            quality: quality || null,
+          },
+        ];
+      }
+    )
+  );
+
+  gearStore.equipMultiple(gearSet);
   isOpen.value = false;
 }
 

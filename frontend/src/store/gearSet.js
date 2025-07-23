@@ -29,9 +29,12 @@ export const useGearSetStore = defineStore("gearSetStore", {
 
     // Check if current set is valid for saving
     canSave: (state) => {
-      return (
-        state.currentSet.name.trim().length > 0
-      );
+      return state.currentSet.name.trim().length > 0;
+    },
+
+    // Check if current set is valid for saving with gear data
+    canSaveWithGear: (state) => (hasGearEquipped) => {
+      return state.currentSet.name.trim().length > 0 && hasGearEquipped;
     },
 
     // Get selected set ID (for dropdown binding)
@@ -81,7 +84,7 @@ export const useGearSetStore = defineStore("gearSetStore", {
       this.currentSet = {
         id: existingSet.id,
         name: existingSet.name,
-        tags: [...existingSet.tags], // clone arrays to avoid mutations
+        tags: [...existingSet.tags],
         items: [...existingSet.items],
         isDirty: false,
         isNew: false,
@@ -115,9 +118,18 @@ export const useGearSetStore = defineStore("gearSetStore", {
     },
 
     // Save current set to backend and update local store
-    async saveCurrentSet() {
+    async saveCurrentSet(gearItems = null) {
+      // If gear items are provided, update them first
+      if (gearItems) {
+        this.updateCurrentSetItems(gearItems);
+      }
+
       if (!this.canSave) {
-        throw new Error("Cannot save: set name and items are required");
+        throw new Error("Cannot save: set name is required");
+      }
+
+      if (!this.currentSet.items || this.currentSet.items.length === 0) {
+        throw new Error("Cannot save: no gear items to save");
       }
 
       const payload = {

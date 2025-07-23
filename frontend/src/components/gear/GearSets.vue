@@ -9,8 +9,12 @@ const gearStore = useGearStore();
 
 // Get current set data from store
 const currentSet = computed(() => gearSetStore.getCurrentSet);
-const canSave = computed(() => gearSetStore.canSave);
 const hasUnsavedChanges = computed(() => gearSetStore.hasUnsavedChanges);
+
+const canSave = computed(() => {
+  const hasGear = gearStore.hasGearEquipped;
+  return gearSetStore.canSaveWithGear(hasGear);
+});
 
 const getSetItems = () => {
   const excluded = ["consumable", "potion", "service"];
@@ -36,10 +40,9 @@ async function handleSaveGearSet() {
   try {
     // Capture current gear configuration
     const currentGearItems = getSetItems();
-    gearSetStore.updateCurrentSetItems(currentGearItems);
 
-    // Save to backend
-    await gearSetStore.saveCurrentSet();
+    // Save to backend (passing gear items directly)
+    await gearSetStore.saveCurrentSet(currentGearItems);
 
     // Could show success notification here
     console.log("Gear set saved successfully!");

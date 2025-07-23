@@ -31,6 +31,13 @@ export const useGearStore = defineStore("gearStore", {
     showUseful: true,
   }),
   getters: {
+    hasGearEquipped: (state) => {
+      return (
+        Object.entries(state.gearSlots).filter(
+          ([key, value]) => key !== "service" && value !== null
+        ).length > 0
+      );
+    },
     equippedGear: (state) => {
       return Object.values(state.gearSlots).filter(Boolean) || [];
     },
