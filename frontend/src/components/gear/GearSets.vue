@@ -3,15 +3,23 @@ import { computed } from "vue";
 import { useGearSetStore } from "@/store/gearSet";
 import { useGearStore } from "@/store/gear";
 import GearSetDropdown from "./GearSetDropdown.vue";
+import TagSelection from "./TagSelection.vue";
 
 const gearSetStore = useGearSetStore();
 const gearStore = useGearStore();
 
+// Computed properties
 const hasUnsavedChanges = computed(() => gearSetStore.hasUnsavedChanges);
 
 const canSave = computed(() => {
   const hasGear = gearStore.hasGearEquipped;
   return gearSetStore.canSaveWithGear(hasGear);
+});
+
+// Current set tags for editing
+const currentSetTags = computed({
+  get: () => gearSetStore.currentSet.tags,
+  set: (value) => gearSetStore.updateCurrentSetTags(value),
 });
 
 const getSetItems = () => {
@@ -48,16 +56,23 @@ async function handleSaveGearSet() {
 
 <template>
   <div class="gear-set-manager">
-    <div class="row">
-      <button
-        class="button"
-        @click="handleSaveGearSet"
-        :disabled="!canSave"
-        :class="{ 'has-changes': hasUnsavedChanges }"
-      >
-        Save
-      </button>
-      <gear-set-dropdown />
+    <!-- Current Set Info and Controls -->
+    <div class="current-set-section">
+      <div class="row">
+        <button
+          class="button save-button"
+          @click="handleSaveGearSet"
+          :disabled="!canSave"
+          :class="{ 'has-changes': hasUnsavedChanges }"
+        >
+          Save
+        </button>
+        <gear-set-dropdown />
+      </div>
+
+      <!-- Current Set Tag Editor -->
+
+      <tag-selection v-model="currentSetTags" label="Tags:" />
     </div>
   </div>
 </template>
@@ -66,7 +81,13 @@ async function handleSaveGearSet() {
 .gear-set-manager {
   display: flex;
   flex-direction: column;
-  gap: $base;
+  gap: $md;
+}
+
+.current-set-section {
+  display: flex;
+  flex-direction: column;
+  gap: $sm;
 
   .row {
     display: flex;
@@ -81,6 +102,7 @@ async function handleSaveGearSet() {
   border: 1px solid $boxDarkOutline;
   border-radius: $md;
   padding: $sm $xlg;
+  color: $txPrimary;
 
   &:hover:not(:disabled) {
     background-color: $boxTransparentDarkBackground;
@@ -97,26 +119,7 @@ async function handleSaveGearSet() {
   }
 }
 
-.current-set-info {
-  padding: $sm;
-  background-color: $boxTransparentDarkBackground;
-  border-radius: $sm;
-  border: 1px solid $boxDarkOutline;
-}
-
-.set-details {
-  color: $txPrimary;
+.save-button {
   font-weight: 500;
-
-  .unsaved-indicator {
-    color: $txPositive;
-    font-weight: bold;
-  }
-}
-
-.set-tags {
-  color: $txDarker;
-  font-size: $sm;
-  margin-top: $xxs;
 }
 </style>

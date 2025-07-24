@@ -2,12 +2,19 @@
 import { ref, computed } from "vue";
 import { useGearSetStore } from "@/store/gearSet";
 import WsButton from "@/components/common/WsButton.vue";
+import TagSelection from "./TagSelection.vue";
 
 const gearSetStore = useGearSetStore();
 const isOpen = ref(false);
 const inputRef = ref(null);
 const confirmDeleteId = ref(null); // Track which set is in delete confirmation state
 const searchText = ref(""); // Search filter text
+
+const internalFilterTags = ref([]);
+
+// Computed properties for filter status
+const hasActiveFilters = computed(() => internalFilterTags.value.length > 0);
+const filterCount = computed(() => internalFilterTags.value.length);
 
 // Use the store's current set instead of local state
 const selectedSet = computed(() =>
@@ -21,19 +28,32 @@ const displayName = computed({
   set: (value) => gearSetStore.updateCurrentSetName(value),
 });
 
-// Filter gear sets based on search text
+// Filter gear sets based on search text and selected filter tags
 const filteredGearSets = computed(() => {
-  if (!searchText.value.trim()) {
-    return gearSetStore.gearSets;
+  let sets = gearSetStore.gearSets;
+
+  // Apply text search filter
+  if (searchText.value.trim()) {
+    const search = searchText.value.toLowerCase().trim();
+    sets = sets.filter((set) => {
+      const nameMatch = set.name.toLowerCase().includes(search);
+      const tagsMatch =
+        set.tags && set.tags.some((tag) => tag.toLowerCase().includes(search));
+      return nameMatch || tagsMatch;
+    });
   }
 
-  const search = searchText.value.toLowerCase().trim();
-  return gearSetStore.gearSets.filter((set) => {
-    const nameMatch = set.name.toLowerCase().includes(search);
-    const tagsMatch =
-      set.tags && set.tags.some((tag) => tag.toLowerCase().includes(search));
-    return nameMatch || tagsMatch;
-  });
+  // Apply tag filter (show sets that have ALL selected filter tags)
+  if (internalFilterTags.value.length > 0) {
+    sets = sets.filter((set) => {
+      if (!set.tags || set.tags.length === 0) return false;
+      return internalFilterTags.value.every((filterTag) =>
+        set.tags.includes(filterTag)
+      );
+    });
+  }
+
+  return sets;
 });
 
 function toggleDropdown() {
@@ -76,6 +96,11 @@ function clearSearch() {
   searchText.value = "";
 }
 
+function clearAllFilters() {
+  searchText.value = "";
+  internalFilterTags.value = [];
+}
+
 async function handleDeleteClick(setId) {
   if (confirmDeleteId.value === setId) {
     // Second click - actually delete
@@ -107,10 +132,23 @@ function isConfirmingDelete(setId) {
         :placeholder="selectedSet ? selectedSet.name : 'New Gear Set'"
         @click.stop
       />
-      <div class="chevron" :class="{ open: isOpen }">▼</div>
+      <div class="header-indicators">
+        <span
+          v-if="hasActiveFilters"
+          class="filter-indicator"
+          :title="`${filterCount} tag filter${
+            filterCount > 1 ? 's' : ''
+          } active`"
+        >
+          🏷️{{ filterCount }}
+        </span>
+        <div class="chevron" :class="{ open: isOpen }">▼</div>
+      </div>
     </div>
 
     <div v-if="isOpen" class="dropdown-list">
+      <tag-selection v-model="internalFilterTags" label="Tags:" />
+
       <!-- Search Input -->
       <div class="search-container">
         <input
@@ -119,14 +157,25 @@ function isConfirmingDelete(setId) {
           placeholder="Search..."
           @click.stop
         />
-        <button
-          v-if="searchText"
-          class="clear-search-button"
-          @click.stop="clearSearch"
-          type="button"
-        >
-          ✕
-        </button>
+        <div class="search-actions">
+          <button
+            v-if="hasActiveFilters"
+            class="clear-all-button"
+            @click.stop="clearAllFilters"
+            type="button"
+            title="Clear all filters"
+          >
+            Clear All
+          </button>
+          <button
+            v-if="searchText"
+            class="clear-search-button"
+            @click.stop="clearSearch"
+            type="button"
+          >
+            ✕
+          </button>
+        </div>
       </div>
 
       <button class="dropdown-item new-set-item" @click="selectNewSet">
@@ -159,11 +208,20 @@ function isConfirmingDelete(setId) {
         />
       </button>
 
-      <div
-        v-if="searchText && filteredGearSets.length === 0"
-        class="no-results"
-      >
-        No gear sets found matching "{{ searchText }}"
+      <div v-if="filteredGearSets.length === 0" class="no-results">
+        <span v-if="searchText && hasActiveFilters">
+          No gear sets found matching "{{ searchText }}" with
+          {{ filterCount }} selected tag{{ filterCount > 1 ? "s" : "" }}
+        </span>
+        <span v-else-if="searchText">
+          No gear sets found matching "{{ searchText }}"
+        </span>
+        <span v-else-if="hasActiveFilters">
+          No gear sets found with {{ filterCount }} selected tag{{
+            filterCount > 1 ? "s" : ""
+          }}
+        </span>
+        <span v-else> No gear sets available </span>
       </div>
     </div>
   </div>
@@ -211,6 +269,25 @@ function isConfirmingDelete(setId) {
   }
 }
 
+.header-indicators {
+  display: flex;
+  align-items: center;
+  gap: $xs;
+}
+
+.filter-indicator {
+  display: flex;
+  align-items: center;
+  gap: $xxs;
+  background-color: $chipBackground;
+  color: $txPrimary;
+  padding: $xxs $xs;
+  border-radius: $xxs;
+  font-size: $xs;
+  font-weight: 500;
+  border: 1px solid $boxDarkOutline;
+}
+
 .chevron {
   padding: $sm $xlg;
   color: $txDarker;
@@ -244,16 +321,17 @@ function isConfirmingDelete(setId) {
 .search-container {
   position: relative;
   border-bottom: 1px solid $boxDarkOutline;
+  display: flex;
+  align-items: center;
 }
 
 .search-input {
-  width: 100%;
+  flex: 1;
   box-sizing: border-box;
   background-color: $boxTransparentDarkBackground;
   border: 1px solid $boxDarkOutline;
   border-radius: $xs;
   padding: $xs $md;
-  padding-right: $xxlg; // Make room for clear button
   color: $txPrimary;
   font-size: $sm;
   outline: none;
@@ -268,11 +346,30 @@ function isConfirmingDelete(setId) {
   }
 }
 
+.search-actions {
+  display: flex;
+  align-items: center;
+  gap: $xs;
+  margin-left: $xs;
+}
+
+.clear-all-button {
+  background-color: $txNegative;
+  border: 1px solid $txNegative;
+  color: white;
+  cursor: pointer;
+  font-size: $xs;
+  padding: $xxs $xs;
+  border-radius: $xs;
+  font-weight: 500;
+
+  &:hover {
+    background-color: $txNegativeDark;
+    border-color: $txNegativeDark;
+  }
+}
+
 .clear-search-button {
-  position: absolute;
-  right: $md;
-  top: 50%;
-  transform: translateY(-50%);
   background: none;
   border: none;
   color: $txDarker;
