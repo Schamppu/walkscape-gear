@@ -18,6 +18,18 @@ const emit = defineEmits(["update:modelValue"]);
 const gearSetStore = useGearSetStore();
 const isPopupOpen = ref(false);
 
+// Group tags by category
+const groupedTags = computed(() => {
+  const groups = {};
+  gearSetStore.gearSetTags.forEach(tag => {
+    if (!groups[tag.category]) {
+      groups[tag.category] = [];
+    }
+    groups[tag.category].push(tag);
+  });
+  return groups;
+});
+
 // Local copy of selected tags for v-model
 const selectedTags = computed({
   get: () => props.modelValue,
@@ -82,18 +94,27 @@ function removeTag(tagName) {
           </button>
         </div>
 
-        <div class="tag-list">
-          <button
-            v-for="tag in gearSetStore.gearSetTags"
-            :key="tag"
-            class="tag"
-            :class="{ selected: isTagSelected(tag.name) }"
-            @click="toggleTag(tag.name)"
-            type="button"
+        <div class="tag-categories">
+          <div
+            v-for="(tags, category) in groupedTags"
+            :key="category"
+            class="tag-category"
           >
-            {{ tag.name }}
-            <span v-if="isTagSelected(tag.name)" class="checkmark">✓</span>
-          </button>
+            <h4 class="category-label">{{ category }}</h4>
+            <div class="category-tags">
+              <button
+                v-for="tag in tags"
+                :key="tag.id"
+                class="tag"
+                :class="{ selected: isTagSelected(tag.name) }"
+                @click="toggleTag(tag.name)"
+                type="button"
+              >
+                {{ tag.name }}
+                <span v-if="isTagSelected(tag.name)" class="checkmark">✓</span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -112,12 +133,6 @@ function removeTag(tagName) {
   padding: 0 $xs;
   gap: $xxxs $xs;
   margin-bottom: $xs;
-}
-
-.tag-label {
-  color: $txPrimary;
-  font-size: $sm;
-  font-weight: 500;
 }
 
 .selected-tags {
@@ -143,6 +158,52 @@ function removeTag(tagName) {
   &:focus {
     background-color: $boxTransparentDarkOutline;
   }
+
+  // Special styling for tags in the category popup
+  .category-tags & {
+    justify-content: space-between;
+    padding: $xxs;
+    background-color: $boxTransparentDarkBackground;
+    font-size: $sm;
+    text-align: left;
+    width: 100%;
+
+    &:hover {
+      background-color: $boxTransparentDarkOutline;
+      border-color: $txPrimary;
+    }
+
+    &.selected {
+      background-color: $chipBackground;
+      border-color: $txPositive;
+    }
+  }
+}
+
+.tag-categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $md;
+}
+
+.tag-category {
+  flex: 0;
+}
+
+.category-label {
+  font-size: $sm;
+  margin: 0 0 $xs 0;
+  padding-left: $xs;
+  padding-bottom: $xxxs;
+  border-bottom: 1px solid $boxDarkOutline;
+  text-transform: capitalize;
+  text-align: left;
+}
+
+.category-tags {
+  display: flex;
+  flex-direction: column;
+  gap: $xxxs;
 }
 
 .tag-popup-overlay {
@@ -163,7 +224,7 @@ function removeTag(tagName) {
   border: 1px solid $boxDarkOutline;
   border-radius: $sm;
   padding: $md;
-  min-width: 300px;
+  min-width: 400px;
   max-width: 90vw;
   max-height: 80vh;
   overflow-y: auto;
@@ -202,36 +263,6 @@ function removeTag(tagName) {
   &:hover {
     color: $txPrimary;
     background-color: $boxTransparentDarkOutline;
-  }
-}
-
-.tag-list {
-  display: flex;
-  flex-direction: column;
-  gap: $xs;
-}
-
-.tag-option {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: $sm;
-  background-color: $boxTransparentDarkBackground;
-  border: 1px solid $boxDarkOutline;
-  border-radius: $xs;
-  color: $txPrimary;
-  cursor: pointer;
-  font-size: $sm;
-  text-align: left;
-
-  &:hover {
-    background-color: $boxTransparentDarkOutline;
-    border-color: $txPrimary;
-  }
-
-  &.selected {
-    background-color: $chipBackground;
-    border-color: $txPositive;
   }
 }
 
