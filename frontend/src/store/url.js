@@ -70,23 +70,39 @@ export const useUrlStore = defineStore("url", {
       const gearStore = useGearStore();
       const activityStore = useActivityStore();
 
+      // Separate gear items from activity/recipe data
+      const gearData = {};
+      const activityPromises = [];
       const ringId = decodedLoadout["ring1"];
-      const promises = [];
+
       Object.entries(decodedLoadout).forEach(([slot, id]) => {
         if (!id) return;
 
-        const useQ2 = slot === "ring2" && ringId === id;
-        const quality = gearStore.determineQuality(id, useQ2);
-
         if (slot === "activity") {
-          promises.push(activityStore.loadActivity(id));
-          promises.push(activityStore.loadActivityLocations(id));
+          activityPromises.push(activityStore.loadActivity(id));
+          activityPromises.push(activityStore.loadActivityLocations(id));
         } else if (slot === "recipe") {
-          promises.push(activityStore.loadRecipe(id));
+          activityPromises.push(activityStore.loadRecipe(id));
         } else {
-          promises.push(gearStore.loadItem(slot, id, quality));
+          // This is a gear slot
+          const useQ2 = slot === "ring2" && ringId === id;
+          const quality = gearStore.determineQuality(id, useQ2);
+          gearData[slot] = { id, quality };
         }
       });
+
+      // Handle gear and activity data in parallel
+      const promises = [];
+
+      // Use the optimized equipMultiple for all gear items at once
+      if (Object.keys(gearData).length > 0) {
+        promises.push(gearStore.equipMultiple(gearData, true));
+      }
+
+      // Handle activity store calls
+      if (activityPromises.length > 0) {
+        promises.push(Promise.all(activityPromises));
+      }
 
       await Promise.all(promises);
     },
