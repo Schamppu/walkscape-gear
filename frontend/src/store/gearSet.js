@@ -56,11 +56,6 @@ export const useGearSetStore = defineStore("gearSetStore", {
       this.gearSetTags = gearSetTags;
       this.gearSets = gearSets;
 
-      // Initialize with a new set if none is loaded
-      if (this.currentSet.id === null && this.currentSet.name === "") {
-        this.createNewSet();
-      }
-
       this.isLoaded = true;
     },
 
@@ -84,6 +79,9 @@ export const useGearSetStore = defineStore("gearSetStore", {
       try {
         const { useUrlStore } = await import("./url");
         const urlStore = useUrlStore();
+        if (gearSetId) {
+          urlStore.encodeAndPushToUrl();
+        }
         urlStore.updateUrlWithGearSet(gearSetId);
       } catch (error) {
         console.warn("Could not update URL:", error);
@@ -98,6 +96,7 @@ export const useGearSetStore = defineStore("gearSetStore", {
         return false;
       }
 
+      let returnValue = true;
       // If the existing set doesn't have items (from the lightweight getGearSets call),
       // fetch the full gear set data including items
       let fullGearSet = existingSet;
@@ -115,6 +114,7 @@ export const useGearSetStore = defineStore("gearSetStore", {
             `Error loading gear set: ${existingSet.name}`
           );
           fullGearSet = existingSet;
+          returnValue = false;
         }
       }
 
@@ -127,8 +127,7 @@ export const useGearSetStore = defineStore("gearSetStore", {
         isNew: false,
       };
 
-      const notificationStore = useNotificationStore();
-      notificationStore.success(`"${fullGearSet.name}" loaded successfully`);
+      return returnValue;
     },
 
     async selectAndEquipSet(setId) {
@@ -170,6 +169,11 @@ export const useGearSetStore = defineStore("gearSetStore", {
 
         // Update URL with gear set parameter
         await this._updateUrlWithGearSet(setId);
+
+        const notificationStore = useNotificationStore();
+        notificationStore.success(
+          `"${this.currentSet.name}" loaded successfully`
+        );
 
         return true;
       } catch (error) {

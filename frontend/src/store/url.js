@@ -72,29 +72,33 @@ export const useUrlStore = defineStore("url", {
     async decodeFromUrlAndApply() {
       const params = new URLSearchParams(window.location.search);
       const encodedGear = params.get("q");
-      const gearSetId = params.get("gs");
+      const gearSetIdParam = params.get("gs");
+
+      // Parse gear set ID to number with validation
+      const gearSetId = gearSetIdParam ? parseInt(gearSetIdParam, 10) : null;
+      const isValidGearSetId = gearSetId && !isNaN(gearSetId) && gearSetId > 0;
 
       // Prioritize 'q' parameter over 'gs' parameter
       if (encodedGear) {
         // If we have encoded gear data, use that and ignore gear set
         await this._applyEncodedGearLoadout(encodedGear);
-      } else if (gearSetId) {
-        // Only gear set ID is present, try to load that gear set
+      } else if (isValidGearSetId) {
+        // Only gear set ID is present and valid, try to load that gear set
         await this._applyGearSetFromUrl(gearSetId);
+      } else if (gearSetIdParam) {
+        // Invalid gear set ID format, remove it from URL
+        console.warn(
+          `Invalid gear set ID format: ${gearSetIdParam}, removing from URL`
+        );
+        const url = new URL(window.location.href);
+        url.searchParams.delete("gs");
+        window.history.replaceState({}, "", url);
       }
 
-      console.log(gearSetId);
-      if (gearSetId) {
+      if (isValidGearSetId) {
         const { useGearSetStore } = await import("./gearSet");
         const gearSetStore = useGearSetStore();
-        console.log(gearSetStore.gearSets);
-        const exists = gearSetStore.loadSet(gearSetId);
-
-        if (!exists) {
-          const url = new URL(window.location.href);
-          url.searchParams.delete("gs");
-          window.history.replaceState({}, "", url);
-        }
+        gearSetStore.loadSet(gearSetId);
       }
     },
 
@@ -149,7 +153,7 @@ export const useUrlStore = defineStore("url", {
       // Ensure gear sets are loaded
       await gearSetStore.fetchGearSets();
 
-      // Check if the gear set exists
+      // Check if the gear set exists (gearSetId is already a number)
       const gearSetExists = gearSetStore.gearSets.some(
         (set) => set.id === gearSetId
       );
