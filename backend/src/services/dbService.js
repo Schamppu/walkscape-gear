@@ -123,11 +123,11 @@ export async function getGearSetTags() {
   return await prisma.tag.findMany({ orderBy: { name: "asc" } });
 }
 
-export async function getGearSets(userUuid) {
+export async function getGearSets(userUuid, includeItems = false) {
   const gearSets = await prisma.gearSet.findMany({
     where: { userUuid },
     include: {
-      items: true,
+      items: includeItems,
       tags: { include: { tag: true } },
     },
     orderBy: {
@@ -139,6 +139,28 @@ export async function getGearSets(userUuid) {
     ...set,
     tags: set.tags.map((t) => t.tag.name),
   }));
+}
+
+export async function getGearSet(userUuid, gearSetId) {
+  const gearSet = await prisma.gearSet.findFirst({
+    where: { 
+      id: gearSetId,
+      userUuid 
+    },
+    include: {
+      items: true,
+      tags: { include: { tag: true } },
+    },
+  });
+
+  if (!gearSet) {
+    throw new Error("Gear set not found");
+  }
+
+  return {
+    ...gearSet,
+    tags: gearSet.tags.map((t) => t.tag.name),
+  };
 }
 
 export async function upsertGearSet(userUuid, payload) {

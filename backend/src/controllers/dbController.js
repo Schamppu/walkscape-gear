@@ -69,7 +69,41 @@ export const getGearSetTags = async (req, res) => {
   }
 };
 
-export const getGearSets = makeGetHandler(dbService.getGearSets);
+export const getGearSets = async (req, res) => {
+  const userUuid = getUserUuid(req, res);
+  if (!userUuid) return;
+  
+  // Check if includeItems query parameter is present
+  const includeItems = req.query.includeItems === 'true';
+  
+  try {
+    const result = await dbService.getGearSets(userUuid, includeItems);
+    res.json(result || []);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+};
+
+export const getGearSet = async (req, res) => {
+  const userUuid = getUserUuid(req, res);
+  if (!userUuid) return;
+  
+  const gearSetId = parseInt(req.params.id);
+  if (!gearSetId || isNaN(gearSetId)) {
+    return res.status(400).json({ error: "Invalid gear set ID" });
+  }
+
+  try {
+    const result = await dbService.getGearSet(userUuid, gearSetId);
+    res.json(result);
+  } catch (e) {
+    if (e.message === "Gear set not found") {
+      res.status(404).json({ error: e.message });
+    } else {
+      res.status(500).json({ error: e.message });
+    }
+  }
+};
 export const upsertGearSet = makeUpsertHandler(dbService.upsertGearSet);
 
 export const deleteGearSet = async (req, res) => {
