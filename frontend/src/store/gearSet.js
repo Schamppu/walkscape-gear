@@ -228,50 +228,55 @@ export const useGearSetStore = defineStore("gearSetStore", {
         items: this.currentSet.items,
       };
 
-      // Save to backend
-      const result = await upsertGearSet(payload);
+      try {
+        // Save to backend
+        const result = await upsertGearSet(payload);
 
-      // Update local state
-      if (this.currentSet.isNew) {
-        const newId = result.gearSetId;
+        // Update local state
+        if (this.currentSet.isNew) {
+          const newId = result.gearSetId;
 
-        if (!newId) {
-          throw new Error(
-            "Failed to save gear set: No ID returned from server"
+          if (!newId) {
+            throw new Error(
+              "Failed to save gear set: No ID returned from server"
+            );
+          }
+
+          // Add new set to the list
+          const newSet = { ...payload, id: newId };
+          this.gearSets.push(newSet);
+          this.currentSet.id = newId;
+          this.currentSet.isNew = false;
+
+          const notificationStore = useNotificationStore();
+          notificationStore.success(`"${newSet.name}" created successfully`);
+
+          // Update URL with new gear set parameter
+          await this._updateUrlWithGearSet(newId);
+        } else {
+          // Update existing set in the list
+          const index = this.gearSets.findIndex(
+            (set) => set.id === this.currentSet.id
           );
+          if (index !== -1) {
+            this.gearSets[index] = { ...payload };
+          }
+
+          const notificationStore = useNotificationStore();
+          notificationStore.success(
+            `"${this.currentSet.name}" updated successfully`
+          );
+
+          // Update URL with updated gear set parameter
+          await this._updateUrlWithGearSet(this.currentSet.id);
         }
 
-        // Add new set to the list
-        const newSet = { ...payload, id: newId };
-        this.gearSets.push(newSet);
-        this.currentSet.id = newId;
-        this.currentSet.isNew = false;
-
+        this.currentSet.isDirty = false;
+        return this.currentSet.id;
+      } catch {
         const notificationStore = useNotificationStore();
-        notificationStore.success(`"${newSet.name}" created successfully`);
-
-        // Update URL with new gear set parameter
-        await this._updateUrlWithGearSet(newId);
-      } else {
-        // Update existing set in the list
-        const index = this.gearSets.findIndex(
-          (set) => set.id === this.currentSet.id
-        );
-        if (index !== -1) {
-          this.gearSets[index] = { ...payload };
-        }
-
-        const notificationStore = useNotificationStore();
-        notificationStore.success(
-          `"${this.currentSet.name}" updated successfully`
-        );
-
-        // Update URL with updated gear set parameter
-        await this._updateUrlWithGearSet(this.currentSet.id);
+        notificationStore.error("Failed to save gear set");
       }
-
-      this.currentSet.isDirty = false;
-      return this.currentSet.id;
     },
 
     // Reset current set to last saved state
