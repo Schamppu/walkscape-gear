@@ -146,10 +146,18 @@ export const useGearSetStore = defineStore("gearSetStore", {
 
       // Update local state
       if (this.currentSet.isNew) {
+        const newId = result.gearSetId;
+
+        if (!newId) {
+          throw new Error(
+            "Failed to save gear set: No ID returned from server"
+          );
+        }
+
         // Add new set to the list
-        const newSet = { ...payload, id: result.id || payload.id };
+        const newSet = { ...payload, id: newId };
         this.gearSets.push(newSet);
-        this.currentSet.id = newSet.id;
+        this.currentSet.id = newId;
         this.currentSet.isNew = false;
       } else {
         // Update existing set in the list
@@ -194,12 +202,12 @@ export const useGearSetStore = defineStore("gearSetStore", {
       }
 
       try {
-        const gearSetToDelete = this.gearSets.find(set => set.id === id);
+        const gearSetToDelete = this.gearSets.find((set) => set.id === id);
         const gearSetName = gearSetToDelete?.name || "Gear Set";
-        
+
         await deleteGearSet(id);
         this.gearSets = this.gearSets.filter((set) => set.id !== id);
-        
+
         if (this.currentSet.id === id) {
           this.createNewSet();
         }

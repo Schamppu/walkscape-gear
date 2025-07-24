@@ -7,8 +7,6 @@ import GearSetDropdown from "./GearSetDropdown.vue";
 const gearSetStore = useGearSetStore();
 const gearStore = useGearStore();
 
-// Get current set data from store
-const currentSet = computed(() => gearSetStore.getCurrentSet);
 const hasUnsavedChanges = computed(() => gearSetStore.hasUnsavedChanges);
 
 const canSave = computed(() => {
