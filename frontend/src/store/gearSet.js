@@ -3,6 +3,7 @@ import { useNotificationStore } from "@/store/notifications";
 import {
   getGearSetTags,
   getGearSets,
+  getGearSet,
   upsertGearSet,
   deleteGearSet,
 } from "@/utils/axios/db_routes";
@@ -76,24 +77,44 @@ export const useGearSetStore = defineStore("gearSetStore", {
     },
 
     // Load an existing set for editing
-    loadSet(setId) {
+    async loadSet(setId) {
       const existingSet = this.gearSets.find((set) => set.id === setId);
       if (!existingSet) {
         this.createNewSet();
         return;
       }
 
+      // If the existing set doesn't have items (from the lightweight getGearSets call),
+      // fetch the full gear set data including items
+      let fullGearSet = existingSet;
+      if (
+        !existingSet.items ||
+        !Array.isArray(existingSet.items) ||
+        existingSet.items.length === 0
+      ) {
+        try {
+          fullGearSet = await getGearSet(setId);
+        } catch (error) {
+          console.error(error);
+          const notificationStore = useNotificationStore();
+          notificationStore.success(
+            `error loading gear set: ${existingSet.name}`
+          );
+          fullGearSet = existingSet;
+        }
+      }
+
       this.currentSet = {
-        id: existingSet.id,
-        name: existingSet.name,
-        tags: [...existingSet.tags],
-        items: [...existingSet.items],
+        id: fullGearSet.id,
+        name: fullGearSet.name,
+        tags: [...(fullGearSet.tags || [])],
+        items: [...(fullGearSet.items || [])],
         isDirty: false,
         isNew: false,
       };
 
       const notificationStore = useNotificationStore();
-      notificationStore.success(`"${existingSet.name}" loaded successfully`);
+      notificationStore.success(`"${fullGearSet.name}" loaded successfully`);
     },
 
     // Update current set name
@@ -183,11 +204,11 @@ export const useGearSetStore = defineStore("gearSetStore", {
     },
 
     // Reset current set to last saved state
-    resetCurrentSet() {
+    async resetCurrentSet() {
       if (this.currentSet.isNew) {
         this.createNewSet();
       } else {
-        this.loadSet(this.currentSet.id);
+        await this.loadSet(this.currentSet.id);
       }
     },
 

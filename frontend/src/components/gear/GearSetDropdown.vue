@@ -26,36 +26,41 @@ function toggleDropdown() {
   isOpen.value = !isOpen.value;
 }
 
-function selectSet(setId) {
-  gearSetStore.loadSet(setId);
+async function selectSet(setId) {
+  try {
+    await gearSetStore.loadSet(setId);
 
-  const gearSet = Object.fromEntries(
-    gearSetStore.getCurrentSet.items.map(
-      ({ itemId, quality, slotIndex, slotType }) => {
-        const slotName = ["ring", "tool"].includes(slotType)
-          ? `${slotType}${slotIndex + 1}`
-          : slotType;
-        return [
-          slotName,
-          {
-            id: itemId,
-            quality: quality || null,
-          },
-        ];
+    const gearSet = Object.fromEntries(
+      gearSetStore.getCurrentSet.items.map(
+        ({ itemId, quality, slotIndex, slotType }) => {
+          const slotName = ["ring", "tool"].includes(slotType)
+            ? `${slotType}${slotIndex + 1}`
+            : slotType;
+          return [
+            slotName,
+            {
+              id: itemId,
+              quality: quality || null,
+            },
+          ];
+        }
+      )
+    );
+
+    Object.keys(gearStore.gearSlots).forEach((key) => {
+      if (
+        !(["service", "consumable", "potion"].includes(key) || key in gearSet)
+      ) {
+        gearSet[key] = null; // Ensure all slots are set, even if empty
       }
-    )
-  );
+    });
 
-  Object.keys(gearStore.gearSlots).forEach((key) => {
-    if (
-      !(["service", "consumable", "potion"].includes(key) || key in gearSet)
-    ) {
-      gearSet[key] = null; // Ensure all slots are set, even if empty
-    }
-  });
-
-  gearStore.equipMultiple(gearSet);
-  isOpen.value = false;
+    gearStore.equipMultiple(gearSet);
+    isOpen.value = false;
+  } catch (error) {
+    console.error("Failed to load gear set:", error);
+    // Keep dropdown open so user can try again or select different set
+  }
 }
 
 function selectNewSet() {
