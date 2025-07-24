@@ -7,6 +7,7 @@ const gearSetStore = useGearSetStore();
 const isOpen = ref(false);
 const inputRef = ref(null);
 const confirmDeleteId = ref(null); // Track which set is in delete confirmation state
+const searchText = ref(""); // Search filter text
 
 // Use the store's current set instead of local state
 const selectedSet = computed(() =>
@@ -20,6 +21,21 @@ const displayName = computed({
   set: (value) => gearSetStore.updateCurrentSetName(value),
 });
 
+// Filter gear sets based on search text
+const filteredGearSets = computed(() => {
+  if (!searchText.value.trim()) {
+    return gearSetStore.gearSets;
+  }
+
+  const search = searchText.value.toLowerCase().trim();
+  return gearSetStore.gearSets.filter((set) => {
+    const nameMatch = set.name.toLowerCase().includes(search);
+    const tagsMatch =
+      set.tags && set.tags.some((tag) => tag.toLowerCase().includes(search));
+    return nameMatch || tagsMatch;
+  });
+});
+
 function toggleDropdown() {
   isOpen.value = !isOpen.value;
 }
@@ -30,6 +46,7 @@ async function selectSet(setId) {
     if (success) {
       isOpen.value = false;
     }
+    searchText.value = "";
     // If failed, keep dropdown open so user can try again or select different set
   } catch (error) {
     console.error("Failed to select gear set:", error);
@@ -44,12 +61,19 @@ function selectNewSet() {
   setTimeout(() => {
     inputRef.value?.focus();
   }, 50);
+  searchText.value = "";
 }
 
 function handleClickOutside() {
   isOpen.value = false;
   // Reset delete confirmation when clicking outside
   confirmDeleteId.value = null;
+  // Clear search when closing dropdown
+  searchText.value = "";
+}
+
+function clearSearch() {
+  searchText.value = "";
 }
 
 async function handleDeleteClick(setId) {
@@ -87,12 +111,30 @@ function isConfirmingDelete(setId) {
     </div>
 
     <div v-if="isOpen" class="dropdown-list">
+      <!-- Search Input -->
+      <div class="search-container">
+        <input
+          v-model="searchText"
+          class="search-input"
+          placeholder="Search..."
+          @click.stop
+        />
+        <button
+          v-if="searchText"
+          class="clear-search-button"
+          @click.stop="clearSearch"
+          type="button"
+        >
+          ✕
+        </button>
+      </div>
+
       <button class="dropdown-item new-set-item" @click="selectNewSet">
         <span class="new-set-text">+ New Gear Set</span>
       </button>
 
       <button
-        v-for="set in gearSetStore.gearSets"
+        v-for="set in filteredGearSets"
         :key="set.id"
         class="dropdown-item"
         :class="{ selected: set.id === gearSetStore.currentSet.id }"
@@ -116,6 +158,13 @@ function isConfirmingDelete(setId) {
           @click.stop="handleDeleteClick(set.id)"
         />
       </button>
+
+      <div
+        v-if="searchText && filteredGearSets.length === 0"
+        class="no-results"
+      >
+        No gear sets found matching "{{ searchText }}"
+      </div>
     </div>
   </div>
 </template>
@@ -192,6 +241,56 @@ function isConfirmingDelete(setId) {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
+.search-container {
+  position: relative;
+  border-bottom: 1px solid $boxDarkOutline;
+}
+
+.search-input {
+  width: 100%;
+  box-sizing: border-box;
+  background-color: $boxTransparentDarkBackground;
+  border: 1px solid $boxDarkOutline;
+  border-radius: $xs;
+  padding: $xs $md;
+  padding-right: $xxlg; // Make room for clear button
+  color: $txPrimary;
+  font-size: $sm;
+  outline: none;
+
+  &::placeholder {
+    color: $txDarker;
+  }
+
+  &:focus {
+    border-color: $txPrimary;
+    background-color: $boxDarkBackground;
+  }
+}
+
+.clear-search-button {
+  position: absolute;
+  right: $md;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: $txDarker;
+  cursor: pointer;
+  font-size: $sm;
+  width: $lg;
+  height: $lg;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: $xs;
+
+  &:hover {
+    color: $txPrimary;
+    background-color: $boxTransparentDarkOutline;
+  }
+}
+
 .dropdown-item {
   width: 100%;
   background-color: $boxDarkBackground;
@@ -252,5 +351,13 @@ function isConfirmingDelete(setId) {
   &:hover {
     background-color: $txNegativeDark !important;
   }
+}
+
+.no-results {
+  padding: $md;
+  text-align: center;
+  color: $txDarker;
+  font-size: $sm;
+  font-style: italic;
 }
 </style>
