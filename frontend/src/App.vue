@@ -114,7 +114,7 @@ onUnmounted(() => {
         target="_blank"
         rel="noopener noreferrer"
       >
-        BMaC
+        Support
       </a>
     </div>
     <ws-button
