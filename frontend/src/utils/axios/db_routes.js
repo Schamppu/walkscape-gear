@@ -44,6 +44,11 @@ export const getGearSets = async () => {
   return data;
 };
 
+export const getGearSet = async (id) => {
+  const { data } = await axios.get(`${getHost()}/db/gear_sets/${id}`);
+  return data;
+};
+
 export const upsertGearSet = async (payload) => {
   const { data } = await axios.post(`${getHost()}/db/gear_sets`, payload);
   return data;
