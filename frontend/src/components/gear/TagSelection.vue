@@ -2,6 +2,7 @@
 import { ref, computed } from "vue";
 import { useGearSetStore } from "@/store/gearSet";
 import WsIcon from "@/components/common/WsIcon.vue";
+import WsButton from "@/components/common/WsButton.vue";
 
 const props = defineProps({
   modelValue: {
@@ -126,6 +127,10 @@ function removeTag(tagToRemove) {
             </div>
           </div>
         </div>
+
+        <div class="tag-footer">
+          <ws-button text="Close" @click="closePopup" />
+        </div>
       </div>
     </div>
   </div>
@@ -143,6 +148,12 @@ function removeTag(tagToRemove) {
   padding: 0 $xs;
   gap: $xxxs $xs;
   margin-bottom: $xs;
+}
+
+.tag-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: $xs;
 }
 
 .selected-tags {
