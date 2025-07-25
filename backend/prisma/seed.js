@@ -17,7 +17,7 @@ async function seedSkillTags() {
     await prisma.tag.upsert({
       where: { id },
       update: { name, category: "skill", icon },
-      create: { name, category: "skill", icon },
+      create: { id, name, category: "skill", icon },
     });
   });
 
@@ -26,7 +26,7 @@ async function seedSkillTags() {
     await prisma.tag.upsert({
       where: { id },
       update: { name, category: "attribute", icon },
-      create: { name, category: "attribute", icon },
+      create: { id, name, category: "attribute", icon },
     });
   });
 
@@ -34,7 +34,7 @@ async function seedSkillTags() {
     await prisma.tag.upsert({
       where: { id },
       update: { name, category: "other", icon },
-      create: { name, category: "other", icon },
+      create: { id, name, category: "other", icon },
     });
   });
 
