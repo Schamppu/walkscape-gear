@@ -134,18 +134,7 @@ function isConfirmingDelete(setId) {
         :placeholder="selectedSet ? selectedSet.name : 'New Gear Set'"
         @click.stop
       />
-      <div class="header-indicators">
-        <span
-          v-if="hasActiveFilters"
-          class="filter-indicator"
-          :title="`${filterCount} tag filter${
-            filterCount > 1 ? 's' : ''
-          } active`"
-        >
-          🏷️{{ filterCount }}
-        </span>
-        <div class="chevron" :class="{ open: isOpen }">▼</div>
-      </div>
+      <div class="chevron" :class="{ open: isOpen }">▼</div>
     </div>
 
     <div v-if="isOpen" class="dropdown-list">
@@ -274,25 +263,6 @@ function isConfirmingDelete(setId) {
   &:focus {
     cursor: text;
   }
-}
-
-.header-indicators {
-  display: flex;
-  align-items: center;
-  gap: $xs;
-}
-
-.filter-indicator {
-  display: flex;
-  align-items: center;
-  gap: $xxs;
-  background-color: $chipBackground;
-  color: $txPrimary;
-  padding: $xxs $xs;
-  border-radius: $xxs;
-  font-size: $xs;
-  font-weight: 500;
-  border: 1px solid $boxDarkOutline;
 }
 
 .chevron {
