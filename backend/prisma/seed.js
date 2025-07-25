@@ -5,20 +5,38 @@ import {
   factionService,
   itemService,
 } from "../src/services/index.js";
-import { skillTags } from "./tag-data.js";
+import { skillTags, attributeTags, otherTags } from "./tag-data.js";
 
 const prisma = new PrismaClient();
 
 async function seedSkillTags() {
   console.log("🌱 Seeding default tags...");
 
-  for (const name of skillTags) {
+  skillTags.forEach(async ({ name, id }) => {
+    const icon = `assets/icons/text/skill_icons/${id}.png`;
     await prisma.tag.upsert({
-      where: { name },
-      update: { category: "skill" },
-      create: { name, category: "skill" },
+      where: { id },
+      update: { name, category: "skill", icon },
+      create: { name, category: "skill", icon },
     });
-  }
+  });
+
+  attributeTags.forEach(async ({ name, id }) => {
+    const icon = `assets/icons/text/stats/skilling/${id}.png`;
+    await prisma.tag.upsert({
+      where: { id },
+      update: { name, category: "attribute", icon },
+      create: { name, category: "attribute", icon },
+    });
+  });
+
+  otherTags.forEach(async ({ name, id, icon }) => {
+    await prisma.tag.upsert({
+      where: { id },
+      update: { name, category: "other", icon },
+      create: { name, category: "other", icon },
+    });
+  });
 
   console.log("✅ Tag seed complete.");
 }
