@@ -120,7 +120,7 @@ export async function upsertUserFactionReputations(userUuid, reputationsObj) {
 }
 
 export async function getGearSetTags() {
-  return await prisma.tag.findMany({ orderBy: { category: "asc" } }); // Changed from name to id
+  return await prisma.tag.findMany({ orderBy: { id: "asc" } }); // Changed from name to id
 }
 
 export async function getGearSets(userUuid, includeItems = false) {
