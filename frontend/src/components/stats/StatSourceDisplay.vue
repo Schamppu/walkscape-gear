@@ -37,8 +37,7 @@ const statList = computed(() => {
     >
       <p :class="stat.isNegative ? 'negative' : 'positive'" class="stat-line">
         <span v-if="stat.isPercent">
-          <span v-if="!(stat.value <= 0)">+</span
-          >{{ n(100* stat.value, 2) }}%
+          <span v-if="!(stat.value <= 0)">+</span>{{ n(100 * stat.value, 2) }}%
         </span>
         <span v-else
           ><span v-if="!(stat.value <= 0)">+</span>{{ n(stat.value, 2) }}
