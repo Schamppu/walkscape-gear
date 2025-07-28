@@ -1,6 +1,9 @@
 import { defineStore } from "pinia";
 import { upsertOwnedItems } from "@/utils/axios/db_routes";
-import { getCategorizedItems } from "@/utils/axios/api_routes";
+import {
+  getCategorizedItems,
+  getFineMaterials,
+} from "@/utils/axios/api_routes";
 import { fetchOwnedItems } from "@/utils/axios/db_routes";
 import debounce from "@/utils/debounce";
 
@@ -11,16 +14,19 @@ export const useItemsStore = defineStore("itemStore", {
     ownedItems: {},
     allItems: {},
     changedOwnedItems: {},
+    fineMaterials: {},
     isLoaded: false,
   }),
   actions: {
     async fetchItems() {
       if (this.isLoaded) return;
 
-      const [{ data: categorizedItems }, ownedItems] = await Promise.all([
-        getCategorizedItems(),
-        fetchOwnedItems(),
-      ]);
+      const [{ data: categorizedItems }, ownedItems, { data: fineMaterials }] =
+        await Promise.all([
+          getCategorizedItems(),
+          fetchOwnedItems(),
+          getFineMaterials(),
+        ]);
 
       this.ownedItems = Object.fromEntries(
         ownedItems.map(({ itemId, ...data }) => [itemId, data])
@@ -36,6 +42,10 @@ export const useItemsStore = defineStore("itemStore", {
       this.allItems = Object.fromEntries(
         categories.flatMap(({ items }) => items).map((item) => [item.id, item])
       );
+      this.fineMaterials = Object.fromEntries(
+        fineMaterials.map((id) => [id, true])
+      );
+
       this.isLoaded = true;
     },
     toggleItem({
