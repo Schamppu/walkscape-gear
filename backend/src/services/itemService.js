@@ -88,6 +88,12 @@ class ItemService extends BaseService {
       locations
     );
   }
+
+  async getFineMaterials() {
+    return this.search({ canBeFine: "true", type: "material" }).then((res) =>
+      res.map(({ id }) => id)
+    );
+  }
 }
 
 export default ItemService;

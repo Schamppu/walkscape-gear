@@ -34,3 +34,13 @@ export async function getUrlMapping(req, res) {
     res.status(500).json({ error: "Failed to fetch URL mapping" });
   }
 }
+
+export async function getFineMaterials(req, res) {
+  try {
+    const fineMaterials = await itemService.getFineMaterials();
+    res.json(fineMaterials);
+  } catch (error) {
+    console.error("Error fetching fine materials:", error);
+    res.status(500).json({ error: "Failed to fetch fine materials" });
+  }
+}
