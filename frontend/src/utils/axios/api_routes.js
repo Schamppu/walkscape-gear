@@ -61,6 +61,12 @@ export function getItem({ id }) {
   });
 }
 
+export function getFineMaterials() {
+  return proxy({
+    url: `items/fine_materials`,
+  });
+}
+
 export function getNewItemIds(ids) {
   return proxy({
     method: "POST",
