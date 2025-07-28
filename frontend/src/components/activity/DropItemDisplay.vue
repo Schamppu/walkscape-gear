@@ -96,11 +96,7 @@ const dropCounts = computed(() => {
 
 const canDropFine = computed(() => {
   return (
-    !props.sources[0].icon.includes("openables") &&
-    !(item.value.rowItemID in itemsStore.allItems) &&
-    !item.value.isMoney &&
-    item.value.rowItemID !==
-      "item-adventurer's_guild_token-dad84ad7-050a-4ec2-9bc7-7f2dae5c4a08"
+    !item.value.isMoney && item.value.rowItemID in itemsStore.fineMaterials
   );
 });
 
