@@ -34,13 +34,20 @@ watchEffect(async () => {
     return attrs;
   });
 
-  const { tables: activityTables, name } = activityStore.activity;
-  const activityLootTables = activityTables.map((table) => {
-    return {
-      ...table,
-      tableSource: `activity-${name}`,
-    };
-  });
+  const source = activityStore.activitySelected
+    ? activityStore.activity
+    : activityStore.recipe;
+  const { tables: activityTables, name } = source;
+  let activityLootTables = [];
+  if (activityTables) {
+    activityLootTables = activityTables.map((table) => {
+      return {
+        ...table,
+        tableSource: `activity-${name}`,
+      };
+    });
+  }
+
   const tables = [...activityLootTables, ...gearLootTables];
   const tableIds = tables.flatMap(({ tables }) => tables);
   await dataStore.fetchDetailedLootTables(tableIds);

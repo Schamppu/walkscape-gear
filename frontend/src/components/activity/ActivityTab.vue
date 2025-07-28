@@ -120,8 +120,13 @@ const updateRecipeAndUrl = async (recipe, update) => {
       @select="updateRecipeAndUrl"
     />
     <activity-info v-if="!loadingActivity && activityStore.activitySelected" />
-    <drops-info v-if="!loadingActivity && activityStore.activitySelected" />
     <recipe-info v-if="!loadingActivity && activityStore.recipeSelected" />
+    <drops-info
+      v-if="
+        !loadingActivity &&
+        (activityStore.activitySelected || activityStore.recipeSelected)
+      "
+    />
   </tab-content-wrapper>
 </template>
 
