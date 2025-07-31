@@ -102,12 +102,14 @@ const reqs = props.requirements.map((req) => {
     };
   } else if (type === "activityType") {
     const activity = activityStore.activitiesMap[requirement.activity];
-    return {
-      prefix: "doing",
-      text: `${activity.name} activity`,
-      icon: activity.icon,
-      opposite,
-    };
+    if (activity) {
+      return {
+        prefix: "doing",
+        text: `${activity.name} activity`,
+        icon: activity.icon,
+        opposite,
+      };
+    }
   }
   return {
     text: requirement,
@@ -123,7 +125,7 @@ const toggle = () => {
 <template>
   <div class="stat-requirement-display">
     <div
-      v-if="!reqs.length"
+      v-if="!reqs || !reqs.length"
       class="stat-wrapper"
       :class="stat.isNegative ? 'negative' : 'positive'"
     >
