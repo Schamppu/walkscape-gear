@@ -1,10 +1,15 @@
 <script setup>
+import { ref } from "vue";
 import { useGearSetExport } from "@/utils/useGearSetExport";
 import { useNotificationStore } from "@/store/notifications";
 import WsButton from "@/components/common/WsButton.vue";
+import ExportCodeModal from "./ExportCodeModal.vue";
 
 const { exportCode } = useGearSetExport();
 const notificationStore = useNotificationStore();
+
+const showModal = ref(false);
+const currentExportCode = ref("");
 
 async function copyExportCode() {
   try {
@@ -13,15 +18,29 @@ async function copyExportCode() {
     notificationStore.success("Export code copied to clipboard!");
   } catch (error) {
     console.error("Export failed:", error);
-    notificationStore.error("Failed to export gear set");
+
+    // If clipboard copy fails, try to get the export code and show modal
+    try {
+      currentExportCode.value = await exportCode();
+      showModal.value = true;
+      notificationStore.info(
+        "Clipboard access failed. Export code displayed in modal."
+      );
+    } catch (exportError) {
+      console.error("Export code generation failed:", exportError);
+      notificationStore.error("Failed to export gear set");
+    }
   }
 }
 </script>
 
 <template>
-  <ws-button
-    @click="copyExportCode"
-    text="Export"
-    icon-path="assets/icons/text/button_icons/deposit.png"
-  />
+  <div>
+    <ws-button
+      @click="copyExportCode"
+      text="Export"
+      icon-path="assets/icons/text/button_icons/deposit.png"
+    />
+    <export-code-modal v-model="showModal" :export-code="currentExportCode" />
+  </div>
 </template>
