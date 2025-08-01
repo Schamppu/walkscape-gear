@@ -6,6 +6,7 @@ import { useUrlStore } from "@/store/url";
 import TabContentWrapper from "../common/TabContentWrapper.vue";
 import NestedDropdown from "@/components/common/dropdowns/NestedDropdown.vue";
 import ActivityInfo from "./ActivityInfo.vue";
+import TravelInfo from "./TravelInfo.vue";
 import RecipeInfo from "./RecipeInfo.vue";
 import DropsInfo from "./DropsInfo.vue";
 
@@ -101,6 +102,16 @@ const updateRecipeAndUrl = async (recipe, update) => {
   await selectRecipe(recipe);
   if (update) urlStore.encodeAndPushToUrl();
 };
+
+const activitySelected = computed(
+  () => !loadingActivity.value && activityStore.activitySelected
+);
+const travellingSelected = computed(() => {
+  return activitySelected.value && activityStore.activity?.id === "travelling";
+});
+const recipeSelected = computed(
+  () => !loadingActivity.value && activityStore.recipeSelected
+);
 </script>
 
 <template>
@@ -119,13 +130,11 @@ const updateRecipeAndUrl = async (recipe, update) => {
       default-text="Select a recipe"
       @select="updateRecipeAndUrl"
     />
-    <activity-info v-if="!loadingActivity && activityStore.activitySelected" />
-    <recipe-info v-if="!loadingActivity && activityStore.recipeSelected" />
+    <travel-info v-if="travellingSelected" />
+    <activity-info v-else-if="activitySelected" />
+    <recipe-info v-if="recipeSelected" />
     <drops-info
-      v-if="
-        !loadingActivity &&
-        (activityStore.activitySelected || activityStore.recipeSelected)
-      "
+      v-if="(activitySelected || recipeSelected) && !travellingSelected"
     />
   </tab-content-wrapper>
 </template>
