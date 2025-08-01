@@ -84,13 +84,15 @@ export function useSkillModifiers() {
     return getStat("craftingOutcome", "flat");
   });
 
+  const stepsRequired = computed(() => {
+    return getStat("stepsRequired", "flat");
+  });
+
   const uncappedStepsPerCompletion = computed(() => {
     const { workRequired } = activity.value || 0;
     if (!workRequired) return 0;
-    const stepsRequired = getStat("stepsRequired", "flat");
     return (
-      Math.ceil(workRequired / (1 + workEfficiency.value)) +
-      stepsRequired
+      Math.ceil(workRequired / (1 + workEfficiency.value)) + stepsRequired.value
     );
   });
 
@@ -162,6 +164,7 @@ export function useSkillModifiers() {
     fineMaterialFind,
     chestFind,
     craftingOutcome,
+    stepsRequired,
     stepsPerAction,
     uncappedStepsPerCompletion,
     stepsPerCompletion,
