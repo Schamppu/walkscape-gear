@@ -9,7 +9,7 @@ export function useLevelBonus() {
   const itemStore = useItemsStore();
 
   const activityLevelRequirement = (activity, skill) =>
-    activity.levelRequirementsMap[skill];
+    activity?.levelRequirementsMap?.[skill] || 1;
 
   const recipeLevelRequirement = (recipe) => {
     const [{ level }] = recipe.requirements
