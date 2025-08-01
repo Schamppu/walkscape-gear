@@ -15,11 +15,12 @@ export function useShowItemForActivity() {
     const requirements = activity?.requirements || [];
     const serviceRequirements = service?.requirements || [];
 
-    const kws = kw?.map(({ keyword }) => keyword) ?? [];
+    const kws = kw?.map(({ id }) => id) ?? [];
     const kwEquipped =
       [...requirements, ...serviceRequirements]
         ?.filter((req) => req.type === "distinctKeywordItemsEquipped")
         .flatMap(({ requirement }) => requirement.keywords) ?? [];
+
 
     if (!(kws || kwEquipped)) return false;
     return item.keywords.filter(
