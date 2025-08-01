@@ -25,6 +25,7 @@ const stats = computed(() => {
     uncappedWorkEfficiency,
     effectiveMaxWorkEfficiency,
     craftingOutcome,
+    uncappedStepsPerCompletion,
     stepsPerCompletion,
     craftsPerMaterial,
     xpRewards,
@@ -39,6 +40,7 @@ const stats = computed(() => {
     uncappedWorkEfficiency: uncappedWorkEfficiency.value,
     effectiveMaxWorkEfficiency: effectiveMaxWorkEfficiency.value,
     craftingOutcome: craftingOutcome.value,
+    uncappedStepsPerCompletion: uncappedStepsPerCompletion.value,
     stepsPerCompletion: stepsPerCompletion.value,
     craftsPerMaterial: craftsPerMaterial.value,
     xpRewards: xpRewards.value.map((reward) => ({
@@ -178,9 +180,12 @@ const craftingOdds = computed(() => {
         <div class="info-row">
           <info-bubble
             label="Steps"
-            :text="`${stats.stepsPerCompletion} / ${
-              recipe.workRequired || 1000
-            }`"
+            :text="`${stats.stepsPerCompletion}${
+              stats.uncappedStepsPerCompletion !== stats.stepsPerCompletion
+                ? `
+          (${stats.uncappedStepsPerCompletion})`
+                : ''
+            } / ${recipe.workRequired || 1000}`"
             :tooltip="`${stats.stepsPerCompletion} steps per action`"
             iconPath="assets/icons/text/general_icons/steps.png"
           />
