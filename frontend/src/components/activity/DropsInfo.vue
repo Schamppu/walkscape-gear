@@ -3,6 +3,7 @@ import { computed, ref, watchEffect } from "vue";
 import { useActivityStore } from "@/store/activity";
 import { useDataStore } from "@/store/data";
 import { useGearStore } from "@/store/gear";
+import { useItemsStore } from "@/store/items";
 import { sumAttrs } from "@/utils/qualityAttrs";
 import DropItemDisplay from "./DropItemDisplay.vue";
 import LootTableDisplay from "./LootTableDisplay.vue";
@@ -10,6 +11,7 @@ import LootTableDisplay from "./LootTableDisplay.vue";
 const activityStore = useActivityStore();
 const dataStore = useDataStore();
 const gearStore = useGearStore();
+const itemsStore = useItemsStore();
 const resolvedLootTables = ref([]);
 
 watchEffect(async () => {
@@ -63,6 +65,25 @@ watchEffect(async () => {
   resolvedLootTables.value = resolvedTables;
 });
 
+const filteredLootTables = computed(() => {
+  if (!activityStore.hideOwnedCollectibles) {
+    return resolvedLootTables.value;
+  }
+
+  return resolvedLootTables.value.filter((table) => {
+    if (
+      activityStore.hideOwnedCollectibles &&
+      table.type.includes("collectible")
+    ) {
+      const id = table.tables?.[0]?.tableRows?.[0]?.rowItemID || null;
+      return (
+        id in itemsStore.ownedCollectibles && !itemsStore.ownedCollectibles[id]
+      );
+    }
+    return table.tables.some((t) => t.tableRows.length > 0);
+  });
+});
+
 const mapLootTable = (table) => {
   const { rollAmount, rollChance, slot, type, tableSource } = table;
   return table.tables?.flatMap(({ noDropChance, tableRows }) => {
@@ -90,7 +111,7 @@ const mapLootTable = (table) => {
 };
 
 const combinedItems = computed(() => {
-  const allItems = resolvedLootTables.value.flatMap((table) => {
+  const allItems = filteredLootTables.value.flatMap((table) => {
     return mapLootTable(table) || [];
   });
 
@@ -118,12 +139,20 @@ const combinedItems = computed(() => {
 
 const groupedLootTables = computed(() => {
   const grouped = {};
-  for (const table of resolvedLootTables.value) {
+  for (const table of filteredLootTables.value) {
     const key = `${table.type}-${table.rollAmount}-${table.tableSource}`;
     if (!grouped[key]) {
-      grouped[key] = table;
+      // Create a deep copy of the table to avoid mutation
+      grouped[key] = {
+        ...table,
+        tables: [...table.tables],
+      };
     } else {
-      grouped[key]["tables"].push.apply(grouped[key]["tables"], table.tables);
+      // Create a new array instead of mutating the existing one
+      grouped[key] = {
+        ...grouped[key],
+        tables: [...grouped[key].tables, ...table.tables],
+      };
     }
   }
   return Object.values(grouped);
@@ -133,10 +162,14 @@ const groupedLootTables = computed(() => {
 <template>
   <details open>
     <summary>Drops</summary>
-    <div style="margin-bottom: 1em">
+    <div class="options">
       <label>
         <input type="checkbox" v-model="activityStore.showCombined" />
         Show combined drops
+      </label>
+      <label>
+        <input type="checkbox" v-model="activityStore.hideOwnedCollectibles" />
+        Hide owned collectibles
       </label>
     </div>
     <section class="drops-info">
@@ -159,6 +192,19 @@ const groupedLootTables = computed(() => {
 </template>
 
 <style lang="scss" scoped>
+.options {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: $md;
+
+  label {
+    display: flex;
+    align-items: center;
+    gap: $sm;
+  }
+}
+
 .drops-info {
   border-radius: $md;
   display: flex;

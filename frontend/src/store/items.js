@@ -17,6 +17,17 @@ export const useItemsStore = defineStore("itemStore", {
     fineMaterials: {},
     isLoaded: false,
   }),
+  getters: {
+    ownedCollectibles: (state) => {
+      return Object.fromEntries(
+        state.categorizedItems
+          .find(({ title }) => title.toLowerCase() === "collectibles")
+          .categories.flatMap(({ items }) =>
+            items.map((item) => [item.id, item.id in state.ownedItems])
+          )
+      );
+    },
+  },
   actions: {
     async fetchItems() {
       if (this.isLoaded) return;

@@ -10,7 +10,7 @@ import {
 import { filterServicesByTier, sortServicesByTier } from "@/utils/services";
 import { activityNone } from "@/utils/activityNone";
 
-export const useActivityStore = defineStore("activity", {
+export const useActivityStore = defineStore("activityStore", {
   state: () => ({
     activities: [],
     activitiesMap: {},
@@ -22,6 +22,7 @@ export const useActivityStore = defineStore("activity", {
     services: null,
     service: null,
     showCombined: true,
+    hideOwnedCollectibles: true,
     isLoaded: false,
   }),
   getters: {
