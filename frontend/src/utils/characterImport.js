@@ -111,7 +111,7 @@ function processItemCounts(itemData, allItems) {
 function processGear(gearData, allItems) {
   if (!gearData || typeof gearData !== "object") return;
 
-  for (const [itemId, slot] of Object.entries(gearData)) {
+  for (const [slot, itemId] of Object.entries(gearData)) {
     if (typeof itemId === "string" && slot) {
       // slot can be string or object
       allItems[itemId] = (allItems[itemId] || 0) + 1;
