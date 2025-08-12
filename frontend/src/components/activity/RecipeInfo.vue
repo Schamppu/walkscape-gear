@@ -121,10 +121,13 @@ const craftingOdds = computed(() => {
       const { weightEnd, weightStart, slope, bandStart } = item;
       return {
         ...item,
-        weight: Math.max(
-          weightEnd,
-          weightStart + slope * (stats.value.craftingOutcome - bandStart)
-        ),
+        weight:
+          stats.value.craftingOutcome < bandStart
+            ? weightStart
+            : Math.max(
+                weightEnd,
+                weightStart + slope * (stats.value.craftingOutcome - bandStart)
+              ),
       };
     });
 
