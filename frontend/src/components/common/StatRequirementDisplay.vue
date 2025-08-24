@@ -26,6 +26,10 @@ const storeStat = computed(
   () => dataStore.getStatByType(props.stat.type) || props.stat
 );
 
+const iconPath = computed(() => {
+  return props.stat.customIcon || storeStat.value.icon;
+});
+
 const displayValue = computed(() => {
   const { value, isPercent } = props.stat;
   const prefix = value > 0 ? "+" : "";
@@ -140,7 +144,7 @@ const toggle = () => {
     >
       <span>Global</span>
       <span class="stat-value">{{ displayValue }}</span>
-      <ws-icon :iconPath="storeStat.icon" size="sm" />
+      <ws-icon :iconPath="iconPath" size="sm" />
       <span class="stat-name">{{ stat.name }}</span>
     </div>
     <button
@@ -150,7 +154,7 @@ const toggle = () => {
       @click="toggle"
     >
       <span class="stat-value">{{ displayValue }}</span>
-      <ws-icon :iconPath="storeStat.icon" size="sm" />
+      <ws-icon :iconPath="iconPath" size="sm" />
       <span class="stat-name">{{ stat.name }}</span>
     </button>
     <div v-if="isOpen" class="requirements-list">

@@ -34,6 +34,11 @@ const keywords = props.hideKeywords
       .map((keyword) => dataStore.getKeywordById(keyword))
       .filter((k) => k.icon);
 
+const stripHtmlTags = (text) => {
+  if (!text) return '';
+  return text.replace(/<[^>]*>/g, '');
+};
+
 const mapAttrs = (quality) => {
   const itemCopy = toDeepRaw(props.item);
   return sumAttrs(
@@ -42,8 +47,14 @@ const mapAttrs = (quality) => {
     itemCopy.buffs,
     quality
   )
-    .flatMap(({ stats, requirements }) => {
+    .flatMap((obj) => {
+      const { text, stats, requirements } = obj;
       return stats.flatMap((stat) => {
+        if (stat.stat === "roll_special_table") {
+          stat.name = stripHtmlTags(text);
+          stat.customIcon = obj.customIcon;
+        }
+
         return { stat, requirements: requirements || [] };
       });
     })
