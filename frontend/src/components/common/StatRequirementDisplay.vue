@@ -92,6 +92,15 @@ const reqs = props.requirements.map((req) => {
         opposite,
       };
     }
+    if (requirement.category === "actionCompleted") {
+      const activity = activityStore.activitiesMap[requirement.data];
+      return {
+        prefix: `have completed`,
+        text: `${activity.name} activity ${requirement.value} times`,
+        icon: activity.icon,
+        opposite,
+      };
+    }
   } else if (type === "skillLevel") {
     const skill = playerStore.skillsMap[requirement.skill];
     return {
