@@ -10,7 +10,8 @@ const {
   workEfficiency,
   uncappedWorkEfficiency,
   effectiveMaxWorkEfficiency,
-  stepsRequired,
+  stepsRequiredFlat,
+  stepsRequiredPercent,
   doubleAction,
 } = useSkillModifiers();
 
@@ -41,7 +42,13 @@ watch(routeCount, adjustRouteDistances, { immediate: true });
 
 const stepsPerNode = (distance) => {
   const we = 1 + workEfficiency.value;
-  return Math.ceil(Math.max(10, distance / we / 10 + stepsRequired.value));
+  return Math.ceil(
+    Math.max(
+      10,
+      (distance / we / 10) * stepsRequiredPercent.value +
+        stepsRequiredFlat.value
+    )
+  );
 };
 
 // Calculate expected number of node completions with double action
