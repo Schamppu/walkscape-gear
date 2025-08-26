@@ -123,3 +123,6 @@ export const deleteGearSet = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
+
+export const getUserSettings = makeGetHandler(dbService.getUserSettings);
+export const upsertUserSettings = makeUpsertHandler(dbService.upsertUserSettings);

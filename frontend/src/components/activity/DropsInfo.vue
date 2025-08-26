@@ -1,9 +1,11 @@
 <script setup>
 import { computed, ref, watchEffect } from "vue";
+import { storeToRefs } from "pinia";
 import { useActivityStore } from "@/store/activity";
 import { useDataStore } from "@/store/data";
 import { useGearStore } from "@/store/gear";
 import { useItemsStore } from "@/store/items";
+import { useSettingsStore } from "@/store/settings";
 import { useRequirements } from "@/utils/useRequirements";
 import { sumAttrs } from "@/utils/qualityAttrs";
 import DropItemDisplay from "./DropItemDisplay.vue";
@@ -13,6 +15,8 @@ const activityStore = useActivityStore();
 const dataStore = useDataStore();
 const gearStore = useGearStore();
 const itemsStore = useItemsStore();
+const settingsStore = useSettingsStore();
+const { activitySettings } = storeToRefs(settingsStore);
 const { checkRequirements } = useRequirements();
 const resolvedLootTables = ref([]);
 
@@ -170,12 +174,15 @@ const groupedLootTables = computed(() => {
   <details open>
     <summary>Drops</summary>
     <div class="options">
-      <label>
-        <input type="checkbox" v-model="activityStore.showCombined" />
+      <label v-if="activitySettings.showCombined.display === 1">
+        <input type="checkbox" v-model="activitySettings.showCombined.value" />
         Show combined drops
       </label>
-      <label>
-        <input type="checkbox" v-model="activityStore.hideOwnedCollectibles" />
+      <label v-if="activitySettings.hideOwnedCollectibles.display === 1">
+        <input
+          type="checkbox"
+          v-model="activitySettings.hideOwnedCollectibles.value"
+        />
         Hide owned collectibles
       </label>
     </div>

@@ -6,6 +6,7 @@ import { usePlayerStore } from "@/store/player";
 import { useUrlStore } from "@/store/url";
 import { useItemsStore } from "@/store/items";
 import { useGearSetStore } from "@/store/gearSet";
+import { useSettingsStore } from "./store/settings";
 import { getOrCreateUserUuid } from "@/utils/user";
 import Hub from "./components/hub/HubTab.vue";
 import Activity from "./components/activity/ActivityTab.vue";
@@ -14,7 +15,7 @@ import Footer from "./components/footer/FooterNav.vue";
 import About from "./components/about/AboutView.vue";
 import LoadingThrobber from "./components/common/LoadingThrobber.vue";
 import WsButton from "./components/common/WsButton.vue";
-import SettingsModal from "./components/common/SettingsModal.vue";
+import SettingsModal from "./components/settings/SettingsModal.vue";
 import NotificationContainer from "./components/common/NotificationContainer.vue";
 
 const urlStore = useUrlStore();
@@ -58,6 +59,7 @@ const bootstrap = async () => {
   const gearSetStore = useGearSetStore();
   const playerStore = usePlayerStore();
   const itemsStore = useItemsStore();
+  const settingsStore = useSettingsStore();
 
   playerStore.setUuid(getOrCreateUserUuid());
 
@@ -68,6 +70,7 @@ const bootstrap = async () => {
     urlStore.fetchMapping(),
     itemsStore.fetchItems(),
     gearSetStore.fetchGearSets(),
+    settingsStore.fetchSettingsData(),
   ]);
 
   await urlStore.decodeFromUrlAndApply();
@@ -82,6 +85,7 @@ function handleUuidUpdate(newUuid) {
 
   playerStore.isLoaded = false;
   itemsStore.isLoaded = false;
+  showSettings.value = false;
   isLoaded.value = false;
 
   bootstrap();

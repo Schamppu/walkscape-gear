@@ -58,3 +58,13 @@ export const deleteGearSet = async (id) => {
   const { data } = await axios.delete(`${getHost()}/db/gear_sets/${id}`);
   return data;
 };
+
+export const getSettings = async () => {
+  const { data } = await axios.get(`${getHost()}/db/user_settings`);
+  return data;
+};
+
+export const upsertSettings = async (payload) => {
+  const { data } = await axios.post(`${getHost()}/db/user_settings`, payload);
+  return data;
+};

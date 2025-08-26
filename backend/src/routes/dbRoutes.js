@@ -11,6 +11,8 @@ import {
   getGearSet,
   upsertGearSet,
   deleteGearSet,
+  getUserSettings,
+  upsertUserSettings,
 } from "../controllers/dbController.js";
 
 const router = Router();
@@ -26,5 +28,7 @@ router.get("/gear_sets", getGearSets);
 router.get("/gear_sets/:id", getGearSet);
 router.post("/gear_sets", upsertGearSet);
 router.delete("/gear_sets/:id", deleteGearSet);
+router.get("/user_settings", getUserSettings);
+router.post("/user_settings", upsertUserSettings);
 
 export { router as dbRoutes };
