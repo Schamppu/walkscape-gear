@@ -1,12 +1,14 @@
 <script setup>
+import { storeToRefs } from "pinia";
 import TabContentWrapper from "@/components/common/TabContentWrapper.vue";
 import GearSelection from "./GearSelection.vue";
 import GearButtons from "./GearButtons.vue";
 import Stats from "../stats/StatsList.vue";
 import GearSets from "./GearSets.vue";
-import { useGearStore } from "@/store/gear";
+import { useSettingsStore } from "@/store/settings";
 
-const gearStore = useGearStore();
+const settingsStore = useSettingsStore();
+const { gearSettings } = storeToRefs(settingsStore);
 </script>
 
 <template>
@@ -16,12 +18,12 @@ const gearStore = useGearStore();
       <section class="gear-set">
         <gear-sets />
         <div class="options">
-          <label>
-            <input type="checkbox" v-model="gearStore.showOwned" />
+          <label v-if="gearSettings.showOwned.display === 1">
+            <input type="checkbox" v-model="gearSettings.showOwned.value" />
             Show only owned items
           </label>
-          <label>
-            <input type="checkbox" v-model="gearStore.showUseful" />
+          <label v-if="gearSettings.showUseful.display === 1">
+            <input type="checkbox" v-model="gearSettings.showUseful.value" />
             Show items with applicable stats
           </label>
         </div>

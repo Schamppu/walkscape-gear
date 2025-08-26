@@ -21,6 +21,7 @@ model User {
   items              OwnedItem[]
   factionReputations FactionReputation[]
   gearSets           GearSet[]
+  settings           UserSetting[]
 }
 
 model PlayerStat {
@@ -119,4 +120,15 @@ model GearSetTag {
   tagId String // Changed from Int
 
   @@id([gearSetId, tagId])
+}
+
+model UserSetting {
+  userUuid String
+  setting  String
+  value    Boolean
+  display  Int
+
+  user User @relation(fields: [userUuid], references: [userUuid])
+
+  @@id([userUuid, setting])
 }

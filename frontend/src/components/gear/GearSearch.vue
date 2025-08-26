@@ -1,9 +1,11 @@
 <script setup>
 import { ref, computed } from "vue";
+import { storeToRefs } from "pinia";
 import { useGearStore } from "@/store/gear";
 import { useItemsStore } from "@/store/items";
 import { useActivityStore } from "@/store/activity";
 import { useDataStore } from "@/store/data";
+import { useSettingsStore } from "@/store/settings";
 import { useRequirements } from "@/utils/useRequirements";
 import { useShowItemForActivity } from "@/utils/useShowItemForActivity";
 import { itemQualityNameSort } from "@/utils/quality";
@@ -29,6 +31,8 @@ const gearStore = useGearStore();
 const itemsStore = useItemsStore();
 const activityStore = useActivityStore();
 const dataStore = useDataStore();
+const settingsStore = useSettingsStore();
+const { gearSettings } = storeToRefs(settingsStore);
 const { checkRequirements } = useRequirements();
 const { showItemForActivity } = useShowItemForActivity();
 
@@ -51,8 +55,8 @@ const filteredItems = computed(() => {
     (activityStore.activitySelected && activityStore.activity) ||
     (activityStore.recipeSelected && activityStore.recipe);
   const term = searchTerm.value.trim().toLowerCase();
-  const showOwned = gearStore.showOwned;
-  const showUseful = gearStore.showUseful;
+  const showOwned = gearSettings.value.showOwned.value;
+  const showUseful = gearSettings.value.showUseful.value;
 
   const filterActivity = (item) => {
     if (!activity || !showUseful) {

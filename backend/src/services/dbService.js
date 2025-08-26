@@ -26,6 +26,13 @@ const ALLOWED_REPUTATIONS = new Set([
   "syrenthiaReputation",
 ]);
 
+const ALLOWED_SETTINGS = new Set([
+  "showOwned",
+  "showUseful",
+  "showCombined",
+  "hideOwnedCollectibles",
+]);
+
 export async function ensureUser(userUuid) {
   let user = await prisma.user.findUnique({ where: { userUuid } });
   if (!user) {
@@ -243,4 +250,31 @@ export async function deleteGearSet(userUuid, gearSetId) {
     console.error("Error deleting gear set:", error);
     throw new Error(error.message || "Failed to delete gear set");
   }
+}
+
+export async function getUserSettings(userUuid) {
+  const settings = await prisma.userSetting.findMany({
+    where: { userUuid },
+  });
+  return Object.fromEntries(
+    settings.map(({ setting, value, display }) => [setting, { value, display }])
+  );
+}
+
+export async function upsertUserSettings(userUuid, settingsArr) {
+  await ensureUser(userUuid);
+  const validEntries = settingsArr.filter(({ setting }) =>
+    ALLOWED_SETTINGS.has(setting)
+  );
+  if (validEntries.length === 0) throw new Error("No valid settings provided");
+
+  await Promise.all(
+    validEntries.map(({ setting, display, value }) => {
+      return prisma.userSetting.upsert({
+        where: { userUuid_setting: { userUuid, setting } },
+        update: { value, display },
+        create: { userUuid, setting, value, display },
+      });
+    })
+  );
 }
