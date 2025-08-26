@@ -21,10 +21,6 @@ const props = defineProps({
     type: String,
     required: true,
   },
-  showClose: {
-    type: Boolean,
-    default: false,
-  },
 });
 
 const emit = defineEmits(["selectItem", "close"]);
@@ -186,28 +182,23 @@ const handleClick = (item) => {
 
 <template>
   <div class="search-wrapper">
-    <div class="header">
-      <div class="stat-filter-select">
-        <label for="stat-filter">Filter stat:</label>
-        <ws-icon
-          v-if="dataStore.selectedStat !== 'none'"
-          :icon-path="dataStore.filterStat.icon"
-          size="sm"
-        />
-        <select id="stat-filter" v-model="dataStore.selectedStat">
-          <option value="none">None</option>
-          <option
-            v-for="stat in dataStore.mainStats"
-            :key="stat"
-            :value="stat.type"
-          >
-            {{ stat.name }}
-          </option>
-        </select>
-      </div>
-      <button v-if="showClose" class="close-button" @click="$emit('close')">
-        x
-      </button>
+    <div class="stat-filter-select">
+      <label for="stat-filter">Filter stat:</label>
+      <ws-icon
+        v-if="dataStore.selectedStat !== 'none'"
+        :icon-path="dataStore.filterStat.icon"
+        size="sm"
+      />
+      <select id="stat-filter" v-model="dataStore.selectedStat">
+        <option value="none">None</option>
+        <option
+          v-for="stat in dataStore.mainStats"
+          :key="stat"
+          :value="stat.type"
+        >
+          {{ stat.name }}
+        </option>
+      </select>
     </div>
 
     <input
@@ -247,14 +238,6 @@ const handleClick = (item) => {
   }
 }
 
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: $boxDarkBackground;
-  border-radius: calc($sm - 2px) calc($sm - 2px) 0 0;
-}
-
 .stat-filter-select {
   display: flex;
   width: 100%;
@@ -284,18 +267,5 @@ const handleClick = (item) => {
   flex-direction: column;
   gap: $xxxs;
   background-color: $bgPrimary;
-}
-
-.close-button {
-  background-color: $boxDarkBackground;
-  padding: $base $base $xs;
-  border: none;
-  cursor: pointer;
-  color: $txPrimary;
-
-  &:hover,
-  &:focus {
-    background-color: $boxDarkOutline;
-  }
 }
 </style>

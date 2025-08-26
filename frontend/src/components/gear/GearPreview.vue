@@ -25,19 +25,13 @@ const item = computed(() => gearStore.gearSlots[props.slotName]);
 <template>
   <div v-if="gearStore.slotFilled(slotName)" class="preview-wrapper">
     <div class="header">
-      <div class="start"></div>
-      <div class="mid">
-        <div class="base-info">
-          <ws-icon :icon-path="item.icon" />
-          <p>
-            {{ item.name }}
-          </p>
-        </div>
-        <button class="unequip" @click="$emit('unequip')">Unequip</button>
+      <div class="base-info">
+        <ws-icon :icon-path="item.icon" />
+        <p>
+          {{ item.name }}
+        </p>
       </div>
-      <div class="end">
-        <button class="close-button" @click="$emit('close')">x</button>
-      </div>
+      <button class="unequip" @click="$emit('unequip')">Unequip</button>
     </div>
     <stats-display :item="item" :quality="item.quality" />
   </div>
@@ -59,10 +53,11 @@ const item = computed(() => gearStore.gearSlots[props.slotName]);
     background-color: $boxDarkBackground;
     width: 100%;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     gap: $xxlg;
     margin-bottom: $xxs;
     border-radius: calc($sm - 2px) calc($sm - 2px) 0 0;
+    padding: $xxs;
 
     .base-info {
       padding: 0;
@@ -75,19 +70,6 @@ const item = computed(() => gearStore.gearSlots[props.slotName]);
     .mid {
       display: flex;
       gap: $md;
-    }
-
-    .close-button {
-      background-color: $boxDarkBackground;
-      padding: $base $base $xs;
-      border: none;
-      cursor: pointer;
-      color: $txPrimary;
-
-      &:hover,
-      &:focus {
-        background-color: $boxDarkOutline;
-      }
     }
   }
 
