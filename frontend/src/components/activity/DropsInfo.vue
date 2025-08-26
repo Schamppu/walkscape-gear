@@ -4,6 +4,7 @@ import { useActivityStore } from "@/store/activity";
 import { useDataStore } from "@/store/data";
 import { useGearStore } from "@/store/gear";
 import { useItemsStore } from "@/store/items";
+import { useRequirements } from "@/utils/useRequirements";
 import { sumAttrs } from "@/utils/qualityAttrs";
 import DropItemDisplay from "./DropItemDisplay.vue";
 import LootTableDisplay from "./LootTableDisplay.vue";
@@ -12,6 +13,7 @@ const activityStore = useActivityStore();
 const dataStore = useDataStore();
 const gearStore = useGearStore();
 const itemsStore = useItemsStore();
+const { checkRequirements } = useRequirements();
 const resolvedLootTables = ref([]);
 
 watchEffect(async () => {
@@ -22,7 +24,12 @@ watchEffect(async () => {
       item.buffs,
       item.quality
     )
-      .filter((item) => Array.isArray(item.tables) && item.tables.length > 0)
+      .filter(
+        (item) =>
+          Array.isArray(item.tables) &&
+          item.tables.length > 0 &&
+          checkRequirements(item.requirements)
+      )
       .flatMap(({ tables, stats }) => {
         return tables.map((table) => {
           return {
