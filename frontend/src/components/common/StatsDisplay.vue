@@ -48,10 +48,10 @@ const mapAttrs = (quality) => {
     quality
   )
     .flatMap((obj) => {
-      const { text, stats, requirements } = obj;
+      const { customText, stats, requirements } = obj;
       return stats.flatMap((stat) => {
         if (stat.stat === "roll_special_table") {
-          stat.name = stripHtmlTags(text);
+          stat.name = stripHtmlTags(customText);
           stat.customIcon = obj.customIcon;
         }
 
