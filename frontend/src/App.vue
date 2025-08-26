@@ -14,7 +14,7 @@ import Footer from "./components/footer/FooterNav.vue";
 import About from "./components/about/AboutView.vue";
 import LoadingThrobber from "./components/common/LoadingThrobber.vue";
 import WsButton from "./components/common/WsButton.vue";
-import SettingsModal from "./components/common/SettingsModal.vue";
+import SettingsModal from "./components/settings/SettingsModal.vue";
 import NotificationContainer from "./components/common/NotificationContainer.vue";
 
 const urlStore = useUrlStore();
@@ -82,6 +82,7 @@ function handleUuidUpdate(newUuid) {
 
   playerStore.isLoaded = false;
   itemsStore.isLoaded = false;
+  showSettings.value = false;
   isLoaded.value = false;
 
   bootstrap();
