@@ -5,11 +5,11 @@ import SettingsTable from "./SettingsTable.vue";
 const settingsStore = useSettingsStore();
 
 function updateSettingValue(key, value) {
-  settingsStore.gearSettings[key].value = value;
+  settingsStore.markSettingChanged(key, value, undefined);
 }
 
 function updateSettingDisplay(key, display) {
-  settingsStore.gearSettings[key].display = display ? 1 : 0;
+  settingsStore.markSettingChanged(key, undefined, display ? 1 : 0);
 }
 </script>
 

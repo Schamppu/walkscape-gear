@@ -5,11 +5,11 @@ import SettingsTable from "./SettingsTable.vue";
 const settingsStore = useSettingsStore();
 
 function updateSettingValue(key, value) {
-  settingsStore.activitySettings[key].value = value;
+  settingsStore.markSettingChanged(key, value, undefined);
 }
 
 function updateSettingDisplay(key, display) {
-  settingsStore.activitySettings[key].display = display ? 1 : 0;
+  settingsStore.markSettingChanged(key, undefined, display ? 1 : 0);
 }
 </script>
 
