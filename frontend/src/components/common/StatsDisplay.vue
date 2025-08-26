@@ -3,6 +3,7 @@ import { computed } from "vue";
 import { useDataStore } from "@/store/data";
 import { toDeepRaw } from "@/utils/rawData";
 import { sumAttrs } from "@/utils/qualityAttrs";
+import { getWikiUrl } from "@/utils/wiki";
 import StatRequirementDisplay from "./StatRequirementDisplay.vue";
 import KeywordDisplay from "@/components/common/KeywordDisplay.vue";
 
@@ -35,8 +36,8 @@ const keywords = props.hideKeywords
       .filter((k) => k.icon);
 
 const stripHtmlTags = (text) => {
-  if (!text) return '';
-  return text.replace(/<[^>]*>/g, '');
+  if (!text) return "";
+  return text.replace(/<[^>]*>/g, "");
 };
 
 const mapAttrs = (quality) => {
@@ -48,10 +49,10 @@ const mapAttrs = (quality) => {
     quality
   )
     .flatMap((obj) => {
-      const { text, stats, requirements } = obj;
+      const { customText, stats, requirements } = obj;
       return stats.flatMap((stat) => {
         if (stat.stat === "roll_special_table") {
-          stat.name = stripHtmlTags(text);
+          stat.name = stripHtmlTags(customText);
           stat.customIcon = obj.customIcon;
         }
 
@@ -71,6 +72,9 @@ const attrs = computed(() => mapAttrs(props.quality));
 
 <template>
   <div class="stats-display">
+    <div class="wiki-link">
+      <p><a :href="getWikiUrl(item.name)" target="_blank">wiki</a></p>
+    </div>
     <div class="keywords">
       <keyword-display
         v-for="(keyword, index) in keywords"
