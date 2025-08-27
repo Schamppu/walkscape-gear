@@ -90,9 +90,15 @@ class ItemService extends BaseService {
   }
 
   async getFineMaterials() {
-    return this.search({ canBeFine: "true", type: "material" }).then((res) =>
-      res.map(({ id }) => id)
-    );
+    const [materials, consumables] = await Promise.all([
+      this.search({ canBeFine: "true", type: "material" }),
+      this.search({ canBeFine: "true", type: "consumable" }),
+    ]);
+
+    return [
+      ...materials.map(({ id }) => id),
+      ...consumables.map(({ id }) => id),
+    ];
   }
 }
 
