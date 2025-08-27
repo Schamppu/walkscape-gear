@@ -39,12 +39,30 @@ const dropChanceMultipliers = (type) => {
   return multiplier;
 };
 
-const sourceDropChance = (source) => {
+const groupSourcesByStat = (sources) => {
+  return sources.reduce((groups, source) => {
+    const statKey = source.stat || "default";
+    if (!groups[statKey]) {
+      groups[statKey] = [];
+    }
+    groups[statKey].push(source);
+    return groups;
+  }, {});
+};
+
+const getCombinedRollChance = (sourcesInGroup) => {
+  return sourcesInGroup.reduce((sum, source) => {
+    return sum + (source.rollChance || 1);
+  }, 0);
+};
+
+const sourceDropChance = (source, combinedRollChance = null) => {
   const { rowWeight, tableWeight, noDropChance, rollChance, type, rollAmount } =
     source;
+  const effectiveRollChance = combinedRollChance ?? (rollChance || 1);
   const odds =
     (1 - noDropChance) *
-    (rollChance || 1) *
+    effectiveRollChance *
     (rowWeight / tableWeight) *
     dropChanceMultipliers(type);
 
@@ -52,46 +70,119 @@ const sourceDropChance = (source) => {
 };
 
 const totalDropChance = computed(() => {
-  const probabilityNone = props.sources
-    .map(sourceDropChance)
-    .reduce((acc, prob) => acc * (1 - prob), 1);
+  const groupedSources = groupSourcesByStat(props.sources);
+
+  // Calculate probability for each stat group
+  const statGroupProbabilities = Object.values(groupedSources).map(
+    (sourcesInGroup) => {
+      if (sourcesInGroup.length === 1) {
+        // Single source, use normal calculation
+        return sourceDropChance(sourcesInGroup[0]);
+      } else {
+        // Multiple sources with same stat, sum their rollChance values
+        const combinedRollChance = getCombinedRollChance(sourcesInGroup);
+
+        // Use the first source as template but with combined rollChance
+        return sourceDropChance(sourcesInGroup[0], combinedRollChance);
+      }
+    }
+  );
+
+  // Calculate overall probability (1 - probability that none of the stat groups proc)
+  const probabilityNone = statGroupProbabilities.reduce(
+    (acc, prob) => acc * (1 - prob),
+    1
+  );
   return 100 * (1 - probabilityNone);
 });
 
 const stepsPerItem = computed(() => {
-  const stepsPerSource = props.sources.map((source) => {
-    const { rowMinimumAmount, rowMaximumAmount } = source;
-    const avgAmount = (rowMaximumAmount + rowMinimumAmount) / 2;
+  const groupedSources = groupSourcesByStat(props.sources);
 
-    return stepsPerRewardRoll.value / sourceDropChance(source) / avgAmount;
-  });
+  // Calculate steps per source for each stat group
+  const stepsPerStatGroup = Object.values(groupedSources).map(
+    (sourcesInGroup) => {
+      if (sourcesInGroup.length === 1) {
+        // Single source, use normal calculation
+        const source = sourcesInGroup[0];
+        const { rowMinimumAmount, rowMaximumAmount } = source;
+        const avgAmount = (rowMaximumAmount + rowMinimumAmount) / 2;
+        return stepsPerRewardRoll.value / sourceDropChance(source) / avgAmount;
+      } else {
+        // Multiple sources with same stat, sum their rollChance values
+        const combinedRollChance = getCombinedRollChance(sourcesInGroup);
+
+        // Use the first source as template but with combined rollChance
+        const templateSource = sourcesInGroup[0];
+        const { rowMinimumAmount, rowMaximumAmount } = templateSource;
+        const avgAmount = (rowMaximumAmount + rowMinimumAmount) / 2;
+
+        return (
+          stepsPerRewardRoll.value /
+          sourceDropChance(templateSource, combinedRollChance) /
+          avgAmount
+        );
+      }
+    }
+  );
 
   return (
-    1 / stepsPerSource.map((steps) => 1 / steps).reduce((a, b) => a + b, 0)
+    1 / stepsPerStatGroup.map((steps) => 1 / steps).reduce((a, b) => a + b, 0)
   );
 });
 
 const itemsPerStep = computed(() => {
-  const itemsPerSource = props.sources.map((source) => {
-    const { rowMinimumAmount, rowMaximumAmount } = source;
-    const avgAmount = (rowMaximumAmount + rowMinimumAmount) / 2;
+  const groupedSources = groupSourcesByStat(props.sources);
 
-    return (sourceDropChance(source) * avgAmount) / stepsPerRewardRoll.value;
-  });
+  // Calculate items per step for each stat group
+  const itemsPerStatGroup = Object.values(groupedSources).map(
+    (sourcesInGroup) => {
+      if (sourcesInGroup.length === 1) {
+        // Single source, use normal calculation
+        const source = sourcesInGroup[0];
+        const { rowMinimumAmount, rowMaximumAmount } = source;
+        const avgAmount = (rowMaximumAmount + rowMinimumAmount) / 2;
+        return (
+          (sourceDropChance(source) * avgAmount) / stepsPerRewardRoll.value
+        );
+      } else {
+        // Multiple sources with same stat, sum their rollChance values
+        const combinedRollChance = getCombinedRollChance(sourcesInGroup);
 
-  return 1000 * itemsPerSource.reduce((total, rate) => total + rate, 0);
+        // Use the first source as template but with combined rollChance
+        const templateSource = sourcesInGroup[0];
+        const { rowMinimumAmount, rowMaximumAmount } = templateSource;
+        const avgAmount = (rowMaximumAmount + rowMinimumAmount) / 2;
+
+        return (
+          (sourceDropChance(templateSource, combinedRollChance) * avgAmount) /
+          stepsPerRewardRoll.value
+        );
+      }
+    }
+  );
+
+  return 1000 * itemsPerStatGroup.reduce((total, rate) => total + rate, 0);
 });
 
 const dropCounts = computed(() => {
-  return props.sources
-    .map((source) => {
-      const { rowMinimumAmount, rowMaximumAmount } = source;
+  const groupedSources = groupSourcesByStat(props.sources);
+
+  // Calculate counts for each stat group
+  const statGroupCounts = Object.values(groupedSources).map(
+    (sourcesInGroup) => {
+      // For sources with the same stat, they should have the same drop amounts
+      // (just with higher chance due to combined rollChance)
+      // So we just show the drop count from the first source in the group
+      const { rowMinimumAmount, rowMaximumAmount } = sourcesInGroup[0];
       if (rowMinimumAmount === rowMaximumAmount) {
         return `${rowMinimumAmount}`;
       }
       return `${rowMinimumAmount}-${rowMaximumAmount}`;
-    })
-    .join(", ");
+    }
+  );
+
+  return statGroupCounts.join(", ");
 });
 
 const canDropFine = computed(() => {

@@ -34,12 +34,14 @@ watchEffect(async () => {
           item.tables.length > 0 &&
           checkRequirements(item.requirements)
       )
-      .flatMap(({ tables, stats }) => {
+      .flatMap((item) => {
+        const { tables, stats, customText } = item;
         return tables.map((table) => {
           return {
             ...table,
             tableSource: item.name,
             slot,
+            stat: customText,
             rollChance: stats?.[0]?.value || 1,
           };
         });
@@ -96,7 +98,7 @@ const filteredLootTables = computed(() => {
 });
 
 const mapLootTable = (table) => {
-  const { rollAmount, rollChance, slot, type, tableSource } = table;
+  const { rollAmount, rollChance, slot, type, tableSource, stat } = table;
   return table.tables?.flatMap(({ noDropChance, tableRows }) => {
     const mappedRows = tableRows.map((row) => {
       return {
@@ -113,6 +115,7 @@ const mapLootTable = (table) => {
         tableWeight,
         rollAmount,
         slot,
+        stat,
         type,
         tableSource,
         rollChance,
