@@ -52,8 +52,8 @@ watch(
 
     <ul v-if="isOpen" class="item-list">
       <DropdownItem
-        v-for="(item, idx) in category.items"
-        :key="idx"
+        v-for="item in category.items"
+        :key="item.name"
         :item="item"
         class="item"
         @select="handleSelect"

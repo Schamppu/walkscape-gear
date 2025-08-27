@@ -122,7 +122,7 @@ const selectItem = (item, update = true) => {
       <ul class="category-list">
         <DropdownCategory
           v-for="(category, index) in filteredData"
-          :key="index"
+          :key="category.name"
           :category="category"
           :force-open="searchTerm !== ''"
           :no-border="index === 0"

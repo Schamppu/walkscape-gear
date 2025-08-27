@@ -51,8 +51,8 @@ const includedStats = computed(() => {
 <template>
   <section class="stats">
     <stat-display
-      v-for="({ stat, isPercent }, index) in includedStats"
-      :key="index"
+      v-for="({ stat, isPercent }) in includedStats"
+      :key="`${stat.id}-${isPercent}`"
       :stat="stat"
       :isPercent="isPercent"
     />
