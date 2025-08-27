@@ -59,7 +59,10 @@ const getCombinedRollChance = (sourcesInGroup) => {
 const sourceDropChance = (source, combinedRollChance = null) => {
   const { rowWeight, tableWeight, noDropChance, rollChance, type, rollAmount } =
     source;
-  const effectiveRollChance = combinedRollChance ?? (rollChance || 1);
+  const effectiveRollChance = Math.min(
+    1,
+    combinedRollChance ?? (rollChance || 1)
+  );
   const odds =
     (1 - noDropChance) *
     effectiveRollChance *
@@ -147,7 +150,9 @@ const itemsPerStep = computed(() => {
         );
       } else {
         // Multiple sources with same stat, sum their rollChance values
-        const combinedRollChance = getCombinedRollChance(sourcesInGroup);
+        const combinedRollChance = sourcesInGroup.reduce((sum, source) => {
+          return sum + (source.rollChance || 1);
+        }, 0);
 
         // Use the first source as template but with combined rollChance
         const templateSource = sourcesInGroup[0];

@@ -163,10 +163,14 @@ const groupedLootTables = computed(() => {
         tables: [...table.tables],
       };
     } else {
-      // Create a new array instead of mutating the existing one
+      // Combine rollChance values (capped at 1) instead of adding more tables
+      const combinedRollChance = Math.min(
+        1,
+        grouped[key].rollChance + table.rollChance
+      );
       grouped[key] = {
         ...grouped[key],
-        tables: [...grouped[key].tables, ...table.tables],
+        rollChance: combinedRollChance,
       };
     }
   }
