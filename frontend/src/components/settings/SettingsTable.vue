@@ -37,22 +37,63 @@ function updateSettingDisplay(key, display) {
           <td class="setting-label">
             {{ setting.label }}
           </td>
-          <td class="setting-enabled">
-            <input
-              type="checkbox"
-              :id="`${key}-value`"
-              :checked="setting.value"
-              @change="updateSettingValue(key, $event.target.checked)"
-            />
-          </td>
-          <td class="setting-display">
-            <input
-              type="checkbox"
-              :id="`${key}-display`"
-              :checked="setting.display === 1"
-              @change="updateSettingDisplay(key, $event.target.checked)"
-            />
-          </td>
+          
+          <!-- If setting has displayOptions and no showEnable, span the dropdown across both columns -->
+          <template v-if="setting.displayOptions && ('showEnable' in setting && !setting.showEnable)">
+            <td colspan="2" class="setting-display-wide">
+              <select
+                :id="`${key}-display`"
+                :value="setting.display"
+                @change="updateSettingDisplay(key, parseInt($event.target.value))"
+                class="wide-select"
+              >
+                <option
+                  v-for="(option, idx) in setting.displayOptions"
+                  :key="option"
+                  :value="idx"
+                >
+                  {{ option }}
+                </option>
+              </select>
+            </td>
+          </template>
+          
+          <!-- Normal layout when enabled checkbox is shown -->
+          <template v-else>
+            <td class="setting-enabled">
+              <input
+                v-if="!('showEnable' in setting && !setting.showEnable)"
+                type="checkbox"
+                :id="`${key}-value`"
+                :checked="setting.value"
+                @change="updateSettingValue(key, $event.target.checked)"
+              />
+            </td>
+
+            <td v-if="setting.displayOptions" class="setting-display">
+              <select
+                :id="`${key}-display`"
+                :value="setting.display"
+                @change="updateSettingDisplay(key, parseInt($event.target.value))"
+              >
+                <option
+                  v-for="(option, idx) in setting.displayOptions"
+                  :key="option"
+                  :value="idx"
+                >
+                  {{ option }}
+                </option>
+              </select>
+            </td>
+            <td v-else class="setting-display">
+              <input
+                type="checkbox"
+                :id="`${key}-display`"
+                :checked="setting.display === 1"
+                @change="updateSettingDisplay(key, $event.target.checked)"
+              />
+            </td>
+          </template>
         </tr>
       </tbody>
     </table>
@@ -124,6 +165,12 @@ function updateSettingDisplay(key, display) {
         text-align: center;
         width: 20%;
       }
+
+      &.setting-display-wide {
+        text-align: center;
+        width: 40%;
+        padding: $sm $base;
+      }
     }
   }
 
@@ -134,6 +181,90 @@ function updateSettingDisplay(key, display) {
     &:focus {
       outline: 2px solid var(--color-primary, $txPrimary);
       outline-offset: 2px;
+    }
+  }
+
+  select {
+    background: $bgPrimary;
+    color: $txPrimary;
+    border: 1px solid $boxDarkOutline;
+    border-radius: $xs;
+    padding: $xs $sm;
+    cursor: pointer;
+    font-size: inherit;
+    max-width: 100%;
+
+    &:focus {
+      outline: 2px solid var(--color-primary, $txPrimary);
+      outline-offset: 2px;
+      border-color: var(--color-primary, $txPrimary);
+    }
+
+    option {
+      background: $bgPrimary;
+      color: $txPrimary;
+    }
+
+    &.wide-select {
+      min-width: 200px;
+      max-width: 100%;
+    }
+  }
+}
+
+// Mobile responsiveness
+@media (max-width: 768px) {
+  .settings-table {
+    font-size: 14px;
+
+    thead th {
+      padding: $xs $sm;
+    }
+
+    tbody td {
+      padding: $xs $sm;
+
+      &.setting-label {
+        width: 50%;
+        word-break: break-word;
+      }
+
+      &.setting-enabled,
+      &.setting-display {
+        width: 25%;
+      }
+
+      &.setting-display-wide {
+        width: 50%;
+      }
+    }
+
+    select {
+      padding: $xs;
+      font-size: 14px;
+      
+      &.wide-select {
+        min-width: 150px;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .settings-table {
+    font-size: 13px;
+
+    select {
+      &.wide-select {
+        min-width: 120px;
+      }
+    }
+
+    tbody td {
+      &.setting-label {
+        font-size: 12px;
+        line-height: 1.3;
+      }
     }
   }
 }

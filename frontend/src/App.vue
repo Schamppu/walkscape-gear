@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted, onUnmounted, reactive, nextTick } from "vue";
+import { storeToRefs } from "pinia";
 import { useActivityStore } from "@/store/activity";
 import { useDataStore } from "@/store/data";
 import { usePlayerStore } from "@/store/player";
@@ -17,8 +18,11 @@ import LoadingThrobber from "./components/common/LoadingThrobber.vue";
 import WsButton from "./components/common/WsButton.vue";
 import SettingsModal from "./components/settings/SettingsModal.vue";
 import NotificationContainer from "./components/common/NotificationContainer.vue";
+import UndoRedoButtons from "./components/common/UndoRedoButtons.vue";
 
 const urlStore = useUrlStore();
+const settingsStore = useSettingsStore();
+const { gearSettings } = storeToRefs(settingsStore);
 const isLoaded = ref(false);
 const showSettings = ref(false);
 const activeTab = ref("Hub");
@@ -72,6 +76,10 @@ const bootstrap = async () => {
     gearSetStore.fetchGearSets(),
     settingsStore.fetchSettingsData(),
   ]);
+
+  // Initialize history tracking for stores
+  await activityStore.initializeHistoryTracking();
+  await gearSetStore.initializeHistoryTracking();
 
   await urlStore.decodeFromUrlAndApply();
   isLoaded.value = true;
@@ -157,6 +165,17 @@ onUnmounted(() => {
   </div>
   <SettingsModal v-model="showSettings" @update-uuid="handleUuidUpdate" />
   <NotificationContainer />
+
+  <!-- Static Undo/Redo Buttons -->
+  <div v-if="isLoaded" class="static-undo-redo">
+    <undo-redo-buttons
+      v-if="gearSettings.undoRedo.display === 2"
+      size="medium"
+      variant="icon-only"
+      direction="horizontal"
+      :show-tooltips="true"
+    />
+  </div>
 </template>
 
 <style lang="scss">
@@ -242,5 +261,27 @@ onUnmounted(() => {
       text-decoration: underline;
     }
   }
+}
+
+.static-undo-redo {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+
+  // On mobile, position above the footer
+  @media (max-width: 768px) {
+    bottom: calc($footerHeight + 20px);
+  }
+
+  // Add a subtle background for better visibility
+  background: rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(8px);
+  border-radius: $sm;
+  padding: $xs;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+
+  // Ensure it's above other elements but below modals
+  z-index: 999;
 }
 </style>

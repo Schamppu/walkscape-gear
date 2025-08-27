@@ -31,6 +31,7 @@ const ALLOWED_SETTINGS = new Set([
   "showUseful",
   "showCombined",
   "hideOwnedCollectibles",
+  "undoRedo",
 ]);
 
 export async function ensureUser(userUuid) {

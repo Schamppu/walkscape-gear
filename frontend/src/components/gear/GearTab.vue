@@ -5,10 +5,23 @@ import GearSelection from "./GearSelection.vue";
 import GearButtons from "./GearButtons.vue";
 import Stats from "../stats/StatsList.vue";
 import GearSets from "./GearSets.vue";
+import UndoRedoButtons from "@/components/common/UndoRedoButtons.vue";
 import { useSettingsStore } from "@/store/settings";
+import { useGearStore } from "@/store/gear";
+import { onMounted } from "vue";
+import { useUndoRedoShortcuts } from "@/utils/useUndoRedoShortcuts";
 
+const gearStore = useGearStore();
 const settingsStore = useSettingsStore();
 const { gearSettings } = storeToRefs(settingsStore);
+
+// Initialize keyboard shortcuts
+useUndoRedoShortcuts();
+
+// Initialize history tracking when component mounts
+onMounted(async () => {
+  await gearStore.initializeHistoryTracking();
+});
 </script>
 
 <template>
@@ -27,6 +40,13 @@ const { gearSettings } = storeToRefs(settingsStore);
             Show items with applicable stats
           </label>
         </div>
+        <undo-redo-buttons
+          v-if="gearSettings.undoRedo.display === 1"
+          size="small"
+          variant="minimal"
+          direction="horizontal"
+          class="undo-redo"
+        />
         <gear-selection />
         <gear-buttons />
       </section>
