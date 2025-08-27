@@ -7,6 +7,22 @@ import {
   upsertGearSet,
   deleteGearSet,
 } from "@/utils/axios/db_routes";
+import { LoadGearSetCommand } from "./gearCommands";
+
+// Lazy import for history store to avoid circular dependencies
+let useHistoryStore = null;
+const getHistoryStore = async () => {
+  if (!useHistoryStore) {
+    try {
+      const module = await import("@/store/history");
+      useHistoryStore = module.useHistoryStore;
+    } catch {
+      console.debug("History store not available");
+      return null;
+    }
+  }
+  return useHistoryStore?.();
+};
 
 export const useGearSetStore = defineStore("gearSetStore", {
   state: () => ({
@@ -68,6 +84,34 @@ export const useGearSetStore = defineStore("gearSetStore", {
       this.isLoaded = true;
     },
 
+    // Direct setter that doesn't record history (used by commands)
+    _setCurrentSetDirect(gearSetData) {
+      if (gearSetData) {
+        this.currentSet = {
+          id: gearSetData.id,
+          name: gearSetData.name,
+          tags: [...(gearSetData.tags || [])],
+          items: [...(gearSetData.items || [])],
+          isDirty: false,
+          isNew: false,
+        };
+      } else {
+        this._createNewSetDirect();
+      }
+    },
+
+    // Direct method to create new set without history (used by commands)
+    _createNewSetDirect() {
+      this.currentSet = {
+        id: null,
+        name: "",
+        tags: [],
+        items: [],
+        isDirty: false,
+        isNew: true,
+      };
+    },
+
     // Create a new empty set
     createNewSet() {
       this.currentSet = {
@@ -81,6 +125,36 @@ export const useGearSetStore = defineStore("gearSetStore", {
 
       // Clear gear set parameter from URL when creating new set
       this._updateUrlWithGearSet(null);
+    },
+
+    // Create a new set with command pattern support for undo
+    async createNewSetWithHistory() {
+      const { useGearStore } = await import("./gear");
+      const gearStore = useGearStore();
+
+      // Capture current state for undo
+      const previousGearSetId = this.currentSet.id;
+      const previousGearSetData = this.currentSet.id
+        ? { ...this.currentSet }
+        : null;
+      const previousGearSlots = { ...gearStore.gearSlots };
+
+      // Create command to clear gear set
+      const command = new LoadGearSetCommand(
+        gearStore,
+        this,
+        null, // setId
+        null, // gearSetData (will create new set)
+        {}, // gearSetMapping (empty)
+        previousGearSetId,
+        previousGearSetData,
+        previousGearSlots
+      );
+
+      await this._executeCommand(command);
+
+      // Clear gear set parameter from URL
+      await this._updateUrlWithGearSet(null);
     },
 
     // Helper method to update URL (avoiding circular import issues)
@@ -148,8 +222,17 @@ export const useGearSetStore = defineStore("gearSetStore", {
       const gearStore = useGearStore();
 
       try {
+        // Capture current state for undo
+        const previousGearSetId = this.currentSet.id;
+        const previousGearSetData = this.currentSet.id
+          ? { ...this.currentSet }
+          : null;
+        const previousGearSlots = { ...gearStore.gearSlots };
+
+        // Load the gear set data (this part stays the same for fetching)
         await this.loadSet(setId);
 
+        // Process the gear data
         const gearSet = Object.fromEntries(
           this.getCurrentSet.items.map(
             ({ itemId, quality, slotIndex, slotType }) => {
@@ -178,7 +261,21 @@ export const useGearSetStore = defineStore("gearSetStore", {
           }
         });
 
-        await gearStore.equipMultiple(gearSet);
+        // Create and execute the load gear set command
+        // Pass the raw gear set mapping, the command will process it
+        const command = new LoadGearSetCommand(
+          gearStore,
+          this,
+          setId,
+          { ...this.currentSet }, // Current gear set data (already loaded)
+          gearSet, // Raw gear set mapping (will be processed in command)
+          previousGearSetId,
+          previousGearSetData,
+          previousGearSlots
+        );
+
+        // Execute the command (this will set the gear set state and equip gear)
+        await this._executeCommand(command);
 
         // Update URL with gear set parameter
         await this._updateUrlWithGearSet(setId);
@@ -339,6 +436,38 @@ export const useGearSetStore = defineStore("gearSetStore", {
         const notificationStore = useNotificationStore();
         notificationStore.error("Failed to delete gear set");
         throw error;
+      }
+    },
+
+    // Command execution and history management
+    async _executeCommand(command) {
+      try {
+        const historyStore = await getHistoryStore();
+
+        // Execute the command
+        await command.execute();
+
+        // Record in history if available
+        if (historyStore) {
+          historyStore.recordCommand(command);
+        }
+      } catch (error) {
+        console.error("Failed to execute command:", error);
+      }
+    },
+
+    async initializeHistoryTracking() {
+      try {
+        const historyStore = await getHistoryStore();
+        if (!historyStore) {
+          console.debug("History store not available");
+          return false;
+        }
+
+        return true;
+      } catch (error) {
+        console.debug("Failed to initialize history tracking:", error);
+        return false;
       }
     },
   },

@@ -79,6 +79,7 @@ const bootstrap = async () => {
 
   // Initialize history tracking for stores
   await activityStore.initializeHistoryTracking();
+  await gearSetStore.initializeHistoryTracking();
 
   await urlStore.decodeFromUrlAndApply();
   isLoaded.value = true;

@@ -245,8 +245,6 @@ export const useActivityStore = defineStore("activityStore", {
         // Execute the command
         await command.execute();
 
-        console.log("record activity command", command);
-
         // Record in history if available
         if (historyStore) {
           historyStore.recordCommand(command);

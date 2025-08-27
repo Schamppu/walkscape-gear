@@ -6,7 +6,7 @@ export class EquipItemCommand {
     this.slot = slot;
     this.newItem = newItem;
     this.previousItem = previousItem;
-    this.description = newItem 
+    this.description = newItem
       ? `Equip ${newItem.name} to ${slot}`
       : `Unequip ${slot}`;
   }
@@ -56,5 +56,72 @@ export class EquipMultipleCommand {
   async undo() {
     // Don't record history during execute/undo
     this.gearStore._setAllGearSlotsDirect(this.previousGearSlots);
+  }
+}
+
+export class LoadGearSetCommand {
+  constructor(
+    gearStore,
+    gearSetStore,
+    setId,
+    gearSetData,
+    gearSetMapping,
+    previousGearSetId = null,
+    previousGearSetData = null,
+    previousGearSlots = null
+  ) {
+    this.gearStore = gearStore;
+    this.gearSetStore = gearSetStore;
+    this.setId = setId;
+    this.gearSetData = gearSetData ? { ...gearSetData } : null; // Deep copy
+    this.gearSetMapping = { ...gearSetMapping }; // The raw gear set mapping
+    this.previousGearSetId = previousGearSetId;
+    this.previousGearSetData = previousGearSetData
+      ? { ...previousGearSetData }
+      : null;
+    this.previousGearSlots = previousGearSlots
+      ? { ...previousGearSlots }
+      : null;
+    this.description = gearSetData?.name
+      ? `Load gear set: ${gearSetData.name}`
+      : `Clear gear set`;
+  }
+
+  async execute() {
+    // Don't record history during execute/undo
+    // Set gear set state
+    if (this.gearSetData) {
+      this.gearSetStore._setCurrentSetDirect(this.gearSetData);
+    } else {
+      this.gearSetStore._createNewSetDirect();
+    }
+
+    // Process and equip the gear
+    if (this.gearSetMapping && Object.keys(this.gearSetMapping).length > 0) {
+      const processedGearSlots = await this.gearStore._processGearSetData(
+        this.gearSetMapping
+      );
+      await this.gearStore._equipMultipleDirect(processedGearSlots);
+    } else {
+      // Clear all gear if no mapping provided
+      await this.gearStore._equipMultipleDirect({});
+    }
+  }
+
+  async undo() {
+    // Don't record history during execute/undo
+    // Restore previous gear set state
+    if (this.previousGearSetData) {
+      this.gearSetStore._setCurrentSetDirect(this.previousGearSetData);
+    } else {
+      this.gearSetStore._createNewSetDirect();
+    }
+
+    // Restore previous gear
+    if (this.previousGearSlots) {
+      this.gearStore._setAllGearSlotsDirect(this.previousGearSlots);
+    } else {
+      this.gearStore._setAllGearSlotsDirect({});
+    }
   }
 }
