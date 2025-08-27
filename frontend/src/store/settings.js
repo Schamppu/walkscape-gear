@@ -219,6 +219,12 @@ export const useSettingsStore = defineStore("settingsStore", {
             display: 1,
             value: true,
           },
+          openStatRequirements: {
+            label: "Open stat requirements by default",
+            showDisplay: false,
+            display: 0,
+            value: false,
+          },
           undoRedo: {
             label: "Show undo/redo buttons",
             display: 2,

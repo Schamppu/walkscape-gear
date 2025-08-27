@@ -29,6 +29,7 @@ const ALLOWED_REPUTATIONS = new Set([
 const ALLOWED_SETTINGS = new Set([
   "showOwned",
   "showUseful",
+  "openStatRequirements",
   "showCombined",
   "hideOwnedCollectibles",
   "undoRedo",

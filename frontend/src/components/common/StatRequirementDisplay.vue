@@ -1,9 +1,12 @@
 <script setup>
 import { ref, computed } from "vue";
+import { storeToRefs } from "pinia";
 import { useActivityStore } from "@/store/activity";
 import { useDataStore } from "@/store/data";
 import { usePlayerStore } from "@/store/player";
+import { useSettingsStore } from "@/store/settings";
 import WsIcon from "@/components/common/WsIcon.vue";
+
 import { n } from "@/utils/number";
 
 const props = defineProps({
@@ -20,7 +23,9 @@ const props = defineProps({
 const activityStore = useActivityStore();
 const dataStore = useDataStore();
 const playerStore = usePlayerStore();
-const isOpen = ref(false);
+const settingsStore = useSettingsStore();
+const { gearSettings } = storeToRefs(settingsStore);
+const isOpen = ref(gearSettings.value.openStatRequirements.value);
 
 const storeStat = computed(
   () => dataStore.getStatByType(props.stat.type) || props.stat

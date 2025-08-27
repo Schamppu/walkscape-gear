@@ -37,14 +37,22 @@ function updateSettingDisplay(key, display) {
           <td class="setting-label">
             {{ setting.label }}
           </td>
-          
+
           <!-- If setting has displayOptions and no showEnable, span the dropdown across both columns -->
-          <template v-if="setting.displayOptions && ('showEnable' in setting && !setting.showEnable)">
+          <template
+            v-if="
+              setting.displayOptions &&
+              'showEnable' in setting &&
+              !setting.showEnable
+            "
+          >
             <td colspan="2" class="setting-display-wide">
               <select
                 :id="`${key}-display`"
                 :value="setting.display"
-                @change="updateSettingDisplay(key, parseInt($event.target.value))"
+                @change="
+                  updateSettingDisplay(key, parseInt($event.target.value))
+                "
                 class="wide-select"
               >
                 <option
@@ -57,7 +65,7 @@ function updateSettingDisplay(key, display) {
               </select>
             </td>
           </template>
-          
+
           <!-- Normal layout when enabled checkbox is shown -->
           <template v-else>
             <td class="setting-enabled">
@@ -74,7 +82,9 @@ function updateSettingDisplay(key, display) {
               <select
                 :id="`${key}-display`"
                 :value="setting.display"
-                @change="updateSettingDisplay(key, parseInt($event.target.value))"
+                @change="
+                  updateSettingDisplay(key, parseInt($event.target.value))
+                "
               >
                 <option
                   v-for="(option, idx) in setting.displayOptions"
@@ -85,7 +95,10 @@ function updateSettingDisplay(key, display) {
                 </option>
               </select>
             </td>
-            <td v-else class="setting-display">
+            <td
+              v-else-if="!('showDisplay' in setting && !setting.showDisplay)"
+              class="setting-display"
+            >
               <input
                 type="checkbox"
                 :id="`${key}-display`"
@@ -242,7 +255,7 @@ function updateSettingDisplay(key, display) {
     select {
       padding: $xs;
       font-size: 14px;
-      
+
       &.wide-select {
         min-width: 150px;
       }
