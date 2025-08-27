@@ -9,7 +9,7 @@ const dataStore = useDataStore();
 
 const includedStats = computed(() => {
   const attrStats = allAttrs.value.map(({ stats }) => stats[0]);
-  return dataStore.stats
+  const regularStats = dataStore.stats
     .flatMap((stat) => {
       return [
         { stat, isPercent: true },
@@ -21,6 +21,30 @@ const includedStats = computed(() => {
         (stats) => stats.isPercent === isPercent && stats.type === stat.type
       );
     });
+
+  const regularStatIds = dataStore.stats.map(({ id }) => id);
+  const pseudoStats = allAttrs.value
+    .filter(({ stats }) => {
+      return stats.some((stat) => !regularStatIds.includes(stat.stat));
+    })
+    .map(({ stats, customIcon }) => {
+      const { name, stat, isPercent } = stats[0];
+      return {
+        stat: { name, id: stat, type: stat, icon: customIcon },
+        isPercent,
+      };
+    })
+    .filter((item, index, array) => {
+      return (
+        index ===
+        array.findIndex(
+          (other) =>
+            other.stat.id === item.stat.id && other.isPercent === item.isPercent
+        )
+      );
+    });
+
+  return regularStats.concat(pseudoStats);
 });
 </script>
 

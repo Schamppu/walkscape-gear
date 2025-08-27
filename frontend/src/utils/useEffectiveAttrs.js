@@ -7,6 +7,11 @@ import { useLevelBonus } from "./useLevelBonus";
 import { sumAttrs } from "./qualityAttrs";
 import { toDeepRaw } from "./rawData";
 
+const stripHtmlTags = (text) => {
+  if (!text) return "";
+  return text.replace(/<[^>]*>/g, "");
+};
+
 export function useEffectiveAttrs() {
   const { checkRequirements } = useRequirements();
   const { workEfficiencyBonus, craftingOutcomeBonus } = useLevelBonus();
@@ -63,7 +68,26 @@ export function useEffectiveAttrs() {
   const allAttrs = computed(() => {
     const mappedAttrs = allEquippedItems.value.flatMap((item) => {
       return item.attrs.map((attr) => {
-        return { ...attr, item };
+        if (attr?.stats?.[0]?.type !== "rollSpecialTable") {
+          return { ...attr, item };
+        } else {
+          const text = stripHtmlTags(attr.customText);
+          const split = attr.customTextLocalizationKey.split(".");
+          const pseudoStat = split[split.length - 2];
+          return {
+            ...attr,
+            statText: text,
+            stats: [
+              {
+                ...attr.stats[0],
+                name: text,
+                stat: pseudoStat,
+                type: pseudoStat,
+              },
+            ],
+            item,
+          };
+        }
       });
     });
     if (workEfficiencyBonus.value) {
