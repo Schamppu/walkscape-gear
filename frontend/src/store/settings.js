@@ -215,9 +215,16 @@ export const useSettingsStore = defineStore("settingsStore", {
             value: true,
           },
           showUseful: {
-            label: "Show  items with applicable stats",
+            label: "Show items with applicable stats",
             display: 1,
             value: true,
+          },
+          undoRedo: {
+            label: "Show undo/redo buttons",
+            display: 2,
+            displayOptions: ["Hidden", "Gear Tab", "Static buttons"],
+            value: true,
+            showEnable: false,
           },
         },
         activitySettings: {

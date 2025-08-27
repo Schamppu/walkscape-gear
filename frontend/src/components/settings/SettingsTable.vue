@@ -39,13 +39,30 @@ function updateSettingDisplay(key, display) {
           </td>
           <td class="setting-enabled">
             <input
+              v-if="!('showEnable' in setting && !setting.showEnable)"
               type="checkbox"
               :id="`${key}-value`"
               :checked="setting.value"
               @change="updateSettingValue(key, $event.target.checked)"
             />
           </td>
-          <td class="setting-display">
+
+          <td v-if="setting.displayOptions" class="setting-display">
+            <select
+              :id="`${key}-display`"
+              :value="setting.display"
+              @change="updateSettingDisplay(key, parseInt($event.target.value))"
+            >
+              <option
+                v-for="(option, idx) in setting.displayOptions"
+                :key="option"
+                :value="idx"
+              >
+                {{ option }}
+              </option>
+            </select>
+          </td>
+          <td v-else class="setting-display">
             <input
               type="checkbox"
               :id="`${key}-display`"
@@ -134,6 +151,27 @@ function updateSettingDisplay(key, display) {
     &:focus {
       outline: 2px solid var(--color-primary, $txPrimary);
       outline-offset: 2px;
+    }
+  }
+
+  select {
+    background: $bgPrimary;
+    color: $txPrimary;
+    border: 1px solid $boxDarkOutline;
+    border-radius: $xs;
+    padding: $xs $sm;
+    cursor: pointer;
+    font-size: inherit;
+
+    &:focus {
+      outline: 2px solid var(--color-primary, $txPrimary);
+      outline-offset: 2px;
+      border-color: var(--color-primary, $txPrimary);
+    }
+
+    option {
+      background: $bgPrimary;
+      color: $txPrimary;
     }
   }
 }

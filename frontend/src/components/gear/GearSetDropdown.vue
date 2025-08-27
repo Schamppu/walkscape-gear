@@ -76,8 +76,8 @@ async function selectSet(setId) {
   }
 }
 
-function selectNewSet() {
-  gearSetStore.createNewSet();
+async function selectNewSet() {
+  await gearSetStore.createNewSetWithHistory();
   isOpen.value = false;
   // Focus the input after a brief delay to allow the UI to update
   setTimeout(() => {

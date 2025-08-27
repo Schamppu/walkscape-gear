@@ -1,6 +1,26 @@
 import { defineStore } from "pinia";
 import { getItem, searchItems } from "@/utils/axios/api_routes";
 import { useItemsStore } from "./items";
+import {
+  EquipItemCommand,
+  UnequipAllCommand,
+  EquipMultipleCommand,
+} from "./gearCommands";
+
+// Lazy import for history store to avoid circular dependencies
+let useHistoryStore = null;
+const getHistoryStore = async () => {
+  if (!useHistoryStore) {
+    try {
+      const module = await import("@/store/history");
+      useHistoryStore = module.useHistoryStore;
+    } catch {
+      console.debug("History store not available");
+      return null;
+    }
+  }
+  return useHistoryStore?.();
+};
 
 export const useGearStore = defineStore("gearStore", {
   state: () => ({
@@ -52,6 +72,15 @@ export const useGearStore = defineStore("gearStore", {
       return this.gearSlots[slot];
     },
     setGearSlot(slot, item) {
+      const previousItem = this.gearSlots[slot];
+
+      // Create and execute command
+      const command = new EquipItemCommand(this, slot, item, previousItem);
+      this._executeCommand(command);
+    },
+
+    // Direct setter that doesn't record history (used by commands)
+    _setGearSlotDirect(slot, item) {
       this.gearSlots[slot] = item;
     },
     updateStats(slot, data) {
@@ -104,7 +133,7 @@ export const useGearStore = defineStore("gearStore", {
       // Check cache first
       const cachedItem = this._getFromCache(id, quality);
       if (cachedItem) {
-        this.setGearSlot(itemSlot, cachedItem);
+        this._setGearSlotDirect(itemSlot, cachedItem);
         return cachedItem;
       }
 
@@ -113,7 +142,7 @@ export const useGearStore = defineStore("gearStore", {
       if (data) {
         const itemData = { ...data, quality };
         this._setInCache(id, quality, itemData);
-        this.setGearSlot(itemSlot, itemData);
+        this._setGearSlotDirect(itemSlot, itemData);
         return itemData;
       }
       return null;
@@ -161,17 +190,92 @@ export const useGearStore = defineStore("gearStore", {
         return;
 
       const quality = itemQuality || this.determineQuality(id);
-      await this._fetchAndSetItem(itemSlot, id, quality);
+
+      // Fetch the item data first
+      const cachedItem = this._getFromCache(id, quality);
+      let itemData = cachedItem;
+
+      if (!itemData) {
+        const { data } = await getItem({ id });
+        if (data) {
+          itemData = { ...data, quality };
+          this._setInCache(id, quality, itemData);
+        }
+      }
+
+      if (itemData) {
+        // Use command system to track this change
+        const command = new EquipItemCommand(
+          this,
+          itemSlot,
+          itemData,
+          previousItem
+        );
+        this._executeCommand(command);
+      }
     },
 
     unequipAll() {
+      const previousGearSlots = { ...this.gearSlots };
+
+      // Create and execute command
+      const command = new UnequipAllCommand(this, previousGearSlots);
+      this._executeCommand(command);
+    },
+
+    // Direct setter for all slots that doesn't record history (used by commands)
+    _setAllGearSlotsDirect(gearSlots) {
       const newGearSlots = Object.fromEntries(
-        Object.keys(this.gearSlots).map((slot) => [slot, null])
+        Object.keys(this.gearSlots).map((slot) => [
+          slot,
+          gearSlots[slot] || null,
+        ])
       );
       this.gearSlots = newGearSlots;
     },
 
     async equipMultiple(gearSetData, useQuality = false) {
+      const previousGearSlots = { ...this.gearSlots };
+
+      // Process the gear set data first
+      const processedGearSlots = await this._processGearSetData(
+        gearSetData,
+        useQuality
+      );
+
+      // Create and execute command
+      const command = new EquipMultipleCommand(
+        this,
+        processedGearSlots,
+        previousGearSlots
+      );
+      this._executeCommand(command);
+    },
+
+    // Direct equip multiple that doesn't record history (used by commands)
+    async _equipMultipleDirect(gearSetData) {
+      // Apply all changes at once to minimize reactive updates
+      const completeGearSlots = { ...this.gearSlots };
+      Object.assign(completeGearSlots, gearSetData);
+      this.gearSlots = completeGearSlots;
+    },
+
+    // Optimized batch update for both gear and cache operations
+    async _batchUpdateGearState(gearSetData, cacheOperations = null) {
+      // Perform cache operations first if provided (batch them)
+      if (cacheOperations && cacheOperations.length > 0) {
+        // Batch cache updates to minimize Map operations
+        cacheOperations.forEach(({ id, quality, data }) => {
+          this._setInCache(id, quality, data);
+        });
+      }
+      
+      // Apply all gear changes at once to minimize reactive updates
+      const completeGearSlots = { ...this.gearSlots };
+      Object.assign(completeGearSlots, gearSetData);
+      this.gearSlots = completeGearSlots;
+    },    // Helper method to process gear set data (extracted from equipMultiple)
+    async _processGearSetData(gearSetData, useQuality = false) {
       const itemsStore = useItemsStore();
 
       // Step 1: Determine what needs to be fetched vs what can be set directly
@@ -245,11 +349,7 @@ export const useGearStore = defineStore("gearStore", {
         });
       }
 
-      // Step 3: Apply all changes at once to minimize reactive updates
-      // Make sure we handle all slots, not just the ones in gearSetData
-      const completeGearSlots = { ...this.gearSlots };
-      Object.assign(completeGearSlots, finalGearSlots);
-      this.gearSlots = completeGearSlots;
+      return finalGearSlots;
     },
 
     // Method to clear the item cache if needed
@@ -271,6 +371,38 @@ export const useGearStore = defineStore("gearStore", {
           }
         }
         keysToDelete.forEach((key) => this.itemCache.delete(key));
+      }
+    },
+
+    // Command execution and history management
+    async _executeCommand(command) {
+      try {
+        const historyStore = await getHistoryStore();
+
+        // Execute the command
+        await command.execute();
+
+        // Record in history if available
+        if (historyStore) {
+          historyStore.recordCommand(command);
+        }
+      } catch (error) {
+        console.error("Failed to execute command:", error);
+      }
+    },
+
+    async initializeHistoryTracking() {
+      try {
+        const historyStore = await getHistoryStore();
+        if (!historyStore) {
+          console.debug("History store not available");
+          return false;
+        }
+
+        return true;
+      } catch (error) {
+        console.debug("Failed to initialize history tracking:", error);
+        return false;
       }
     },
   },
