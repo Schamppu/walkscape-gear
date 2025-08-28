@@ -90,6 +90,11 @@ export function useRequirements() {
       case "activityType":
         if (activity) value = activity.id === requirement.activity;
         break;
+      case "totalSkillLevelUps":
+        value =
+          Object.values(player.skillLevels).reduce((a, b) => a + b - 1, 0) >=
+          requirement.levels;
+        break;
       default:
         console.error("unhandled requirement", type, requirement);
     }

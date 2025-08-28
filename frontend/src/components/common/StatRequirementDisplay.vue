@@ -46,32 +46,31 @@ const reqs = props.requirements.map((req) => {
   if (type === "mainSkill") {
     const skill = playerStore.skillsMap[requirement.skill];
     return {
+      prefix: `While${opposite ? " NOT" : ""}`,
       text: skill.name,
       icon: skill.icon,
-      opposite,
     };
   } else if (type === "traveling") {
     return {
+      prefix: `While${opposite ? " NOT" : ""}`,
       text: "Traveling",
       icon: "",
-      opposite,
     };
   } else if (type === "locationHasKeywords") {
     return requirement.keywords
       .map(dataStore.getKeywordById)
       .filter(Boolean)
       .map(({ name, icon }) => ({
-        text: name,
+        prefix: `While${opposite ? " NOT" : ""} in`,
+        text: `${name} location`,
         icon,
-        opposite,
       }))[0];
   } else if (type === "realm") {
     const realm = playerStore.factionsMap[requirement.realm];
     return {
-      prefix: "in",
+      prefix: `While${opposite ? " NOT" : ""} in`,
       text: `${realm.name} area`,
       icon: realm.icon,
-      opposite,
     };
   } else if (type === "distinctKeywordItemsEquipped") {
     const { quantity } = requirement;
@@ -79,44 +78,52 @@ const reqs = props.requirements.map((req) => {
       .map(dataStore.getKeywordById)
       .filter(Boolean)
       .map(({ name, icon }) => ({
-        prefix: `wearing ${quantity}`,
+        prefix: `While${opposite ? " NOT" : ""} wearing ${quantity}`,
         text: name,
         icon,
-        opposite,
       }))[0];
   } else if (type === "achievementPoint") {
     return {
-      prefix: "have",
+      prefix: "Have",
       text: `${requirement.value} achievement points`,
       icon: "assets/icons/text/general_icons/achievement_point.png",
-      opposite,
     };
   } else if (type === "historyData") {
     if (requirement.category === "stepsWalkedActivity") {
+      // Not used anymore
       const activity = activityStore.activitiesMap[requirement.data];
       return {
-        prefix: `have taken ${requirement.value} steps on the`,
+        prefix: `Have taken ${requirement.value} steps on the`,
         text: `${activity.name} activity`,
         icon: activity.icon,
-        opposite,
       };
     }
     if (requirement.category === "actionCompleted") {
       const activity = activityStore.activitiesMap[requirement.data];
       return {
-        prefix: `have completed`,
+        prefix: `Have completed`,
         text: `${activity.name} activity ${requirement.value} times`,
         icon: activity.icon,
-        opposite,
       };
     }
   } else if (type === "skillLevel") {
     const skill = playerStore.skillsMap[requirement.skill];
     return {
-      prefix: `at least ${requirement.level}`,
+      prefix: `While at least ${requirement.level}`,
       text: skill.name,
       icon: skill.icon,
-      opposite,
+    };
+  } else if (type === "totalSkillLevelUps") {
+    const skillLevels = Object.values(playerStore.skillLevels).reduce(
+      (a, b) => a + b - 1,
+      0
+    );
+
+    return {
+      text: `Level up your skills ${Math.min(
+        skillLevels,
+        requirement.levels
+      )}/${requirement.levels} times`,
     };
   } else if (type === "activityType") {
     const activity = activityStore.activitiesMap[requirement.activity];
@@ -164,12 +171,10 @@ const toggle = () => {
     </button>
     <div v-if="isOpen" class="requirements-list">
       <p
-        v-for="({ prefix, text, icon, opposite }, index) in reqs"
+        v-for="({ prefix, text, icon }, index) in reqs"
         :key="index"
         class="requirement"
       >
-        While
-        <template v-if="opposite">NOT </template>
         <template v-if="prefix">{{ prefix }} </template>
         <ws-icon v-if="icon" :iconPath="icon" size="sm" />
         {{ text }}
