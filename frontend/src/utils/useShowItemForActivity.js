@@ -21,7 +21,6 @@ export function useShowItemForActivity() {
         ?.filter((req) => req.type === "distinctKeywordItemsEquipped")
         .flatMap(({ requirement }) => requirement.keywords) ?? [];
 
-
     if (!(kws || kwEquipped)) return false;
     return item.keywords.filter(
       (keyword) => kws.includes(keyword) || kwEquipped.includes(keyword)
@@ -49,7 +48,7 @@ export function useShowItemForActivity() {
 
     const filterRecipeOnlyAttrs = (attr) => {
       if (isRecipe) return true;
-      const recipeOnlyAttrs = ["No materials consumed"];
+      const recipeOnlyAttrs = ["No materials consumed", "Crafting outcome"];
       return !recipeOnlyAttrs.includes(attr.statText);
     };
 
