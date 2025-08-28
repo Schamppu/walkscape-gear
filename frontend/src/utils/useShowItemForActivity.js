@@ -1,12 +1,18 @@
+import { storeToRefs } from "pinia";
 import { useActivityStore } from "@/store/activity";
 import { useItemsStore } from "@/store/items";
+import { useDataStore } from "@/store/data";
 import { useRequirements } from "@/utils/useRequirements";
+import { useSettingsStore } from "@/store/settings";
 import { getRawData } from "@/utils/rawData";
 import { sumAttrs } from "@/utils/qualityAttrs";
 
 export function useShowItemForActivity() {
   const activityStore = useActivityStore();
   const itemStore = useItemsStore();
+  const dataStore = useDataStore();
+  const settingsStore = useSettingsStore();
+  const { activitySettings } = storeToRefs(settingsStore);
   const { checkRequirements } = useRequirements();
 
   const usefulKeywords = (item, activity, service) => {
@@ -34,6 +40,21 @@ export function useShowItemForActivity() {
       item.buffs || [],
       quality
     );
+
+    const hideOwnedCollectibles =
+      activitySettings.value.hideOwnedCollectibles.value;
+    const activityCollectibles = activity.tables
+      .filter(({ type }) => type.includes("collectible"))
+      .flatMap(({ tables }) => tables)
+      .map(
+        (table) =>
+          dataStore.detailedLootTablesMap[table]?.tableRows[0].rowItemID
+      )
+      .filter(
+        (collectible) =>
+          !hideOwnedCollectibles ||
+          (hideOwnedCollectibles && !(collectible in itemStore.ownedItems))
+      );
 
     const filterActivityOnlyAttrs = (attr) => {
       if (!isRecipe) return true;
@@ -66,6 +87,12 @@ export function useShowItemForActivity() {
       return statIsCO && benefitsCO;
     };
 
+    const filterFindCollectibles = (attr, activityCollectibles) => {
+      const statIsFindCollectibles = attr.statText === "Find collectibles";
+      if (!statIsFindCollectibles) return true;
+      return activityCollectibles.length > 0;
+    };
+
     const unfilteredRequirementTypes = ["distinctKeywordItemsEquipped"];
 
     const usefulAttr = baseAttrs.filter((attr) => {
@@ -76,6 +103,7 @@ export function useShowItemForActivity() {
 
       return (
         filterActivityOnlyAttrs(attr) &&
+        filterFindCollectibles(attr, activityCollectibles) &&
         filterRecipeOnlyAttrs(attr) &&
         filterCO(attr, activity) &&
         checkRequirements(usedRequirements) &&
