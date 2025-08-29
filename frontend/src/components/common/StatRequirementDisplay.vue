@@ -47,8 +47,16 @@ const displayValue = computed(() => {
   return isPercent ? `${prefix}${n(100 * value)}%` : `${prefix}${n(value)}`;
 });
 
+const requirementsActive = computed(() => {
+  return props.requirements.map((req) => checkRequirements([req]));
+});
+
+const statActive = computed(() => {
+  return requirementsActive.value.every((active) => active);
+});
+
 const reqs = computed(() =>
-  props.requirements.map((req) => {
+  props.requirements.map((req, idx) => {
     const { type, opposite, requirement } = req;
     let out;
     if (type === "mainSkill") {
@@ -143,7 +151,7 @@ const reqs = computed(() =>
       }
     }
     if (out) {
-      const active = checkRequirements([req]);
+      const active = requirementsActive.value[idx];
       return {
         ...out,
         active,
@@ -175,7 +183,13 @@ const toggle = () => {
     <button
       v-else
       class="stat-wrapper button"
-      :class="stat.isNegative ? 'negative' : 'positive'"
+      :class="[
+        {
+          negative: stat.isNegative,
+          positive: !stat.isNegative,
+          disabled: props.showActiveColors && !statActive,
+        },
+      ]"
       @click="toggle"
     >
       <span class="stat-value">{{ displayValue }}</span>
@@ -186,16 +200,14 @@ const toggle = () => {
       <p
         v-for="({ prefix, text, icon, active }, index) in reqs"
         :key="index"
-        class="requirement"
+        :class="[
+          'requirement',
+          { disabled: props.showActiveColors && !active },
+        ]"
       >
         <template v-if="prefix">{{ prefix }} </template>
         <ws-icon v-if="icon" :iconPath="icon" size="sm" />
-        <span
-          v-if="props.showActiveColors"
-          :class="[active ? 'positive' : 'negative']"
-          >{{ text }}</span
-        >
-        <span v-else>{{ text }}</span>
+        <span>{{ text }}</span>
       </p>
     </div>
   </div>
@@ -225,8 +237,20 @@ const toggle = () => {
     color: $txNegative;
   }
 
+  &.negative.disabled {
+    color: $txNegativeDark;
+  }
+
   &.positive {
     color: $txPositive;
+  }
+
+  &.positive.disabled {
+    color: $txPositiveDark;
+  }
+
+  &.disabled {
+    color: $txDarker;
   }
 }
 
@@ -242,6 +266,7 @@ const toggle = () => {
     gap: $xxs;
     border-radius: $lg;
     flex-wrap: wrap;
+    color: $txLighter;
 
     background-color: $boxDarkBackground;
     border: 1px solid $boxDarkOutline;
@@ -250,12 +275,8 @@ const toggle = () => {
       display: inline;
     }
 
-    .negative {
-      color: $txNegativeDark;
-    }
-
-    .positive {
-      color: $txPositiveDark;
+    &.disabled {
+      color: $txDarker;
     }
   }
 }
