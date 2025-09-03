@@ -3,6 +3,7 @@ import { computed } from "vue";
 import WsIcon from "@/components/common/WsIcon.vue";
 import { useSkillModifiers } from "@/utils/useSkillModifiers";
 import { useItemsStore } from "@/store/items";
+import { usePlayerStore } from "@/store/player";
 import { n } from "@/utils/number";
 
 const props = defineProps({
@@ -10,6 +11,7 @@ const props = defineProps({
 });
 
 const itemsStore = useItemsStore();
+const playerStore = usePlayerStore();
 const item = computed(() => props.sources?.[0] || {});
 
 const {
@@ -97,6 +99,16 @@ const totalDropChance = computed(() => {
     1
   );
   return 100 * (1 - probabilityNone);
+});
+
+const variableRequirement = computed(() => {
+  if (props.sources.length === 0) return null;
+  const { requirementsBonuses } = props.sources[0];
+  if (!requirementsBonuses.length) return null;
+  const { levelRequirement, relatedSkill } = requirementsBonuses[0];
+
+  const icon = playerStore.skillsMap[relatedSkill].icon;
+  return { levelRequirement, icon };
 });
 
 const stepsPerItem = computed(() => {
@@ -208,13 +220,14 @@ const stepsPerFine = computed(() => {
   <div
     v-if="item && (item.name || item.isMoney)"
     class="drop-item-display"
+    :class="{ disabled: !totalDropChance }"
     :title="item.isMoney ? 'Gold' : item.name"
     :aria-label="item.isMoney ? 'Gold' : item.name"
   >
     <ws-icon :icon-path="item.icon" size="md" />
     <span>{{ n(totalDropChance, 3) }}%</span>
     <span>{{ dropCounts }}</span>
-    <div class="step-counts">
+    <div v-if="totalDropChance > 0" class="step-counts">
       <div v-if="showItemsPerStep" class="steps-line">
         <span>{{ n(itemsPerStep, 0) }}</span>
         /
@@ -241,6 +254,13 @@ const stepsPerFine = computed(() => {
         <span>{{ n(stepsPerFine, 0) }}</span>
       </div>
     </div>
+    <div v-else-if="variableRequirement" class="requirement-row">
+      <span> At </span>
+      <ws-icon :icon-path="variableRequirement.icon" size="xs" />
+      <span>
+        {{ variableRequirement.levelRequirement }}
+      </span>
+    </div>
   </div>
 </template>
 
@@ -259,6 +279,10 @@ const stepsPerFine = computed(() => {
   border-radius: $sm;
 
   font-size: 0.75rem;
+
+  &.disabled {
+    opacity: 0.5;
+  }
 }
 
 .step-counts {
@@ -274,5 +298,10 @@ const stepsPerFine = computed(() => {
     width: 100%;
     box-sizing: border-box;
   }
+}
+
+.requirement-row {
+  display: flex;
+  gap: $xxxs;
 }
 </style>

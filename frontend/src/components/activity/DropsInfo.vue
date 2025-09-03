@@ -5,6 +5,7 @@ import { useActivityStore } from "@/store/activity";
 import { useDataStore } from "@/store/data";
 import { useGearStore } from "@/store/gear";
 import { useItemsStore } from "@/store/items";
+import { usePlayerStore } from "@/store/player";
 import { useSettingsStore } from "@/store/settings";
 import { useRequirements } from "@/utils/useRequirements";
 import { sumAttrs } from "@/utils/qualityAttrs";
@@ -16,6 +17,7 @@ const activityStore = useActivityStore();
 const dataStore = useDataStore();
 const gearStore = useGearStore();
 const itemsStore = useItemsStore();
+const playerStore = usePlayerStore();
 const settingsStore = useSettingsStore();
 const { activitySettings } = storeToRefs(settingsStore);
 const { checkRequirements } = useRequirements();
@@ -79,12 +81,63 @@ watchEffect(async () => {
   resolvedLootTables.value = resolvedTables;
 });
 
+const resolveLootTableWeights = (params) => {
+  const { tables } = params;
+  const tableRows = tables.map((table) =>
+    table.tableRows.map((row) => {
+      const { rowWeight, minWeightScale, requirementsBonuses } = row;
+      return {
+        ...row,
+        rowWeight: requirementsBonuses.length
+          ? resolveWeight({ rowWeight, minWeightScale, requirementsBonuses })
+          : rowWeight,
+      };
+    })
+  );
+  return tables.map((table, index) => {
+    return {
+      ...table,
+      tableRows: tableRows[index],
+    };
+  });
+};
+
+const resolveWeight = (params) => {
+  const { rowWeight, minWeightScale, requirementsBonuses } = params;
+  const { levelMaxScaling, levelRequirement, relatedSkill } =
+    requirementsBonuses[0];
+  const level = playerStore.skillLevels[relatedSkill] || 1;
+  if (level < levelRequirement) {
+    return 0;
+  } else if (level >= levelMaxScaling) {
+    return rowWeight;
+  } else if (
+    rowWeight / (levelMaxScaling - levelRequirement + 1) < 1 &&
+    level == levelRequirement
+  ) {
+    return Math.floor(rowWeight * minWeightScale * 10 + 0.5) / 10;
+  } else {
+    const weightIncrement =
+      rowWeight / (levelMaxScaling - levelRequirement + 1);
+    const weight = weightIncrement * (level - (levelRequirement - 1));
+    return Math.floor(weight * 10 + 0.5) / 10;
+  }
+};
+
 const filteredLootTables = computed(() => {
+  const tablesWithResolvedWeights = resolvedLootTables.value.map((table) => {
+    const mappedTables = resolveLootTableWeights({ tables: table.tables });
+    return {
+      ...table,
+      tables: mappedTables,
+    };
+  });
+
   if (!activitySettings.value.hideOwnedCollectibles.value) {
-    return resolvedLootTables.value;
+    return tablesWithResolvedWeights;
   }
 
-  return resolvedLootTables.value.filter((table) => {
+  return tablesWithResolvedWeights.filter((table) => {
     if (
       activitySettings.value.hideOwnedCollectibles.value &&
       table.type.includes("collectible")
