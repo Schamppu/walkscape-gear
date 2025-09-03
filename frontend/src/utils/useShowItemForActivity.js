@@ -46,10 +46,12 @@ export function useShowItemForActivity() {
     const activityCollectibles = activity.tables
       .filter(({ type }) => type.includes("collectible"))
       .flatMap(({ tables }) => tables)
-      .map(
-        (table) =>
-          dataStore.detailedLootTablesMap[table]?.tableRows[0].rowItemID
-      )
+      .map((table) => {
+        const tableData = dataStore.detailedLootTablesMap[table];
+        if (tableData.tableRows.length === 0) return false;
+        return tableData.tableRows[0].rowItemID;
+      })
+      .filter(Boolean)
       .filter(
         (collectible) =>
           !hideOwnedCollectibles ||

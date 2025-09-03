@@ -269,11 +269,6 @@ onUnmounted(() => {
   right: 20px;
   z-index: 1000;
 
-  // On mobile, position above the footer
-  @media (max-width: 768px) {
-    bottom: calc($footerHeight + 20px);
-  }
-
   // Add a subtle background for better visibility
   background: rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(8px);
@@ -283,5 +278,10 @@ onUnmounted(() => {
 
   // Ensure it's above other elements but below modals
   z-index: 999;
+
+  // On mobile, position above the footer
+  @media (max-width: 768px) {
+    bottom: calc($footerHeight + 20px);
+  }
 }
 </style>

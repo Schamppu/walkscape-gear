@@ -163,15 +163,25 @@ const groupedLootTables = computed(() => {
         tables: [...table.tables],
       };
     } else {
-      // Combine rollChance values (capped at 1) instead of adding more tables
-      const combinedRollChance = Math.min(
-        1,
-        grouped[key].rollChance + table.rollChance
-      );
-      grouped[key] = {
-        ...grouped[key],
-        rollChance: combinedRollChance,
-      };
+      if (table.stat) {
+        // if table comes from stat (item):
+        // Combine rollChance values (capped at 1) instead of adding more tables
+        const combinedRollChance = Math.min(
+          1,
+          grouped[key].rollChance + table.rollChance
+        );
+        grouped[key] = {
+          ...grouped[key],
+          rollChance: combinedRollChance,
+        };
+      } else {
+        // if table comes from activity:
+        // group tables e.g. collectibles
+        grouped[key] = {
+          ...grouped[key],
+          tables: [...grouped[key].tables, ...table.tables],
+        };
+      }
     }
   }
   return Object.values(grouped);
