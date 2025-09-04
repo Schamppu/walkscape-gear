@@ -16,3 +16,14 @@ config.global.IntersectionObserver = vi.fn(() => ({
 
 // Mock scrollTo if needed
 config.global.scrollTo = vi.fn();
+
+// Global component mocks
+vi.mock("@/components/common/WsIcon.vue", () => ({
+  default: {
+    name: "WsIcon",
+    props: ["iconPath", "size"],
+    template: '<div data-testid="ws-icon" :data-icon-path="iconPath" :data-size="size">Icon</div>'
+  }
+}));
+
+config.global.stubs = [];
