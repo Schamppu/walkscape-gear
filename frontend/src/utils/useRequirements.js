@@ -2,11 +2,13 @@ import { intersect } from "./intersect";
 import { useActivityStore } from "@/store/activity";
 import { useGearStore } from "@/store/gear";
 import { usePlayerStore } from "@/store/player";
+import { useItemsStore } from "@/store/items";
 
 export function useRequirements() {
   const activity = useActivityStore();
   const gear = useGearStore();
   const player = usePlayerStore();
+  const items = useItemsStore();
 
   const checkRequirements = (reqs) => {
     if (!reqs || !reqs.length) return true;
@@ -94,6 +96,9 @@ export function useRequirements() {
         value =
           Object.values(player.skillLevels).reduce((a, b) => a + b - 1, 0) >=
           requirement.levels;
+        break;
+      case "itemAnywhere":
+        value = requirement.item in items.ownedItems;
         break;
       default:
         console.error("unhandled requirement", type, requirement);

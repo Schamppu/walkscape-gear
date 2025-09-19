@@ -3,6 +3,7 @@ import { ref, computed } from "vue";
 import { storeToRefs } from "pinia";
 import { useActivityStore } from "@/store/activity";
 import { useDataStore } from "@/store/data";
+import { useItemsStore } from "@/store/items";
 import { usePlayerStore } from "@/store/player";
 import { useSettingsStore } from "@/store/settings";
 import { useRequirements } from "@/utils/useRequirements";
@@ -27,6 +28,7 @@ const props = defineProps({
 
 const activityStore = useActivityStore();
 const dataStore = useDataStore();
+const itemsStore = useItemsStore();
 const playerStore = usePlayerStore();
 const settingsStore = useSettingsStore();
 const { gearSettings } = storeToRefs(settingsStore);
@@ -147,6 +149,16 @@ const reqs = computed(() =>
           prefix: `While${opposite ? " NOT" : ""} doing`,
           text: `${activity.name} activity`,
           icon: activity.icon,
+        };
+      }
+    } else if (type === "itemAnywhere") {
+      const { item: itemID } = requirement;
+      const item = itemsStore.allItems[itemID];
+      if (item) {
+        out = {
+          prefix: `Own a`,
+          text: item.name,
+          icon: item.icon,
         };
       }
     }
