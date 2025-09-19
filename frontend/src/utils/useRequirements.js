@@ -56,7 +56,7 @@ export function useRequirements() {
             requirement.keywords.length;
         break;
       case "achievementPoint":
-        value = achievementPoints > requirement.value;
+        value = achievementPoints >= requirement.value;
         break;
       case "distinctKeywordItemsEquipped":
         value = requirement.keywords.every(
