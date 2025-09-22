@@ -8,7 +8,7 @@ import { useDataStore } from "@/store/data";
 import { useSettingsStore } from "@/store/settings";
 import { useRequirements } from "@/composables/useRequirements";
 import { useShowItemForActivity } from "@/composables/useShowItemForActivity";
-import { itemQualityNameSort } from "@/utils/quality";
+import { itemQualityNameSort } from "@/utils/sorting";
 import { sumAttrs } from "@/utils/qualityAttrs";
 import { intersect } from "@/utils/intersect";
 import WsIcon from "@/components/common/WsIcon.vue";

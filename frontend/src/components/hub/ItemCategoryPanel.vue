@@ -3,7 +3,7 @@ import { computed, ref, watch } from "vue";
 import { useItemsStore } from "@/store/items";
 import ItemEntry from "./ItemEntry.vue";
 import ConsumableEntry from "./ConsumableEntry.vue";
-import { itemQualityNameSort } from "@/utils/quality";
+import { itemQualityNameSort, levelReqNameSort } from "@/utils/sorting";
 import { consumableQualityOptions } from "@/constants/quality";
 
 const props = defineProps({
@@ -17,9 +17,20 @@ const props = defineProps({
 defineEmits(["toggle"]);
 const hasLoaded = ref(false);
 
+const getSortFn = (group) => {
+  const key = group.toLowerCase();
+  switch (key) {
+    case "crafted":
+      return levelReqNameSort;
+    default:
+      return itemQualityNameSort;
+  }
+};
+
 const itemsStore = useItemsStore();
-const items =
-  itemsStore.itemsByCategory[props.itemCategory].sort(itemQualityNameSort);
+const items = itemsStore.itemsByCategory[props.itemCategory].sort(
+  getSortFn(props.group)
+);
 
 const selectedItems = ref(
   new Set(
