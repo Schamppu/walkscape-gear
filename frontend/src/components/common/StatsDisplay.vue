@@ -38,7 +38,7 @@ const keywords = props.hideKeywords
   ? []
   : props.item.keywords
       .map((keyword) => dataStore.getKeywordById(keyword))
-      .filter((k) => k.icon);
+      .filter((k) => k?.icon);
 
 const mapAttrs = (quality) => {
   const itemCopy = toDeepRaw(props.item);
