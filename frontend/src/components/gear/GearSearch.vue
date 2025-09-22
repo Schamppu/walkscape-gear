@@ -103,16 +103,19 @@ const filteredItems = computed(() => {
   return slotItems
     .map((item) => {
       const { id, type, gearType } = item;
+      const isCrafted = type === "crafted";
       const isConsumable = type === "consumable";
       const isRing = gearType === "ring";
 
       const owned = id in itemsStore.ownedItems;
       const hidden = owned ? itemsStore.ownedItems[id].hidden : false;
-      let quality = owned ? itemsStore.ownedItems[id].quality : item.quality;
+      let quality = item.quality;
       let quality2 = null;
 
       if (owned) {
-        quality = itemsStore.ownedItems[id].quality;
+        if (isCrafted) {
+          quality = itemsStore.ownedItems[id].quality;
+        }
         quality2 = itemsStore.ownedItems[id].quality2;
       }
 
