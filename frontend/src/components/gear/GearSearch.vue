@@ -121,6 +121,7 @@ const filteredItems = computed(() => {
 
       if (isConsumable) {
         if (showOwned) {
+          quality = owned ? itemsStore.ownedItems[id].quality : null;
           quality2 = owned ? itemsStore.ownedItems[id].quality2 : null;
         } else {
           quality = consumableQualityOptions[0].value;
