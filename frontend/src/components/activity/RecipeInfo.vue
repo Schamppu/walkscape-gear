@@ -28,6 +28,7 @@ const stats = computed(() => {
     craftingOutcome,
     uncappedStepsPerCompletion,
     stepsPerCompletion,
+    stepsPerRewardRoll,
     craftsPerMaterial,
     xpRewards,
     xpPerStep,
@@ -43,6 +44,7 @@ const stats = computed(() => {
     craftingOutcome: craftingOutcome.value,
     uncappedStepsPerCompletion: uncappedStepsPerCompletion.value,
     stepsPerCompletion: stepsPerCompletion.value,
+    stepsPerRewardRoll: stepsPerRewardRoll.value,
     craftsPerMaterial: craftsPerMaterial.value,
     xpRewards: xpRewards.value.map((reward) => ({
       ...reward,
@@ -192,7 +194,13 @@ const wikiLink = computed(() => {
         </div>
         <div class="info-row">
           <info-bubble
-            label="Steps"
+            label="item"
+            :text="`${n(stats.stepsPerRewardRoll, 2)}`"
+            :tooltip="`${n(stats.stepsPerRewardRoll, 2)} steps per item`"
+            iconPath="assets/icons/text/general_icons/steps.png"
+          />
+          <info-bubble
+            label="action"
             :text="`${stats.stepsPerCompletion}${
               stats.uncappedStepsPerCompletion !== stats.stepsPerCompletion
                 ? `
