@@ -182,7 +182,10 @@ const sections = computed(() => {
   <details open>
     <summary>Activity Info</summary>
 
-    <section :class="['activity-info', borderClass]">
+    <section
+      :class="['activity-info', borderClass]"
+      :key="activityStore.activity?.id"
+    >
       <div class="info-section">
         <wiki-button :name="activityStore.activity?.name" />
       </div>

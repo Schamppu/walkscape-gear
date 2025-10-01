@@ -1,3 +1,5 @@
+import { activityNone } from "@/constants/activityNone";
+
 export class SetActivityCommand {
   constructor(
     activityStore,
@@ -39,17 +41,18 @@ export class SetActivityCommand {
         _isUndoRedoOperation: true,
         activity: this.previousActivity,
         locations: this.previousLocations,
-        location: this.previousLocation
+        location: this.previousLocation,
       });
     } else if (this.previousRecipe) {
       this.activityStore._batchUpdateActivityState({
         _isUndoRedoOperation: true,
+        activity: activityNone,
         recipe: this.previousRecipe,
         locations: this.previousLocations,
-        location: this.previousLocation
+        location: this.previousLocation,
       });
     }
-    
+
     // Clear the undo flag after a microtask
     setTimeout(() => {
       this.activityStore._isUndoRedoOperation = false;
@@ -103,6 +106,7 @@ export class SetRecipeCommand {
   async undo() {
     // Don't record history during execute/undo
     // Set undo flag and restore state in one batch to minimize reactivity
+
     if (this.previousRecipe) {
       this.activityStore._batchUpdateActivityState({
         _isUndoRedoOperation: true,
@@ -110,17 +114,18 @@ export class SetRecipeCommand {
         services: this.previousServices,
         service: this.previousService,
         locations: this.previousLocations,
-        location: this.previousLocation
+        location: this.previousLocation,
       });
     } else if (this.previousActivity) {
       this.activityStore._batchUpdateActivityState({
         _isUndoRedoOperation: true,
         activity: this.previousActivity,
+        recipe: activityNone,
         locations: this.previousLocations,
-        location: this.previousLocation
+        location: this.previousLocation,
       });
     }
-    
+
     // Clear the undo flag after a microtask
     setTimeout(() => {
       this.activityStore._isUndoRedoOperation = false;
@@ -148,9 +153,9 @@ export class SetLocationCommand {
     // Set undo flag and restore state in one batch
     this.activityStore._batchUpdateActivityState({
       _isUndoRedoOperation: true,
-      location: this.previousLocation
+      location: this.previousLocation,
     });
-    
+
     // Clear the undo flag after a microtask
     setTimeout(() => {
       this.activityStore._isUndoRedoOperation = false;
@@ -196,9 +201,9 @@ export class SetServiceCommand {
       _isUndoRedoOperation: true,
       service: this.previousService,
       locations: this.previousLocations,
-      location: this.previousLocation
+      location: this.previousLocation,
     });
-    
+
     // Clear the undo flag after a microtask
     setTimeout(() => {
       this.activityStore._isUndoRedoOperation = false;

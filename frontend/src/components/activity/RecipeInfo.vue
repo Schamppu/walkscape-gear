@@ -184,7 +184,7 @@ const wikiLink = computed(() => {
   <details open>
     <summary>Recipe Info</summary>
     <section :class="['recipe-info', borderClass]">
-      <div class="info-section">
+      <div class="info-section" :key="recipe">
         <div class="info-row">
           <label>
             <input type="checkbox" v-model="useFineMaterials" />
