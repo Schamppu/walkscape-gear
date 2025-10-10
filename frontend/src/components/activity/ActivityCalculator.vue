@@ -30,16 +30,14 @@ const skillList = computed(() =>
 const steps = ref(0);
 
 const actions = computed({
-  get: () => Math.ceil(steps.value / stepsPerAction.value),
-  set: (val) => {
-    steps.value = Math.ceil(val * stepsPerAction.value);
-  },
+  get: () => steps.value / stepsPerAction.value,
+  set: (val) => (steps.value = val * stepsPerAction.value),
 });
 
 const materials = computed({
-  get: () => Math.ceil(actions.value / craftsPerMaterial.value),
+  get: () => actions.value / craftsPerMaterial.value,
   set: (val) => {
-    actions.value = Math.floor(val * craftsPerMaterial.value);
+    actions.value = val * craftsPerMaterial.value;
   },
 });
 
@@ -71,10 +69,10 @@ watchEffect(() => {
     const perAction = getXpPerActionFor(s);
     skillXpGainRefs[s] = computed({
       get: () => {
-        return Math.round(steps.value * perStep);
+        return steps.value * perStep;
       },
       set: (val) => {
-        actions.value = Math.ceil(val / perAction);
+        actions.value = val / perAction;
       },
     });
 
