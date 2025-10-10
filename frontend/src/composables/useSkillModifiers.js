@@ -49,15 +49,15 @@ export function useSkillModifiers() {
   });
 
   const doubleAction = computed(() => {
-    return getStat("doubleAction", "percent");
+    return Math.min(1, getStat("doubleAction", "percent"));
   });
 
   const doubleRewards = computed(() => {
-    return getStat("doubleRewards", "percent");
+    return Math.min(1, getStat("doubleRewards", "percent"));
   });
 
   const noMaterialsConsumed = computed(() => {
-    return getStat("noMaterialsConsumed", "percent");
+    return Math.min(1, getStat("noMaterialsConsumed", "percent"));
   });
 
   const findCollectibles = computed(() => {
