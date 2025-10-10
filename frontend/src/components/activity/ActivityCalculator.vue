@@ -9,8 +9,13 @@ import WsIcon from "@/components/common/WsIcon.vue";
 import WsLabel from "@/components/common/WsLabel.vue";
 import { levelFromXp, xpToLevelSkill } from "@/utils/skillXp";
 
-const { stepsPerAction, xpPerStep, xpRewards, craftsPerMaterial } =
-  useSkillModifiers();
+const {
+  stepsPerAction,
+  xpPerStep,
+  xpRewards,
+  noMaterialsConsumed,
+  doubleRewards,
+} = useSkillModifiers();
 const playerStore = usePlayerStore();
 
 const activityStore = useActivityStore();
@@ -34,10 +39,17 @@ const actions = computed({
   set: (val) => (steps.value = val * stepsPerAction.value),
 });
 
-const materials = computed({
-  get: () => actions.value / craftsPerMaterial.value,
+const materialsInput = computed({
+  get: () => actions.value * (1 - noMaterialsConsumed.value),
   set: (val) => {
-    actions.value = val * craftsPerMaterial.value;
+    actions.value = val / (1 - noMaterialsConsumed.value);
+  },
+});
+
+const materialsOutput = computed({
+  get: () => actions.value * (1 + doubleRewards.value),
+  set: (val) => {
+    actions.value = val / (1 + doubleRewards.value);
   },
 });
 
@@ -127,9 +139,19 @@ watchEffect(() => {
           key="materials"
           id="materials"
           :max="1000000"
-          :getValue="() => materials"
+          :getValue="() => materialsInput"
           :setValue="() => {}"
-          @input="(val) => (materials = val)"
+          @input="(val) => (materialsInput = val)"
+        />
+        <icon-input-bubble
+          v-if="recipeSelected"
+          label="crafts"
+          key="crafts"
+          id="crafts"
+          :max="1000000"
+          :getValue="() => materialsOutput"
+          :setValue="() => {}"
+          @input="(val) => (materialsOutput = val)"
         />
       </div>
       <div
