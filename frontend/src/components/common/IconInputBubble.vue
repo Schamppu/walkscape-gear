@@ -2,6 +2,7 @@
 import { ref, watch } from "vue";
 import WsIcon from "@/components/common/WsIcon.vue";
 import WsLabel from "@/components/common/WsLabel.vue";
+import { n } from "@/utils/number";
 
 const emit = defineEmits(["input"]);
 
@@ -63,7 +64,7 @@ function onBlur() {
     >
       <ws-icon v-if="icon" :iconPath="icon" size="md" />
       <input
-        :value="localValue"
+        :value="Math.ceil(localValue)"
         @input="onInput"
         @blur="onBlur"
         class="input"
