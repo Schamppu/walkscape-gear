@@ -7,7 +7,7 @@ import IconInputBubble from "../common/IconInputBubble.vue";
 import { useSkillModifiers } from "@/composables/useSkillModifiers";
 import WsIcon from "@/components/common/WsIcon.vue";
 import WsLabel from "@/components/common/WsLabel.vue";
-import { xpToLevelSkill } from "@/utils/skillXp";
+import { levelFromXp, xpToLevelSkill } from "@/utils/skillXp";
 
 const { stepsPerAction, xpPerStep, xpRewards, craftsPerMaterial } =
   useSkillModifiers();
@@ -46,6 +46,8 @@ const materials = computed({
 const skillXpStartRefs = reactive({});
 const skillXpGainRefs = reactive({});
 const skillXpEndRefs = reactive({});
+const skillLevelStartRefs = reactive({});
+const skillLevelEndRefs = reactive({});
 
 const getXpPerStepFor = (skill) =>
   xpPerStep.value.find((o) => o.skill === skill).value;
@@ -76,7 +78,11 @@ watchEffect(() => {
       },
     });
 
-    skillXpStartRefs[s] = ref(xpToLevelSkill(skillLevels.value[s]));
+    skillXpStartRefs[s] = xpToLevelSkill(skillLevels.value[s] - 1);
+    skillLevelStartRefs[s] = computed({
+      get: () => levelFromXp(skillXpStartRefs[s]),
+      set: (val) => (skillXpStartRefs[s] = xpToLevelSkill(val - 1)),
+    });
 
     skillXpEndRefs[s] = computed({
       get: () => {
@@ -85,6 +91,10 @@ watchEffect(() => {
       set: (val) => {
         skillXpGainRefs[s] = Math.max(0, val - skillXpStartRefs[s]);
       },
+    });
+    skillLevelEndRefs[s] = computed({
+      get: () => levelFromXp(skillXpEndRefs[s]),
+      set: (val) => (skillXpEndRefs[s] = xpToLevelSkill(val - 1)),
     });
   }
 });
@@ -163,6 +173,24 @@ watchEffect(() => {
             :getValue="() => skillXpEndRefs[skill]"
             :setValue="() => {}"
             @input="(val) => (skillXpEndRefs[skill] = val)"
+          />
+          <icon-input-bubble
+            label="start lvl"
+            :key="`${skill}-start-lvl`"
+            :id="`${skill}-start-lvl`"
+            :max="99"
+            :getValue="() => skillLevelStartRefs[skill]"
+            :setValue="() => {}"
+            @input="(val) => (skillLevelStartRefs[skill] = val)"
+          />
+          <icon-input-bubble
+            label="end lvl"
+            :key="`${skill}-end-lvl`"
+            :id="`${skill}-end-lvl`"
+            :max="99"
+            :getValue="() => skillLevelEndRefs[skill]"
+            :setValue="() => {}"
+            @input="(val) => (skillLevelEndRefs[skill] = val)"
           />
         </div>
       </div>
