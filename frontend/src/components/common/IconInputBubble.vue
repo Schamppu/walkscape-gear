@@ -1,12 +1,14 @@
 <script setup>
 import { ref, watch } from "vue";
 import WsIcon from "@/components/common/WsIcon.vue";
+import WsLabel from "@/components/common/WsLabel.vue";
 
 const emit = defineEmits(["input"]);
 
 const props = defineProps({
   id: { type: [String, Number], required: true },
   icon: { type: String, default: null },
+  label: { type: String, default: null },
   getValue: { type: Function, required: true },
   setValue: { type: Function, required: true },
   min: { type: Number, default: 0 },
@@ -53,20 +55,23 @@ function onBlur() {
 </script>
 
 <template>
-  <div
-    :class="['wrapper', borderClass]"
-    :style="borderColor ? { border: `2px solid ${borderColor}` } : undefined"
-  >
-    <ws-icon v-if="icon" :iconPath="icon" size="md" />
-    <input
-      :value="localValue"
-      @input="onInput"
-      @blur="onBlur"
-      class="input"
-      type="number"
-      :min="min"
-      :max="max"
-    />
+  <div class="label-wrapper">
+    <ws-label v-if="label" :label="label" />
+    <div
+      :class="['wrapper', borderClass]"
+      :style="borderColor ? { border: `2px solid ${borderColor}` } : undefined"
+    >
+      <ws-icon v-if="icon" :iconPath="icon" size="md" />
+      <input
+        :value="localValue"
+        @input="onInput"
+        @blur="onBlur"
+        class="input"
+        type="number"
+        :min="min"
+        :max="max"
+      />
+    </div>
   </div>
 </template>
 
