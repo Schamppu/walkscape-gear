@@ -9,8 +9,7 @@ import ActivityInfo from "./ActivityInfo.vue";
 import TravelInfo from "./TravelInfo.vue";
 import RecipeInfo from "./RecipeInfo.vue";
 import DropsInfo from "./DropsInfo.vue";
-import ActivityCalculator from "./ActivityCalculator.vue";
-import RecipeCalculator from "./RecipeCalculator.vue";
+import RecipeCalculator from "./ActivityCalculator.vue";
 
 const activityStore = useActivityStore();
 const playerStore = usePlayerStore();
@@ -138,8 +137,7 @@ const recipeSelected = computed(
     <drops-info
       v-if="(activitySelected || recipeSelected) && !travellingSelected"
     />
-    <activity-calculator v-if="activitySelected" />
-    <recipe-calculator v-if="recipeSelected" />
+    <recipe-calculator v-if="activitySelected || recipeSelected" />
   </tab-content-wrapper>
 </template>
 
