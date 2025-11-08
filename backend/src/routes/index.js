@@ -12,9 +12,11 @@ import {
   keywordService,
   locationService,
   recipeService,
+  routeService,
   serviceService,
   skillService,
   statService,
+  terrainModifierService,
 } from "../services/index.js";
 
 export function registerRoutes(app) {
@@ -29,9 +31,14 @@ export function registerRoutes(app) {
   apiRouter.use("/locations", createBaseRouter("Location", locationService));
   apiRouter.use("/lootTables", lootTableRoutes);
   apiRouter.use("/recipes", createBaseRouter("Recipe", recipeService));
+  apiRouter.use("/routes", createBaseRouter("Route", routeService));
   apiRouter.use("/services", createBaseRouter("Service", serviceService));
   apiRouter.use("/skills", createBaseRouter("Skill", skillService));
   apiRouter.use("/stats", createBaseRouter("Stat", statService));
+  apiRouter.use(
+    "/terrain_modifiers",
+    createBaseRouter("Terrain Modifiers", terrainModifierService)
+  );
 
   const dbRouter = Router();
   dbRouter.use("/", dbRoutes);
