@@ -113,7 +113,7 @@ const handleCharacterImport = (data) => {
     </div>
     <div class="faction-bubbles">
       <icon-input-bubble
-        v-for="faction in playerStore.factions"
+        v-for="faction in playerStore.reputationFactions"
         :key="faction.reputation"
         :id="faction.reputation"
         :icon="faction.icon"

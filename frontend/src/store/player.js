@@ -11,6 +11,7 @@ export const usePlayerStore = defineStore("playerStore", {
     skillsMap: {},
     skillLevels: {},
     factions: [],
+    reputationFactions: [],
     factionReputation: {},
     factionsMap: {},
     stats: [],
@@ -46,9 +47,10 @@ export const usePlayerStore = defineStore("playerStore", {
       );
       this.setAchievementPoints(playerStats.achievementPoints ?? 0);
 
-      this.factions = factions
-        .filter(({ reputation }) => reputation !== null)
-        .sort((a, b) => a.name.localeCompare(b.name));
+      this.factions = factions.sort((a, b) => a.name.localeCompare(b.name));
+      this.reputationFactions = this.factions.filter(
+        ({ reputation }) => reputation !== null
+      );
       this.factionReputation = Object.fromEntries(
         factions.map(({ reputation }) => [
           reputation,
