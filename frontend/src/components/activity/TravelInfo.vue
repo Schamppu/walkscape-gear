@@ -31,7 +31,7 @@ const end = computed({
   },
 });
 
-const noneLocation = { value: "None" };
+const noneLocation = { value: "None", items: [] };
 
 const locationsByFaction = [
   noneLocation,
