@@ -11,6 +11,7 @@ export const useRouteStore = defineStore("routeStore", {
     start: null,
     end: null,
     locations: [],
+    locationsMap: {},
     routes: [],
     terrainModifiers: [],
     terrainModifiersMap: {},
@@ -30,9 +31,12 @@ export const useRouteStore = defineStore("routeStore", {
       ]);
 
       this.locations = locations;
+      this.locationsMap = Object.fromEntries(
+        locations.map(({ id, ...rest }) => [id, rest])
+      );
       this.routes = routes;
       this.terrainModifiers = terrainModifiers;
-      this.terrainModifiers = Object.fromEntries(
+      this.terrainModifiersMap = Object.fromEntries(
         terrainModifiers.map(({ id, ...rest }) => [id, rest])
       );
 
