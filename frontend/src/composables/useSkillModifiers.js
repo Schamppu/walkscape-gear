@@ -2,7 +2,7 @@ import { computed } from "vue";
 import { useEffectiveAttrs } from "./useEffectiveAttrs";
 import { useActivityStore } from "../store/activity";
 
-export function useSkillModifiers() {
+export function useSkillModifiers(totals = {}) {
   const activityStore = useActivityStore();
   const { totalsByStat } = useEffectiveAttrs();
 
@@ -14,9 +14,10 @@ export function useSkillModifiers() {
   });
 
   const getStat = (stat, key = "percent") => {
-    return stat in totalsByStat.value
-      ? key in totalsByStat.value[stat]
-        ? totalsByStat.value[stat][key]["sum"]
+    const source = { ...totalsByStat.value, ...totals };
+    return stat in source
+      ? key in source[stat]
+        ? source[stat][key]["sum"]
         : 0
       : 0;
   };
