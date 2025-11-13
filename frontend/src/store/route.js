@@ -13,6 +13,7 @@ export const useRouteStore = defineStore("routeStore", {
     locations: [],
     locationsMap: {},
     routes: [],
+    segments: [],
     terrainModifiers: [],
     terrainModifiersMap: {},
   }),
@@ -55,6 +56,9 @@ export const useRouteStore = defineStore("routeStore", {
     },
     setEnd(location) {
       this.end = location;
+    },
+    setSegments(segments) {
+      this.segments = segments;
     },
   },
 });
