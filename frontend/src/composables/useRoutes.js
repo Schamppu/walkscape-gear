@@ -1,11 +1,14 @@
 import { ref } from "vue";
 import { useRouteStore } from "@/store/route";
+import { usePlayerStore } from "@/store/player";
 import { useRequirements } from "@/composables/useRequirements";
 import { useEffectiveAttrs } from "@/composables/useEffectiveAttrs";
 import { useSkillModifiers } from "@/composables/useSkillModifiers";
+import { argbToRgba } from "@/utils/argbToRgba";
 
 export function useRoutes() {
   const routeStore = useRouteStore();
+  const playerStore = usePlayerStore();
   const { getRequirementsContext, checkRequirements } = useRequirements();
   const baseContext = getRequirementsContext();
   const { totalsByStatWithContext } = useEffectiveAttrs();
@@ -48,9 +51,15 @@ export function useRoutes() {
     };
   };
 
+  const getLocationInfo = (id) => {
+    const data = routeStore.locationsMap[id];
+    const color = argbToRgba(playerStore.factionsMap[data.faction].color);
+    return { id, ...data, color };
+  };
+
   const getSegment = (fromId, route) => {
-    const from = { id: fromId, ...routeStore.locationsMap[fromId] };
-    const to = { id: route.to, ...routeStore.locationsMap[route.to] };
+    const from = getLocationInfo(fromId);
+    const to = getLocationInfo(route.to);
     const ctx = getRouteContext(from, route);
 
     const statTotals = totalsByStatWithContext(ctx);
