@@ -74,6 +74,14 @@ export function useRequirements() {
           value =
             intersect(location.keywords, requirement.keywords).length ===
             requirement.keywords.length;
+        if (!location && activity) {
+          const locationKeywords = segments.map(({ from }) => from.keywords);
+          value = locationKeywords.some(
+            (kw) =>
+              intersect(kw, requirement.keywords).length ===
+              requirement.keywords.length
+          );
+        }
         break;
       case "achievementPoint":
         value = achievementPoints >= requirement.value;

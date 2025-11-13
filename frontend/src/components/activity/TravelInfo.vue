@@ -52,13 +52,21 @@ const locationsByFaction = [
     .filter(({ items }) => items.length > 0),
 ];
 
+const selected = computed(() => {
+  return Boolean(start.value && end.value);
+});
+
 const routeRef = computed(() => {
-  if (!(start.value && end.value)) return [];
+  if (!selected.value) return [];
   return getRoute(start.value.id, end.value.id);
 });
 
+const noPath = computed(() => {
+  return selected.value && !routeRef.value;
+});
+
 const segments = computed(() => {
-  if (!(start.value && end.value)) return [];
+  if (!selected.value || noPath.value) return [];
   return routeRef.value.segments;
 });
 
@@ -188,6 +196,10 @@ const updateEnd = (location) => {
           default-text="end location"
           @select="updateEnd"
         />
+      </div>
+
+      <div v-if="noPath">
+        <p>Couldn't find path, probably missing requirements</p>
       </div>
 
       <!-- Stats Display -->
