@@ -7,6 +7,7 @@ import { usePlayerStore } from "@/store/player";
 import { useUrlStore } from "@/store/url";
 import { useItemsStore } from "@/store/items";
 import { useGearSetStore } from "@/store/gearSet";
+import { useRouteStore } from "@/store/route";
 import { useSettingsStore } from "./store/settings";
 import { getOrCreateUserUuid } from "@/utils/user";
 import Hub from "./components/hub/HubTab.vue";
@@ -63,6 +64,7 @@ const bootstrap = async () => {
   const gearSetStore = useGearSetStore();
   const playerStore = usePlayerStore();
   const itemsStore = useItemsStore();
+  const routeStore = useRouteStore();
   const settingsStore = useSettingsStore();
 
   playerStore.setUuid(getOrCreateUserUuid());
@@ -74,6 +76,7 @@ const bootstrap = async () => {
     urlStore.fetchMapping(),
     itemsStore.fetchItems(),
     gearSetStore.fetchGearSets(),
+    routeStore.fetchRouteData(),
     settingsStore.fetchSettingsData(),
   ]);
 
