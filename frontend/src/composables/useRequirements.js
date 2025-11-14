@@ -67,7 +67,6 @@ export function useRequirements() {
     let value = false;
     switch (type) {
       case "mainSkill":
-        console.log(activity, recipe, requirement.skill);
         if (activity)
           value = activity.relatedSkillsList[0] === requirement.skill;
         if (recipe) value = recipe.relatedSkills[0] === requirement.skill;
