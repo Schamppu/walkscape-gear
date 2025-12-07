@@ -171,16 +171,24 @@ const resolveCraftedCategories = (crafted) => {
     { suffix: "sickles", keyword: "sickle" },
     { suffix: "fishing tools", keyword: "fishing_tool" },
     { suffix: "diving gear", keyword: "diving_gear" },
-    { suffix: "amulets", keyword: "amulet" },
+    { suffix: "amulets", keyword: "amulet", type: "neck" },
     { suffix: "rings", keyword: "ring", qualities: 2 },
     { suffix: "weapons", keyword: "weapon" },
     { suffix: "shields", keyword: "shield" },
-  ].map(({ suffix, keyword, qualities }) => {
+    { suffix: "pans", keyword: "cooking_pan" },
+    { suffix: "chisels", keyword: "chisel" },
+    { suffix: "hammers", keyword: "smithing_hammer" },
+    { suffix: "wrenches", keyword: "wrench" },
+    { suffix: "saws", keyword: "saw" },
+  ].map(({ suffix, keyword, type, qualities }) => {
     return {
       title: `Crafted ${capitalize(suffix)}`,
       key: `crafted_${keyword}`,
       qualities: qualities || 1,
-      items: crafted.filter(({ keywords }) => keywords.includes(keyword)),
+      items: crafted.filter(
+        ({ keywords, gearType }) =>
+          keywords.includes(keyword) || gearType === type
+      ),
     };
   });
 
