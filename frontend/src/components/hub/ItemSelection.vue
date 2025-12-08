@@ -38,8 +38,8 @@ const categoryOwnedCount = computed(() => {
 </script>
 
 <template>
-  <div class="wrapper">
-    <h2 class="typography-h3">Owned Items</h2>
+  <details>
+    <summary class="typography-h4">Owned Items</summary>
     <div v-if="!itemsStore.isLoaded">
       <loading-throbber />
     </div>
@@ -69,22 +69,16 @@ const categoryOwnedCount = computed(() => {
         </details>
       </div>
     </div>
-  </div>
+  </details>
 </template>
 
 <style lang="scss" scoped>
-.wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: $base;
+.detail-groups details[open] {
+  margin-bottom: $base;
+}
 
-  .detail-groups {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: $base;
-  }
+details[open] summary {
+  margin-bottom: $md;
 }
 
 .details {
