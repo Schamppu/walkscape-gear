@@ -196,18 +196,18 @@ export function useRequirements() {
       } else if (type === "historyData") {
         if (requirement.category === "stepsWalkedActivity") {
           // Not used anymore
-          const activity = activity.activitiesMap[requirement.data];
+          const act = activity.activitiesMap[requirement.data];
           out = {
             prefix: `Have taken ${requirement.value} steps on the`,
-            text: `${activity.name} activity`,
-            icon: activity.icon,
+            text: `${act.name} activity`,
+            icon: act.icon,
           };
         } else if (requirement.category === "actionCompleted") {
-          const activity = activity.activitiesMap[requirement.data];
+          const act = activity.activitiesMap[requirement.data];
           out = {
             prefix: `Have completed`,
-            text: `${activity.name} activity ${requirement.value} times`,
-            icon: activity.icon,
+            text: `${act.name} activity ${requirement.value} times`,
+            icon: act.icon,
           };
         }
       } else if (type === "skillLevel") {
@@ -230,12 +230,12 @@ export function useRequirements() {
           )}/${requirement.levels} times`,
         };
       } else if (type === "activityType") {
-        const activity = activity.activitiesMap[requirement.activity];
-        if (activity) {
+        const act = activity.activitiesMap[requirement.activity];
+        if (act) {
           out = {
             prefix: `While${opposite ? " NOT" : ""} doing`,
-            text: `${activity.name} activity`,
-            icon: activity.icon,
+            text: `${act.name} activity`,
+            icon: act.icon,
           };
         }
       } else if (type === "itemAnywhere" || type === "itemAnywhereWithYou") {
