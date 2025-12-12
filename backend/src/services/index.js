@@ -2,6 +2,7 @@ import BaseService from "./baseService.js";
 import IconService from "./iconService.js";
 import SkillService from "./skillService.js";
 import ItemService from "./itemService.js";
+import RecipeService from "./recipeService.js";
 
 const achievementService = new BaseService("achievements");
 const activityService = new BaseService("activities");
@@ -12,7 +13,7 @@ const itemService = new ItemService();
 const keywordService = new BaseService("keywords");
 const locationService = new BaseService("locations");
 const lootTableService = new BaseService("loot_tables");
-const recipeService = new BaseService("recipes");
+const recipeService = new RecipeService();
 const routeService = new BaseService("routes");
 const rewardsService = new BaseService("rewards");
 const serviceService = new BaseService("services");
