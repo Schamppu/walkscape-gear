@@ -93,6 +93,29 @@ const resultHasCO = computed(() => {
   );
 });
 
+const materials = computed(() => {
+  return recipe.value.materials
+    .map(
+      ({ options }) =>
+        options.map(({ item, amount }) => {
+          if (!(item in itemsStore.allItems || item in itemsStore.materials))
+            return;
+
+          const fullItem =
+            itemsStore.allItems[item] || itemsStore.materials[item];
+          const { name, icon } = fullItem;
+          return {
+            name,
+            icon,
+            amount,
+          };
+        })[0]
+    )
+    .filter(({ name }) => {
+      return name;
+    });
+});
+
 const craftingOdds = computed(() => {
   const { level: levelReq } = levelRequirement.value;
   const weights = [
@@ -191,6 +214,15 @@ const wikiLink = computed(() => {
             Fine Materials
           </label>
           <wiki-button :name="wikiLink" />
+        </div>
+        <div class="info-row">
+          <info-bubble
+            v-for="{ name, icon, amount } in materials"
+            :key="name"
+            :text="`${amount}`"
+            :tooltip="`${amount}x ${name}`"
+            :iconPath="icon"
+          />
         </div>
         <div class="info-row">
           <info-bubble
