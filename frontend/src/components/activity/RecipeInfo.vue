@@ -25,7 +25,7 @@ const stats = computed(() => {
     workEfficiency,
     uncappedWorkEfficiency,
     effectiveMaxWorkEfficiency,
-    craftingOutcome,
+    qualityOutcome,
     uncappedStepsPerCompletion,
     stepsPerCompletion,
     stepsPerRewardRoll,
@@ -41,7 +41,7 @@ const stats = computed(() => {
     workEfficiency: workEfficiency.value,
     uncappedWorkEfficiency: uncappedWorkEfficiency.value,
     effectiveMaxWorkEfficiency: effectiveMaxWorkEfficiency.value,
-    craftingOutcome: craftingOutcome.value,
+    qualityOutcome: qualityOutcome.value,
     uncappedStepsPerCompletion: uncappedStepsPerCompletion.value,
     stepsPerCompletion: stepsPerCompletion.value,
     stepsPerRewardRoll: stepsPerRewardRoll.value,
@@ -125,11 +125,11 @@ const craftingOdds = computed(() => {
       return {
         ...item,
         weight:
-          stats.value.craftingOutcome < bandStart
+          stats.value.qualityOutcome < bandStart
             ? weightStart
             : Math.max(
                 weightEnd,
-                weightStart + slope * (stats.value.craftingOutcome - bandStart)
+                weightStart + slope * (stats.value.qualityOutcome - bandStart)
               ),
       };
     });

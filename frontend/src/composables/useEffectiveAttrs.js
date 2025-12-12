@@ -10,7 +10,7 @@ import { stripHtmlTags } from "../utils/stripHtmlTags";
 
 export function useEffectiveAttrs() {
   const { checkRequirements } = useRequirements();
-  const { workEfficiencyBonus, craftingOutcomeBonus } = useLevelBonus();
+  const { workEfficiencyBonus, qualityOutcomeBonus } = useLevelBonus();
 
   const activities = useActivityStore();
   const gear = useGearStore();
@@ -89,8 +89,8 @@ export function useEffectiveAttrs() {
     if (workEfficiencyBonus.value) {
       mappedAttrs.push(workEfficiencyBonus.value);
     }
-    if (craftingOutcomeBonus.value) {
-      mappedAttrs.push(craftingOutcomeBonus.value);
+    if (qualityOutcomeBonus.value) {
+      mappedAttrs.push(qualityOutcomeBonus.value);
     }
     if (activities.service?.attributes.length) {
       const serviceAttrs = activities.service.attributes.map((attr) => {

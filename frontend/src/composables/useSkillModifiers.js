@@ -81,8 +81,8 @@ export function useSkillModifiers(totals = {}) {
     return 1 + getStat("chestFind", "percent");
   });
 
-  const craftingOutcome = computed(() => {
-    return getStat("craftingOutcome", "flat");
+  const qualityOutcome = computed(() => {
+    return getStat("qualityOutcome", "flat");
   });
 
   const stepsRequiredFlat = computed(() => {
@@ -170,7 +170,7 @@ export function useSkillModifiers(totals = {}) {
     findBirdNests,
     fineMaterialFind,
     chestFind,
-    craftingOutcome,
+    qualityOutcome,
     doubleAction,
     doubleRewards,
     noMaterialsConsumed,

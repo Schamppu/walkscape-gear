@@ -10,8 +10,8 @@ export function useLevelBonus() {
   const itemStore = useItemsStore();
   const { getLevelRequirementsMap } = useRequirements();
 
-  const getLevelRequirement = (activity, skill) => 
-    getLevelRequirementsMap(activity.requirements)?.[skill] || 1
+  const getLevelRequirement = (activity, skill) =>
+    getLevelRequirementsMap(activity.requirements)?.[skill] || 1;
 
   const workEfficiencyBonus = computed(() => {
     if (!activityStore.activitySelected && !activityStore.recipeSelected)
@@ -54,7 +54,7 @@ export function useLevelBonus() {
     };
   });
 
-  const craftingOutcomeBonus = computed(() => {
+  const qualityOutcomeBonus = computed(() => {
     if (!activityStore.recipeSelected) return null;
     const recipe = activityStore.recipe;
     const [itemId] = Object.keys(recipe.itemRewards);
@@ -72,21 +72,21 @@ export function useLevelBonus() {
     const value = Math.max(playerLevel - levelRequirement, 0);
 
     return {
-      id: "crafting_outcome_bonus",
+      id: "quality_outcome_bonus",
       requirements: [],
       stats: [
         {
           isMultiplicative: true,
           isNegative: false,
           isPercent: false,
-          name: "Crafting Outcome",
-          stat: "crafting_outcome",
-          type: "craftingOutcome",
+          name: "Quality Outcome",
+          stat: "quality_outcome",
+          type: "qualityOutcome",
           value,
         },
       ],
       item: {
-        id: "crafting_outcome_bonus",
+        id: "quality_outcome_bonus",
         name: "From levels above requirement",
         icon: "",
       },
@@ -95,7 +95,7 @@ export function useLevelBonus() {
   });
 
   return {
-    craftingOutcomeBonus,
+    qualityOutcomeBonus,
     workEfficiencyBonus,
   };
 }

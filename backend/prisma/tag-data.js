@@ -14,7 +14,7 @@ export const skillTags = [
 export const attributeTags = [
   { id: "bonus_experience", name: "Experience" },
   { id: "chest_find", name: "Chest Find" },
-  { id: "crafting_quality", name: "Crafting Outcome" },
+  { id: "crafting_quality", name: "Quality Outcome" },
   { id: "double_action", name: "Double Action" },
   { id: "double_result", name: "Double Rewards" },
   { id: "find_bird_nests", name: "Bird Nests" },
