@@ -93,6 +93,14 @@ const resultHasCO = computed(() => {
   );
 });
 
+const canUseFineMaterials = computed(() => {
+  const upgraded = itemsStore.itemsByCategory["upgraded_crafted"].map(
+    ({ id }) => id
+  );
+  const reward = Object.keys(recipe.value.itemRewards)[0];
+  return !upgraded.includes(reward);
+});
+
 const materials = computed(() => {
   return recipe.value.materials
     .map(
@@ -209,19 +217,21 @@ const wikiLink = computed(() => {
     <section :class="['recipe-info', borderClass]">
       <div class="info-section" :key="recipe">
         <div class="info-row">
-          <label>
+          <label v-if="canUseFineMaterials">
             <input type="checkbox" v-model="useFineMaterials" />
             Fine Materials
           </label>
           <wiki-button :name="wikiLink" />
         </div>
         <div class="info-row">
+          <p>Materials:</p>
           <info-bubble
             v-for="{ name, icon, amount } in materials"
             :key="name"
             :text="`${amount}`"
             :tooltip="`${amount}x ${name}`"
             :iconPath="icon"
+            :border-class="useFineMaterials ? 'border-fine' : ''"
           />
         </div>
         <div class="info-row">
