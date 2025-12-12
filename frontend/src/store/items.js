@@ -3,6 +3,7 @@ import { upsertOwnedItems } from "@/utils/axios/db_routes";
 import {
   getCategorizedItems,
   getFineMaterials,
+  getMaterials,
 } from "@/utils/axios/api_routes";
 import { fetchOwnedItems } from "@/utils/axios/db_routes";
 import debounce from "@/utils/debounce";
@@ -14,6 +15,7 @@ export const useItemsStore = defineStore("itemStore", {
     ownedItems: {},
     allItems: {},
     changedOwnedItems: {},
+    materials: {},
     fineMaterials: {},
     isLoaded: false,
   }),
@@ -32,12 +34,17 @@ export const useItemsStore = defineStore("itemStore", {
     async fetchItems() {
       if (this.isLoaded) return;
 
-      const [{ data: categorizedItems }, ownedItems, { data: fineMaterials }] =
-        await Promise.all([
-          getCategorizedItems(),
-          fetchOwnedItems(),
-          getFineMaterials(),
-        ]);
+      const [
+        { data: categorizedItems },
+        ownedItems,
+        { data: materials },
+        { data: fineMaterials },
+      ] = await Promise.all([
+        getCategorizedItems(),
+        fetchOwnedItems(),
+        getMaterials(),
+        getFineMaterials(),
+      ]);
 
       this.ownedItems = Object.fromEntries(
         ownedItems.map(({ itemId, ...data }) => [itemId, data])
@@ -52,6 +59,9 @@ export const useItemsStore = defineStore("itemStore", {
       );
       this.allItems = Object.fromEntries(
         categories.flatMap(({ items }) => items).map((item) => [item.id, item])
+      );
+      this.materials = Object.fromEntries(
+        materials.map(({ id, icon, name }) => [id, { icon, name }])
       );
       this.fineMaterials = Object.fromEntries(
         fineMaterials.map((id) => [id, true])
