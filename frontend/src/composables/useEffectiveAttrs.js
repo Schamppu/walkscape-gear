@@ -3,6 +3,7 @@ import { useActivityStore } from "@/store/activity";
 import { useGearStore } from "@/store/gear";
 import { useItemsStore } from "@/store/items";
 import { useRequirements } from "./useRequirements";
+import useBaseContext from "./useBaseContext";
 import { useLevelBonus } from "./useLevelBonus";
 import { sumAttrs } from "../utils/qualityAttrs";
 import { toDeepRaw } from "../utils/rawData";
@@ -10,7 +11,8 @@ import { stripHtmlTags } from "../utils/stripHtmlTags";
 
 export function useEffectiveAttrs() {
   const { checkRequirements } = useRequirements();
-  const { workEfficiencyBonus, qualityOutcomeBonus } = useLevelBonus();
+  const ctx = useBaseContext();
+  const { workEfficiencyBonus, qualityOutcomeBonus } = useLevelBonus(ctx);
 
   const activities = useActivityStore();
   const gear = useGearStore();
