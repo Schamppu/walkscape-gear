@@ -1,62 +1,27 @@
 import { intersect } from "../utils/intersect";
 import { useActivityStore } from "@/store/activity";
-import { useGearStore } from "@/store/gear";
 import { usePlayerStore } from "@/store/player";
 import { useItemsStore } from "@/store/items";
-import { useRouteStore } from "@/store/route";
 import { useDataStore } from "@/store/data";
 
-export function useRequirements() {
-  const activity = useActivityStore();
-  const gear = useGearStore();
-  const player = usePlayerStore();
-  const items = useItemsStore();
-  const route = useRouteStore();
-  const data = useDataStore();
+export function useRequirements(ctx) {
+  const activityStore = useActivityStore();
+  const playerStore = usePlayerStore();
+  const itemsStore = useItemsStore();
+  const dataStore = useDataStore();
 
-  const getRequirementsContext = () => {
-    return {
-      activity: activity.activitySelected && activity.activity,
-      recipe: activity.recipeSelected && activity.recipe,
-      location: activity.location,
-      achievementPoints: player.achievementPoints,
-      gear: gear.equippedGear,
-      factionReputation: player.factionReputation,
-      segments: route.segments,
-    };
-  };
-
-  const checkRequirements = (reqs, context = {}) => {
+  const checkRequirements = (reqs, context) => {
     if (!reqs || !reqs.length) return true;
-    const baseData = getRequirementsContext();
-    const data = {
-      activity: context.activity || baseData.activity,
-      recipe: context.recipe || baseData.recipe,
-      location: context.location || baseData.location,
-      achievementPoints:
-        context.achievementPoints || baseData.achievementPoints,
-      gear: context.equippedGear || baseData.gear,
-      factionReputation:
-        context.factionReputation || baseData.factionReputation,
-      segments: context.segments || baseData.segments,
-    };
-
-    return reqs.every((requirements) => checkRequirement(requirements, data));
+    return reqs.every((requirements) =>
+      checkRequirement(requirements, ctx || context)
+    );
   };
 
-  const checkRequirement = (req, data) => {
+  const checkRequirement = (req, context) => {
     const { type, opposite, requirement } = req;
-    const {
-      activity,
-      recipe,
-      location,
-      achievementPoints,
-      gear,
-      factionReputation,
-      segments,
-    } = data;
-    const equippedKeywordCounts = gear
-      ? gear
+
+    const equippedKeywordCounts = context.equippedGear.value
+      ? context.equippedGear.value
           .flatMap(({ keywords }) => keywords)
           .reduce((acc, val) => {
             acc[val] = (acc[val] || 0) + 1;
@@ -67,27 +32,31 @@ export function useRequirements() {
     let value = false;
     switch (type) {
       case "mainSkill":
-        if (activity)
-          value = activity.relatedSkillsList[0] === requirement.skill;
-        if (recipe) value = recipe.relatedSkills[0] === requirement.skill;
+        if (context.activity.value)
+          value =
+            context.activity.value.relatedSkillsList[0] === requirement.skill;
+        if (context.recipe.value)
+          value = context.recipe.value.relatedSkills[0] === requirement.skill;
         break;
       case "mainSkillType":
-        if (activity)
+        if (context.activity.value)
           value =
-            player.skillsMap[activity.relatedSkillsList[0]].type ==
-            requirement.type;
-        if (recipe)
+            playerStore.skillsMap[context.activity.value.relatedSkillsList[0]]
+              .type == requirement.type;
+        if (context.recipe.value)
           value =
-            player.skillsMap[recipe.relatedSkills[0]].type ==
+            playerStore.skillsMap[context.recipe.value.relatedSkills[0]].type ==
             requirement.type;
         break;
       case "locationHasKeywords":
-        if (location)
+        if (context.location.value)
           value =
-            intersect(location.keywords, requirement.keywords).length ===
+            intersect(location.value.keywords, requirement.keywords).length ===
             requirement.keywords.length;
-        if (!location && activity) {
-          const locationKeywords = segments.map(({ from }) => from.keywords);
+        if (!context.location.value && context.activity.value) {
+          const locationKeywords = context.segments.value.map(
+            ({ from }) => from.keywords
+          );
           value = locationKeywords.some(
             (kw) =>
               intersect(kw, requirement.keywords).length ===
@@ -96,7 +65,7 @@ export function useRequirements() {
         }
         break;
       case "achievementPoint":
-        value = achievementPoints >= requirement.value;
+        value = context.achievementPoints.value >= requirement.value;
         break;
       case "distinctKeywordItemsEquipped":
         value = requirement.keywords.every(
@@ -107,12 +76,12 @@ export function useRequirements() {
         value = true;
         break;
       case "realm":
-        if (location)
+        if (context.location.value)
           value =
-            location.faction === requirement.realm ||
-            location.subFactions?.includes(requirement.realm);
-        if (!location && activity) {
-          const factionInfo = segments.map(({ from }) => {
+            context.location.value.faction === requirement.realm ||
+            context.location.value.subFactions?.includes(requirement.realm);
+        if (!context.location.value && context.activity.value) {
+          const factionInfo = context.segments.value.map(({ from }) => {
             return { faction: from.faction, subFactions: from.subFactions };
           });
           value = factionInfo.some(
@@ -123,29 +92,33 @@ export function useRequirements() {
         }
         break;
       case "traveling":
-        if (activity) value = activity.id === "travelling";
+        if (context.activity.value)
+          value = context.activity.value.id === "travelling";
         break;
       case "gameData":
-        if (factionReputation) {
+        if (context.factionReputation.value) {
           const { data, gameDataId } = requirement;
           const rep = JSON.parse(data).double || 0;
-          value = factionReputation[gameDataId] >= rep;
+          value = context.factionReputation[gameDataId] >= rep;
         }
         break;
       case "skillLevel":
-        value = player.skillLevels[requirement.skill] >= requirement.level;
+        value = playerStore.skillLevels[requirement.skill] >= requirement.level;
         break;
       case "activityType":
-        if (activity) value = activity.id === requirement.activity;
+        if (context.activity.value)
+          value = context.activity.value.id === requirement.activity;
         break;
       case "totalSkillLevelUps":
         value =
-          Object.values(player.skillLevels).reduce((a, b) => a + b - 1, 0) >=
-          requirement.levels;
+          Object.values(playerStore.skillLevels).reduce(
+            (a, b) => a + b - 1,
+            0
+          ) >= requirement.levels;
         break;
       case "itemAnywhereWithYou":
       case "itemAnywhere":
-        value = requirement.item in items.ownedItems;
+        value = requirement.item in itemsStore.ownedItems;
         break;
       default:
         console.error("unhandled requirement", type, requirement);
@@ -159,7 +132,7 @@ export function useRequirements() {
       const { type, opposite, requirement } = req;
       let out;
       if (type === "mainSkill") {
-        const skill = player.skillsMap[requirement.skill];
+        const skill = playerStore.skillsMap[requirement.skill];
         out = {
           prefix: `While${opposite ? " NOT" : ""}`,
           text: skill.name,
@@ -179,7 +152,7 @@ export function useRequirements() {
         };
       } else if (type === "locationHasKeywords") {
         out = requirement.keywords
-          .map(data.getKeywordById)
+          .map(dataStore.getKeywordById)
           .filter(Boolean)
           .map(({ name, icon }) => ({
             prefix: `While${opposite ? " NOT" : ""} in`,
@@ -187,7 +160,7 @@ export function useRequirements() {
             icon,
           }))[0];
       } else if (type === "realm") {
-        const realm = player.factionsMap[requirement.realm];
+        const realm = playerStore.factionsMap[requirement.realm];
         out = {
           prefix: `While${opposite ? " NOT" : ""} in`,
           text: `${realm.name} area`,
@@ -196,7 +169,7 @@ export function useRequirements() {
       } else if (type === "distinctKeywordItemsEquipped") {
         const { quantity } = requirement;
         out = requirement.keywords
-          .map(data.getKeywordById)
+          .map(dataStore.getKeywordById)
           .filter(Boolean)
           .map(({ name, icon }) => ({
             prefix: `While${opposite ? " NOT" : ""} wearing ${quantity}`,
@@ -212,14 +185,14 @@ export function useRequirements() {
       } else if (type === "historyData") {
         if (requirement.category === "stepsWalkedActivity") {
           // Not used anymore
-          const act = activity.activitiesMap[requirement.data];
+          const act = activityStore.activitiesMap[requirement.data];
           out = {
             prefix: `Have taken ${requirement.value} steps on the`,
             text: `${act.name} activity`,
             icon: act.icon,
           };
         } else if (requirement.category === "actionCompleted") {
-          const act = activity.activitiesMap[requirement.data];
+          const act = activityStore.activitiesMap[requirement.data];
           out = {
             prefix: `Have completed`,
             text: `${act.name} activity ${requirement.value} times`,
@@ -227,14 +200,14 @@ export function useRequirements() {
           };
         }
       } else if (type === "skillLevel") {
-        const skill = player.skillsMap[requirement.skill];
+        const skill = playerStore.skillsMap[requirement.skill];
         out = {
           prefix: `While at least ${requirement.level}`,
           text: skill.name,
           icon: skill.icon,
         };
       } else if (type === "totalSkillLevelUps") {
-        const skillLevels = Object.values(player.skillLevels).reduce(
+        const skillLevels = Object.values(playerStore.skillLevels).reduce(
           (a, b) => a + b - 1,
           0
         );
@@ -246,7 +219,7 @@ export function useRequirements() {
           )}/${requirement.levels} times`,
         };
       } else if (type === "activityType") {
-        const act = activity.activitiesMap[requirement.activity];
+        const act = activityStore.activitiesMap[requirement.activity];
         if (act) {
           out = {
             prefix: `While${opposite ? " NOT" : ""} doing`,
@@ -256,7 +229,7 @@ export function useRequirements() {
         }
       } else if (type === "itemAnywhere" || type === "itemAnywhereWithYou") {
         const { item: itemID } = requirement;
-        const item = items.allItems[itemID];
+        const item = itemsStore.allItems[itemID];
         if (item) {
           out = {
             prefix: `Own a`,
@@ -280,6 +253,7 @@ export function useRequirements() {
   };
 
   const getLevelRequirementsMap = (requirements) => {
+    if (!requirements) return {};
     const map = {};
     requirements.forEach(({ type, requirement }) => {
       if (type !== "skillLevel") return;
@@ -290,7 +264,6 @@ export function useRequirements() {
   };
 
   return {
-    getRequirementsContext,
     checkRequirements,
     mapRequirementsText,
     getLevelRequirementsMap,

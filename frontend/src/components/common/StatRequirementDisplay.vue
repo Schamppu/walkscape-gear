@@ -4,6 +4,7 @@ import { storeToRefs } from "pinia";
 import { useDataStore } from "@/store/data";
 import { useSettingsStore } from "@/store/settings";
 import { useRequirements } from "@/composables/useRequirements";
+import useBaseContext from "@/composables/useBaseContext";
 import WsIcon from "@/components/common/WsIcon.vue";
 
 import { n } from "@/utils/number";
@@ -26,7 +27,8 @@ const props = defineProps({
 const dataStore = useDataStore();
 const settingsStore = useSettingsStore();
 const { gearSettings } = storeToRefs(settingsStore);
-const { checkRequirements, mapRequirementsText } = useRequirements();
+const ctx = useBaseContext();
+const { checkRequirements, mapRequirementsText } = useRequirements(ctx);
 const isOpen = ref(gearSettings.value.openStatRequirements.value);
 
 const storeStat = computed(

@@ -7,6 +7,7 @@ import { useGearStore } from "@/store/gear";
 import { useItemsStore } from "@/store/items";
 import { usePlayerStore } from "@/store/player";
 import { useSettingsStore } from "@/store/settings";
+import useBaseContext from "@/composables/useBaseContext";
 import { useRequirements } from "@/composables/useRequirements";
 import { sumAttrs } from "@/utils/qualityAttrs";
 import { stripHtmlTags } from "@/utils/stripHtmlTags";
@@ -20,7 +21,8 @@ const itemsStore = useItemsStore();
 const playerStore = usePlayerStore();
 const settingsStore = useSettingsStore();
 const { activitySettings } = storeToRefs(settingsStore);
-const { checkRequirements } = useRequirements();
+const ctx = useBaseContext();
+const { checkRequirements } = useRequirements(ctx);
 const resolvedLootTables = ref([]);
 
 watchEffect(async () => {

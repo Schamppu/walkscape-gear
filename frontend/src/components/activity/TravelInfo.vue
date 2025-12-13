@@ -7,13 +7,15 @@ import WsIcon from "../common/WsIcon.vue";
 import { usePlayerStore } from "@/store/player";
 import { useRouteStore } from "@/store/route";
 import { useRoutes } from "@/composables/useRoutes";
+import useBaseContext from "@/composables/useBaseContext";
 import { useRequirements } from "@/composables/useRequirements";
 import { n } from "@/utils/number";
 
 const playerStore = usePlayerStore();
 const routeStore = useRouteStore();
 const { getRoute, averageStepsPerRoute, stepsPerNode } = useRoutes();
-const { checkRequirements, mapRequirementsText } = useRequirements();
+const ctx = useBaseContext();
+const { checkRequirements, mapRequirementsText } = useRequirements(ctx);
 
 const start = computed({
   get: () => routeStore.start,

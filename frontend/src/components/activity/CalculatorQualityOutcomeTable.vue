@@ -3,6 +3,7 @@ import { computed, ref } from "vue";
 import { storeToRefs } from "pinia";
 import { useActivityStore } from "@/store/activity";
 import { useItemsStore } from "@/store/items";
+import useBaseContext from "@/composables/useBaseContext";
 import { useRequirements } from "@/composables/useRequirements";
 import { useSkillModifiers } from "@/composables/useSkillModifiers";
 import WsLabel from "@/components/common/WsLabel.vue";
@@ -16,7 +17,8 @@ const props = defineProps({
 const activityStore = useActivityStore();
 const itemsStore = useItemsStore();
 const { recipe } = storeToRefs(activityStore);
-const { getLevelRequirementsMap } = useRequirements();
+const ctx = useBaseContext();
+const { getLevelRequirementsMap } = useRequirements(ctx);
 const useFineMaterials = ref(false);
 
 const canUseFineMaterials = computed(() => {

@@ -2,16 +2,17 @@ import { computed } from "vue";
 import { useActivityStore } from "@/store/activity";
 import { useGearStore } from "@/store/gear";
 import { useItemsStore } from "@/store/items";
+import useBaseContext from "@/composables/useBaseContext";
 import { useRequirements } from "./useRequirements";
-import useBaseContext from "./useBaseContext";
 import { useLevelBonus } from "./useLevelBonus";
 import { sumAttrs } from "../utils/qualityAttrs";
 import { toDeepRaw } from "../utils/rawData";
 import { stripHtmlTags } from "../utils/stripHtmlTags";
 
 export function useEffectiveAttrs() {
-  const { checkRequirements } = useRequirements();
   const ctx = useBaseContext();
+  const { checkRequirements } = useRequirements(ctx);
+
   const { workEfficiencyBonus, qualityOutcomeBonus } = useLevelBonus(ctx);
 
   const activities = useActivityStore();

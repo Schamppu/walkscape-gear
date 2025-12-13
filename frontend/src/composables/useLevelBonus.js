@@ -2,7 +2,7 @@ import { computed } from "vue";
 import { useRequirements } from "./useRequirements";
 
 export function useLevelBonus(ctx) {
-  const { getLevelRequirementsMap } = useRequirements();
+  const { getLevelRequirementsMap } = useRequirements(ctx);
 
   const getLevelRequirement = (activity, skill) =>
     getLevelRequirementsMap(activity.requirements)?.[skill] || 1;

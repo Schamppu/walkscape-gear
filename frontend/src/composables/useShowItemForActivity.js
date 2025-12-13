@@ -2,6 +2,7 @@ import { storeToRefs } from "pinia";
 import { useActivityStore } from "@/store/activity";
 import { useItemsStore } from "@/store/items";
 import { useDataStore } from "@/store/data";
+import useBaseContext from "@/composables/useBaseContext";
 import { useRequirements } from "@/composables/useRequirements";
 import { useSettingsStore } from "@/store/settings";
 import { getRawData } from "@/utils/rawData";
@@ -13,7 +14,8 @@ export function useShowItemForActivity() {
   const dataStore = useDataStore();
   const settingsStore = useSettingsStore();
   const { activitySettings } = storeToRefs(settingsStore);
-  const { checkRequirements } = useRequirements();
+  const ctx = useBaseContext();
+  const { checkRequirements } = useRequirements(ctx);
 
   const usefulKeywords = (item, activity, service) => {
     if (!activity) return false;

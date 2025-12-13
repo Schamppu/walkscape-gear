@@ -6,6 +6,7 @@ import { useItemsStore } from "@/store/items";
 import { useActivityStore } from "@/store/activity";
 import { useDataStore } from "@/store/data";
 import { useSettingsStore } from "@/store/settings";
+import useBaseContext from "@/composables/useBaseContext";
 import { useRequirements } from "@/composables/useRequirements";
 import { useShowItemForActivity } from "@/composables/useShowItemForActivity";
 import { consumableQualityOptions } from "@/constants/quality";
@@ -34,7 +35,9 @@ const activityStore = useActivityStore();
 const dataStore = useDataStore();
 const settingsStore = useSettingsStore();
 const { gearSettings } = storeToRefs(settingsStore);
-const { checkRequirements } = useRequirements();
+
+const ctx = useBaseContext();
+const { checkRequirements } = useRequirements(ctx);
 const { showItemForActivity } = useShowItemForActivity();
 
 const searchTerm = ref("");
