@@ -1,14 +1,11 @@
 import pako from "pako";
-import { useGearStore } from "@/store/gear";
 import { getOldItemIds } from "../utils/axios/api_routes";
 
-export function useGearSetExport() {
-  const gearStore = useGearStore();
-
+export function useGearSetExport(ctx) {
   const exportItem = (slotName, itemIdMap) => {
     const match = slotName.match(/^([a-zA-Z]+)(\d+)?$/);
     const [type, index] = match ? [match[1], match[2] - 1 || 0] : ["", ""];
-    const slotItem = gearStore.get(slotName);
+    const slotItem = ctx.gearSlots[slotName];
     const item = slotItem
       ? {
           id: itemIdMap[slotItem?.id],
@@ -27,11 +24,11 @@ export function useGearSetExport() {
 
   const exportCode = async () => {
     const excluded = ["consumable", "potion", "service"];
-    const slotKeys = Object.keys(gearStore.gearSlots).filter(
+    const slotKeys = Object.keys(ctx.gearSlots).filter(
       (key) => !excluded.includes(key)
     );
     const itemIds = slotKeys
-      .map((key) => gearStore.get(key)?.id)
+      .map((key) => ctx.gearSlots[key]?.id)
       .filter(Boolean);
     const { data: itemIdMap } = await getOldItemIds(itemIds);
 

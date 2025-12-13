@@ -2,13 +2,15 @@
 import { ref } from "vue";
 import WsButton from "@/components/common/WsButton.vue";
 import GearSetImportModal from "./GearSetImportModal.vue";
+import useBaseContext from "@/composables/useBaseContext";
 import { useGearSetExport } from "@/composables/useGearSetExport";
 import { useNotificationStore } from "@/store/notifications";
 import { useGearStore } from "@/store/gear";
 import { useUrlStore } from "@/store/url";
 import { getNewItemIds } from "@/utils/axios/api_routes";
 
-const { importCode } = useGearSetExport();
+const ctx = useBaseContext();
+const { importCode } = useGearSetExport(ctx);
 const notificationStore = useNotificationStore();
 const gearStore = useGearStore();
 const urlStore = useUrlStore();
