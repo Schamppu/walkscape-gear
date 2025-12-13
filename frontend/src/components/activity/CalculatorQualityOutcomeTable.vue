@@ -1,7 +1,8 @@
 <script setup>
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { storeToRefs } from "pinia";
 import { useActivityStore } from "@/store/activity";
+import { useItemsStore } from "@/store/items";
 import { useRequirements } from "@/composables/useRequirements";
 import { useSkillModifiers } from "@/composables/useSkillModifiers";
 import WsLabel from "@/components/common/WsLabel.vue";
@@ -13,17 +14,30 @@ const props = defineProps({
 });
 
 const activityStore = useActivityStore();
+const itemsStore = useItemsStore();
 const { recipe } = storeToRefs(activityStore);
 const { getLevelRequirementsMap } = useRequirements();
+const useFineMaterials = ref(false);
+
+const canUseFineMaterials = computed(() => {
+  const upgraded = itemsStore.itemsByCategory["upgraded_crafted"].map(
+    ({ id }) => id
+  );
+  const reward = Object.keys(recipe.value.itemRewards)[0];
+  return !upgraded.includes(reward);
+});
 
 const craftingOdds = computed(() => {
   const levelMap = getLevelRequirementsMap(recipe.value.requirements);
-  if (!("crafting" in levelMap)) return [];
-  const level = levelMap["crafting"];
+  const level = Object.values(levelMap)[0];
 
   const { qualityOutcome } = useSkillModifiers();
 
-  const odds = getOutcomeOdds(level, qualityOutcome.value, false);
+  const odds = getOutcomeOdds(
+    level,
+    qualityOutcome.value,
+    useFineMaterials.value
+  );
   return odds.map((item) => {
     return {
       ...item,
@@ -35,26 +49,41 @@ const craftingOdds = computed(() => {
 </script>
 
 <template>
-  <ws-label label="Expected outcomes" />
-  <table class="quality-odds-table">
-    <thead>
-      <tr>
-        <th>Quality</th>
-        <th>Odds of 1</th>
-        <th>Avg. Amount</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="(item, index) in craftingOdds" :key="`${item.name}-${index}`">
-        <td :class="`color-${item.qualityValue}`">{{ item.name }}</td>
-        <td>{{ n(item.odds1, 2) }}</td>
-        <td>{{ n(item.avg, 2) }}</td>
-      </tr>
-    </tbody>
-  </table>
+  <div class="wrapper">
+    <ws-label label="Expected outcomes" />
+    <label v-if="canUseFineMaterials">
+      <input type="checkbox" v-model="useFineMaterials" />
+      Fine Materials
+    </label>
+    <table class="quality-odds-table">
+      <thead>
+        <tr>
+          <th>Quality</th>
+          <th>Odds of 1</th>
+          <th>Avg. Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          v-for="(item, index) in craftingOdds"
+          :key="`${item.name}-${index}`"
+        >
+          <td :class="`color-${item.qualityValue}`">{{ item.name }}</td>
+          <td>{{ n(item.odds1, 4) }}</td>
+          <td>{{ n(item.avg, 1) }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </template>
 
 <style lang="scss" scoped>
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: $xxs;
+}
+
 .quality-odds-table {
   width: 100%;
   border-collapse: collapse;
