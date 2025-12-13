@@ -93,7 +93,7 @@ const craftingOdds = computed(() => {
 </script>
 
 <template>
-  <ws-label label="Crafting Odds" class="info-row" />
+  <ws-label label="Crafting Odds" />
   <table class="quality-odds-table">
     <thead>
       <tr>
@@ -114,14 +114,7 @@ const craftingOdds = computed(() => {
   </table>
 </template>
 
-<style lang="scss">
-.info-row {
-  align-items: center;
-  display: flex;
-  flex-wrap: wrap;
-  gap: $md;
-}
-
+<style lang="scss" scoped>
 .quality-odds-table {
   width: 100%;
   border-collapse: collapse;
