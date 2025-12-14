@@ -1,5 +1,6 @@
 <script setup>
 import { computed, ref } from "vue";
+import useBaseContext from "@/composables/useBaseContext";
 import { useEffectiveAttrs } from "@/composables/useEffectiveAttrs";
 import WsIcon from "@/components/common/WsIcon.vue";
 import StatSourceDisplay from "@/components/stats/StatSourceDisplay.vue";
@@ -14,7 +15,8 @@ const props = defineProps({
 
 const isOpen = ref(false);
 
-const { allAttrs, totalsByStat } = useEffectiveAttrs();
+const ctx = useBaseContext();
+const { allAttrs, totalsByStat } = useEffectiveAttrs(ctx);
 
 const sumStats = (stats) => {
   return stats.reduce((a, { value: b }) => a + b, 0);

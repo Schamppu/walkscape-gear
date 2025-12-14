@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from "vue";
+import useBaseContext from "@/composables/useBaseContext";
 import { useEffectiveAttrs } from "@/composables/useEffectiveAttrs";
 import WsIcon from "@/components/common/WsIcon.vue";
 import { n } from "@/utils/number";
@@ -12,7 +13,8 @@ const props = defineProps({
   isPercent: Boolean,
 });
 
-const { effectiveAttrs, allAttrs } = useEffectiveAttrs();
+const ctx = useBaseContext();
+const { effectiveAttrs, allAttrs } = useEffectiveAttrs(ctx);
 
 const statList = computed(() => {
   const effectiveAttrIds = effectiveAttrs.value.map((attr) => attr.id);

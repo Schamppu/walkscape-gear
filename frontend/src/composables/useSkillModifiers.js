@@ -1,10 +1,12 @@
 import { computed } from "vue";
+import useBaseContext from "@/composables/useBaseContext";
 import { useEffectiveAttrs } from "./useEffectiveAttrs";
 import { useActivityStore } from "../store/activity";
 
 export function useSkillModifiers(totals = {}) {
   const activityStore = useActivityStore();
-  const { totalsByStat } = useEffectiveAttrs();
+  const ctx = useBaseContext();
+  const { totalsByStat } = useEffectiveAttrs(ctx);
 
   const isActivity = computed(() => activityStore.activitySelected);
   const activity = computed(() => {

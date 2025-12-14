@@ -26,12 +26,15 @@ function useBaseContext() {
       activityStore.recipeSelected ? activityStore.recipe : null
     ),
     location: computed(() => activityStore.activity?.location || null),
+    service: computed(() => activityStore.service),
 
     skillLevels: computed(() => playerStore.skillLevels),
     achievementPoints: computed(() => playerStore.achievementPoints),
     factionReputation: computed(() => playerStore.factionReputation),
 
-    items: computed(() => itemsStore.allItems),
+    allItems: computed(() => itemsStore.allItems),
+    itemsByCategory: computed(() => itemsStore.itemsByCategory),
+    ownedItems: computed(() => itemsStore.ownedItems),
 
     gearSlots: computed(() => gearStore.gearSlots),
 

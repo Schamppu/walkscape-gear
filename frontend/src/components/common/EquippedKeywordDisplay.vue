@@ -1,13 +1,15 @@
 <script setup>
 import { computed } from "vue";
 import WsIcon from "./WsIcon.vue";
+import useBaseContext from "@/composables/useBaseContext";
 import { useEffectiveAttrs } from "@/composables/useEffectiveAttrs";
 
 const props = defineProps({
   keyword: Object,
 });
 
-const { equippedKeywords } = useEffectiveAttrs();
+const ctx = useBaseContext();
+const { equippedKeywords } = useEffectiveAttrs(ctx);
 const borderClass = computed(() => {
   const { id, quantity } = props.keyword;
   const quantLim = quantity ? quantity : 1;

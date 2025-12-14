@@ -61,7 +61,7 @@ export function useLevelBonus(ctx) {
     if (!recipe) return null;
 
     const [itemId] = Object.keys(recipe.itemRewards);
-    const item = ctx.items.value[itemId];
+    const item = ctx.allItems.value[itemId];
 
     if (!item || item.type !== "crafted") return null;
 

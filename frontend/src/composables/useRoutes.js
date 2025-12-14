@@ -12,7 +12,7 @@ export function useRoutes() {
   const playerStore = usePlayerStore();
   const baseContext = useBaseContext();
   const { checkRequirements } = useRequirements(baseContext);
-  const { totalsByStatWithContext } = useEffectiveAttrs();
+  const { totalsByStatWithContext } = useEffectiveAttrs(baseContext);
 
   const graph = ref(new Map());
 
