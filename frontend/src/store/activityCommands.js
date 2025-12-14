@@ -25,7 +25,11 @@ export class SetActivityCommand {
     this.activityStore._setActivityDirect(this.newActivity);
 
     // Load activity locations if we have an activity
-    if (this.newActivity && this.newActivity.id !== "none") {
+    if (
+      this.newActivity &&
+      this.newActivity.id !== "none" &&
+      this.newActivity.id !== "travelling"
+    ) {
       await this.activityStore.loadActivityLocations(this.newActivity.id);
     } else {
       this.activityStore._setLocationsDirect(null);
