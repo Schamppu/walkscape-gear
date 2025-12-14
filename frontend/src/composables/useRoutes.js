@@ -1,4 +1,4 @@
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useRouteStore } from "@/store/route";
 import { usePlayerStore } from "@/store/player";
 import useBaseContext from "@/composables/useBaseContext";
@@ -44,11 +44,14 @@ export function useRoutes() {
   const getRouteContext = (from, route) => {
     return {
       ...baseContext,
-      location: {
-        faction: from.faction,
-        subFactions: from.subFactions,
-      },
-      terrainModifiers: route.requirements,
+      location: computed(() => {
+        return {
+          faction: from.faction,
+          subFactions: from.subFactions,
+          keywords: from.keywords,
+        };
+      }),
+      terrainModifiers: computed(() => route.requirements),
     };
   };
 
@@ -83,8 +86,8 @@ export function useRoutes() {
       route,
       context: ctx,
       distance: route.distance,
-      terrainModifiers: ctx.terrainModifiers,
-      requirements: ctx.terrainModifiers.flatMap((tm) =>
+      terrainModifiers: ctx.terrainModifiers.value,
+      requirements: ctx.terrainModifiers.value.flatMap((tm) =>
         tm.flatMap(({ requirements }) => requirements)
       ),
     };
