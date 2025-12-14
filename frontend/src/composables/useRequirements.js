@@ -99,7 +99,7 @@ export function useRequirements(ctx) {
         if (context.factionReputation.value) {
           const { data, gameDataId } = requirement;
           const rep = JSON.parse(data).double || 0;
-          value = context.factionReputation[gameDataId] >= rep;
+          value = context.factionReputation.value[gameDataId] >= rep;
         }
         break;
       case "skillLevel":
