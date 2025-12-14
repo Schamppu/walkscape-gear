@@ -13,8 +13,8 @@ import { n } from "@/utils/number";
 
 const playerStore = usePlayerStore();
 const routeStore = useRouteStore();
-const { getRoute, averageStepsPerRoute, stepsPerNode } = useRoutes();
 const ctx = useBaseContext();
+const { getRoute, averageStepsPerRoute, stepsPerNode } = useRoutes(ctx);
 const { checkRequirements, mapRequirementsText } = useRequirements(ctx);
 
 const start = computed({

@@ -1,16 +1,14 @@
 import { ref, computed } from "vue";
 import { useRouteStore } from "@/store/route";
 import { usePlayerStore } from "@/store/player";
-import useBaseContext from "@/composables/useBaseContext";
 import { useRequirements } from "@/composables/useRequirements";
 import { useEffectiveAttrs } from "@/composables/useEffectiveAttrs";
 import { useSkillModifiers } from "@/composables/useSkillModifiers";
 import { argbToRgba } from "@/utils/argbToRgba";
 
-export function useRoutes() {
+export function useRoutes(baseContext) {
   const routeStore = useRouteStore();
   const playerStore = usePlayerStore();
-  const baseContext = useBaseContext();
   const { checkRequirements } = useRequirements(baseContext);
   const { totalsByStatWithContext } = useEffectiveAttrs(baseContext);
 
