@@ -49,10 +49,11 @@ export function useRequirements(ctx) {
             requirement.type;
         break;
       case "locationHasKeywords":
-        if (context.location.value)
+        if (context.location.value) {
           value =
             intersect(context.location.value.keywords, requirement.keywords)
               .length === requirement.keywords.length;
+        }
         if (!context.location.value && context.activity.value) {
           const locationKeywords = context.segments.value.map(
             ({ from }) => from.keywords

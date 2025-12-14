@@ -22,7 +22,7 @@ function useBaseContext() {
     recipe: computed(() =>
       activityStore.recipeSelected ? activityStore.recipe : null
     ),
-    location: computed(() => activityStore.activity?.location || null),
+    location: computed(() => activityStore.location),
     service: computed(() => activityStore.service),
 
     skillLevels: computed(() => playerStore.skillLevels),
