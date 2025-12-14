@@ -13,7 +13,7 @@ export function useRequirements(ctx) {
   const checkRequirements = (reqs, context) => {
     if (!reqs || !reqs.length) return true;
     return reqs.every((requirements) =>
-      checkRequirement(requirements, ctx || context)
+      checkRequirement(requirements, context || ctx)
     );
   };
 
@@ -51,7 +51,7 @@ export function useRequirements(ctx) {
       case "locationHasKeywords":
         if (context.location.value)
           value =
-            intersect(location.value.keywords, requirement.keywords).length ===
+            intersect(context.location.value.keywords, requirement.keywords).length ===
             requirement.keywords.length;
         if (!context.location.value && context.activity.value) {
           const locationKeywords = context.segments.value.map(
