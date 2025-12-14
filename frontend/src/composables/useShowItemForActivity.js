@@ -1,20 +1,14 @@
 import { storeToRefs } from "pinia";
-import { useActivityStore } from "@/store/activity";
-import { useItemsStore } from "@/store/items";
 import { useDataStore } from "@/store/data";
-import useBaseContext from "@/composables/useBaseContext";
 import { useRequirements } from "@/composables/useRequirements";
 import { useSettingsStore } from "@/store/settings";
 import { getRawData } from "@/utils/rawData";
 import { sumAttrs } from "@/utils/qualityAttrs";
 
-export function useShowItemForActivity() {
-  const activityStore = useActivityStore();
-  const itemStore = useItemsStore();
+export function useShowItemForActivity(ctx) {
   const dataStore = useDataStore();
   const settingsStore = useSettingsStore();
   const { activitySettings } = storeToRefs(settingsStore);
-  const ctx = useBaseContext();
   const { checkRequirements } = useRequirements(ctx);
 
   const usefulKeywords = (item, activity, service) => {
@@ -61,7 +55,7 @@ export function useShowItemForActivity() {
               (collectible) =>
                 !hideOwnedCollectibles ||
                 (hideOwnedCollectibles &&
-                  !(collectible in itemStore.ownedItems))
+                  !(collectible in ctx.ownedItems.value))
             )
         : [];
 
@@ -89,8 +83,8 @@ export function useShowItemForActivity() {
 
       const benefitsCO = Object.keys(activity.itemRewards).some(
         (itemId) =>
-          itemId in itemStore.allItems &&
-          itemStore.allItems[itemId].type === "crafted"
+          itemId in ctx.allItems.value &&
+          ctx.allItems.value[itemId].type === "crafted"
       );
 
       return statIsCO && benefitsCO;
@@ -134,20 +128,16 @@ export function useShowItemForActivity() {
     isRecipe = null
   ) => {
     // Use store state if parameters are not provided
-    const currentActivity =
-      activity ||
-      (activityStore.activitySelected && activityStore.activity) ||
-      (activityStore.recipeSelected && activityStore.recipe);
+    const currentActivity = activity || ctx.source.value;
 
-    const currentService =
-      service || (activityStore.recipeSelected && activityStore.service);
+    const currentService = service || ctx.service.value;
 
     const currentQuality = quality || itemProxy.quality;
 
     const currentIsRecipe =
-      isRecipe !== null ? isRecipe : activityStore.recipeSelected;
+      isRecipe !== null ? isRecipe : ctx.recipeSelected.value;
 
-    if (!currentActivity) return false;
+    if (!ctx.source.value) return false;
 
     const item = getRawData(itemProxy);
 

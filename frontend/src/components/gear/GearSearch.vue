@@ -1,9 +1,6 @@
 <script setup>
 import { ref, computed } from "vue";
 import { storeToRefs } from "pinia";
-import { useGearStore } from "@/store/gear";
-import { useItemsStore } from "@/store/items";
-import { useActivityStore } from "@/store/activity";
 import { useDataStore } from "@/store/data";
 import { useSettingsStore } from "@/store/settings";
 import useBaseContext from "@/composables/useBaseContext";
@@ -29,20 +26,17 @@ const props = defineProps({
 
 const emit = defineEmits(["selectItem", "close"]);
 
-const gearStore = useGearStore();
-const itemsStore = useItemsStore();
-const activityStore = useActivityStore();
 const dataStore = useDataStore();
 const settingsStore = useSettingsStore();
 const { gearSettings } = storeToRefs(settingsStore);
 
 const ctx = useBaseContext();
 const { checkRequirements } = useRequirements(ctx);
-const { showItemForActivity } = useShowItemForActivity();
+const { showItemForActivity } = useShowItemForActivity(ctx);
 
 const searchTerm = ref("");
 
-const slotItems = Object.values(itemsStore.allItems).filter(
+const slotItems = Object.values(ctx.allItems.value).filter(
   ({ gearType, type }) => gearType === props.gearType || type === props.gearType
 );
 
@@ -51,28 +45,25 @@ const otherSlotIds = computed(() => {
   return [1, 2, 3, 4, 5, 6]
     .map((i) => `tool${i}`)
     .filter((id) => id !== props.slotName)
-    .map((slot) => gearStore.get(slot)?.id || null);
+    .map((slot) => ctx.gearSlots.value[slot]?.id || null);
 });
 
 const filteredItems = computed(() => {
-  const activity =
-    (activityStore.activitySelected && activityStore.activity) ||
-    (activityStore.recipeSelected && activityStore.recipe);
   const term = searchTerm.value.trim().toLowerCase();
   const showOwned = gearSettings.value.showOwned.value;
   const showUseful = gearSettings.value.showUseful.value;
 
   const filterActivity = (item) => {
-    if (!activity || !showUseful) {
+    if (!ctx.source.value || !showUseful) {
       return true;
     }
 
-    return showUseful && activity && showItemForActivity(item);
+    return showUseful && ctx.source.value && showItemForActivity(item);
   };
   const filterSearch = ({ name }) =>
     (term && name.toLowerCase().includes(term)) || !term;
   const filterOwned = (item) =>
-    (showOwned && item.id in itemsStore.ownedItems) || !showOwned;
+    (showOwned && item.id in ctx.ownedItems.value) || !showOwned;
   const filterEquipped = (item) =>
     !(otherSlotIds.value.length && otherSlotIds.value.includes(item.id));
   const filterStat = (item) => {
@@ -88,7 +79,7 @@ const filteredItems = computed(() => {
     });
   };
   const filterBannedKeywords = (item) => {
-    const otherSlotsItems = Object.entries(gearStore.gearSlots)
+    const otherSlotsItems = Object.entries(ctx.gearSlots.value)
       .filter(
         ([slot, item]) =>
           item && slot !== props.slotName && slot.includes(props.gearType)
@@ -110,28 +101,28 @@ const filteredItems = computed(() => {
       const isConsumable = type === "consumable";
       const isRing = gearType === "ring";
 
-      const owned = id in itemsStore.ownedItems;
-      const hidden = owned ? itemsStore.ownedItems[id].hidden : false;
+      const owned = id in ctx.ownedItems.value;
+      const hidden = owned ? ctx.ownedItems.value[id].hidden : false;
       let quality = item.quality;
       let quality2 = null;
 
       if (owned) {
         if (isCrafted) {
-          quality = itemsStore.ownedItems[id].quality;
+          quality = ctx.ownedItems.value[id].quality;
         }
-        quality2 = itemsStore.ownedItems[id].quality2;
+        quality2 = ctx.ownedItems.value[id].quality2;
       }
 
       if (isConsumable) {
         if (showOwned) {
-          quality = owned ? itemsStore.ownedItems[id].quality : null;
-          quality2 = owned ? itemsStore.ownedItems[id].quality2 : null;
+          quality = owned ? ctx.ownedItems.value[id].quality : null;
+          quality2 = owned ? ctx.ownedItems.value[id].quality2 : null;
         } else {
           quality = consumableQualityOptions[0].value;
           quality2 = consumableQualityOptions[1].value;
         }
       } else if (isRing) {
-        quality2 = owned ? itemsStore.ownedItems[id].quality2 : item.quality2;
+        quality2 = owned ? ctx.ownedItems.value[id].quality2 : item.quality2;
       }
 
       const attrs =
