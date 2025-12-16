@@ -7,7 +7,7 @@ import {
   getActivities,
   getRecipes,
 } from "@/utils/axios/api_routes";
-import { filterServicesByTier, sortServicesByTier } from "@/utils/services";
+import { filterServices, sortServicesByTier } from "@/utils/services";
 import { activityNone } from "@/constants/activityNone";
 import {
   SetActivityCommand,
@@ -230,10 +230,7 @@ export const useActivityStore = defineStore("activityStore", {
 
       let filteredServices = services;
       if (recipeRequirement) {
-        filteredServices = filterServicesByTier(
-          services,
-          recipeRequirement.tier
-        );
+        filteredServices = filterServices(services, recipeRequirement);
       }
 
       this.services = filteredServices.sort(sortServicesByTier);
