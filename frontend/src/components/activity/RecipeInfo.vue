@@ -242,7 +242,7 @@ const wikiLink = computed(() => {
       </div>
       <div v-if="resultHasCO" class="info-section">
         <quality-outcome-table
-          useFineMaterials
+          :use-fine-materials="useFineMaterials"
           :level-requirement="levelRequirement"
           :quality-outcome="stats.qualityOutcome"
           :crafts-per-material="stats.craftsPerMaterial"
