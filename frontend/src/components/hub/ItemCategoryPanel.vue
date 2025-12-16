@@ -80,15 +80,17 @@ const toggleAll = (e) => {
   if (e.target.checked) {
     const newSet = new Set();
     items.forEach((item) => {
-      newSet.add(item.id);
-      const data = {
-        itemId: item.id,
-        owned: true,
-        hidden: false,
-        quality: item.quality,
-        quality2: item.quality2,
-      };
-      itemsStore.toggleItem(data);
+      if (!item.quarantined) {
+        newSet.add(item.id);
+        const data = {
+          itemId: item.id,
+          owned: true,
+          hidden: false,
+          quality: item.quality,
+          quality2: item.quality2,
+        };
+        itemsStore.toggleItem(data);
+      }
     });
     selectedItems.value = newSet;
   } else {
