@@ -11,6 +11,7 @@ import {
   factionService,
   keywordService,
   locationService,
+  petService,
   recipeService,
   routeService,
   serviceService,
@@ -30,6 +31,7 @@ export function registerRoutes(app) {
   apiRouter.use("/keywords", createBaseRouter("Keyword", keywordService));
   apiRouter.use("/locations", createBaseRouter("Location", locationService));
   apiRouter.use("/lootTables", lootTableRoutes);
+  apiRouter.use("/pets", createBaseRouter("Pets", petService));
   apiRouter.use("/recipes", createBaseRouter("Recipe", recipeService));
   apiRouter.use("/routes", createBaseRouter("Route", routeService));
   apiRouter.use("/services", createBaseRouter("Service", serviceService));

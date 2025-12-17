@@ -7,7 +7,6 @@ import SkillBubble from "@/components/common/SkillBubble.vue";
 import RequirementDisplay from "@/components/activity/RequirementDisplay.vue";
 import WikiButton from "@/components/common/WikiButton.vue";
 import { useActivityStore } from "@/store/activity";
-import { useDataStore } from "@/store/data";
 import { usePlayerStore } from "@/store/player";
 import { useSkillModifiers } from "@/composables/useSkillModifiers";
 
@@ -17,7 +16,6 @@ import { isEmpty } from "@/utils/isEmpty";
 import { n } from "@/utils/number";
 
 const activityStore = useActivityStore();
-const dataStore = useDataStore();
 const playerStore = usePlayerStore();
 
 const ctx = useBaseContext();
@@ -36,32 +34,11 @@ const {
 const { getLevelRequirementsMap } = useRequirements(ctx);
 
 const borderClass = computed(
-  () => `border-${activityStore.activity?.relatedSkillsList[0]}`
+  () => `border-${ctx.activity.value?.relatedSkillsList[0]}`
 );
 
-const getKeyword = (kw) => {
-  if ("id" in kw) {
-    return dataStore.getKeywordById(kw["id"]);
-  } else if ("keywords" in kw) {
-    const { quantity, keywords } = kw;
-    return keywords.map((kwId) => {
-      return { ...dataStore.getKeywordById(kwId), quantity };
-    });
-  }
-  return null;
-};
-
-const getRequirementKeywords = (requirements) => {
-  if (!requirements) return [];
-  return requirements
-    .flatMap((requirements) => requirements)
-    .filter(({ type }) => type === "distinctKeywordItemsEquipped")
-    .flatMap(({ requirement }) => getKeyword(requirement));
-};
-
 const sections = computed(() => {
-  const { id, workRequired, requiredKeywords, requirements, rewards } =
-    activityStore.activity;
+  const { id, workRequired, requirements, rewards } = ctx.activity.value;
   const levelRequirementsMap = getLevelRequirementsMap(requirements);
 
   const isTravel = id === "travelling";
@@ -84,14 +61,15 @@ const sections = computed(() => {
         text: `${n(uncappedWorkEfficiency.value * 100)} / ${Math.round(
           (maxWorkEfficiency.value - 1) * 100
         )}%`,
-        tooltip: `Your Work Efficiency: ${Math.round(
-          uncappedWorkEfficiency.value * 100
-        )}%\nMax Work Efficiency: ${n(
-          (maxWorkEfficiency.value - 1) * 100,
-          0
-        )}%\nMax benefit at: ${
-          Math.ceil((effectiveMaxWorkEfficiency.value - 1) * 400) / 4
-        }%`,
+        tooltip: [
+          `Your Work Efficiency: ${Math.round(
+            uncappedWorkEfficiency.value * 100
+          )}%`,
+          `Max Work Efficiency: ${n((maxWorkEfficiency.value - 1) * 100, 0)}%`,
+          `Max benefit at: ${
+            Math.ceil((effectiveMaxWorkEfficiency.value - 1) * 400) / 4
+          }%`,
+        ].join("\n"),
         iconPath: "assets/icons/text/stats/skilling/work_efficiency.png",
         borderClass:
           workEfficiency.value >= effectiveMaxWorkEfficiency.value - 1
@@ -125,9 +103,7 @@ const sections = computed(() => {
     itemProps: (item) => ({ ...item }),
   };
 
-  const otherReqs = requirements.filter(
-    ({ type }) => type !== "skillLevel"
-  );
+  const otherReqs = requirements.filter(({ type }) => type !== "skillLevel");
 
   const requirementsRow = {
     label: "Requirements",

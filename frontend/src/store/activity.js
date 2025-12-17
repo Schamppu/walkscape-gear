@@ -212,12 +212,13 @@ export const useActivityStore = defineStore("activityStore", {
       this.setRecipe(recipe);
 
       const [skill] = recipe.relatedSkills || [null];
-      const recipeRequirement = recipe.requirements
-        .map(({ requirement }) => requirement)
-        .find((req) => req.runtimeType === "service");
-      await this.loadRecipeServices(skill, recipeRequirement);
+
+      const serviceRequirements = recipe.requirements
+        .filter(({ type }) => type === "service")
+        .map(({ requirement }) => requirement);
+      await this.loadRecipeServices(skill, serviceRequirements);
     },
-    async loadRecipeServices(skill, recipeRequirement) {
+    async loadRecipeServices(skill, serviceRequirements) {
       if (!skill) {
         this.services = [];
         this.service = null;
@@ -229,8 +230,8 @@ export const useActivityStore = defineStore("activityStore", {
       const { data: services } = await searchServices({ skill });
 
       let filteredServices = services;
-      if (recipeRequirement) {
-        filteredServices = filterServices(services, recipeRequirement);
+      if (serviceRequirements && serviceRequirements.length) {
+        filteredServices = filterServices(services, serviceRequirements[0]);
       }
 
       this.services = filteredServices.sort(sortServicesByTier);

@@ -1,17 +1,13 @@
 export const serviceTiers = ["basic", "advanced", "expert"];
 
 export const filterServices = (services, requirement) => {
-  const kws =
-    "keywords" in requirement && requirement["keywords"].length
-      ? requirement.keywords.map((kw) =>
-          kw.startsWith("service_") ? kw.slice(8) : kw
-        )
-      : [];
+  const { keywords, serviceKeyword, tier } = requirement;
+  const kws = keywords && keywords.length ? keywords.map((kw) => kw) : [];
+  if (serviceKeyword) kws.push(serviceKeyword);
 
   return services.filter((service) => {
     const checkTier =
-      serviceTiers.indexOf(service.tier) >=
-      serviceTiers.indexOf(requirement.tier);
+      serviceTiers.indexOf(service.tier) >= serviceTiers.indexOf(tier);
     const checkKeywords = kws.every((kw) => service.keywords.includes(kw));
     return checkTier && checkKeywords;
   });

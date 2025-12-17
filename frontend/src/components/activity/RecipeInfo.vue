@@ -61,8 +61,8 @@ const stats = computed(() => {
 
 const levelRequirement = computed(() => {
   const [level] = recipe.value.requirements
-    .map(({ requirement }) => requirement)
-    .filter(({ runtimeType }) => runtimeType === "skillLevel");
+    .filter(({ type }) => type === "skillLevel")
+    .map(({ requirement }) => requirement);
   return level || { level: 1, skill: "none" };
 });
 
