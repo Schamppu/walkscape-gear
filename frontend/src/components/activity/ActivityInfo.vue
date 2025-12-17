@@ -4,7 +4,7 @@ import WsLabel from "@/components/common/WsLabel.vue";
 import InfoBubble from "@/components/common/InfoBubble.vue";
 import LocationBubble from "@/components/common/LocationBubble.vue";
 import SkillBubble from "@/components/common/SkillBubble.vue";
-import EquippedKeywordDisplay from "@/components/common/EquippedKeywordDisplay.vue";
+import RequirementDisplay from "@/components/activity/RequirementDisplay.vue";
 import WikiButton from "@/components/common/WikiButton.vue";
 import { useActivityStore } from "@/store/activity";
 import { useDataStore } from "@/store/data";
@@ -125,14 +125,19 @@ const sections = computed(() => {
     itemProps: (item) => ({ ...item }),
   };
 
-  const keywordReqsRow = {
-    label: "Keyword requirements",
-    component: EquippedKeywordDisplay,
-    items: [
-      ...(requiredKeywords || []).map(getKeyword),
-      ...getRequirementKeywords(requirements),
-    ],
-    itemProps: (keyword) => ({ keyword }),
+  const otherReqs = requirements.filter(
+    ({ type }) => type !== "skillLevel"
+  );
+
+  const requirementsRow = {
+    label: "Requirements",
+    component: RequirementDisplay,
+    items: otherReqs,
+    itemProps: (item) => {
+      return {
+        requirement: item,
+      };
+    },
   };
 
   const xpRewardsRow = {
@@ -171,7 +176,7 @@ const sections = computed(() => {
   return [
     statsRow,
     skillReqsRow,
-    keywordReqsRow,
+    requirementsRow,
     xpRewardsRow,
     xpPerStepRow,
     locationsRow,
