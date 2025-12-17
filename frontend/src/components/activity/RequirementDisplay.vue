@@ -18,7 +18,6 @@ const reqText = computed(() =>
 const borderClass = computed(() => {
   return fulfilled.value ? "border-green" : "border-red";
 });
-console.log(reqText.value);
 </script>
 
 <template>
