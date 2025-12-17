@@ -30,28 +30,29 @@ console.log(reqText.value);
     >
       <template v-if="prefix">{{ prefix }} </template>
       <ws-icon v-if="icon" :iconPath="icon" size="sm" />
-      <span>{{ text }}</span>
+      <span class="main-text">{{ text }}</span>
     </p>
   </div>
 </template>
 
 <style lang="scss" scoped>
 .requirement {
-  display: flex;
-  justify-content: flex-start;
+  display: block;
   text-align: left;
-  align-items: center;
   padding: $xxxxs $xs;
-  gap: $xxs;
   border-radius: $lg;
-  flex-wrap: wrap;
   color: $txLighter;
 
   background-color: $boxDarkBackground;
   border: 1px solid $boxDarkOutline;
 
-  ws-icon {
-    display: inline;
+  ::v-deep .ws-icon {
+    margin-left: $xxxxs;
+    vertical-align: middle;
+  }
+
+  .main-text {
+    margin-left: $xxxxs;
   }
 }
 
