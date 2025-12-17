@@ -14,6 +14,7 @@ export const useItemsStore = defineStore("itemStore", {
     itemsByCategory: {},
     ownedItems: {},
     allItems: {},
+    embargoedItems: new Set(),
     changedOwnedItems: {},
     materials: {},
     fineMaterials: {},
@@ -59,6 +60,11 @@ export const useItemsStore = defineStore("itemStore", {
       );
       this.allItems = Object.fromEntries(
         categories.flatMap(({ items }) => items).map((item) => [item.id, item])
+      );
+      this.embargoedItems = new Set(
+        Object.values(this.allItems)
+          .filter((item) => "embargo" in item)
+          .map(({ id }) => id)
       );
       this.materials = Object.fromEntries(
         materials.map(({ id, icon, name }) => [id, { icon, name }])

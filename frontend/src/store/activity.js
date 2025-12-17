@@ -35,6 +35,7 @@ export const useActivityStore = defineStore("activityStore", {
   state: () => ({
     activities: [],
     activitiesMap: {},
+    embargoedActivities: new Set(),
     activity: null,
     recipes: [],
     recipe: null,
@@ -65,6 +66,9 @@ export const useActivityStore = defineStore("activityStore", {
       this.activities = activities;
       this.activitiesMap = Object.fromEntries(
         activities.map(({ id, name, icon }) => [id, { name, icon }])
+      );
+      this.embargoedItems = new Set(
+        activities.filter((item) => "embargo" in item).map(({ id }) => id)
       );
       this.recipes = recipes;
 

@@ -29,6 +29,7 @@ function useBaseContext() {
     }),
     location: computed(() => activityStore.location),
     service: computed(() => activityStore.service),
+    embargoedActivities: computed(() => activityStore.embargoedActivities),
 
     skillLevels: computed(() => playerStore.skillLevels),
     achievementPoints: computed(() => playerStore.achievementPoints),
@@ -37,6 +38,7 @@ function useBaseContext() {
     allItems: computed(() => itemsStore.allItems),
     itemsByCategory: computed(() => itemsStore.itemsByCategory),
     ownedItems: computed(() => itemsStore.ownedItems),
+    embargoedItems: computed(() => itemsStore.embargoedItems),
 
     gearSlots: computed(() => gearStore.gearSlots),
     equippedGear: computed(() => gearStore.equippedGear),
