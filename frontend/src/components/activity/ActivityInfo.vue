@@ -25,6 +25,7 @@ const {
   uncappedWorkEfficiency,
   effectiveMaxWorkEfficiency,
   stepsPerAction,
+  stepsPerRewardRoll,
   uncappedStepsPerCompletion,
   stepsPerCompletion,
   xpRewards,
@@ -75,6 +76,11 @@ const sections = computed(() => {
           workEfficiency.value >= effectiveMaxWorkEfficiency.value - 1
             ? "border-green"
             : "",
+      },
+      {
+        text: `${n(stepsPerRewardRoll.value, 2)}`,
+        tooltip: `steps per reward roll ${n(stepsPerRewardRoll.value, 2)}`,
+        iconPath: "assets/icons/text/stats/skilling/double_result.png",
       },
     ],
     itemProps: (item) => ({ ...item }),
