@@ -35,6 +35,8 @@ export const factionTags = [
   { id: "gdte", name: "GDTE" },
   { id: "halfling_rebels", name: "Halfling Rebels" },
   { id: "syrenthia", name: "Syrenthia" },
+  { id: "wallisia", name: "Wallisia" },
+  { id: "wrentmark", name: "Wrentmark" },
 ];
 
 export const otherTags = [
@@ -57,6 +59,11 @@ export const otherTags = [
     id: "underwater",
     name: "Underwater",
     icon: "assets/icons/keywords/itemset_diving_gear_expert.png",
+  },
+  {
+    id: "ectoplasm",
+    name: "Ectoplasm",
+    icon: "assets/icons/items/materials/ectoplasm.png",
   },
 ];
 
