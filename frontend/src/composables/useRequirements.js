@@ -126,6 +126,25 @@ export function useRequirements(ctx) {
       case "itemAnywhere":
         value = requirement.item in itemsStore.ownedItems;
         break;
+      case "keywordEquipped":
+        value =
+          ctx.equippedGear.value.filter((gear) => {
+            const { keyword } = requirement;
+            const kwCheck = gear.keywords.includes(keyword);
+            return kwCheck;
+          }).length > 0;
+        break;
+      case "keywordWithLevelEquipped":
+        value =
+          ctx.equippedGear.value.filter((gear) => {
+            const { keyword, skill, level } = requirement;
+            const kwCheck = gear.keywords.includes(keyword);
+
+            const levelReqs = getLevelRequirementsMap(gear.requirements);
+            const levelCheck = skill in levelReqs && levelReqs[skill] >= level;
+            return kwCheck && levelCheck;
+          }).length > 0;
+        break;
       default:
         console.error("unhandled requirement", type, requirement);
     }
@@ -182,6 +201,26 @@ export function useRequirements(ctx) {
             text: name,
             icon,
           }))[0];
+      } else if (type === "keywordEquipped") {
+        const { keyword } = requirement;
+        const kw = dataStore.getKeywordById(keyword);
+        const { icon, name } = kw;
+
+        out = {
+          prefix: "Requires",
+          text: `${name}`,
+          icon,
+        };
+      } else if (type === "keywordWithLevelEquipped") {
+        const { keyword, level, skill } = requirement;
+        const kw = dataStore.getKeywordById(keyword);
+        const { icon, name } = kw;
+
+        out = {
+          prefix: "Have",
+          text: `${name} that requires at least ${level} ${skill}`,
+          icon,
+        };
       } else if (type === "achievementPoint") {
         out = {
           prefix: "Have",
