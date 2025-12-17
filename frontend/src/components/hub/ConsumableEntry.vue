@@ -4,6 +4,7 @@ import { consumableQualityOptions } from "@/constants/quality";
 import { useItemsStore } from "@/store/items";
 import WsIcon from "@/components/common/WsIcon.vue";
 import StatsDisplay from "../common/StatsDisplay.vue";
+import useBaseContext from "@/composables/useBaseContext";
 
 const props = defineProps({
   item: Object,
@@ -12,17 +13,18 @@ const props = defineProps({
 
 const emit = defineEmits(["change"]);
 const [normal, fine] = consumableQualityOptions.map((q) => q.value);
+const ctx = useBaseContext();
 
 const itemsStore = useItemsStore();
 const normalOwned = ref(false);
 const fineOwned = ref(false);
 const isHidden = ref(false);
-const isQuarantined = ref(false);
+const isEmbargo = ref(false);
 const isOpen = ref(false);
 
 function updateOwnedFromStore() {
   const entry = itemsStore.ownedItems[props.item.id];
-  isQuarantined.value = props.item?.quarantined;
+  isEmbargo.value = ctx.embargoedItems.value.has(props.item.id);
   normalOwned.value = !!(
     entry &&
     (entry.quality === normal || entry.quality2 === normal)
@@ -86,7 +88,7 @@ const toggleOpen = () => {
   isOpen.value = !isOpen.value;
 };
 const hideQuarantine = computed(() => {
-  return isQuarantined.value && !(normalOwned.value || fineOwned.value);
+  return isEmbargo.value && !(normalOwned.value || fineOwned.value);
 });
 </script>
 

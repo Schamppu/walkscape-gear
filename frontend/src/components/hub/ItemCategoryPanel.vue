@@ -5,6 +5,7 @@ import ItemEntry from "./ItemEntry.vue";
 import ConsumableEntry from "./ConsumableEntry.vue";
 import { itemQualityNameSort, levelReqNameSort } from "@/utils/sorting";
 import { consumableQualityOptions } from "@/constants/quality";
+import useBaseContext from "@/composables/useBaseContext";
 
 const props = defineProps({
   group: String,
@@ -16,6 +17,7 @@ const props = defineProps({
 
 defineEmits(["toggle"]);
 const hasLoaded = ref(false);
+const ctx = useBaseContext();
 
 const getSortFn = (group) => {
   const key = group.toLowerCase();
@@ -80,7 +82,7 @@ const toggleAll = (e) => {
   if (e.target.checked) {
     const newSet = new Set();
     items.forEach((item) => {
-      if (!item.quarantined) {
+      if (!ctx.embargoedItems.value.has(item.id)) {
         newSet.add(item.id);
         const data = {
           itemId: item.id,

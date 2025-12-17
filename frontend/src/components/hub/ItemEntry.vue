@@ -4,6 +4,7 @@ import { craftingQualityOptions, qualityOptions } from "@/constants/quality";
 import { useItemsStore } from "@/store/items";
 import WsIcon from "@/components/common/WsIcon.vue";
 import StatsDisplay from "../common/StatsDisplay.vue";
+import useBaseContext from "@/composables/useBaseContext";
 
 const props = defineProps({
   item: Object,
@@ -13,11 +14,12 @@ const props = defineProps({
 
 const emit = defineEmits(["change"]);
 
+const ctx = useBaseContext();
 const defaultQuality = qualityOptions[0].value;
 const itemsStore = useItemsStore();
 const isOwned = ref(false);
 const isHidden = ref(false);
-const isQuarantined = ref(false);
+const isEmbargo = ref(false);
 const quality = ref("");
 const quality2 = ref("");
 const isOpen = ref(false);
@@ -25,7 +27,7 @@ const isOpen = ref(false);
 onMounted(() => {
   const entry = itemsStore.ownedItems[props.item.id];
   const isCrafted = props.item?.type === "crafted";
-  isQuarantined.value = props.item?.quarantined;
+  isEmbargo.value = ctx.embargoedItems.value.has(props.item.id);
 
   if (!entry) {
     isOwned.value = false;
@@ -96,7 +98,7 @@ const qualityInputs = computed(() => {
 });
 
 const hideQuarantine = computed(() => {
-  return isQuarantined.value && !isOwned.value;
+  return isEmbargo.value && !isOwned.value;
 });
 
 const toggleChecked = (e) => {

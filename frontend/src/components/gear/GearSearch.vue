@@ -93,8 +93,8 @@ const filteredItems = computed(() => {
     return commonKeywords.length === 0;
   };
   const filterHidden = (item) => !item.hidden;
-  const filterQuarantined = (item) =>
-    !(item.quarantined && !(item.id in ctx.ownedItems.value));
+  const filterEmbargo = (item) =>
+    !(ctx.embargoedItems.value.has(item.id) && !(item.id in ctx.ownedItems.value));
 
   return slotItems
     .map((item) => {
@@ -179,7 +179,7 @@ const filteredItems = computed(() => {
         filterStat(item) &&
         filterBannedKeywords(item) &&
         filterHidden(item) &&
-        filterQuarantined(item)
+        filterEmbargo(item)
     )
     .sort((a, b) => {
       if (dataStore.selectedStat === "none")
