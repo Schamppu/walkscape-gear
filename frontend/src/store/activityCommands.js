@@ -96,8 +96,8 @@ export class SetRecipeCommand {
     if (this.newRecipe && this.newRecipe.id !== "none") {
       const [skill] = this.newRecipe.relatedSkills || [null];
       const recipeRequirement = this.newRecipe.requirements
-        ?.map(({ requirement }) => requirement)
-        ?.find((req) => req.runtimeType === "service");
+        .filter(({ type }) => type === "service")
+        .map(({ requirement }) => requirement);
       await this.activityStore.loadRecipeServices(skill, recipeRequirement);
     } else {
       this.activityStore._setServicesDirect([]);
