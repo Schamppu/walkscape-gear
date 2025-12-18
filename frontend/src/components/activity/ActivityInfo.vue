@@ -39,11 +39,36 @@ const borderClass = computed(
 );
 
 const sections = computed(() => {
-  const { id, workRequired, requirements, rewards } = ctx.activity.value;
+  const { id, workRequired, requirements, rewards, options } =
+    ctx.activity.value;
   const levelRequirementsMap = getLevelRequirementsMap(requirements);
 
   const isTravel = id === "travelling";
   const showRewards = rewards && rewards.length > 0;
+
+  const inputs = options
+    .filter(({ type }) => type === "inputActivity")
+    .flatMap(({ inputs }) => inputs)
+    .map(({ item, quantity }) => {
+      const itemObj = ctx.materials.value[item];
+      const { name, icon } = itemObj;
+
+      return {
+        name,
+        icon,
+        quantity,
+      };
+    });
+  const inputsRow = {
+    label: "Inputs",
+    component: InfoBubble,
+    items: inputs.map(({ name, icon, quantity }) => ({
+      text: `${quantity}`,
+      tooltip: `${quantity} ${name}`,
+      iconPath: icon,
+    })),
+    itemProps: (item) => ({ ...item }),
+  };
 
   const statsRow = {
     label: "Stats (current / base)",
@@ -156,6 +181,7 @@ const sections = computed(() => {
   };
 
   return [
+    inputsRow,
     statsRow,
     skillReqsRow,
     requirementsRow,

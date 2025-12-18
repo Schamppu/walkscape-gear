@@ -39,6 +39,7 @@ function useBaseContext() {
     itemsByCategory: computed(() => itemsStore.itemsByCategory),
     ownedItems: computed(() => itemsStore.ownedItems),
     embargoedItems: computed(() => itemsStore.embargoedItems),
+    materials: computed(() => itemsStore.materials),
 
     gearSlots: computed(() => gearStore.gearSlots),
     equippedGear: computed(() => gearStore.equippedGear),
