@@ -74,11 +74,11 @@ const hasAttrs = computed(() => props.item.buffs.length > 0);
 
 function toggleNormal(e) {
   e.stopPropagation();
-  if (hideQuarantine.value) normalOwned.value = !normalOwned.value;
+  if (hideEmbargo.value) normalOwned.value = !normalOwned.value;
 }
 function toggleFine(e) {
   e.stopPropagation();
-  if (hideQuarantine.value) fineOwned.value = !fineOwned.value;
+  if (hideEmbargo.value) fineOwned.value = !fineOwned.value;
 }
 function toggleHidden(e) {
   e.stopPropagation();
@@ -87,7 +87,7 @@ function toggleHidden(e) {
 const toggleOpen = () => {
   isOpen.value = !isOpen.value;
 };
-const hideQuarantine = computed(() => {
+const hideEmbargo = computed(() => {
   return isEmbargo.value && !(normalOwned.value || fineOwned.value);
 });
 </script>
@@ -102,7 +102,7 @@ const hideQuarantine = computed(() => {
             <input
               type="checkbox"
               v-model="normalOwned"
-              :disabled="hideQuarantine"
+              :disabled="hideEmbargo"
               @click="toggleNormal"
             />
           </label>
@@ -113,24 +113,24 @@ const hideQuarantine = computed(() => {
             <input
               type="checkbox"
               v-model="fineOwned"
-              :disabled="hideQuarantine"
+              :disabled="hideEmbargo"
               @click="toggleFine"
           /></label>
         </div>
         <ws-icon
-          :iconPath="hideQuarantine ? '' : item.icon"
+          :iconPath="hideEmbargo ? '' : item.icon"
           :outline-class="fineOwned ? 'outline-fine' : ''"
-          :key="hideQuarantine ? '' : item.icon"
+          :key="hideEmbargo ? '' : item.icon"
         />
 
         <div class="rows">
-          <span>{{ hideQuarantine ? "Unknown" : item.name }}</span>
+          <span>{{ hideEmbargo ? "Unknown" : item.name }}</span>
         </div>
       </div>
 
       <button
         class="toggle"
-        v-if="hideQuarantine ? false : hasAttrs"
+        v-if="hideEmbargo ? false : hasAttrs"
         @click="toggleOpen"
       >
         {{ isOpen ? "▲" : "▼" }}
