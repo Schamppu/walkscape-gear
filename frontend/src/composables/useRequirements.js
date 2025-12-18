@@ -293,6 +293,21 @@ export function useRequirements(ctx) {
             icon: item.icon,
           };
         }
+      } else if (type === "gameData") {
+        const { gameDataId, data } = requirement;
+        const rep = JSON.parse(data).double || 0;
+        const reputationFaction = Object.values(playerStore.factions).find(
+          ({ reputation }) => reputation === gameDataId
+        );
+        if (reputationFaction) {
+          const { name, icon } = reputationFaction;
+
+          out = {
+            prefix: `Requires ${rep}`,
+            text: `${name} reputation`,
+            icon: icon,
+          };
+        }
       }
       if (out) {
         const active = requirementsActive[idx];
