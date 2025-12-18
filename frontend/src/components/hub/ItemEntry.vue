@@ -97,13 +97,13 @@ const qualityInputs = computed(() => {
   return arr;
 });
 
-const hideQuarantine = computed(() => {
+const hideEmbargo = computed(() => {
   return isEmbargo.value && !isOwned.value;
 });
 
 const toggleChecked = (e) => {
   e.stopPropagation();
-  if (!hideQuarantine.value) {
+  if (!hideEmbargo.value) {
     isOwned.value = !isOwned.value;
     emitChange({ owned: isOwned.value });
   }
@@ -117,20 +117,20 @@ const toggleChecked = (e) => {
         <input
           type="checkbox"
           :checked="isOwned"
-          :disabled="hideQuarantine"
+          :disabled="hideEmbargo"
           readonly
         />
         <ws-icon
-          :iconPath="hideQuarantine ? '' : item.icon"
+          :iconPath="hideEmbargo ? '' : item.icon"
           :outline-class="`outline-${quality}`"
-          :key="hideQuarantine ? '' : item.icon"
+          :key="hideEmbargo ? '' : item.icon"
         />
 
         <div class="rows">
           <span :class="`color-${quality}`">{{
-            hideQuarantine ? "Unknown" : item.name
+            hideEmbargo ? "Unknown" : item.name
           }}</span>
-          <div v-if="hideQuarantine ? false : qualities > 0" class="group">
+          <div v-if="hideEmbargo ? false : qualities > 0" class="group">
             <template v-for="qInput in qualityInputs" :key="qInput.label">
               <select
                 v-model="qInput.model.value"
@@ -153,7 +153,7 @@ const toggleChecked = (e) => {
       </div>
 
       <button
-        v-if="hideQuarantine ? false : hasAttrs"
+        v-if="hideEmbargo ? false : hasAttrs"
         class="toggle"
         @click="toggleOpen"
       >

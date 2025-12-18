@@ -242,7 +242,7 @@ const groupedLootTables = computed(() => {
 <template>
   <details open>
     <summary>Drops</summary>
-    <div v-if="ctx.embargoedActivities.value.has(ctx.activity.value)">
+    <div v-if="ctx.embargoedActivities.value.has(ctx.activity.value.id)">
       Info hidden during wiki embargo
     </div>
     <div v-else>
