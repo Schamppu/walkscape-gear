@@ -145,6 +145,12 @@ export function useRequirements(ctx) {
             return kwCheck && levelCheck;
           }).length > 0;
         break;
+      case "itemEquipped":
+        value =
+          ctx.equippedGear.value.findIndex(
+            ({ id }) => id === requirement.item
+          ) >= 0;
+        break;
       default:
         console.error("unhandled requirement", type, requirement);
     }
@@ -239,7 +245,7 @@ export function useRequirements(ctx) {
         } else if (requirement.category === "actionCompleted") {
           const act = activityStore.activitiesMap[requirement.data];
           out = {
-            prefix: `Have completed`,
+            prefix: `${opposite ? "NOT " : ""}Have completed`,
             text: `${act.name} activity ${requirement.value} times`,
             icon: act.icon,
           };
@@ -305,9 +311,20 @@ export function useRequirements(ctx) {
           out = {
             prefix: `Requires ${rep}`,
             text: `${name} reputation`,
-            icon: icon,
+            icon,
           };
         }
+      } else if (type === "itemEquipped") {
+        const { item } = requirement;
+        console.log(item);
+        const itemObj = ctx.allItems.value[item];
+        const { name, icon } = itemObj;
+
+        out = {
+          prefix: `Have`,
+          text: `${name} equipped`,
+          icon,
+        };
       }
       if (out) {
         const active = requirementsActive[idx];
