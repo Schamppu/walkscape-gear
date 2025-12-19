@@ -27,8 +27,6 @@ const typeIconPaths = {
   passive: "assets/icons/text/general_icons/ability_passive.png",
   active: "assets/icons/text/general_icons/ability_active.png",
 };
-
-console.log(props.ability.cooldown);
 </script>
 
 <template>
@@ -52,7 +50,7 @@ console.log(props.ability.cooldown);
     </div>
     <section v-if="isOpen" class="extra-info">
       <p>{{ props.ability.desc }}</p>
-      <div class="requirements">
+      <div v-if="props.ability.requirements.length" class="requirements">
         <div class="openable">
           <p class="info-title">requirements</p>
           <button class="toggle" @click="toggleOpenRequirements">
@@ -70,7 +68,7 @@ console.log(props.ability.cooldown);
         </div>
       </div>
       <div class="cooldown">
-        <div :class="['openable', 'toggle']" @click="toggleOpenCooldown">
+        <div :class="['openable']" @click="toggleOpenCooldown">
           <p class="info-title">cooldown</p>
           <div v-if="props.ability.cooldown.steps" class="amount">
             <p>{{ props.ability.cooldown.steps }}</p>
@@ -167,6 +165,7 @@ console.log(props.ability.cooldown);
     margin: $xxxxs $xxxs;
     padding: $xs;
     background-color: $bgPrimary;
+    color: $txPrimary;
 
     p {
       line-height: 16px;
@@ -184,6 +183,11 @@ console.log(props.ability.cooldown);
       text-transform: none;
       margin-right: $sm;
     }
+  }
+
+  .cooldown {
+    font: inherit;
+    cursor: pointer;
   }
 
   .openable {
