@@ -25,6 +25,12 @@ export function getLocalization({ key, locale = "en" }) {
   });
 }
 
+export function getAbilities() {
+  return proxy({
+    url: "abilities",
+  });
+}
+
 export function getSkills() {
   return proxy({
     url: "skills",
@@ -158,6 +164,16 @@ export function getStats() {
 export function getLootTables() {
   return proxy({
     url: "lootTables",
+  });
+}
+
+export function getMultipleAbilities(ids) {
+  return proxy({
+    method: "POST",
+    url: "abilities/multiple",
+    options: {
+      ids,
+    },
   });
 }
 
