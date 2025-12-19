@@ -46,19 +46,20 @@ const sections = computed(() => {
   const isTravel = id === "travelling";
   const showRewards = rewards && rewards.length > 0;
 
-  const inputs = options
-    .filter(({ type }) => type === "inputActivity")
-    .flatMap(({ inputs }) => inputs)
-    .map(({ item, quantity }) => {
-      const itemObj = ctx.materials.value[item];
-      const { name, icon } = itemObj;
+  const inputs =
+    options
+      ?.filter(({ type }) => type === "inputActivity")
+      .flatMap(({ inputs }) => inputs)
+      .map(({ item, quantity }) => {
+        const itemObj = ctx.materials.value[item];
+        const { name, icon } = itemObj;
 
-      return {
-        name,
-        icon,
-        quantity,
-      };
-    });
+        return {
+          name,
+          icon,
+          quantity,
+        };
+      }) || [];
   const inputsRow = {
     label: "Inputs",
     component: InfoBubble,
