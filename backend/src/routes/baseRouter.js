@@ -28,6 +28,17 @@ export const createBaseRouter = (name, service, additionalRoutes = []) => {
     })
   );
 
+  router.post(
+    "/multiple",
+    wrapController((req) => {
+      const { ids } = req.body;
+      if (!Array.isArray(ids)) {
+        throw new Error("ids must be an array");
+      }
+      return service.getMultiple(ids);
+    })
+  );
+
   // Add additional routes before the catch-all /:id route
   additionalRoutes.forEach(({ method, path, handler }) => {
     router[method](path, handler);
