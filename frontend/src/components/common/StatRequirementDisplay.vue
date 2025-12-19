@@ -114,17 +114,23 @@ const toggle = () => {
 }
 
 .stat-wrapper {
-  width: 100%;
-  display: flex;
-  justify-content: flex-start;
-  align-content: center;
+  display: block;
+  text-align: left;
   padding: $xxxxs $xs;
-  gap: $xxs;
   border-radius: $lg;
-  box-sizing: border-box;
+  color: $txLighter;
 
   background-color: $boxDarkBackground;
   border: 1px solid $boxDarkOutline;
+
+  :deep(.ws-icon) {
+    margin-left: $xxxxs;
+    vertical-align: middle;
+  }
+
+  .stat-name {
+    margin-left: $xxxxs;
+  }
 
   &.negative {
     color: $txNegative;
