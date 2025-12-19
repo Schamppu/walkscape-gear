@@ -417,7 +417,7 @@ const updateEnd = (location) => {
   background-color: $boxDarkBackground;
   border: 1px solid $boxDarkOutline;
 
-  ::v-deep .ws-icon {
+  :deep(.ws-icon) {
     margin-left: $xxxxs;
     vertical-align: middle;
   }
