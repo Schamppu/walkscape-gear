@@ -45,3 +45,21 @@ export function parseGameString(str) {
 
   return tokens;
 }
+
+export const getDataIdMapping = (data) => {
+  const mapAction = (action) => {
+    const { type } = action;
+    if (type === "teleport") {
+      return [action.locationId, action.location];
+    }
+    if (type === "completeActions") {
+      return ["count", action.count];
+    }
+    return ["", false];
+  };
+
+  const mappedData = data.flatMap(({ actions }) =>
+    actions.map((action) => mapAction(action))
+  );
+  return Object.fromEntries(mappedData);
+};
