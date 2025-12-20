@@ -29,6 +29,11 @@ export default class BaseService {
     return response.data;
   }
 
+  async getMultiple(ids) {
+    const data = await Promise.all(ids.map((id) => this.getById(id)));
+    return data;
+  }
+
   async getIds(ids, target) {
     const response = await api.post(
       `/${this.resourceName}/ids`,

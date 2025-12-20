@@ -84,6 +84,7 @@ const attrs = computed(() => mapAttrs(props.quality));
       />
     </div>
     <div
+      v-if="attrs.length"
       :class="[
         'stats',
         props.showQualityBorder ? `border-${props.quality}` : '',

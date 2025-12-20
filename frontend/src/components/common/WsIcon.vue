@@ -13,9 +13,18 @@ const props = defineProps({
     type: String,
     default: "default",
     validator: (value) =>
-      ["xxxs", "xxs", "xs", "sm", "md", "lg", "xl", "xxl", "default"].includes(
-        value
-      ),
+      [
+        "xxxs",
+        "xxs",
+        "xs",
+        "sm",
+        "md",
+        "mdp",
+        "lg",
+        "xl",
+        "xxl",
+        "default",
+      ].includes(value),
   },
   outlineClass: {
     type: String,
@@ -49,6 +58,7 @@ const iconSize = computed(() => {
     sm: "24px",
     md: "32px",
     default: "32px",
+    mdp: "40px",
     lg: "48px",
     xl: "64px",
     xxl: "96px",

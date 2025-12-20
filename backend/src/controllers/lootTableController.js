@@ -32,10 +32,3 @@ export const fetchChestItems = () =>
       };
     })
   );
-
-export async function fetchMultipleLootTables(ids) {
-  const lootTables = await Promise.all(
-    ids.map((id) => lootTableService.getById(id))
-  );
-  return lootTables;
-}

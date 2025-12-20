@@ -5,13 +5,13 @@ import { achievementRoutes } from "./achievementRoutes.js";
 import { dbRoutes } from "./dbRoutes.js";
 import itemRoutes from "./itemRoutes.js";
 import iconRoutes from "./iconRoutes.js";
-import lootTableRoutes from "./lootTableRoutes.js";
 import {
   abilitiesService,
   activityService,
   factionService,
   keywordService,
   locationService,
+  lootTableService,
   petService,
   recipeService,
   routeService,
@@ -32,7 +32,7 @@ export function registerRoutes(app) {
   apiRouter.use("/items", itemRoutes);
   apiRouter.use("/keywords", createBaseRouter("Keyword", keywordService));
   apiRouter.use("/locations", createBaseRouter("Location", locationService));
-  apiRouter.use("/lootTables", lootTableRoutes);
+  apiRouter.use("/lootTables", createBaseRouter("lootTable", lootTableService));
   apiRouter.use("/pets", createBaseRouter("Pets", petService));
   apiRouter.use("/recipes", createBaseRouter("Recipe", recipeService));
   apiRouter.use("/routes", createBaseRouter("Route", routeService));

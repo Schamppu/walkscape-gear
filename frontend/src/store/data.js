@@ -1,20 +1,26 @@
 import { defineStore } from "pinia";
 import {
+  getAbilities,
   getKeywords,
   getStats,
   getLootTables,
+  getMultipleAbilities,
   getMultipleLootTables,
 } from "@/utils/axios/api_routes";
 
 export const useDataStore = defineStore("dataStore", {
   state: () => ({
     isLoaded: false,
+    abilities: [],
+    abilitiesMap: {},
     keywords: [],
     keywordsMap: {},
     stats: [],
     mainStats: [],
     statsMap: {},
     lootTables: [],
+    loadingData: {},
+    detailedAbilitiesMap: {},
     detailedLootTablesMap: {},
     selectedStat: "none",
   }),
@@ -35,8 +41,25 @@ export const useDataStore = defineStore("dataStore", {
     async fetchGameData() {
       if (this.isLoaded) return;
 
-      const [{ data: keywords }, { data: statList }, { data: lootTables }] =
-        await Promise.all([getKeywords(), getStats(), getLootTables()]);
+      const [
+        { data: abilities },
+        { data: keywords },
+        { data: statList },
+        { data: lootTables },
+      ] = await Promise.all([
+        getAbilities(),
+        getKeywords(),
+        getStats(),
+        getLootTables(),
+      ]);
+
+      this.abilities = abilities;
+      this.abilitiesMap = Object.fromEntries(
+        abilities.map((ability) => {
+          const { id } = ability;
+          return [id, ability];
+        })
+      );
 
       this.keywords = keywords;
       this.keywordsMap = Object.fromEntries(
@@ -73,6 +96,49 @@ export const useDataStore = defineStore("dataStore", {
 
       // Return loot tables in the same order as input ids
       return ids.map((id) => this.detailedLootTablesMap[id]);
+    },
+    async fetchDetailedAbilities(ids) {
+      const validIds = ids.filter(
+        (id) =>
+          this.abilities.findIndex(({ id: abilityId }) => id === abilityId) >= 0
+      );
+
+      const uncachedIds = validIds.filter(
+        (id) => !(id in this.detailedAbilitiesMap || id in this.loadingData)
+      );
+
+      if (uncachedIds.length > 0) {
+        const batchPromise = getMultipleAbilities(uncachedIds)
+          .then(({ data: abilities }) => {
+            abilities.forEach((ability) => {
+              const { id } = ability;
+              this.detailedAbilitiesMap[id] = ability;
+              delete this.loadingData.id;
+              return ability;
+            });
+            return abilities;
+          })
+          .catch(() => {
+            uncachedIds.forEach((id) => delete this.loadingData[id]);
+            return [];
+          });
+
+        uncachedIds.forEach(
+          (id) =>
+            (this.loadingData[id] = batchPromise.then(
+              () => this.detailedAbilitiesMap[id]
+            ))
+        );
+
+        return Promise.all(
+          uncachedIds.map((id) =>
+            id in this.detailedAbilitiesMap
+              ? Promise.resolve(this.detailedAbilitiesMap[id])
+              : this.loadingData[id]
+          )
+        );
+      }
+      return validIds.map((id) => this.detailedAbilitiesMap[id]);
     },
   },
 });

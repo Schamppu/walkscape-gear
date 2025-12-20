@@ -1,11 +1,49 @@
+/* Notototo */
+@font-face {
+  font-family: "Notototo";
+  src: url("/fonts/notototo/NotoSerifToto-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Notototo";
+  src: url("/fonts/notototo/NotoSerifToto-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+}
+
 @font-face {
   font-family: "Notototo";
   src: url("/fonts/notototo/NotoSerifToto-SemiBold.ttf") format("truetype");
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Notototo";
+  src: url("/fonts/notototo/NotoSerifToto-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+}
+
+/* Work Sans */
+@font-face {
+  font-family: "WorkSans";
+  src: url("/fonts/worksans/WorkSans-Regular.ttf") format("truetype");
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: "WorkSans";
+  src: url("/fonts/worksans/WorkSans-Medium.ttf") format("truetype");
+  font-weight: 500;
 }
 
 @font-face {
   font-family: "WorkSans";
   src: url("/fonts/worksans/WorkSans-SemiBold.ttf") format("truetype");
+  font-weight: 600;
 }
 
 @mixin typography-base(
@@ -51,4 +89,4 @@
   text-transform: uppercase;
 }
 
-$font-family: "Notototo", "Worksans", Helvetica, Arial, sans-serif;
+$font-family: "Notototo", "WorkSans", Helvetica, Arial, sans-serif;

@@ -5,6 +5,7 @@ import { useItemsStore } from "@/store/items";
 import WsIcon from "@/components/common/WsIcon.vue";
 import StatsDisplay from "../common/StatsDisplay.vue";
 import useBaseContext from "@/composables/useBaseContext";
+import AbilitiesDisplay from "../common/abilities/AbilitiesDisplay.vue";
 
 const props = defineProps({
   item: Object,
@@ -186,6 +187,10 @@ const toggleChecked = (e) => {
         :quality="quality2"
         show-quality-border
         hide-keywords
+      />
+      <abilities-display
+        v-if="props.item.abilities"
+        :abilities="props.item.abilities"
       />
     </section>
   </section>

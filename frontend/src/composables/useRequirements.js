@@ -108,7 +108,15 @@ export function useRequirements(ctx) {
         break;
       case "activityType":
         if (context.activity.value)
-          value = context.activity.value.id === requirement.activity;
+          value =
+            ((requirement.activity &&
+              context.activity.value.id === requirement.activity) ||
+              !requirement.activity) &&
+            ((requirement.keywords &&
+              requirement.keywords.every((kw) =>
+                context.activity.value.keywords.includes(kw)
+              )) ||
+              !requirement.keywords);
         break;
       case "totalSkillLevel":
         value =
@@ -282,7 +290,16 @@ export function useRequirements(ctx) {
         };
       } else if (type === "activityType") {
         const act = activityStore.activitiesMap[requirement.activity];
-        if (act) {
+        if (requirement.keywords) {
+          const kws = requirement.keywords.map(
+            (kw) => dataStore.keywordsMap[kw]
+          );
+          out = {
+            prefix: `While${opposite ? " NOT" : ""} doing`,
+            text: `${kws[0].name} activity`,
+            icon: kws[0].icon,
+          };
+        } else if (act) {
           out = {
             prefix: `While${opposite ? " NOT" : ""} doing`,
             text: `${act.name} activity`,
