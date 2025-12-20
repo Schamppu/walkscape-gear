@@ -14,6 +14,7 @@ import useBaseContext from "@/composables/useBaseContext";
 import { useRequirements } from "@/composables/useRequirements";
 import { isEmpty } from "@/utils/isEmpty";
 import { n } from "@/utils/number";
+import AbilitiesDisplay from "../common/abilities/AbilitiesDisplay.vue";
 
 const activityStore = useActivityStore();
 const playerStore = usePlayerStore();
@@ -39,7 +40,7 @@ const borderClass = computed(
 );
 
 const sections = computed(() => {
-  const { id, workRequired, requirements, rewards, options } =
+  const { id, workRequired, requirements, rewards, options, abilities } =
     ctx.activity.value;
   const levelRequirementsMap = getLevelRequirementsMap(requirements);
 
@@ -110,6 +111,13 @@ const sections = computed(() => {
       },
     ],
     itemProps: (item) => ({ ...item }),
+  };
+
+  const abilitiesRow = {
+    label: "Abilities",
+    component: AbilitiesDisplay,
+    items: [1],
+    itemProps: () => ({ abilities }),
   };
 
   if (showRewards) {
@@ -184,6 +192,7 @@ const sections = computed(() => {
   return [
     inputsRow,
     statsRow,
+    abilitiesRow,
     skillReqsRow,
     requirementsRow,
     xpRewardsRow,

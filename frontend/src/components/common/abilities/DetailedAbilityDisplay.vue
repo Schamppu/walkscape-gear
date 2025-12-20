@@ -27,6 +27,11 @@ const toggleOpenCooldown = () => {
 const typeIconPaths = {
   passive: "assets/icons/text/general_icons/ability_passive.png",
   active: "assets/icons/text/general_icons/ability_active.png",
+  book: "assets/icons/text/general_icons/ability_book.png",
+  charge: "assets/icons/text/general_icons/ability_charge.png",
+  consumable: "assets/icons/text/general_icons/ability_consumable.png",
+  activity: "assets/icons/text/general_icons/ability_activity.png",
+  emergency: "assets/icons/text/general_icons/ability_emergency.png",
 };
 </script>
 
@@ -68,7 +73,7 @@ const typeIconPaths = {
           </div>
         </div>
       </div>
-      <div class="cooldown">
+      <div v-if="props.ability.cooldown" class="cooldown">
         <div :class="['openable']" @click="toggleOpenCooldown">
           <p class="info-title">cooldown</p>
           <div v-if="props.ability.cooldown.steps" class="amount">
