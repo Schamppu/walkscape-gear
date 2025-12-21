@@ -159,6 +159,9 @@ export function useRequirements(ctx) {
             ({ id }) => id === requirement.item
           ) >= 0;
         break;
+      case "abilityAvailable":
+        value = false;
+        break;
       default:
         console.error("unhandled requirement", type, requirement);
     }
@@ -340,6 +343,16 @@ export function useRequirements(ctx) {
           prefix: `Have`,
           text: `${name} equipped`,
           icon,
+        };
+      } else if (type === "abilityAvailable") {
+        const { ability: abilityId } = requirement;
+        const ability = dataStore.abilitiesMap[abilityId];
+        const { name, icon } = ability;
+
+        out = {
+          prefix: "While having",
+          icon,
+          text: `${name} ability available`,
         };
       }
       if (out) {
