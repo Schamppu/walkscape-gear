@@ -276,7 +276,7 @@ export function useRequirements(ctx) {
           text: skill.name,
           icon: skill.icon,
         };
-      } else if (type === "totalSkilllevel") {
+      } else if (type === "totalSkillLevel") {
         const skillLevels = Object.values(playerStore.skillLevels).reduce(
           (a, b) => a + b,
           0
