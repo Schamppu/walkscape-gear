@@ -12,6 +12,7 @@ import {
   fetchCraftingRecipes,
   fetchTrinketryRecipes,
 } from "../controllers/recipeController.js";
+import { fetchAllPets } from "../controllers/petController.js";
 import { activityService, recipeService, locationService } from "./index.js";
 
 class ItemService extends BaseService {
@@ -49,6 +50,7 @@ class ItemService extends BaseService {
       shopItems,
       craftingRecipes,
       trinketryRecipes,
+      pets,
     ] = await Promise.all([
       this.fetchCollectibles(),
       this.fetchCrafted(),
@@ -62,6 +64,7 @@ class ItemService extends BaseService {
       fetchSoldShopItems(),
       fetchCraftingRecipes(),
       fetchTrinketryRecipes(),
+      fetchAllPets(),
     ]);
 
     return categorizeItems({
@@ -77,6 +80,7 @@ class ItemService extends BaseService {
       shopItems,
       craftingRecipes,
       trinketryRecipes,
+      pets,
     });
   }
 

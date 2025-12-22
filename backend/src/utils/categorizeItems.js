@@ -10,6 +10,7 @@ export function categorizeItems(data) {
     chestItems,
     craftingRecipes,
     trinketryRecipes,
+    pets,
     ...sourceInfo
   } = data;
 
@@ -37,6 +38,11 @@ export function categorizeItems(data) {
   categoryGroups.splice(1, 0, {
     title: "Consumables",
     categories: resolveConsumables(consumables),
+  });
+
+  categoryGroups.push({
+    title: "Pets",
+    categories: resolvePetCategories(pets),
   });
 
   categoryGroups.forEach(({ categories }) => {
@@ -169,6 +175,17 @@ const resolveChestCategories = (loot, chestTables, containers) => {
   }
 
   return { chestCategories: chestTableCategories };
+};
+
+const resolvePetCategories = (pets) => {
+  return [
+    {
+      title: `All Pets`,
+      key: `pets`,
+      qualities: 1,
+      items: pets,
+    },
+  ];
 };
 
 const resolveCraftedCategories = (
