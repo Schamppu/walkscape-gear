@@ -62,3 +62,14 @@ export const consumableQualityOptions = [
     value: "consumableFine",
   },
 ];
+
+export const petQualityOptions = [
+  {
+    name: "Normal",
+    value: "common",
+  },
+  {
+    name: "Rare",
+    value: "rare",
+  },
+];
