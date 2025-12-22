@@ -210,3 +210,9 @@ export function getUrlMap() {
     url: "items/url_mapping",
   });
 }
+
+export function getPets() {
+  return proxy({
+    url: "pets",
+  });
+}
