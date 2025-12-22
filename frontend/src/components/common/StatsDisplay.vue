@@ -14,6 +14,7 @@ const props = defineProps({
     required: true,
   },
   quality: String,
+  petLevel: { type: Number, default: null },
   showQualityBorder: {
     type: Boolean,
     default: false,
@@ -42,12 +43,19 @@ const keywords = props.hideKeywords
 
 const mapAttrs = (quality) => {
   const itemCopy = toDeepRaw(props.item);
-  return sumAttrs(
-    itemCopy.itemAttrs,
+  const usedAttrs =
+    props.petLevel !== null
+      ? itemCopy.levels[props.petLevel - 1].attributes
+      : itemCopy.itemAttrs;
+
+  const baseAttrs = sumAttrs(
+    usedAttrs,
     itemCopy.itemQualityAttrs,
     itemCopy.buffs,
     quality
-  )
+  );
+
+  return baseAttrs
     .flatMap((obj) => {
       const { customText, stats, requirements } = obj;
       return stats.flatMap((stat) => {
