@@ -3,6 +3,7 @@ import { computed, ref, watch } from "vue";
 import { useItemsStore } from "@/store/items";
 import ItemEntry from "./ItemEntry.vue";
 import ConsumableEntry from "./ConsumableEntry.vue";
+import PetEntry from "./PetEntry.vue";
 import { itemQualityNameSort, levelReqNameSort } from "@/utils/sorting";
 import { consumableQualityOptions } from "@/constants/quality";
 import useBaseContext from "@/composables/useBaseContext";
@@ -174,6 +175,15 @@ watch(
           v-for="item in items"
           :key="item.id"
           :item="item"
+          :selected="selectedItems.has(item.id)"
+          @change="toggleItemSelection"
+        />
+      </div>
+      <div v-if="group === 'Pets'">
+        <pet-entry
+          v-for="item in items"
+          :key="item.id"
+          :pet="item"
           :selected="selectedItems.has(item.id)"
           @change="toggleItemSelection"
         />
