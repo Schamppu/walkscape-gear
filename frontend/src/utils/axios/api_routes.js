@@ -216,3 +216,9 @@ export function getPets() {
     url: "pets",
   });
 }
+
+export function getPet({ id }) {
+  return proxy({
+    url: `pets/${id}`,
+  });
+}
