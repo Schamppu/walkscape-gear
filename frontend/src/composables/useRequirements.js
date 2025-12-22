@@ -161,7 +161,14 @@ export function useRequirements(ctx) {
           ) >= 0;
         break;
       case "abilityAvailable":
-        value = false;
+        value =
+          ctx.equippedGear.value.filter(({ abilities }) =>
+            abilities
+              ?.flatMap((ability) =>
+                typeof ability === "object" ? ability.ability : ability
+              )
+              .includes(requirement.ability)
+          ).length > 0;
         break;
       default:
         console.error("unhandled requirement", type, requirement);
