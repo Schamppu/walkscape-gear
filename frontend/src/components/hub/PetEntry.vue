@@ -35,13 +35,13 @@ onMounted(() => {
   if (!entry) {
     isOwned.value = false;
     isHidden.value = false;
-    rarity.value = normal;
     level.value = 0;
+    rarity.value = normal;
   } else {
     isOwned.value = entry.owned;
     isHidden.value = entry.hidden;
-    rarity.value = entry.quality ?? normal;
-    level.value = entry.quality2 ? Number(entry.quality2) : 0;
+    level.value = entry.quality ? Number(entry.quality) : 0;
+    rarity.value = entry.quality2 ?? normal;
   }
 });
 
@@ -50,8 +50,8 @@ function emitChange(overrides = {}) {
     itemId: props.pet.id,
     owned: isOwned.value,
     hidden: isHidden.value,
-    quality: rarity.value,
-    quality2: `${level.value}`,
+    quality: `${level.value}`,
+    quality2: rarity.value,
     ...overrides,
   });
 }
@@ -164,8 +164,7 @@ const abilities = computed(() => {
       </label>
       <stats-display
         :item="props.pet"
-        :quality="normal"
-        :pet-level="level"
+        :quality="`${level}`"
         :hide-keywords="true"
       />
       <div class="xp">
