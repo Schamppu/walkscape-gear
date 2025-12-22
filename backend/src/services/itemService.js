@@ -13,7 +13,12 @@ import {
   fetchTrinketryRecipes,
 } from "../controllers/recipeController.js";
 import { fetchAllPets } from "../controllers/petController.js";
-import { activityService, recipeService, locationService } from "./index.js";
+import {
+  activityService,
+  recipeService,
+  locationService,
+  petService,
+} from "./index.js";
 
 class ItemService extends BaseService {
   constructor() {
@@ -85,7 +90,7 @@ class ItemService extends BaseService {
   }
 
   async getUrlMapping() {
-    const [crafted, loot, consumables, activities, recipes, locations] =
+    const [crafted, loot, consumables, activities, recipes, locations, pets] =
       await Promise.all([
         this.fetchCrafted(),
         this.fetchLoot(),
@@ -93,13 +98,15 @@ class ItemService extends BaseService {
         activityService.list(),
         recipeService.list(),
         locationService.list(),
+        petService.list(),
       ]);
     return createUrlMapping(
       [...crafted, ...loot],
       consumables,
       activities,
       recipes,
-      locations
+      locations,
+      pets
     );
   }
 
