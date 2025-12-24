@@ -18,7 +18,7 @@ function toggleCategory(group, category) {
   openCategoryGroup.value = group;
   openCategory.value = category;
 
-  document.getElementById(category).scrollIntoView();
+  // document.getElementById(category).scrollIntoView();
 }
 
 const categoryOwnedCount = computed(() => {
