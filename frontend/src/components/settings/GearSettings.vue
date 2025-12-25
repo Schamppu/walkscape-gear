@@ -9,7 +9,7 @@ function updateSettingValue(key, value) {
 }
 
 function updateSettingDisplay(key, display) {
-  settingsStore.markSettingChanged(key, undefined, display);
+  settingsStore.markSettingChanged(key, undefined, display ? 1 : 0);
 }
 </script>
 

@@ -21,7 +21,7 @@ export const upsertOwnedItems = async (payload) => {
   return data;
 };
 
-export const fetchFactionRepuations = async () => {
+export const fetchFactionReputations = async () => {
   const { data } = await axios.get(`${getHost()}/db/faction_reputations`);
   return data;
 };
