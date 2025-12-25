@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import { getSkills, getFactions } from "@/utils/axios/api_routes";
 import {
   fetchPlayerStats,
-  fetchFactionRepuations,
+  fetchFactionReputations,
 } from "@/utils/axios/db_routes";
 
 export const usePlayerStore = defineStore("playerStore", {
@@ -31,7 +31,7 @@ export const usePlayerStore = defineStore("playerStore", {
         getSkills(),
         getFactions(),
         fetchPlayerStats(),
-        fetchFactionRepuations(),
+        fetchFactionReputations(),
       ]);
 
       this.skills = skills
