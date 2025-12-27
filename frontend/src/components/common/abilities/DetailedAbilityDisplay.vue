@@ -3,6 +3,7 @@ import { ref } from "vue";
 import WsText from "@/components/common/text/WsText.vue";
 import WsIcon from "../WsIcon.vue";
 import RequirementDisplay from "@/components/activity/RequirementDisplay.vue";
+import { icons } from "@/constants/iconPaths";
 
 const props = defineProps({
   ability: Object,
@@ -23,16 +24,6 @@ const toggleOpenRequirements = () => {
 const toggleOpenCooldown = () => {
   cooldownOpen.value = !cooldownOpen.value;
 };
-
-const typeIconPaths = {
-  passive: "assets/icons/text/general_icons/ability_passive.png",
-  active: "assets/icons/text/general_icons/ability_active.png",
-  book: "assets/icons/text/general_icons/ability_book.png",
-  charge: "assets/icons/text/general_icons/ability_charge.png",
-  consumable: "assets/icons/text/general_icons/ability_consumable.png",
-  activity: "assets/icons/text/general_icons/ability_activity.png",
-  emergency: "assets/icons/text/general_icons/ability_emergency.png",
-};
 </script>
 
 <template>
@@ -41,7 +32,7 @@ const typeIconPaths = {
       <ws-icon :icon-path="props.ability?.icon" size="mdp" />
       <div class="data">
         <div class="title">
-          <ws-icon :icon-path="typeIconPaths[props.ability?.type]" size="xs" />
+          <ws-icon :icon-path="icons[props.ability?.type]" size="xs" />
           <p :class="['type', `color-${props.ability.type}`]">
             {{ props.ability.type }}
           </p>
@@ -78,17 +69,11 @@ const typeIconPaths = {
           <p class="info-title">cooldown</p>
           <div v-if="props.ability.cooldown.steps" class="amount">
             <p>{{ props.ability.cooldown.steps }}</p>
-            <ws-icon
-              icon-path="assets/icons/text/general_icons/steps.png"
-              size="sm"
-            />
+            <ws-icon :icon-path="icons.steps" size="sm" />
           </div>
           <div v-else-if="props.ability.cooldown.actions" class="amount">
             <p>{{ props.ability.cooldown.actions }}</p>
-            <ws-icon
-              icon-path="assets/icons/text/general_icons/actions.png"
-              size="sm"
-            />
+            <ws-icon :icon-path="icons.actions" size="sm" />
           </div>
           <div v-else class="amount">
             <p v-if="props.ability.cooldown.days">
@@ -104,7 +89,7 @@ const typeIconPaths = {
               {{ props.ability.cooldown.seconds }}s
             </p>
             <ws-icon
-              icon-path="assets/devtools/icons/cooldowns.png"
+              :icon-path="icons.cooldowns"
               size="sm"
             />
           </div>

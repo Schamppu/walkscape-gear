@@ -1,6 +1,7 @@
 <script setup>
 import { ref, watch } from "vue";
 import { useNotificationStore } from "@/store/notifications";
+import { icons } from "@/constants/iconPaths";
 import BaseModal from "@/components/common/BaseModal.vue";
 import WsButton from "@/components/common/WsButton.vue";
 
@@ -78,7 +79,7 @@ async function copyToClipboard() {
       <div class="button-group">
         <ws-button
           text="Copy to Clipboard"
-          icon-path="assets/icons/text/button_icons/deposit.png"
+          :icon-path="icons.deposit"
           @click="copyToClipboard"
         />
         <ws-button text="Select All" @click="selectAllText" />

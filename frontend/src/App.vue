@@ -10,6 +10,7 @@ import { useGearSetStore } from "@/store/gearSet";
 import { useRouteStore } from "@/store/route";
 import { useSettingsStore } from "./store/settings";
 import { getOrCreateUserUuid } from "@/utils/user";
+import { icons } from "@/constants/iconPaths";
 import Hub from "./components/hub/HubTab.vue";
 import Activity from "./components/activity/ActivityTab.vue";
 import Gear from "./components/gear/GearTab.vue";
@@ -136,7 +137,7 @@ onUnmounted(() => {
     <ws-button
       v-if="isLoaded"
       @click="showSettings = true"
-      icon-path="assets/icons/text/general_icons/settings.png"
+      :icon-path="icons.settings"
       icon-size="sm"
     />
   </header>

@@ -4,6 +4,7 @@ import WsButton from "@/components/common/WsButton.vue";
 import GearSetImportModal from "./GearSetImportModal.vue";
 import useBaseContext from "@/composables/useBaseContext";
 import { useGearSetExport } from "@/composables/useGearSetExport";
+import { icons } from "@/constants/iconPaths";
 import { useNotificationStore } from "@/store/notifications";
 import { useGearStore } from "@/store/gear";
 import { useUrlStore } from "@/store/url";
@@ -62,7 +63,7 @@ async function handleImportData(data) {
   <div>
     <ws-button
       text="Import"
-      icon-path="assets/icons/text/button_icons/equip.png"
+      :icon-path="icons.equip"
       @click="openModal"
     />
     <gear-set-import-modal

@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import useBaseContext from "@/composables/useBaseContext";
 import { useGearSetExport } from "@/composables/useGearSetExport";
+import { icons } from "@/constants/iconPaths";
 import { useNotificationStore } from "@/store/notifications";
 import WsButton from "@/components/common/WsButton.vue";
 import ExportCodeModal from "./ExportCodeModal.vue";
@@ -41,7 +42,7 @@ async function copyExportCode() {
     <ws-button
       @click="copyExportCode"
       text="Export"
-      icon-path="assets/icons/text/button_icons/deposit.png"
+      :icon-path="icons.deposit"
     />
     <export-code-modal v-model="showModal" :export-code="currentExportCode" />
   </div>

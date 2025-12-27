@@ -2,6 +2,7 @@
 import WsButton from "@/components/common/WsButton.vue";
 import { useGearStore } from "@/store/gear";
 import { useNotificationStore } from "@/store/notifications";
+import { icons } from "@/constants/iconPaths";
 
 const gearStore = useGearStore();
 const notificationStore = useNotificationStore();
@@ -16,7 +17,7 @@ function handleUnequip() {
   <ws-button
     class="unequip-button"
     text="Unequip All"
-    icon-path="assets/icons/text/button_icons/unequip.png"
+    :icon-path="icons.unequip"
     @click="handleUnequip"
   />
 </template>

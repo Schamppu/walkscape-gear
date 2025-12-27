@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed } from "vue";
 import { useGearSetStore } from "@/store/gearSet";
+import { icons } from "@/constants/iconPaths";
 import WsIcon from "@/components/common/WsIcon.vue";
 import WsButton from "@/components/common/WsButton.vue";
 import TagSelection from "./TagSelection.vue";
@@ -193,7 +194,7 @@ function isConfirmingDelete(setId) {
         </div>
         <ws-button
           v-if="!isConfirmingDelete(set.id)"
-          icon-path="assets/icons/text/button_icons/delete.png"
+          :icon-path="icons.delete"
           @click.stop="handleDeleteClick(set.id)"
         />
         <ws-button
