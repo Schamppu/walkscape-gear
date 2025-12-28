@@ -119,7 +119,6 @@ export const useDataStore = defineStore("dataStore", {
       }
       return validIds.map((id) => detailedMap[id]);
     },
-
     async fetchDetailedLootTables(ids) {
       const idMap = Object.fromEntries(
         this.lootTables.map(({ id }) => [id, true])
