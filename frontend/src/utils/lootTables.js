@@ -1,5 +1,5 @@
 import { usedAttrs } from "./qualityAttrs";
-import { useDataStore } from "@/store/data";
+import { usePlayerStore } from "@/store/player";
 import { useRequirements } from "@/composables/useRequirements";
 import { stripHtmlTags } from "@/utils/stripHtmlTags";
 
@@ -46,6 +46,49 @@ export const getCtxLootTables = (ctx) => {
   return [...getGearLootTables(ctx), ...getSourceLootTables(ctx)];
 };
 
+const resolveWeight = (params) => {
+  const playerStore = usePlayerStore();
+  const { rowWeight, minWeightScale, requirementsBonuses } = params;
+  const { levelMaxScaling, levelRequirement, relatedSkill } =
+    requirementsBonuses[0];
+  const level = playerStore.skillLevels[relatedSkill] || 1;
+  if (level < levelRequirement) {
+    return 0;
+  } else if (level >= levelMaxScaling) {
+    return rowWeight;
+  } else if (
+    rowWeight / (levelMaxScaling - levelRequirement + 1) < 1 &&
+    level == levelRequirement
+  ) {
+    return Math.floor(rowWeight * minWeightScale * 10 + 0.5) / 10;
+  } else {
+    const weightIncrement =
+      rowWeight / (levelMaxScaling - levelRequirement + 1);
+    const weight = weightIncrement * (level - (levelRequirement - 1));
+    return Math.floor(weight * 10 + 0.5) / 10;
+  }
+};
+
+const resolveLootTableWeights = (tables) => {
+  const tableRows = tables.map((table) =>
+    table.tableRows.map((row) => {
+      const { rowWeight, minWeightScale, requirementsBonuses } = row;
+      return {
+        ...row,
+        rowWeight: requirementsBonuses?.length
+          ? resolveWeight({ rowWeight, minWeightScale, requirementsBonuses })
+          : rowWeight,
+      };
+    })
+  );
+  return tables.map((table, index) => {
+    return {
+      ...table,
+      tableRows: tableRows[index],
+    };
+  });
+};
+
 export const normalizeLootTable = (table) => {
-  console.log(table);
+  return resolveLootTableWeights(table);
 };
