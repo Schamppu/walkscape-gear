@@ -43,7 +43,7 @@ const getSourceLootTables = (ctx) => {
 };
 
 export const getCtxLootTables = (ctx) => {
-  return [...getGearLootTables(ctx), ...getSourceLootTables(ctx)];
+  return [...getSourceLootTables(ctx), ...getGearLootTables(ctx)];
 };
 
 const resolveWeight = (params) => {
@@ -91,4 +91,31 @@ const resolveLootTableWeights = (tables) => {
 
 export const normalizeLootTable = (table) => {
   return resolveLootTableWeights(table);
+};
+
+export const mapTableToItems = (table) => {
+  const { rollAmount, rollChance, slot, type, tableSource, stat } = table;
+  return table.tables?.flatMap(({ noDropChance, tableRows }) => {
+    const mappedRows = tableRows.map((row) => {
+      return {
+        ...row,
+        noDropChance,
+      };
+    });
+    const tableWeight = mappedRows.reduce((acc, row) => {
+      return acc + (row.rowWeight || 0);
+    }, 0);
+    return mappedRows.map((row) => {
+      return {
+        ...row,
+        tableWeight,
+        rollAmount,
+        slot,
+        stat,
+        type,
+        tableSource,
+        rollChance,
+      };
+    });
+  });
 };

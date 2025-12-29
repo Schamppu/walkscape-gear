@@ -2,6 +2,7 @@
 import { computed } from "vue";
 import DropItemDisplay from "./DropItemDisplay.vue";
 import WsLabel from "@/components/common/WsLabel.vue";
+import { mapTableToItems } from "@/utils/lootTables";
 
 const props = defineProps({
   lootTable: Object,
@@ -29,31 +30,9 @@ const lootTableLabels = computed(() => {
   return labels;
 });
 
-const tableItems = computed(() => {
-  const { rollAmount, type, rollChance } = props.lootTable;
-  return props.lootTable?.tables?.flatMap(({ noDropChance, tableRows }) => {
-    const mappedRows = tableRows.flatMap((row) => {
-      return {
-        ...row,
-        noDropChance,
-      };
-    });
-    const tableWeight = mappedRows.reduce((acc, row) => {
-      return acc + (row.rowWeight || 0);
-    }, 0);
-    return mappedRows.map((row) => {
-      return [
-        {
-          ...row,
-          tableWeight,
-          rollAmount,
-          rollChance,
-          type,
-        },
-      ];
-    });
-  });
-});
+const tableItems = computed(() =>
+  mapTableToItems(props.lootTable).map((item) => item?.rowItemID || "gold")
+);
 </script>
 
 <template>
@@ -67,11 +46,7 @@ const tableItems = computed(() => {
       />
     </div>
     <div class="loot-table">
-      <drop-item-display
-        v-for="(sources, index) in tableItems"
-        :key="index"
-        :sources="sources"
-      />
+      <drop-item-display v-for="item in tableItems" :key="item" :item-id="item" />
     </div>
   </section>
 </template>
