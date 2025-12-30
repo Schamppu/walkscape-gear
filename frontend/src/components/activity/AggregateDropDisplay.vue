@@ -37,6 +37,7 @@ const materialValue = (id, itemInfo, valueSource) => {
 
 const goldTotal = computed(() => {
   const data = Object.entries(dropItemInfoMap.value);
+
   const sum = data.reduce((total, [id, info]) => {
     if (id === "gold") {
       return total + info.itemsPerStep;
