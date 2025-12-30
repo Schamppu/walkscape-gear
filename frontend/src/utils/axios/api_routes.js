@@ -211,6 +211,12 @@ export function getUrlMap() {
   });
 }
 
+export function getItemValueMap() {
+  return proxy({
+    url: "items/item_value_mapping",
+  });
+}
+
 export function getPets() {
   return proxy({
     url: "pets",
