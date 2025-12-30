@@ -2,6 +2,8 @@ const BASE_PATHS = {
   general: "assets/icons/text/general_icons/",
   button: "assets/icons/text/button_icons/",
   devtools: "assets/devtools/icons/",
+  items: "assets/icons/items/",
+  currencies: "assets/icons/items/currencies/",
 };
 
 const withBase = (base, files) =>
@@ -34,6 +36,12 @@ export const icons = {
     delete: "delete.png",
     equip: "equip.png",
     unequip: "unequip.png",
+  }),
+  ...withBase("items", {
+    money: "money.png",
+  }),
+  ...withBase("currencies", {
+    token: "adventure_guild_token.png",
   }),
   cooldowns: `${BASE_PATHS.devtools}cooldowns.png`,
 };
