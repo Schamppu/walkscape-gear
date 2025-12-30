@@ -44,7 +44,8 @@ const rarityAdders = {
 };
 
 export const price = (value, modifier, quality = "common", fine = false) => {
+  const usedModifier = modifier || 1;
   const base = fine ? fineItemValueTable[value] : normalItemValueTable[value];
   const { valueAdder, modifierAdder } = rarityAdders[quality];
-  return Math.floor((base + valueAdder) * (modifier + modifierAdder));
+  return Math.floor((base + valueAdder) * (usedModifier + modifierAdder));
 };
