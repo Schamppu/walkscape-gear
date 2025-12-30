@@ -29,7 +29,7 @@ export function useLootTables(ctx) {
 
   const lootTables = computed(() => getCtxLootTables(ctx));
   const lootTableIds = computed(() =>
-    lootTables.value.map(({ tables }) => tables)
+    lootTables.value.flatMap(({ tables }) => tables)
   );
 
   watch(
@@ -210,7 +210,7 @@ export function useLootTables(ctx) {
       1
     );
     const totalChance = 100 * (1 - probabilityNone);
-    const rounded = Math.round(totalChance * 1000) / 1000;
+    const rounded = Math.round(totalChance * 10000) / 10000;
     return rounded;
   };
 
