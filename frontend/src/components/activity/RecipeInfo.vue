@@ -17,7 +17,6 @@ import { n } from "@/utils/number";
 
 const activityStore = useActivityStore();
 const itemsStore = useItemsStore();
-const useFineMaterials = ref(false);
 
 const { recipe } = storeToRefs(activityStore);
 const ctx = useBaseContext();
@@ -36,7 +35,7 @@ const stats = computed(() => {
     xpPerStep,
   } = useSkillModifiers(ctx);
 
-  const xpRewardsMultiplier = useFineMaterials.value ? 1.5 : 1;
+  const xpRewardsMultiplier = activityStore.useFineMaterials ? 1.5 : 1;
 
   return {
     maxWorkEfficiency: maxWorkEfficiency.value,
@@ -137,7 +136,7 @@ const wikiLink = computed(() => {
       <div class="info-section" :key="recipe">
         <div class="info-row">
           <label v-if="canUseFineMaterials">
-            <input type="checkbox" v-model="useFineMaterials" />
+            <input type="checkbox" v-model="activityStore.useFineMaterials" />
             Fine Materials
           </label>
           <wiki-button :name="wikiLink" />
@@ -158,7 +157,9 @@ const wikiLink = computed(() => {
                 :text="`${amount}`"
                 :tooltip="`${amount}x ${name}`"
                 :iconPath="icon"
-                :border-class="useFineMaterials ? 'border-fine' : ''"
+                :border-class="
+                  activityStore.useFineMaterials ? 'border-fine' : ''
+                "
               />
             </template>
           </div>
@@ -249,7 +250,7 @@ const wikiLink = computed(() => {
       </div>
       <div v-if="resultHasCO" class="info-section">
         <quality-outcome-table
-          :use-fine-materials="useFineMaterials"
+          :use-fine-materials="activityStore.useFineMaterials"
           :level-requirement="levelRequirement"
           :quality-outcome="stats.qualityOutcome"
           :crafts-per-material="stats.craftsPerMaterial"
@@ -278,12 +279,12 @@ const wikiLink = computed(() => {
   gap: $sm;
   align-items: flex-start;
 
-  .info-row, .material-group {
+  .info-row,
+  .material-group {
     align-items: center;
     display: flex;
     flex-wrap: wrap;
     gap: $md;
   }
-
 }
 </style>
