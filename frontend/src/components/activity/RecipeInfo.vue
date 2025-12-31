@@ -17,7 +17,6 @@ import { n } from "@/utils/number";
 
 const activityStore = useActivityStore();
 const itemsStore = useItemsStore();
-const useFineMaterials = ref(false);
 
 const { recipe } = storeToRefs(activityStore);
 const ctx = useBaseContext();
@@ -36,7 +35,7 @@ const stats = computed(() => {
     xpPerStep,
   } = useSkillModifiers(ctx);
 
-  const xpRewardsMultiplier = useFineMaterials.value ? 1.5 : 1;
+  const xpRewardsMultiplier = activityStore.useFineMaterials ? 1.5 : 1;
 
   return {
     maxWorkEfficiency: maxWorkEfficiency.value,
@@ -104,26 +103,23 @@ const canUseFineMaterials = computed(() => {
 });
 
 const materials = computed(() => {
-  return recipe.value.materials
-    .map(
-      ({ options }) =>
-        options.map(({ item, amount }) => {
-          if (!(item in itemsStore.allGearItems || item in itemsStore.materials))
-            return;
+  return recipe.value.materials.map(({ options }) =>
+    options
+      .map(({ item, amount }) => {
+        if (!(item in itemsStore.allGearItems || item in itemsStore.materials))
+          return;
 
-          const fullItem =
-            itemsStore.allGearItems[item] || itemsStore.materials[item];
-          const { name, icon } = fullItem;
-          return {
-            name,
-            icon,
-            amount,
-          };
-        })[0]
-    )
-    .filter(({ name }) => {
-      return name;
-    });
+        const fullItem =
+          itemsStore.allGearItems[item] || itemsStore.materials[item];
+        const { name, icon } = fullItem;
+        return {
+          name,
+          icon,
+          amount,
+        };
+      })
+      .filter(({ name }) => name)
+  );
 });
 
 const wikiLink = computed(() => {
@@ -140,21 +136,33 @@ const wikiLink = computed(() => {
       <div class="info-section" :key="recipe">
         <div class="info-row">
           <label v-if="canUseFineMaterials">
-            <input type="checkbox" v-model="useFineMaterials" />
+            <input type="checkbox" v-model="activityStore.useFineMaterials" />
             Fine Materials
           </label>
           <wiki-button :name="wikiLink" />
         </div>
         <div class="info-row">
           <p>Materials:</p>
-          <info-bubble
-            v-for="{ name, icon, amount } in materials"
-            :key="name"
-            :text="`${amount}`"
-            :tooltip="`${amount}x ${name}`"
-            :iconPath="icon"
-            :border-class="useFineMaterials ? 'border-fine' : ''"
-          />
+          <div
+            v-for="(materialGroup, gi) in materials"
+            :key="`material-${gi}`"
+            class="material-group"
+          >
+            <template
+              v-for="({ name, icon, amount }, index) in materialGroup"
+              :key="name"
+            >
+              <p v-if="index > 0">or</p>
+              <info-bubble
+                :text="`${amount}`"
+                :tooltip="`${amount}x ${name}`"
+                :iconPath="icon"
+                :border-class="
+                  activityStore.useFineMaterials ? 'border-fine' : ''
+                "
+              />
+            </template>
+          </div>
         </div>
         <div class="info-row">
           <info-bubble
@@ -242,7 +250,7 @@ const wikiLink = computed(() => {
       </div>
       <div v-if="resultHasCO" class="info-section">
         <quality-outcome-table
-          :use-fine-materials="useFineMaterials"
+          :use-fine-materials="activityStore.useFineMaterials"
           :level-requirement="levelRequirement"
           :quality-outcome="stats.qualityOutcome"
           :crafts-per-material="stats.craftsPerMaterial"
@@ -271,7 +279,8 @@ const wikiLink = computed(() => {
   gap: $sm;
   align-items: flex-start;
 
-  .info-row {
+  .info-row,
+  .material-group {
     align-items: center;
     display: flex;
     flex-wrap: wrap;

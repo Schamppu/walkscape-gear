@@ -37,7 +37,7 @@ const craftingOdds = computed(() => {
   const odds = getOutcomeOdds(
     level,
     qualityOutcome.value,
-    useFineMaterials.value
+    useFineMaterials
   );
   return odds.map((item) => {
     return {
