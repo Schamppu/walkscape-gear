@@ -217,6 +217,7 @@ onUnmounted(() => {
 .mobile-layout .tab-panel {
   display: none;
   min-height: calc(100svh - $footerHeight - $navHeight);
+  margin-bottom: 4rem;
 }
 .mobile-layout .tab-panel.active {
   display: block;
