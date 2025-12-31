@@ -5,9 +5,13 @@ import { useDataStore } from "@/store/data";
 import InfoBubble from "@/components/common/InfoBubble.vue";
 import useBaseContext from "@/composables/useBaseContext";
 import { useLootTables } from "@/composables/useLootTables";
+import { useRequirements } from "@/composables/useRequirements";
+import { useSkillModifiers } from "@/composables/useSkillModifiers";
+import getOutcomeOdds from "@/utils/qualityOutcomeOdds";
 import { n } from "@/utils/number";
 import { icons } from "@/constants/iconPaths";
-import { tokenValues } from "@//constants/tokenValues";
+import { tokenValues } from "@/constants/tokenValues";
+import { useActivityStore } from "@/store/activity";
 
 const props = defineProps({
   type: {
@@ -21,10 +25,18 @@ const { dropItemInfoMap } = useLootTables(ctx);
 
 const dataStore = useDataStore();
 const itemsStore = useItemsStore();
+const activityStore = useActivityStore();
+const { getLevelRequirementsMap } = useRequirements(ctx);
+const {
+  stepsPerRewardRoll,
+  stepsPerAction,
+  noMaterialsConsumed,
+  qualityOutcome,
+} = useSkillModifiers(ctx);
 
 const materialValue = (id, itemInfo, valueSource) => {
   const { stepsPerNormal, stepsPerFine } = itemInfo;
-  const normalPerStep = 1000 / stepsPerNormal;
+  const normalPerStep = stepsPerNormal ? 1000 / stepsPerNormal : 0;
   if (stepsPerFine) {
     const finePerStep = 1000 / stepsPerFine;
     const { common, fine } = valueSource[id];
@@ -34,6 +46,76 @@ const materialValue = (id, itemInfo, valueSource) => {
     return common * normalPerStep;
   }
 };
+
+const getCraftingOdds = () => {
+  const levelMap = getLevelRequirementsMap(ctx.recipe.value.requirements);
+  const level = Object.values(levelMap)[0];
+
+  const odds = getOutcomeOdds(
+    level,
+    qualityOutcome.value,
+    activityStore.useFineMaterials
+  );
+  return odds.map((item) => {
+    return {
+      ...item,
+      odds1: 1 - (1 - item.value) ** props.crafts,
+      avg: props.crafts * item.value,
+    };
+  });
+};
+
+const recipeValue = computed(() => {
+  if (!ctx.recipeSelected.value) return 0;
+
+  const { materials, itemRewards } = ctx.source.value;
+  const rewardValues = Object.entries(itemRewards).map(([item, amount]) => {
+    if (
+      item in itemsStore.allGearItems &&
+      itemsStore.allGearItems[item].type === "crafted"
+    ) {
+      const odds = getCraftingOdds();
+      const values = odds.reduce(
+        (total, { qualityValue, value }) =>
+          total + value * dataStore.itemValues[item][qualityValue],
+        0
+      );
+      return values * (1000 / stepsPerRewardRoll.value);
+    } else {
+      const useFine = activityStore.useFineMaterials;
+      const steps = stepsPerRewardRoll.value;
+      const info = {
+        stepsPerNormal: useFine ? 0 : steps,
+        stepsPerFine: useFine ? steps : 0,
+      };
+      return amount * materialValue(item, info, dataStore.itemValues);
+    }
+  });
+  const rewardValue1k = rewardValues.reduce((a, b) => a + b, 0);
+
+  const allMaterials = materials.flatMap(({ options }) => options[0]);
+  const canUseFineMaterials = allMaterials.every(
+    ({ item }) => item in itemsStore.fineMaterials
+  );
+
+  const materialCost = allMaterials.map(({ amount, item }) => {
+    if (item in itemsStore.allGearItems) {
+      return amount * Object.values(dataStore.itemValues[item])[0];
+    } else {
+      const quality =
+        canUseFineMaterials && activityStore.useFineMaterials
+          ? "fine"
+          : "common";
+      return amount * dataStore.itemValues[item][quality];
+    }
+  });
+  const materialsPer1k =
+    1000 / (stepsPerAction.value / (1 - noMaterialsConsumed.value));
+  const materialCost1k =
+    materialCost.reduce((a, b) => a + b, 0) * materialsPer1k;
+
+  return rewardValue1k - materialCost1k;
+});
 
 const goldTotal = computed(() => {
   const data = Object.entries(dropItemInfoMap.value);
@@ -66,7 +148,7 @@ const tokenTotal = computed(() => {
 });
 
 const displayValue = computed(() => {
-  if (props.type === "money") return n(goldTotal.value, 2);
+  if (props.type === "money") return n(goldTotal.value + recipeValue.value, 2);
   if (props.type === "token") return n(tokenTotal.value, 2);
   return "";
 });
