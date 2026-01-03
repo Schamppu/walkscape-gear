@@ -19,7 +19,7 @@ defineProps({
       :title="tooltip"
       :aria-label="tooltip"
     >
-      <ws-icon :icon-path="iconPath" size="sm" />
+      <ws-icon v-if="iconPath" :icon-path="iconPath" size="sm" />
       <p class="text">{{ text }}</p>
     </div>
   </div>
