@@ -230,9 +230,10 @@ watchEffect(() => {
           />
         </div>
       </div>
-      <div v-if="resultHasCO">
-        <calculator-quality-outcome-table :crafts="materialsOutput" />
-      </div>
+      <calculator-quality-outcome-table
+        v-if="resultHasCO"
+        :crafts="materialsOutput"
+      />
     </section>
   </details>
 </template>

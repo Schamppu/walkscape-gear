@@ -80,6 +80,7 @@ const craftingOdds = computed(() => {
 
 <style lang="scss" scoped>
 .wrapper {
+  width: 100%;
   display: flex;
   flex-direction: column;
   gap: $xxs;
