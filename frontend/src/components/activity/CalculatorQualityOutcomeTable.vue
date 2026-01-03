@@ -37,7 +37,7 @@ const craftingOdds = computed(() => {
   const odds = getOutcomeOdds(
     level,
     qualityOutcome.value,
-    useFineMaterials
+    activityStore.useFineMaterials
   );
   return odds.map((item) => {
     return {
@@ -53,7 +53,7 @@ const craftingOdds = computed(() => {
   <div class="wrapper">
     <ws-label label="Expected outcomes" />
     <label v-if="canUseFineMaterials">
-      <input type="checkbox" v-model="useFineMaterials" />
+      <input type="checkbox" v-model="activityStore.useFineMaterials" />
       Fine Materials
     </label>
     <table class="quality-odds-table">
