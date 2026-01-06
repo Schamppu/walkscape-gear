@@ -15,6 +15,7 @@ import { useRequirements } from "@/composables/useRequirements";
 import { isEmpty } from "@/utils/isEmpty";
 import { n } from "@/utils/number";
 import AbilitiesDisplay from "../common/abilities/AbilitiesDisplay.vue";
+import { icons } from "@/constants/iconPaths";
 
 const activityStore = useActivityStore();
 const playerStore = usePlayerStore();
@@ -84,7 +85,7 @@ const sections = computed(() => {
             : ""
         } / ${n(workRequired || 1000)}`,
         tooltip: `${n(stepsPerCompletion.value)} steps per action`,
-        iconPath: "assets/icons/text/general_icons/steps.png",
+        iconPath: icons.steps,
       },
       {
         text: `${n(uncappedWorkEfficiency.value * 100)} / ${Math.round(
@@ -99,7 +100,7 @@ const sections = computed(() => {
             Math.ceil((effectiveMaxWorkEfficiency.value - 1) * 400) / 4
           }%`,
         ].join("\n"),
-        iconPath: "assets/icons/text/stats/skilling/work_efficiency.png",
+        iconPath: icons.WE,
         borderClass:
           workEfficiency.value >= effectiveMaxWorkEfficiency.value - 1
             ? "border-green"
@@ -108,7 +109,7 @@ const sections = computed(() => {
       {
         text: `${n(stepsPerRewardRoll.value, 2)}`,
         tooltip: `Steps per reward roll: ${n(stepsPerRewardRoll.value, 2)}`,
-        iconPath: "assets/icons/text/stats/skilling/double_result.png",
+        iconPath: icons.DR,
       },
     ],
     itemProps: (item) => ({ ...item }),
