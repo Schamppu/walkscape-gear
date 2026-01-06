@@ -5,7 +5,7 @@ import { useLootTables } from "./useLootTables";
 
 export function useShowItemForActivity(ctx) {
   const { checkRequirements } = useRequirements(ctx);
-  const { hasCollectibleDrops } = useLootTables(ctx);
+  const { hasCollectibleDrops, hasFineDrops } = useLootTables(ctx);
 
   const usefulKeywords = (item, activity, service) => {
     if (!activity || !item.keywords) return false;
@@ -62,6 +62,13 @@ export function useShowItemForActivity(ctx) {
       return hasCollectibleDrops.value;
     };
 
+    const filterFineMaterialFinding = (attr) => {
+      const statIsFineMaterialFinding =
+        attr.statText === "Fine material finding";
+      if (!statIsFineMaterialFinding) return true;
+      return hasFineDrops.value;
+    };
+
     const unfilteredRequirementTypes = ["distinctKeywordItemsEquipped"];
 
     const usefulAttr = baseAttrs.filter((attr) => {
@@ -73,6 +80,7 @@ export function useShowItemForActivity(ctx) {
       return (
         filterActivityOnlyAttrs(attr) &&
         filterFindCollectibles(attr) &&
+        filterFineMaterialFinding(attr) &&
         filterRecipeOnlyAttrs(attr) &&
         filterCO(attr, activity) &&
         checkRequirements(usedRequirements) &&

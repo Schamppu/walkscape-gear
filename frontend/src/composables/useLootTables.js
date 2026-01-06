@@ -324,6 +324,12 @@ export function useLootTables(ctx) {
     );
   });
 
+  const hasFineDrops = computed(() => {
+    return Object.values(dropItemInfoMap.value).some(
+      ({ stepsPerFine }) => stepsPerFine > 0
+    );
+  });
+
   return {
     lootTables,
     detailedLootTables,
@@ -333,5 +339,6 @@ export function useLootTables(ctx) {
     dropItemInfoMap,
     groupSourcesByStat,
     hasCollectibleDrops,
+    hasFineDrops,
   };
 }
