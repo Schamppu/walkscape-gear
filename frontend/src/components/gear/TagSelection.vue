@@ -76,7 +76,7 @@ function removeTag(tagToRemove) {
 </script>
 
 <template>
-  <div class="tag-selection">
+  <div class="tag-selection" v-click-outside="closePopup">
     <div class="tag-header">
       <span class="tag-label">{{ label }}</span>
       <span

@@ -126,7 +126,7 @@ function isConfirmingDelete(setId) {
 </script>
 
 <template>
-  <div class="gear-set-dropdown" v-clickOutside="handleClickOutside">
+  <div class="gear-set-dropdown" v-click-outside="handleClickOutside">
     <div :class="['dropdown-header', { open: isOpen }]" @click="toggleDropdown">
       <input
         ref="inputRef"

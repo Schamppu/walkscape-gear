@@ -17,6 +17,7 @@ datasource db {
 model User {
   userUuid           String              @id @default(uuid())
   createdAt          DateTime            @default(now())
+  lastActiveAt       DateTime?
   stats              PlayerStat[]
   items              OwnedItem[]
   factionReputations FactionReputation[]

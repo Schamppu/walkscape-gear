@@ -1,25 +1,55 @@
-import type { Directive, DirectiveBinding } from "vue";
+import type { Directive } from "vue";
 
 type ClickOutsideElement = HTMLElement & {
-  __ClickOutsideHandler__?: (event: MouseEvent) => void;
+  __clickOutsideHandler__?: (e: MouseEvent) => void;
+  __escHandler__?: (e: KeyboardEvent) => void;
 };
 
-const clickOutside: Directive = {
-  mounted(el: HTMLElement, binding: DirectiveBinding) {
-    const _el = el as ClickOutsideElement;
-    _el.__ClickOutsideHandler__ = (event: MouseEvent) => {
-      if (!(_el === event.target || _el.contains(event.target as Node))) {
-        binding.value(event);
+type ClickOutsideBinding =
+  | (() => void)
+  | {
+      handler: () => void;
+      esc?: boolean;
+    };
+
+const clickOutside: Directive<ClickOutsideElement, ClickOutsideBinding> = {
+  mounted(el, binding) {
+    const handler =
+      typeof binding.value === "function"
+        ? binding.value
+        : binding.value.handler;
+
+    const escEnabled =
+      typeof binding.value === "object" ? binding.value.esc !== false : true;
+
+    el.__clickOutsideHandler__ = (event: MouseEvent) => {
+      if (!el.contains(event.target as Node)) {
+        handler();
       }
     };
-    document.body.addEventListener("click", _el.__ClickOutsideHandler__!);
-  },
-  unmounted(el: HTMLElement) {
-    const _el = el as ClickOutsideElement;
-    if (_el.__ClickOutsideHandler__) {
-      document.body.removeEventListener("click", _el.__ClickOutsideHandler__);
-      delete _el.__ClickOutsideHandler__;
+
+    document.addEventListener("click", el.__clickOutsideHandler__);
+
+    if (escEnabled) {
+      el.__escHandler__ = (event: KeyboardEvent) => {
+        if (event.key === "Escape") {
+          handler();
+        }
+      };
+      document.addEventListener("keydown", el.__escHandler__);
     }
+  },
+
+  unmounted(el) {
+    if (el.__clickOutsideHandler__) {
+      document.removeEventListener("click", el.__clickOutsideHandler__);
+    }
+    if (el.__escHandler__) {
+      document.removeEventListener("keydown", el.__escHandler__);
+    }
+
+    delete el.__clickOutsideHandler__;
+    delete el.__escHandler__;
   },
 };
 

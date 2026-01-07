@@ -17,7 +17,6 @@ const props = defineProps({
   },
   slotName: {
     type: String,
-    required: true,
   },
 });
 
@@ -72,9 +71,9 @@ const icon = computed(() => {
       hide-keywords
     />
     <search-item-preview
-      v-if="previewOpen"
+      v-if="previewOpen && props.slotName"
       :item="item"
-      :slot-name="slotName"
+      :slot-name="props.slotName"
     />
   </div>
 </template>

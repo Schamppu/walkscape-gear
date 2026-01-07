@@ -22,13 +22,10 @@ const props = defineProps({
 
 const emit = defineEmits(["select"]);
 
-const handleClickOutside = (event) => {
-  if (dropdownRef.value && !dropdownRef.value.contains(event.target)) {
-    isOpen.value = false;
-  }
+const handleClickOutside = () => {
+  isOpen.value = false;
 };
 
-const dropdownRef = ref("dropdownRef");
 const isOpen = ref(false);
 const selected = ref(props.modelValue || "");
 const searchTerm = ref("");
@@ -100,7 +97,7 @@ const selectItem = (item, update = true) => {
 </script>
 
 <template>
-  <div v-clickOutside="handleClickOutside" class="wrapper" ref="dropdownRef">
+  <div v-click-outside="handleClickOutside" class="wrapper">
     <div class="header">
       <ws-label :label="label" label-for="dropdown-trigger" />
       <button class="dropdown-trigger" @click="toggle">

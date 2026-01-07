@@ -35,11 +35,36 @@ const ALLOWED_SETTINGS = new Set([
   "undoRedo",
 ]);
 
+async function markUserActiveThrottled(userUuid) {
+  const FIVE_MINUTES = 5 * 60 * 1000;
+
+  await prisma.user
+    .updateMany({
+      where: {
+        userUuid,
+        OR: [
+          { lastActiveAt: null },
+          { lastActiveAt: { lt: new Date(Date.now() - FIVE_MINUTES) } },
+        ],
+      },
+      data: {
+        lastActiveAt: new Date(),
+      },
+    })
+    .catch(() => {
+      // swallow errors — never block a request
+    });
+}
+
 export async function ensureUser(userUuid) {
   let user = await prisma.user.findUnique({ where: { userUuid } });
   if (!user) {
     user = await prisma.user.create({ data: { userUuid } });
   }
+
+  // Fire-and-forget activity update
+  markUserActiveThrottled(userUuid);
+
   return user;
 }
 
