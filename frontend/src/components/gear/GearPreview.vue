@@ -29,7 +29,11 @@ const icon = computed(() => {
 });
 
 const changeQuality = (quality) => {
-  gearStore.gearSlots[props.slotName].quality = quality;
+  const newItem = {
+    ...item.value,
+    quality,
+  };
+  gearStore.setGearSlot(props.slotName, newItem);
 };
 </script>
 
