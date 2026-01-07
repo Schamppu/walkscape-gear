@@ -106,7 +106,7 @@ const title = (slotName) => {
   transform: translateX(-50%);
 
   height: 80dvh;
-  width: 90%;
+  width: 90vw;
   max-width: 450px;
   padding: 0;
   background-color: $bgPrimary;
@@ -119,6 +119,10 @@ const title = (slotName) => {
   display: flex;
   flex-direction: column;
   overflow: hidden; /* Prevent the entire dialog from scrolling */
+}
+
+.mobile-layout .bottom-dialog {
+  max-width: 90vw;
 }
 
 .content {

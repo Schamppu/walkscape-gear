@@ -240,7 +240,6 @@ function removeTag(tagToRemove) {
   border: 1px solid $boxDarkOutline;
   border-radius: $sm;
   padding: $md;
-  min-width: 400px;
   max-width: 90vw;
   max-height: 80vh;
   overflow-y: auto;
