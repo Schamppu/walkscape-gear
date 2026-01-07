@@ -45,7 +45,7 @@ const {
 
 function getInfoData(prev, next, negative = false, decimals = 3) {
   return {
-    text: `${n(prev.value, decimals)} -> ${n(next.value, decimals)}`,
+    text: `${n(prev.value, decimals)} → ${n(next.value, decimals)}`,
     value: negative ? prev.value - next.value : next.value - prev.value,
   };
 }
@@ -71,7 +71,7 @@ const xpBubbles = computed(() => {
   return baseXpPerStep.value
     .map((xp, i) => ({
       skill: xp.skill,
-      text: `${n(xp.displayedValue)} -> ${n(
+      text: `${n(xp.displayedValue)} → ${n(
         newXpPerStep.value[i].displayedValue
       )}`,
       value: newXpPerStep.value[i].displayedValue - xp.displayedValue,
