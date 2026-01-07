@@ -2,7 +2,9 @@
 import { ref, computed } from "vue";
 import WsIcon from "@/components/common/WsIcon.vue";
 import StatsDisplay from "../common/StatsDisplay.vue";
+import SearchItemPreview from "./SearchItemPreview.vue";
 import { getPetIcon } from "@/utils/pets";
+import { icons } from "@/constants/iconPaths";
 
 const props = defineProps({
   item: {
@@ -13,14 +15,23 @@ const props = defineProps({
     type: String,
     default: "",
   },
+  slotName: {
+    type: String,
+    required: true,
+  },
 });
 
 const emit = defineEmits(["click"]);
 
 const isOpen = ref(false);
+const previewOpen = ref(false);
 
 const toggle = () => {
   isOpen.value = !isOpen.value;
+};
+
+const togglePreview = () => {
+  previewOpen.value = !previewOpen.value;
 };
 
 const icon = computed(() => {
@@ -33,6 +44,9 @@ const icon = computed(() => {
 <template>
   <div class="display-wrapper">
     <div class="item-wrapper">
+      <button class="icon-button" @click="togglePreview">
+        <ws-icon :icon-path="icons.show" size="xs" />
+      </button>
       <button class="item" @click="() => emit('click')">
         <ws-icon :iconPath="icon" :outline-class="`outline-${item.quality}`" />
         <span :class="`color-${item.quality}`">
@@ -56,6 +70,11 @@ const icon = computed(() => {
       :filter-stat="props.highlightStat === 'none' ? '' : props.highlightStat"
       showActiveColors
       hide-keywords
+    />
+    <search-item-preview
+      v-if="previewOpen"
+      :item="item"
+      :slot-name="slotName"
     />
   </div>
 </template>
@@ -92,6 +111,19 @@ const icon = computed(() => {
 
     padding: $xxxs $xxs;
     cursor: pointer;
+
+    &:hover,
+    &:focus {
+      background-color: $boxTransparentDarkOutline;
+    }
+  }
+
+  .icon-button {
+    display: inline-block;
+    align-items: center;
+    padding: 0 $md;
+
+    background-color: inherit;
 
     &:hover,
     &:focus {

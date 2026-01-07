@@ -318,6 +318,18 @@ export function useLootTables(ctx) {
     return Object.fromEntries(data);
   });
 
+  const hasCollectibleDrops = computed(() => {
+    return filteredLootTables.value.some(({ type }) =>
+      type.includes("collectible")
+    );
+  });
+
+  const hasFineDrops = computed(() => {
+    return Object.values(dropItemInfoMap.value).some(
+      ({ stepsPerFine }) => stepsPerFine > 0
+    );
+  });
+
   return {
     lootTables,
     detailedLootTables,
@@ -326,5 +338,7 @@ export function useLootTables(ctx) {
     groupedLootTables,
     dropItemInfoMap,
     groupSourcesByStat,
+    hasCollectibleDrops,
+    hasFineDrops,
   };
 }

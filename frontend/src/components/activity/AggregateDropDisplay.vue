@@ -123,7 +123,7 @@ const goldTotal = computed(() => {
   const sum = data.reduce((total, [id, info]) => {
     if (id === "gold") {
       return total + info.itemsPerStep;
-    } else if (id in itemsStore.allGearItems) {
+    } else if (id in itemsStore.allGearItems && id in dataStore.itemValues) {
       const { quality } = itemsStore.allGearItems[id];
       const { itemsPerStep } = info;
       const prices = dataStore.itemValues[id];

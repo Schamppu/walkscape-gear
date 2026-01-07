@@ -1,15 +1,11 @@
-import { storeToRefs } from "pinia";
-import { useDataStore } from "@/store/data";
 import { useRequirements } from "@/composables/useRequirements";
-import { useSettingsStore } from "@/store/settings";
 import { getRawData } from "@/utils/rawData";
 import { usedAttrs } from "@/utils/qualityAttrs";
+import { useLootTables } from "./useLootTables";
 
 export function useShowItemForActivity(ctx) {
-  const dataStore = useDataStore();
-  const settingsStore = useSettingsStore();
-  const { activitySettings } = storeToRefs(settingsStore);
   const { checkRequirements } = useRequirements(ctx);
+  const { hasCollectibleDrops, hasFineDrops } = useLootTables(ctx);
 
   const usefulKeywords = (item, activity, service) => {
     if (!activity || !item.keywords) return false;
@@ -28,28 +24,6 @@ export function useShowItemForActivity(ctx) {
 
   const usefulAttrs = (item, activity, quality, isRecipe) => {
     const baseAttrs = usedAttrs(item, quality);
-
-    const hideOwnedCollectibles =
-      activitySettings.value.hideOwnedCollectibles.value;
-
-    const activityCollectibles =
-      activity.tables !== null
-        ? activity.tables
-            .filter(({ type }) => type.includes("collectible"))
-            .flatMap(({ tables }) => tables)
-            .map((table) => {
-              const tableData = dataStore.detailedLootTablesMap[table];
-              if (tableData.tableRows.length === 0) return false;
-              return tableData.tableRows[0].rowItemID;
-            })
-            .filter(Boolean)
-            .filter(
-              (collectible) =>
-                !hideOwnedCollectibles ||
-                (hideOwnedCollectibles &&
-                  !(collectible in ctx.ownedItems.value))
-            )
-        : [];
 
     const filterActivityOnlyAttrs = (attr) => {
       if (!isRecipe) return true;
@@ -82,10 +56,17 @@ export function useShowItemForActivity(ctx) {
       return statIsCO && benefitsCO;
     };
 
-    const filterFindCollectibles = (attr, activityCollectibles) => {
+    const filterFindCollectibles = (attr) => {
       const statIsFindCollectibles = attr.statText === "Find collectibles";
       if (!statIsFindCollectibles) return true;
-      return activityCollectibles.length > 0;
+      return hasCollectibleDrops.value;
+    };
+
+    const filterFineMaterialFinding = (attr) => {
+      const statIsFineMaterialFinding =
+        attr.statText === "Fine material finding";
+      if (!statIsFineMaterialFinding) return true;
+      return hasFineDrops.value;
     };
 
     const unfilteredRequirementTypes = ["distinctKeywordItemsEquipped"];
@@ -98,7 +79,8 @@ export function useShowItemForActivity(ctx) {
 
       return (
         filterActivityOnlyAttrs(attr) &&
-        filterFindCollectibles(attr, activityCollectibles) &&
+        filterFindCollectibles(attr) &&
+        filterFineMaterialFinding(attr) &&
         filterRecipeOnlyAttrs(attr) &&
         filterCO(attr, activity) &&
         checkRequirements(usedRequirements) &&

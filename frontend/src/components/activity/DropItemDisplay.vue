@@ -18,7 +18,7 @@ const item = computed(() => dropItemInfoMap.value[props.itemId]);
 
 <template>
   <div
-    v-if="item.id"
+    v-if="item?.id"
     class="drop-item-display"
     :class="{ disabled: !item.totalDropChance }"
     :title="item.isMoney ? 'Gold' : item.name"

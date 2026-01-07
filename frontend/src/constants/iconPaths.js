@@ -4,6 +4,7 @@ const BASE_PATHS = {
   devtools: "assets/devtools/icons/",
   items: "assets/icons/items/",
   currencies: "assets/icons/items/currencies/",
+  skilling: "assets/icons/text/stats/skilling/",
 };
 
 const withBase = (base, files) =>
@@ -30,12 +31,17 @@ export const icons = {
     actions: "actions.png",
     settings: "settings.png",
     steps: "steps.png",
+    show: "show.png",
   }),
   ...withBase("button", {
     deposit: "deposit.png",
     delete: "delete.png",
     equip: "equip.png",
     unequip: "unequip.png",
+  }),
+  ...withBase("skilling", {
+    WE: "work_efficiency.png",
+    DR: "double_result.png",
   }),
   ...withBase("items", {
     money: "money.png",

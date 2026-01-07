@@ -237,6 +237,7 @@ const handleClick = (item) => {
         :key="`${item.id}-${index}`"
         :item="item"
         :highlight-stat="dataStore.selectedStat"
+        :slot-name="slotName"
         @click="handleClick(item)"
       />
     </div>
