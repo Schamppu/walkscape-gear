@@ -106,8 +106,8 @@ const title = (slotName) => {
   transform: translateX(-50%);
 
   height: 80dvh;
-  width: 100%;
-  max-width: 550px;
+  width: 90%;
+  max-width: 450px;
   padding: 0;
   background-color: $bgPrimary;
   border: 2px solid $boxDarkOutline;
