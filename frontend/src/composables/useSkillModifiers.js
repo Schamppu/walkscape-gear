@@ -111,10 +111,12 @@ export function useSkillModifiers(ctx, totals = {}) {
   });
 
   const xpRewards = computed(() => {
+    if (!ctx.source.value) return [];
+
     const xpRewardsMap = ctx.activitySelected.value
       ? ctx.source.value.xpRewardsMap
       : ctx.source.value.xpRewards;
-    if (!xpRewardsMap) return {};
+    if (!xpRewardsMap) return [];
 
     const xpRewardsArr = Object.entries(xpRewardsMap).map(([skill, base]) => {
       const value = (1 + xpPercent.value) * (base + xpFlat.value);

@@ -31,6 +31,8 @@ const getGearLootTables = (ctx) => {
 
 const getSourceLootTables = (ctx) => {
   const source = ctx.source.value;
+  if (!source) return [];
+
   const { tables: activityTables, name } = source;
   return (
     activityTables?.map((table) => {
