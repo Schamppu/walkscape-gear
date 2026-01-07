@@ -40,7 +40,7 @@ const usedQualities = computed(() => {
   flex-wrap: wrap;
   justify-content: center;
   width: 100%;
-  gap: $xs;
+  gap: $xxxxs;
   margin-bottom: $sm;
 }
 
