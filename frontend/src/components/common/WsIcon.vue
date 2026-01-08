@@ -30,6 +30,10 @@ const props = defineProps({
     type: String,
     default: "",
   },
+  extraClasses: {
+    type: Array,
+    default: [],
+  },
 });
 
 // State variables
@@ -83,7 +87,7 @@ const iconSize = computed(() => {
       :src="iconUrl"
       :alt="iconPath"
       :style="{ width: '100%', height: '100%', objectFit: 'contain' }"
-      :class="outlineClass"
+      :class="[outlineClass, ...props.extraClasses]"
     />
   </div>
 </template>
@@ -94,5 +98,9 @@ const iconSize = computed(() => {
   justify-content: center;
   align-items: center;
   flex: 0 0 auto;
+}
+
+.gray {
+  filter: grayscale();
 }
 </style>

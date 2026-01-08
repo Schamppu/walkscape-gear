@@ -44,7 +44,7 @@ const icon = computed(() => {
   <div class="display-wrapper">
     <div class="item-wrapper">
       <button class="icon-button" @click="togglePreview">
-        <ws-icon :icon-path="icons.show" size="xs" />
+        <ws-icon :icon-path="icons.show" size="xs" :extra-classes="['gray']" />
       </button>
       <button class="item" @click="() => emit('click')">
         <ws-icon :iconPath="icon" :outline-class="`outline-${item.quality}`" />
