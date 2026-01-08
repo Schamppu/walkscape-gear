@@ -1,5 +1,6 @@
 import { levelFromXp } from "./skillXp";
 import { qualityOptions } from "@/constants/quality";
+import { isEqual } from "./isEqual";
 
 /**
  * Processes skills data from import
@@ -15,18 +16,21 @@ function processSkills(skillsData, playerStore) {
   // Start with current skill levels as base
   const updatedSkillLevels = { ...playerStore.skillLevels };
 
+  let updated = false;
   // Only update skills that exist in player store
   for (const [skillId, xp] of Object.entries(skillsData)) {
     // Validate: skill must exist in our store and xp must be a valid number
     if (skillId in updatedSkillLevels && typeof xp === "number" && xp >= 0) {
       const level = levelFromXp(xp);
       updatedSkillLevels[skillId] = level;
+      if (level !== playerStore.skillLevels[skillId]) updated = true;
     } else {
       console.warn(`Skipped invalid skill data: ${skillId} = ${xp}`);
     }
   }
 
-  return updatedSkillLevels;
+  if (updated) return { hasUpdates: true, data: updatedSkillLevels };
+  return { hasUpdates: false };
 }
 
 /**
@@ -34,9 +38,11 @@ function processSkills(skillsData, playerStore) {
  * @param {number} achievementPoints - Achievement points from parsed data
  * @returns {number|null} - Achievement points or null if invalid
  */
-function processAchievementPoints(achievementPoints) {
+function processAchievementPoints(achievementPoints, playerStore) {
   if (achievementPoints && typeof achievementPoints === "number") {
-    return achievementPoints;
+    if (playerStore.achievementPoints !== achievementPoints)
+      return { hasUpdates: true, data: achievementPoints };
+    return { hasUpdates: false };
   } else {
     console.warn("Invalid or missing achievement points data.");
     return null;
@@ -56,6 +62,7 @@ function processReputation(reputationData, playerStore) {
 
   const updatedReputations = { ...playerStore.factionReputation };
 
+  let updated = false;
   // Only update reputations that exist in the player store
   for (const [faction, reputation] of Object.entries(reputationData)) {
     if (
@@ -64,13 +71,17 @@ function processReputation(reputationData, playerStore) {
       reputation >= 0
     ) {
       const factionReputation = playerStore.factionsMap[faction].reputation;
-      updatedReputations[factionReputation] = Math.floor(reputation);
+      const repValue = Math.floor(reputation);
+      updatedReputations[factionReputation] = repValue;
+      if (repValue !== playerStore.factionReputation[factionReputation])
+        updated = true;
     } else {
       console.warn(`Skipped invalid faction data: ${faction} = ${reputation}`);
     }
   }
 
-  return updatedReputations;
+  if (updated) return { hasUpdates: true, data: updatedReputations };
+  return { hasUpdates: false };
 }
 
 /**
@@ -205,7 +216,7 @@ function determineQualities(qualities, isRing) {
 function processItems(parsedData, itemsStore) {
   if (!parsedData || !itemsStore) {
     console.warn("Missing data or items store for item processing");
-    return {};
+    return null;
   }
 
   const allItems = {};
@@ -264,6 +275,7 @@ function processItems(parsedData, itemsStore) {
     };
   });
 
+  let hasUpdates = false;
   for (const [baseId, { qualities }] of Object.entries(itemGroups)) {
     const itemData = itemsStore.allGearItems[baseId];
     const existingOwned = itemsStore.ownedItems[baseId];
@@ -282,34 +294,41 @@ function processItems(parsedData, itemsStore) {
         ? "consumableFine"
         : null;
       const owned = quality || quality2 ? true : false;
-      updatedOwnedItems[baseId] = {
+      const data = {
         owned,
         hidden,
         quality,
         quality2,
       };
+      updatedOwnedItems[baseId] = data;
+      if (!isEqual(itemsStore.ownedItems[baseId], data)) hasUpdates = true;
     } else if (itemData.type === "crafted") {
       // For crafted items, determine qualities based on what was found
       const isRing = itemData.gearType === "ring";
       const { quality, quality2 } = determineQualities(qualities, isRing);
 
-      updatedOwnedItems[baseId] = {
+      const data = {
         owned: true,
         hidden,
         quality,
         quality2,
       };
+      updatedOwnedItems[baseId] = data;
+      if (!isEqual(itemsStore.ownedItems[baseId], data)) hasUpdates = true;
     } else {
       // For non-crafted items, use default quality
-      updatedOwnedItems[baseId] = {
+      const data = {
         owned: true,
         hidden,
         quality: itemData.quality || "common",
         quality2: null,
       };
+
+      updatedOwnedItems[baseId] = data;
+      if (!isEqual(itemsStore.ownedItems[baseId], data)) hasUpdates = true;
     }
   }
-  return updatedOwnedItems;
+  return { hasUpdates, updatedOwnedItems };
 }
 
 /**
@@ -328,7 +347,10 @@ export function processCharacterImport(data, playerStore, itemsStore) {
 
   return {
     skills: processSkills(parsedData.skills, playerStore),
-    achievementPoints: processAchievementPoints(parsedData.achievement_points),
+    achievementPoints: processAchievementPoints(
+      parsedData.achievement_points,
+      playerStore
+    ),
     reputation: processReputation(parsedData.reputation, playerStore),
     items: processItems(parsedData, itemsStore),
   };
