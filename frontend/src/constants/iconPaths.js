@@ -29,6 +29,9 @@ export const icons = {
   ...abilityTypeIconPaths,
   ...withBase("general", {
     actions: "actions.png",
+    activity: "activity.png",
+    character: "character.png",
+    gear2: "gear2.png",
     settings: "settings.png",
     steps: "steps.png",
     show: "show.png",
