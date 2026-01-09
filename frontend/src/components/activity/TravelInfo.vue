@@ -1,15 +1,16 @@
 <script setup>
 import { computed } from "vue";
+import WsIcon from "@/components/common/WsIcon.vue";
 import WsLabel from "@/components/common/WsLabel.vue";
 import InfoBubble from "@/components/common/InfoBubble.vue";
 import NestedDropdown from "@/components/common/dropdowns/NestedDropdown.vue";
 import TravelRequirementsList from "./TravelRequirementsList.vue";
-import WsIcon from "../common/WsIcon.vue";
 import { usePlayerStore } from "@/store/player";
 import { useRouteStore } from "@/store/route";
 import { useRoutes } from "@/composables/useRoutes";
 import useBaseContext from "@/composables/useBaseContext";
 import { useRequirements } from "@/composables/useRequirements";
+import { icons } from "@/constants/iconPaths";
 import { n } from "@/utils/number";
 
 const playerStore = usePlayerStore();
@@ -115,13 +116,15 @@ const stats = (segment) => {
     items: [
       {
         text: `~${averageStepsPerRoute(segment.distance, segment.stats)}`,
-        tooltip: "",
-        iconPath: "assets/icons/text/general_icons/steps.png",
+        tooltip: `Average steps for\n${segment.from.name} to ${
+          segment.to.name
+        }: ${averageStepsPerRoute(segment.distance, segment.stats)}`,
+        iconPath: icons.steps,
       },
       {
         text: `${n(uncappedWorkEfficiency * 100)}%`,
-        tooltip: "",
-        iconPath: "assets/icons/text/stats/skilling/work_efficiency.png",
+        tooltip: `Work Efficiency: ${n(uncappedWorkEfficiency * 100)}%`,
+        iconPath: icons.WE,
         borderClass:
           workEfficiency >= effectiveMaxWorkEfficiency - 1
             ? "border-green"
@@ -129,8 +132,8 @@ const stats = (segment) => {
       },
       {
         text: `${n(doubleAction * 100)}%`,
-        tooltip: "",
-        iconPath: "assets/icons/text/stats/skilling/double_action.png",
+        tooltip: `Double Action: ${n(doubleAction * 100)}%`,
+        iconPath: icons.DA,
       },
     ],
   };
@@ -144,14 +147,22 @@ const statsRow = computed(() => {
   const segmentsDA = segmentStats.map(({ doubleAction }) => doubleAction);
   const daRange = [Math.min(...segmentsDA), Math.max(...segmentsDA)];
 
+  const getRangeText = (range, isPercent = true) => {
+    const multi = isPercent ? 100 : 1;
+    return range[0] !== range[1]
+      ? `${n(range[0] * multi)} - ${n(range[1] * multi)}${isPercent ? "%" : ""}`
+      : `${n(range[0] * multi)}${isPercent ? "%" : ""}`;
+  };
+
   return {
     label: "Total steps (min - max steps, ~average)",
     component: InfoBubble,
     items: [
       {
-        text: `${Math.round(totalMinSteps.value)} - ${
-          totalMaxSteps.value
-        } (~${Math.round(totalAverageSteps.value)})`,
+        text: `${getRangeText(
+          [totalMinSteps.value, totalMaxSteps.value],
+          false
+        )} (~${n(totalAverageSteps.value, 0)})`,
         tooltip: `Min steps: ${Math.round(
           totalMinSteps.value
         )} (best case with double action)\nMax steps: ${
@@ -159,17 +170,17 @@ const statsRow = computed(() => {
         } (worst case, no double action)\nAverage steps: ${Math.round(
           totalAverageSteps.value
         )}`,
-        iconPath: "assets/icons/text/general_icons/steps.png",
+        iconPath: icons.steps,
       },
       {
-        text: `${n(weRange[0] * 100)} - ${Math.round(weRange[1] * 100)}%`,
-        tooltip: `${n(weRange[0] * 100)} - ${Math.round(weRange[1] * 100)}%`,
-        iconPath: "assets/icons/text/stats/skilling/work_efficiency.png",
+        text: getRangeText(weRange),
+        tooltip: getRangeText(weRange),
+        iconPath: icons.WE,
       },
       {
-        text: `${n(daRange[0] * 100)} - ${Math.round(daRange[1] * 100)}%`,
-        tooltip: `${n(daRange[0] * 100)} - ${Math.round(daRange[1] * 100)}%`,
-        iconPath: "assets/icons/text/stats/skilling/double_action.png",
+        text: getRangeText(daRange),
+        tooltip: getRangeText(daRange),
+        iconPath: icons.DA,
       },
     ],
   };
