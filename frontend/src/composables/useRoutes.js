@@ -157,7 +157,10 @@ export function useRoutes(baseContext) {
           segment,
         };
 
-        if (!best.get(edge.to) || isBetter(candidate, best.get(edge.to))) {
+        if (
+          !best.get(edge.to) ||
+          candidate.distance < best.get(edge.to).distance
+        ) {
           best.set(edge.to, candidate);
           queue.add(candidate);
         }
