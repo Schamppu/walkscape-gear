@@ -70,6 +70,7 @@ export async function ensureUser(userUuid) {
 
 export async function getUserStats(userUuid) {
   const stats = await prisma.playerStat.findMany({ where: { userUuid } });
+  markUserActiveThrottled(userUuid);
   return Object.fromEntries(stats.map(({ stat, value }) => [stat, value]));
 }
 
