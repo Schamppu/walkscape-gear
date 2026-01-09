@@ -101,7 +101,7 @@ export function useRoutes(baseContext) {
     addRoute(to, from, dist, getTerrainModifier(to, options || []));
   });
 
-  const getRoute = (start, goal) => {
+  const pathfind = (start, goal, ignoreRequirements = false) => {
     if (!graph.value.has(start)) {
       console.warn(`${start} not in map`);
       return;
@@ -134,7 +134,11 @@ export function useRoutes(baseContext) {
 
       for (const edge of graph.value.get(current) || []) {
         const segment = getSegment(current, edge);
-        if (!checkRequirements(segment.requirements, segment.context)) continue;
+        if (
+          !ignoreRequirements &&
+          !checkRequirements(segment.requirements, segment.context)
+        )
+          continue;
 
         const alt =
           distances.get(current) +
@@ -160,8 +164,29 @@ export function useRoutes(baseContext) {
       if (segment) segments.unshift(segment);
       path.unshift(temp);
     }
-    routeStore.setSegments(segments);
     return { path, segments };
+  };
+
+  const getRoute = (start, goal) => {
+    const route = pathfind(start, goal);
+    if (route) routeStore.setSegments(route.segments);
+    return route;
+  };
+
+  const getFastestRoute = (start, goal, setSegments = false) => {
+    const { path, segments } = pathfind(start, goal, true);
+    const missingRequirements = segments
+      .flatMap(({ requirements, context }) =>
+        requirements.map((req) => ({
+          requirements: [req],
+          context,
+        }))
+      )
+      .filter(
+        ({ requirements, context }) => !checkRequirements(requirements, context)
+      );
+    if (setSegments && segments) routeStore.setSegments(segments);
+    return { path, segments, missingRequirements };
   };
 
   const stepsPerNode = (distance, stats) => {
@@ -186,6 +211,7 @@ export function useRoutes(baseContext) {
 
   return {
     getRoute,
+    getFastestRoute,
     stepsPerNode,
     averageStepsPerRoute,
   };

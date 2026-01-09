@@ -14,7 +14,8 @@ import { n } from "@/utils/number";
 const playerStore = usePlayerStore();
 const routeStore = useRouteStore();
 const ctx = useBaseContext();
-const { getRoute, averageStepsPerRoute, stepsPerNode } = useRoutes(ctx);
+const { getRoute, getFastestRoute, averageStepsPerRoute, stepsPerNode } =
+  useRoutes(ctx);
 const { checkRequirements, mapRequirementsText } = useRequirements(ctx);
 
 const start = computed({
@@ -63,6 +64,11 @@ const selected = computed(() => {
 const routeRef = computed(() => {
   if (!selected.value) return [];
   return getRoute(start.value.id, end.value.id);
+});
+
+const fastestRouteRef = computed(() => {
+  if (!selected.value) return [];
+  return getFastestRoute(start.value.id, end.value.id, true);
 });
 
 const noPath = computed(() => {
@@ -186,6 +192,14 @@ const reqs = computed(() => {
   });
 });
 
+const missingRequirements = computed(() => {
+  return fastestRouteRef.value.missingRequirements.flatMap(
+    ({ requirements }) => {
+      return mapRequirementsText(requirements, [false]);
+    }
+  );
+});
+
 const updateStart = (location) => {
   if (location.value === "None") start.value = null;
   else start.value = location;
@@ -221,11 +235,35 @@ const updateEnd = (location) => {
       </div>
 
       <div v-if="noPath">
-        <p>Couldn't find path, probably missing requirements</p>
+        <div v-if="missingRequirements.length">
+          <p>Requirements needed for route:</p>
+          <p
+            v-for="({ prefix, text, icon }, idx) in missingRequirements"
+            :key="`${idx}-${text}`"
+            class="requirement"
+          >
+            <template v-if="prefix">{{ prefix }} </template>
+            <ws-icon v-if="icon" :iconPath="icon" size="sm" />
+            <span class="main-text">{{ text }}</span>
+          </p>
+        </div>
+        <p v-else>Couldn't find path</p>
       </div>
 
       <!-- Stats Display -->
       <div v-if="segments.length" class="info-section">
+        <div v-if="missingRequirements.length">
+          <p>Faster route available with:</p>
+          <p
+            v-for="({ prefix, text, icon }, idx) in missingRequirements"
+            :key="`${idx}-${text}`"
+            class="requirement"
+          >
+            <template v-if="prefix">{{ prefix }} </template>
+            <ws-icon v-if="icon" :iconPath="icon" size="sm" />
+            <span class="main-text">{{ text }}</span>
+          </p>
+        </div>
         <ws-label :label="statsRow.label" />
         <div class="info-row">
           <component
