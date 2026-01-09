@@ -52,18 +52,17 @@ defineEmits(["back"]);
         </p>
         <h3>Known issues</h3>
         <ul>
-          <li>Travelling activity is not yet fully implemented</li>
+          <li>Issues with traveling activity when route not found</li>
+          <li>Pets not in game data import</li>
+          <li>Multiple issues with how rings are handled</li>
+          <li>Services shouldn't affect recipes without service requirements</li>
         </ul>
         <h3>Planned features</h3>
         <ul>
-          <li>Calculated gold/tokens per step values for Drops section</li>
           <li>Gear set optimizer</li>
           <li>Comparing gear sets</li>
-          <li>
-            Calculator section (actions/steps to target level, materials needed
-            to level up, ...)
-          </li>
           <li>Steps to full inventory estimation</li>
+          <li>Adding custom data (items, activities)</li>
         </ul>
       </section>
     </details>
