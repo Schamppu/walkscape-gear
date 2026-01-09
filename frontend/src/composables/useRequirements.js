@@ -377,6 +377,88 @@ export function useRequirements(ctx) {
     });
   };
 
+  const mergeStrategies = {
+    distinctKeywordItemsEquipped: {
+      canMerge(a, b) {
+        return (
+          a.opposite === b.opposite &&
+          JSON.stringify(a.requirement.keywords) ===
+            JSON.stringify(b.requirement.keywords)
+        );
+      },
+
+      merge(a, b) {
+        return {
+          ...a,
+          requirement: {
+            ...a.requirement,
+            quantity: Math.max(a.requirement.quantity, b.requirement.quantity),
+          },
+        };
+      },
+    },
+    abilityAvailable: {
+      canMerge(a, b) {
+        return (
+          a.opposite === b.opposite &&
+          a.requirement.ability === b.requirement.ability
+        );
+      },
+      merge(a, b) {
+        return a;
+      },
+    },
+    skillLevel: {
+      canMerge(a, b) {
+        return (
+          a.opposite === b.opposite &&
+          a.requirement.skill === b.requirement.skill
+        );
+      },
+      merge(a, b) {
+        return {
+          ...a,
+          requirement: {
+            ...a.requirement,
+            level: Math.max(a.requirement.level, b.requirement.level),
+          },
+        };
+      },
+    },
+  };
+
+  const mergeRequirements = (requirements) => {
+    const result = [];
+
+    for (const req of requirements) {
+      const strategy = mergeStrategies[req.type];
+
+      if (!strategy) {
+        // Unknown type → never merge
+        result.push(req);
+        continue;
+      }
+
+      let merged = false;
+
+      for (let i = 0; i < result.length; i++) {
+        const existing = result[i];
+
+        if (existing.type === req.type && strategy.canMerge(existing, req)) {
+          result[i] = strategy.merge(existing, req);
+          merged = true;
+          break;
+        }
+      }
+
+      if (!merged) {
+        result.push(req);
+      }
+    }
+
+    return result;
+  };
+
   const getLevelRequirementsMap = (requirements) => {
     if (!requirements) return {};
     const map = {};
@@ -392,6 +474,7 @@ export function useRequirements(ctx) {
     checkRequirement,
     checkRequirements,
     mapRequirementsText,
+    mergeRequirements,
     getLevelRequirementsMap,
   };
 }
