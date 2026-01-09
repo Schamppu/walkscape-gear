@@ -62,7 +62,7 @@ const locationsByFaction = [
 ];
 
 watch(
-  [start, end, ctx.equippedGear],
+  [start, end, ctx.equippedGear, ctx.skillLevels.value],
   ([s, e]) => {
     if (!s || !e) return;
     const result = getRoute(s.id, e.id);
