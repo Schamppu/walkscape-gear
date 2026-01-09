@@ -3,6 +3,7 @@ import { computed } from "vue";
 import WsLabel from "@/components/common/WsLabel.vue";
 import InfoBubble from "@/components/common/InfoBubble.vue";
 import NestedDropdown from "@/components/common/dropdowns/NestedDropdown.vue";
+import TravelRequirementsList from "./TravelRequirementsList.vue";
 import WsIcon from "../common/WsIcon.vue";
 import { usePlayerStore } from "@/store/player";
 import { useRouteStore } from "@/store/route";
@@ -235,35 +236,20 @@ const updateEnd = (location) => {
       </div>
 
       <div v-if="noPath">
-        <div v-if="missingRequirements.length">
-          <p>Requirements needed for route:</p>
-          <p
-            v-for="({ prefix, text, icon }, idx) in missingRequirements"
-            :key="`${idx}-${text}`"
-            class="requirement"
-          >
-            <template v-if="prefix">{{ prefix }} </template>
-            <ws-icon v-if="icon" :iconPath="icon" size="sm" />
-            <span class="main-text">{{ text }}</span>
-          </p>
-        </div>
+        <travel-requirements-list
+          v-if="missingRequirements"
+          title="Requirements needed for route:"
+          :requirements="missingRequirements"
+        />
         <p v-else>Couldn't find path</p>
       </div>
 
       <!-- Stats Display -->
       <div v-if="segments.length" class="info-section">
-        <div v-if="missingRequirements.length">
-          <p>Faster route available with:</p>
-          <p
-            v-for="({ prefix, text, icon }, idx) in missingRequirements"
-            :key="`${idx}-${text}`"
-            class="requirement"
-          >
-            <template v-if="prefix">{{ prefix }} </template>
-            <ws-icon v-if="icon" :iconPath="icon" size="sm" />
-            <span class="main-text">{{ text }}</span>
-          </p>
-        </div>
+        <travel-requirements-list
+          title="Faster route available with:"
+          :requirements="missingRequirements"
+        />
         <ws-label :label="statsRow.label" />
         <div class="info-row">
           <component
@@ -296,17 +282,7 @@ const updateEnd = (location) => {
               {{ route.to.name }}</span
             >
           </p>
-          <div v-if="reqs[idx]">
-            <p
-              v-for="({ prefix, text, icon }, idx) in reqs[idx]"
-              :key="`${idx}-${text}`"
-              class="requirement"
-            >
-              <template v-if="prefix">{{ prefix }} </template>
-              <ws-icon v-if="icon" :iconPath="icon" size="sm" />
-              <span class="main-text">{{ text }}</span>
-            </p>
-          </div>
+          <travel-requirements-list :requirements="reqs[idx]" />
           <div class="components">
             <component
               v-for="(item, idx) in stats(route).items"
@@ -442,30 +418,6 @@ const updateEnd = (location) => {
     display: flex;
     flex-wrap: wrap;
     gap: $md;
-  }
-}
-
-.requirement {
-  display: block;
-  text-align: left;
-  padding: $xxxxs $xs;
-  border-radius: $lg;
-  color: $txLighter;
-
-  background-color: $boxDarkBackground;
-  border: 1px solid $boxDarkOutline;
-
-  :deep(.ws-icon) {
-    margin-left: $xxxxs;
-    vertical-align: middle;
-  }
-
-  .main-text {
-    margin-left: $xxxxs;
-  }
-
-  &.disabled {
-    color: $txDarker;
   }
 }
 </style>
