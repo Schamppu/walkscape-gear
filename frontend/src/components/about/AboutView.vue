@@ -52,7 +52,6 @@ defineEmits(["back"]);
         </p>
         <h3>Known issues</h3>
         <ul>
-          <li>Issues with traveling activity when route not found</li>
           <li>Pets not in game data import</li>
           <li>Multiple issues with how rings are handled</li>
           <li>Services shouldn't affect recipes without service requirements</li>
