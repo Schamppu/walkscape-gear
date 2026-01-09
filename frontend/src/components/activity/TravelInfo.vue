@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from "vue";
+import { computed, ref, watch } from "vue";
 import WsIcon from "@/components/common/WsIcon.vue";
 import WsLabel from "@/components/common/WsLabel.vue";
 import InfoBubble from "@/components/common/InfoBubble.vue";
@@ -17,7 +17,10 @@ const playerStore = usePlayerStore();
 const routeStore = useRouteStore();
 const ctx = useBaseContext();
 const { getRoute, averageStepsPerRoute, stepsPerNode } = useRoutes(ctx);
-const { checkRequirements, mapRequirementsText } = useRequirements(ctx);
+const { checkRequirements, mapRequirementsText, mergeRequirements } =
+  useRequirements(ctx);
+
+const route = ref(null);
 
 const start = computed({
   get: () => routeStore.start,
@@ -58,32 +61,23 @@ const locationsByFaction = [
     .filter(({ items }) => items.length > 0),
 ];
 
-const selected = computed(() => {
-  return Boolean(start.value && end.value);
-});
-
-const routeInfo = computed(() => {
-  if (!selected.value) return [];
-  return getRoute(start.value.id, end.value.id);
-});
-
-const routeRef = computed(() => {
-  if (!selected.value) return [];
-  return routeInfo.value.bestValid;
-});
-
-const fastestRouteRef = computed(() => {
-  if (!selected.value) return [];
-  return routeInfo.value.best;
-});
+watch(
+  [start, end, ctx.equippedGear],
+  ([s, e]) => {
+    if (!s || !e) return;
+    const result = getRoute(s.id, e.id);
+    route.value = result;
+  },
+  { flush: "post" }
+);
 
 const noPath = computed(() => {
-  return selected.value && !routeRef.value;
+  return route.value?.bestValid ? false : true;
 });
 
 const segments = computed(() => {
-  if (!selected.value || noPath.value) return [];
-  return routeRef.value.segments;
+  if (!route.value?.bestValid) return [];
+  return route.value?.bestValid.segments;
 });
 
 const totalAverageSteps = computed(() => {
@@ -209,7 +203,10 @@ const reqs = computed(() => {
 });
 
 const missingRequirements = computed(() => {
-  return mapRequirementsText(fastestRouteRef.value?.missing, [false]);
+  if (!route.value) return [];
+  const mergedReqs = mergeRequirements(route.value?.best.missing) || [];
+
+  return mapRequirementsText(mergedReqs, [false]);
 });
 
 const updateStart = (location) => {
