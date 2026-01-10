@@ -120,71 +120,75 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <header class="main-header">
-    <div class="header-group">
-      <a
-        href="#"
-        @click.prevent="scrollToTab('About')"
-        :ref="(el) => (tabRefs['About'] = el)"
-        :class="{ active: activeTab === 'About' }"
-        >About</a
+  <section class="app">
+    <header class="main-header">
+      <div class="header-group">
+        <a
+          href="#"
+          @click.prevent="scrollToTab('About')"
+          :ref="(el) => (tabRefs['About'] = el)"
+          :class="{ active: activeTab === 'About' }"
+          >About</a
+        >
+        <a
+          href="https://buymeacoffee.com/juhanaauttg"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Support
+        </a>
+      </div>
+      <ws-button
+        v-if="isLoaded"
+        @click="showSettings = true"
+        :icon-path="icons.settings"
+        icon-size="sm"
+      />
+    </header>
+    <loading-throbber v-if="!isLoaded" class="throbber" />
+    <div v-else :class="isMobile ? 'mobile-layout' : 'desktop-layout'">
+      <div
+        v-show="activeTab === 'About'"
+        :class="['tab-panel', { active: activeTab === 'About' }]"
+        :tabindex="isMobile ? 0 : undefined"
       >
-      <a
-        href="https://buymeacoffee.com/juhanaauttg"
-        target="_blank"
-        rel="noopener noreferrer"
+        <About @back="scrollToTab('Hub')" />
+      </div>
+
+      <div
+        v-for="{ name, component } in contentTabs"
+        :key="name"
+        :ref="(el) => (tabRefs[name] = el)"
+        :class="['tab-panel', { active: activeTab === name }]"
+        :tabindex="isMobile ? 0 : undefined"
+        v-show="shouldShowTab(name)"
       >
-        Support
-      </a>
+        <component :is="component" />
+      </div>
+      <Footer
+        v-if="isMobile"
+        :tabs="contentTabs"
+        :active-tab="activeTab"
+        @selectTab="scrollToTab"
+      />
     </div>
-    <ws-button
-      v-if="isLoaded"
-      @click="showSettings = true"
-      :icon-path="icons.settings"
-      icon-size="sm"
-    />
-  </header>
-  <loading-throbber v-if="!isLoaded" class="throbber" />
-  <div v-else :class="isMobile ? 'mobile-layout' : 'desktop-layout'">
-    <div
-      v-show="activeTab === 'About'"
-      :class="['tab-panel', { active: activeTab === 'About' }]"
-      :tabindex="isMobile ? 0 : undefined"
-    >
-      <About @back="scrollToTab('Hub')" />
-    </div>
+    <SiteNotice />
+    <SettingsModal v-model="showSettings" @update-uuid="handleUuidUpdate" />
+    <NotificationContainer />
 
+    <!-- Static Undo/Redo Buttons -->
     <div
-      v-for="{ name, component } in contentTabs"
-      :key="name"
-      :ref="(el) => (tabRefs[name] = el)"
-      :class="['tab-panel', { active: activeTab === name }]"
-      :tabindex="isMobile ? 0 : undefined"
-      v-show="shouldShowTab(name)"
+      v-if="isLoaded && gearSettings.undoRedo.display === 2"
+      class="static-undo-redo"
     >
-      <component :is="component" />
+      <undo-redo-buttons
+        size="medium"
+        variant="icon-only"
+        direction="horizontal"
+        :show-tooltips="true"
+      />
     </div>
-    <Footer
-      v-if="isMobile"
-      :tabs="contentTabs"
-      :active-tab="activeTab"
-      @selectTab="scrollToTab"
-    />
-  </div>
-  <SiteNotice />
-  <SettingsModal v-model="showSettings" @update-uuid="handleUuidUpdate" />
-  <NotificationContainer />
-
-  <!-- Static Undo/Redo Buttons -->
-  <div v-if="isLoaded" class="static-undo-redo">
-    <undo-redo-buttons
-      v-if="gearSettings.undoRedo.display === 2"
-      size="medium"
-      variant="icon-only"
-      direction="horizontal"
-      :show-tooltips="true"
-    />
-  </div>
+  </section>
 </template>
 
 <style lang="scss">
