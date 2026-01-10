@@ -17,7 +17,9 @@ function updateSettingValue(key, value) {
 }
 
 function updateSettingDisplay(key, display) {
-  emit("update-setting-display", key, display);
+  const isBool = typeof display === "boolean";
+  const displayValue = isBool ? (display ? 1 : 0) : display;
+  emit("update-setting-display", key, displayValue);
 }
 </script>
 

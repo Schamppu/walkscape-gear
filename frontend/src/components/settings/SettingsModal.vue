@@ -28,7 +28,7 @@ function handleUpdateUuid(uuid) {
 
 <template>
   <base-modal
-    :model-value="modelValue"
+    :model-value="props.modelValue"
     title="Settings"
     @update:model-value="$emit('update:modelValue', $event)"
   >
