@@ -7,6 +7,7 @@ import { computed } from "vue";
 
 const props = defineProps({
   type: String,
+  qualityOptions: Array,
 });
 
 defineEmits(["select-quality"]);
@@ -16,6 +17,8 @@ const usedQualities = computed(() => {
     return craftingQualityOptions;
   } else if (props.type === "consumable") {
     return consumableQualityOptions;
+  } else if (props.type === "pet") {
+    return props.qualityOptions;
   }
   return [];
 });
@@ -26,7 +29,12 @@ const usedQualities = computed(() => {
     <button
       v-for="{ name, value } in usedQualities"
       :key="value"
-      :class="[`color-${value}`, `border-${value}`, 'quality-bubble']"
+      :class="[
+        `color-${value}`,
+        `border-${value}`,
+        'border-common',
+        'quality-bubble',
+      ]"
       @click="$emit('select-quality', value)"
     >
       <p>{{ name }}</p>

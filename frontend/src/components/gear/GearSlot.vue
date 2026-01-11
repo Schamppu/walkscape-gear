@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from "vue";
 import { useGearStore } from "@/store/gear";
+import { getPetIcon } from "@/utils/pets";
 import WsIcon from "@/components/common/WsIcon.vue";
 
 const emit = defineEmits(["select"]);
@@ -21,6 +22,15 @@ const storeKey = props.index
   ? `${props.gearType}${props.index}`
   : props.gearType;
 const gearRef = computed(() => gearStore.gearSlots[storeKey]);
+const icon = computed(() => {
+  return "egg" in gearRef.value
+    ? getPetIcon(
+        gearRef.value,
+        gearRef.value.quality,
+        gearRef.value.quality2 === "rare"
+      )
+    : gearRef.value.icon;
+});
 
 const handleClick = () => emit("select", props.gearType, storeKey);
 </script>
@@ -39,7 +49,7 @@ const handleClick = () => emit("select", props.gearType, storeKey);
     </p>
     <div v-else class="content">
       <ws-icon
-        :icon-path="gearRef.icon"
+        :icon-path="icon"
         size="lg"
         :outline-class="`outline-${gearRef.quality}`"
       />
