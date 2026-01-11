@@ -24,9 +24,13 @@ const gearStore = useGearStore();
 const item = computed(() => gearStore.gearSlots[props.slotName]);
 const type = computed(() => ("egg" in item.value ? "pet" : item.value.type));
 const icon = computed(() => {
-  return "egg" in item.value
-    ? getPetIcon(item.value, item.value.quality)
-    : item.value.icon;
+  if (!("egg" in item.value)) return item.value.icon;
+
+  return getPetIcon(
+    item.value,
+    item.value.quality,
+    item.value.quality2 === "rare"
+  );
 });
 
 const changeQuality = (quality) => {

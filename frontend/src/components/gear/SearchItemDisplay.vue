@@ -35,7 +35,7 @@ const togglePreview = () => {
 
 const icon = computed(() => {
   return "egg" in props.item
-    ? getPetIcon(props.item, props.item.quality)
+    ? getPetIcon(props.item, props.item.quality, props.item.quality2 === "rare")
     : props.item.icon;
 });
 </script>

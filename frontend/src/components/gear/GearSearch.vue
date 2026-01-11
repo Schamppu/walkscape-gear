@@ -143,6 +143,7 @@ const filteredItems = computed(() => {
           ...item,
           hidden,
           quality,
+          quality2,
           attrs,
           stats,
         },
@@ -160,6 +161,7 @@ const filteredItems = computed(() => {
           ...item,
           hidden,
           quality: quality2,
+          quality2: quality,
           attrs: attrs2,
           stats: stats2,
         });
