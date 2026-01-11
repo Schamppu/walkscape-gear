@@ -183,7 +183,7 @@ export const useGearStore = defineStore("gearStore", {
       return Promise.all(fetchPromises);
     },
 
-    async loadItem(itemSlot, id, itemQuality = null) {
+    async loadItem(itemSlot, id, itemQuality = null, itemQuality2 = null) {
       if (!id) {
         console.error("no id provided");
         return;
@@ -198,6 +198,7 @@ export const useGearStore = defineStore("gearStore", {
         return;
 
       const quality = itemQuality || this.determineQuality(id);
+      const quality2 = itemQuality2 || this.determineQuality(id, true);
 
       // Fetch the item data first
       const cachedItem = this._getFromCache(id, quality);
@@ -209,7 +210,7 @@ export const useGearStore = defineStore("gearStore", {
         const icon = isPet ? getPetIcon(data, quality) : data.icon;
 
         if (data) {
-          itemData = { ...data, icon, quality };
+          itemData = { ...data, icon, quality, quality2 };
           this._setInCache(id, quality, itemData);
         }
       }
