@@ -2,7 +2,7 @@
 import { computed } from "vue";
 import { useGearStore } from "@/store/gear";
 import WsIcon from "@/components/common/WsIcon.vue";
-import StatsDisplay from "../common/StatsDisplay.vue";
+import StatsDisplay from "@/components/common/StatsDisplay.vue";
 import QualitySelection from "./QualitySelection.vue";
 import { getPetIcon } from "@/utils/pets";
 

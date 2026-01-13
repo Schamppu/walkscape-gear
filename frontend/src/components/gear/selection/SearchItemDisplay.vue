@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed } from "vue";
 import WsIcon from "@/components/common/WsIcon.vue";
-import StatsDisplay from "../../common/StatsDisplay.vue";
+import StatsDisplay from "@/components/common/StatsDisplay.vue";
 import SearchItemPreview from "./SearchItemPreview.vue";
 import { getPetIcon } from "@/utils/pets";
 import { icons } from "@/constants/iconPaths";
