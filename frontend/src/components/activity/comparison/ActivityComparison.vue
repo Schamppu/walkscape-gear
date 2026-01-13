@@ -19,7 +19,7 @@ const ctx = useBaseContext();
 const gs1Ctx = {
   ...ctx,
   location: computed(() =>
-    gs1Location.value ? gs1Location.value : ctx.location
+    gs1Location.value ? gs1Location.value : ctx.location.value
   ),
   gearSlots: computed(() => gearStore.gearSlots[0]),
   equippedGear: computed(
@@ -33,7 +33,7 @@ const gs1Ctx = {
 const gs2Ctx = {
   ...ctx,
   location: computed(() =>
-    gs2Location.value ? gs2Location.value : ctx.location
+    gs2Location.value ? gs2Location.value : ctx.location.value
   ),
   gearSlots: computed(() => gearStore.gearSlots[1]),
   equippedGear: computed(
@@ -96,7 +96,6 @@ const tableRows = computed(() => {
 });
 
 const updateLocation = ({ location, index, gearSetIndex }) => {
-  console.log(location, gearSetIndex);
   if (gearSetIndex === 0) {
     gs1LocationIdx.value = index;
     gs1Location.value = location;
