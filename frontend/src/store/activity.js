@@ -255,6 +255,7 @@ export const useActivityStore = defineStore("activityStore", {
       this.setLocations(locations);
       if (locations.length && !skipAutoSelect && !this._isUndoRedoOperation)
         this._setLocationDirect(locations[0]);
+      return locations;
     },
 
     // Command execution and history management
