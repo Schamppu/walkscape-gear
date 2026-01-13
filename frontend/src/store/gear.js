@@ -48,10 +48,37 @@ export const useGearStore = defineStore("gearStore", {
       consumable: null,
       service: null,
     },
+    gearSlots2: {
+      head: null,
+      cape: null,
+      back: null,
+      chest: null,
+      primary: null,
+      secondary: null,
+      hands: null,
+      legs: null,
+      neck: null,
+      feet: null,
+      ring1: null,
+      ring2: null,
+      tool1: null,
+      tool2: null,
+      tool3: null,
+      tool4: null,
+      tool5: null,
+      tool6: null,
+      pet: null,
+      consumable: null,
+      service: null,
+    },
+    gearSetIndex: 0,
     // Cache for fetched items to avoid refetching
     itemCache: new Map(),
   }),
   getters: {
+    selectedGearset: (state) => {
+      return state.gearSetIndex ? state.gearSlots2 : state.gearSlots;
+    },
     hasGearEquipped: (state) => {
       return (
         Object.entries(state.gearSlots).filter(

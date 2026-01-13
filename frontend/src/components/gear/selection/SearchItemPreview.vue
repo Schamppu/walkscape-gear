@@ -3,9 +3,9 @@ import useBaseContext from "@/composables/useBaseContext";
 import { computed } from "vue";
 import { useSkillModifiers } from "@/composables/useSkillModifiers";
 import { n } from "@/utils/number";
-import WsLabel from "../common/WsLabel.vue";
-import SkillBubble from "../common/SkillBubble.vue";
-import InfoBubble from "../common/InfoBubble.vue";
+import WsLabel from "../../common/WsLabel.vue";
+import SkillBubble from "../../common/SkillBubble.vue";
+import InfoBubble from "../../common/InfoBubble.vue";
 import { icons } from "@/constants/iconPaths";
 
 const props = defineProps({ item: Object, slotName: String });

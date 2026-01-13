@@ -1,10 +1,10 @@
 <script setup>
 import { storeToRefs } from "pinia";
 import TabContentWrapper from "@/components/common/TabContentWrapper.vue";
-import GearSelection from "./GearSelection.vue";
-import GearButtons from "./GearButtons.vue";
+import GearSelection from "./selection/GearSelection.vue";
+import GearButtons from "./export/GearButtons.vue";
 import Stats from "../stats/StatsList.vue";
-import GearSets from "./GearSets.vue";
+import GearSets from "./gearset/GearSets.vue";
 import UndoRedoButtons from "@/components/common/UndoRedoButtons.vue";
 import { useSettingsStore } from "@/store/settings";
 import { useGearStore } from "@/store/gear";
