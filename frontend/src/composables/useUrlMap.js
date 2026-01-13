@@ -10,7 +10,7 @@ export function useUrlMap() {
 
   const loadout = computed(() => {
     return {
-      ...gearStore.gearSlots,
+      ...gearStore.selectedGearset,
       activity: activityStore.activity,
       recipe: activityStore.recipe,
     };

@@ -35,6 +35,7 @@ defineProps({
   .bubble {
     width: fit-content;
     text-align: left;
+    align-items: center;
 
     display: flex;
     gap: $xs;

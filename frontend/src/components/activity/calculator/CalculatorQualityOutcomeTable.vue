@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from "vue";
+import { computed } from "vue";
 import { storeToRefs } from "pinia";
 import { useActivityStore } from "@/store/activity";
 import { useItemsStore } from "@/store/items";

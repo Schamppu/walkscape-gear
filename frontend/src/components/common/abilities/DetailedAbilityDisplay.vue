@@ -2,7 +2,7 @@
 import { ref } from "vue";
 import WsText from "@/components/common/text/WsText.vue";
 import WsIcon from "../WsIcon.vue";
-import RequirementDisplay from "@/components/activity/RequirementDisplay.vue";
+import RequirementDisplay from "@/components/activity/Info/RequirementDisplay.vue";
 import { icons } from "@/constants/iconPaths";
 
 const props = defineProps({
@@ -88,10 +88,7 @@ const toggleOpenCooldown = () => {
             <p v-if="props.ability.cooldown.seconds">
               {{ props.ability.cooldown.seconds }}s
             </p>
-            <ws-icon
-              :icon-path="icons.cooldowns"
-              size="sm"
-            />
+            <ws-icon :icon-path="icons.cooldowns" size="sm" />
           </div>
         </div>
         <div v-if="cooldownOpen">

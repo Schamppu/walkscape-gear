@@ -6,6 +6,7 @@ import {
   UnequipAllCommand,
   EquipMultipleCommand,
 } from "./gearCommands";
+import { createEmptyGearSet } from "@/utils/createEmptyGearSet";
 import { getPetIcon } from "@/utils/pets";
 
 // Lazy import for history store to avoid circular dependencies
@@ -25,55 +26,42 @@ const getHistoryStore = async () => {
 
 export const useGearStore = defineStore("gearStore", {
   state: () => ({
-    gearSlots: {
-      head: null,
-      cape: null,
-      back: null,
-      chest: null,
-      primary: null,
-      secondary: null,
-      hands: null,
-      legs: null,
-      neck: null,
-      feet: null,
-      ring1: null,
-      ring2: null,
-      tool1: null,
-      tool2: null,
-      tool3: null,
-      tool4: null,
-      tool5: null,
-      tool6: null,
-      pet: null,
-      consumable: null,
-      service: null,
-    },
+    gearSlots: [createEmptyGearSet(), createEmptyGearSet()],
+    gearSetIndex: 0,
     // Cache for fetched items to avoid refetching
     itemCache: new Map(),
   }),
   getters: {
-    hasGearEquipped: (state) => {
+    selectedGearset(state) {
+      return state.gearSlots[this.gearSetIndex];
+    },
+    bothSetsActive(state) {
+      return state.gearSlots.every(
+        (set) => Object.values(set).filter(Boolean).length
+      );
+    },
+    hasGearEquipped() {
       return (
-        Object.entries(state.gearSlots).filter(
+        Object.entries(this.selectedGearset).filter(
           ([key, value]) => key !== "service" && value !== null
         ).length > 0
       );
     },
-    equippedGear: (state) => {
-      return Object.values(state.gearSlots).filter(Boolean) || [];
+    equippedGear() {
+      return Object.values(this.selectedGearset).filter(Boolean) || [];
     },
-    filledGearSlots: (state) => {
-      return Object.entries(state.gearSlots).filter(([, item]) =>
+    filledGearSlots() {
+      return Object.entries(this.selectedGearset).filter(([, item]) =>
         Boolean(item)
       );
     },
   },
   actions: {
     get(slot) {
-      return this.gearSlots[slot];
+      return this.selectedGearset[slot];
     },
     setGearSlot(slot, item) {
-      const previousItem = this.gearSlots[slot];
+      const previousItem = this.selectedGearset[slot];
 
       // Create and execute command
       const command = new EquipItemCommand(this, slot, item, previousItem);
@@ -82,14 +70,14 @@ export const useGearStore = defineStore("gearStore", {
 
     // Direct setter that doesn't record history (used by commands)
     _setGearSlotDirect(slot, item) {
-      this.gearSlots[slot] = item;
+      this.selectedGearset[slot] = item;
     },
     updateStats(slot, data) {
       const { itemAttrs } = data;
-      this.gearSlots[slot].itemAttrs = itemAttrs;
+      this.selectedGearset[slot].itemAttrs = itemAttrs;
     },
     slotFilled(slot) {
-      return !!this.gearSlots[slot];
+      return !!this.selectedGearset[slot];
     },
     getSlotTypes(slot) {
       if (slot === "service") return ["service"];
@@ -193,7 +181,7 @@ export const useGearStore = defineStore("gearStore", {
       const itemsStore = useItemsStore();
       if (!(id in itemsStore.allGearItems)) return;
 
-      const previousItem = this.gearSlots[itemSlot];
+      const previousItem = this.selectedGearset[itemSlot];
       if (previousItem?.id === id && previousItem.quality === itemQuality)
         return;
 
@@ -228,7 +216,7 @@ export const useGearStore = defineStore("gearStore", {
     },
 
     unequipAll() {
-      const previousGearSlots = { ...this.gearSlots };
+      const previousGearSlots = { ...this.selectedGearset };
 
       // Create and execute command
       const command = new UnequipAllCommand(this, previousGearSlots);
@@ -238,16 +226,16 @@ export const useGearStore = defineStore("gearStore", {
     // Direct setter for all slots that doesn't record history (used by commands)
     _setAllGearSlotsDirect(gearSlots) {
       const newGearSlots = Object.fromEntries(
-        Object.keys(this.gearSlots).map((slot) => [
+        Object.keys(this.selectedGearset).map((slot) => [
           slot,
           gearSlots[slot] || null,
         ])
       );
-      this.gearSlots = newGearSlots;
+      this.gearSlots[this.gearSetIndex] = newGearSlots;
     },
 
     async equipMultiple(gearSetData, useQuality = false) {
-      const previousGearSlots = { ...this.gearSlots };
+      const previousGearSlots = { ...this.selectedGearset };
 
       // Process the gear set data first
       const processedGearSlots = await this._processGearSetData(
@@ -267,9 +255,9 @@ export const useGearStore = defineStore("gearStore", {
     // Direct equip multiple that doesn't record history (used by commands)
     async _equipMultipleDirect(gearSetData) {
       // Apply all changes at once to minimize reactive updates
-      const completeGearSlots = { ...this.gearSlots };
+      const completeGearSlots = { ...this.selectedGearset };
       Object.assign(completeGearSlots, gearSetData);
-      this.gearSlots = completeGearSlots;
+      this.gearSlots[this.gearSetIndex] = completeGearSlots;
     },
 
     // Optimized batch update for both gear and cache operations
@@ -283,9 +271,9 @@ export const useGearStore = defineStore("gearStore", {
       }
 
       // Apply all gear changes at once to minimize reactive updates
-      const completeGearSlots = { ...this.gearSlots };
+      const completeGearSlots = { ...this.selectedGearset };
       Object.assign(completeGearSlots, gearSetData);
-      this.gearSlots = completeGearSlots;
+      this.gearSlots[this.gearSetIndex] = completeGearSlots;
     }, // Helper method to process gear set data (extracted from equipMultiple)
     async _processGearSetData(gearSetData, useQuality = false) {
       const itemsStore = useItemsStore();
@@ -311,7 +299,7 @@ export const useGearStore = defineStore("gearStore", {
         const resolvedQuality = quality || this.determineQuality(item.id);
 
         // Check if this item is already equipped with the same quality
-        const currentItem = this.gearSlots[slot];
+        const currentItem = this.selectedGearset[slot];
         if (
           currentItem?.id === item.id &&
           currentItem.quality === resolvedQuality

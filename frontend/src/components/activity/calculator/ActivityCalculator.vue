@@ -4,7 +4,7 @@ import { storeToRefs } from "pinia";
 import { useActivityStore } from "@/store/activity";
 import { usePlayerStore } from "@/store/player";
 import { useItemsStore } from "@/store/items";
-import IconInputBubble from "../common/IconInputBubble.vue";
+import IconInputBubble from "@/components/common/IconInputBubble.vue";
 import useBaseContext from "@/composables/useBaseContext";
 import { useSkillModifiers } from "@/composables/useSkillModifiers";
 import WsIcon from "@/components/common/WsIcon.vue";

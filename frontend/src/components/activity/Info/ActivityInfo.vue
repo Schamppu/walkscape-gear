@@ -4,7 +4,7 @@ import WsLabel from "@/components/common/WsLabel.vue";
 import InfoBubble from "@/components/common/InfoBubble.vue";
 import LocationBubble from "@/components/common/LocationBubble.vue";
 import SkillBubble from "@/components/common/SkillBubble.vue";
-import RequirementDisplay from "@/components/activity/RequirementDisplay.vue";
+import RequirementDisplay from "@/components/activity/Info/RequirementDisplay.vue";
 import WikiButton from "@/components/common/WikiButton.vue";
 import { useActivityStore } from "@/store/activity";
 import { usePlayerStore } from "@/store/player";
@@ -14,7 +14,7 @@ import useBaseContext from "@/composables/useBaseContext";
 import { useRequirements } from "@/composables/useRequirements";
 import { isEmpty } from "@/utils/isEmpty";
 import { n } from "@/utils/number";
-import AbilitiesDisplay from "../common/abilities/AbilitiesDisplay.vue";
+import AbilitiesDisplay from "../../common/abilities/AbilitiesDisplay.vue";
 import { icons } from "@/constants/iconPaths";
 
 const activityStore = useActivityStore();

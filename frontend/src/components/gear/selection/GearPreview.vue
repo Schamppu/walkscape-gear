@@ -2,7 +2,7 @@
 import { computed } from "vue";
 import { useGearStore } from "@/store/gear";
 import WsIcon from "@/components/common/WsIcon.vue";
-import StatsDisplay from "../common/StatsDisplay.vue";
+import StatsDisplay from "@/components/common/StatsDisplay.vue";
 import QualitySelection from "./QualitySelection.vue";
 import { getPetIcon } from "@/utils/pets";
 
@@ -21,7 +21,7 @@ defineEmits(["unequip", "close"]);
 
 const gearStore = useGearStore();
 
-const item = computed(() => gearStore.gearSlots[props.slotName]);
+const item = computed(() => gearStore.selectedGearset[props.slotName]);
 const type = computed(() => ("egg" in item.value ? "pet" : item.value.type));
 const icon = computed(() => {
   if (!("egg" in item.value)) return item.value.icon;

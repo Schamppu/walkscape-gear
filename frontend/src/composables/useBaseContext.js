@@ -41,7 +41,7 @@ function useBaseContext() {
     embargoedItems: computed(() => itemsStore.embargoedItems),
     materials: computed(() => itemsStore.materials),
 
-    gearSlots: computed(() => gearStore.gearSlots),
+    gearSlots: computed(() => gearStore.selectedGearset),
     equippedGear: computed(() => gearStore.equippedGear),
     filledGearSlots: computed(() => gearStore.filledGearSlots),
 

@@ -6,7 +6,7 @@ import WsIcon from "@/components/common/WsIcon.vue";
 import StatsDisplay from "../common/StatsDisplay.vue";
 import AbilitiesDisplay from "../common/abilities/AbilitiesDisplay.vue";
 import useBaseContext from "@/composables/useBaseContext";
-import RequirementDisplay from "../activity/RequirementDisplay.vue";
+import RequirementDisplay from "../activity/Info/RequirementDisplay.vue";
 import { getPetIcon } from "@/utils/pets";
 
 const props = defineProps({

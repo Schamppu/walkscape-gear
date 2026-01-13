@@ -21,7 +21,7 @@ const gearStore = useGearStore();
 const storeKey = props.index
   ? `${props.gearType}${props.index}`
   : props.gearType;
-const gearRef = computed(() => gearStore.gearSlots[storeKey]);
+const gearRef = computed(() => gearStore.selectedGearset[storeKey]);
 const icon = computed(() => {
   return "egg" in gearRef.value
     ? getPetIcon(

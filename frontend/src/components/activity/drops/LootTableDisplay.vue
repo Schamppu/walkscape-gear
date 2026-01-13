@@ -46,7 +46,11 @@ const tableItems = computed(() =>
       />
     </div>
     <div class="loot-table">
-      <drop-item-display v-for="item in tableItems" :key="item" :item-id="item" />
+      <drop-item-display
+        v-for="item in tableItems"
+        :key="item"
+        :item-id="item"
+      />
     </div>
   </section>
 </template>

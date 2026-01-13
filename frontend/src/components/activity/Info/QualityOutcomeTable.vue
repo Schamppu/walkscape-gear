@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from "vue";
-import WsLabel from "../common/WsLabel.vue";
+import WsLabel from "../../common/WsLabel.vue";
 import getOutcomeOdds from "@/utils/qualityOutcomeOdds";
 import { n } from "@/utils/number";
 

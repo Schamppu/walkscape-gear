@@ -3,20 +3,25 @@ import { ref, onMounted, computed } from "vue";
 import { useActivityStore } from "@/store/activity";
 import { usePlayerStore } from "@/store/player";
 import { useUrlStore } from "@/store/url";
-import TabContentWrapper from "../common/TabContentWrapper.vue";
+import { useGearStore } from "@/store/gear";
+import TabContentWrapper from "@/components/common/TabContentWrapper.vue";
 import NestedDropdown from "@/components/common/dropdowns/NestedDropdown.vue";
-import ActivityInfo from "./ActivityInfo.vue";
-import TravelInfo from "./TravelInfo.vue";
-import RecipeInfo from "./RecipeInfo.vue";
-import DropsInfo from "./DropsInfo.vue";
-import RecipeCalculator from "./ActivityCalculator.vue";
+import ActivityInfo from "./Info/ActivityInfo.vue";
+import TravelInfo from "./Info/TravelInfo.vue";
+import RecipeInfo from "./Info/RecipeInfo.vue";
+import DropsInfo from "./drops/DropsInfo.vue";
+import ActivityComparison from "./comparison/ActivityComparison.vue";
+import RecipeCalculator from "./calculator/ActivityCalculator.vue";
+import RecipeComparison from "./comparison/RecipeComparison.vue";
 
 const activityStore = useActivityStore();
 const playerStore = usePlayerStore();
 const urlStore = useUrlStore();
+const gearStore = useGearStore();
 
 const isLoading = ref(true);
 const loadingActivity = ref(false);
+const useComparisonView = ref(false);
 
 const activitiesBySkill = ref([]);
 const recipesBySkill = ref([]);
@@ -131,13 +136,22 @@ const recipeSelected = computed(
       default-text="Select a recipe"
       @select="updateRecipeAndUrl"
     />
-    <travel-info v-if="travellingSelected" />
-    <activity-info v-else-if="activitySelected" />
-    <recipe-info v-if="recipeSelected" />
-    <drops-info
-      v-if="(activitySelected || recipeSelected) && !travellingSelected"
-    />
-    <recipe-calculator v-if="activitySelected || recipeSelected" />
+    <label v-if="gearStore.bothSetsActive"
+      >Comparison view:<input type="checkbox" v-model="useComparisonView"
+    /></label>
+    <template v-if="gearStore.bothSetsActive && useComparisonView">
+      <div v-if="travellingSelected">Travel comparison not supported</div>
+      <activity-comparison v-else-if="activitySelected" />
+      <recipe-comparison v-if="recipeSelected" />
+    </template>
+    <template v-else>
+      <travel-info v-if="travellingSelected" />
+      <activity-info v-else-if="activitySelected" />
+      <recipe-info v-if="recipeSelected" />
+      <drops-info
+        v-if="(activitySelected || recipeSelected) && !travellingSelected" />
+      <recipe-calculator v-if="activitySelected || recipeSelected"
+    /></template>
   </tab-content-wrapper>
 </template>
 
