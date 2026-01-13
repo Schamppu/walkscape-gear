@@ -35,6 +35,11 @@ export const useGearStore = defineStore("gearStore", {
     selectedGearset(state) {
       return state.gearSlots[this.gearSetIndex];
     },
+    bothSetsActive(state) {
+      return state.gearSlots.every(
+        (set) => Object.values(set).filter(Boolean).length
+      );
+    },
     hasGearEquipped() {
       return (
         Object.entries(this.selectedGearset).filter(
