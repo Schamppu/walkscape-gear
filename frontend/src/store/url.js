@@ -60,12 +60,14 @@ export const useUrlStore = defineStore("url", {
       window.history.replaceState({}, "", url);
     },
 
-    updateUrlWithGearSet(gearSetId) {
+    updateUrlWithGearSet(gearSetId, index) {
       const url = new URL(window.location.href);
+      const key = index ? "gs2" : "gs";
+
       if (gearSetId) {
-        url.searchParams.set("gs", gearSetId);
+        url.searchParams.set(key, gearSetId);
       } else {
-        url.searchParams.delete("gs");
+        url.searchParams.delete(key);
       }
       window.history.replaceState({}, "", url);
     },

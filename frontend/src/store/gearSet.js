@@ -150,10 +150,10 @@ export const useGearSetStore = defineStore("gearSetStore", {
       try {
         const { useUrlStore } = await import("./url");
         const urlStore = useUrlStore();
-        if (gearSetId) {
+        if (gearSetId && this.gearSetIndex === 0) {
           urlStore.encodeAndPushToUrl();
         }
-        urlStore.updateUrlWithGearSet(gearSetId);
+        urlStore.updateUrlWithGearSet(gearSetId, this.gearSetIndex);
       } catch (error) {
         console.warn("Could not update URL:", error);
       }
