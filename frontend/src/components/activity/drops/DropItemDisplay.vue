@@ -1,5 +1,7 @@
 <script setup>
 import { computed } from "vue";
+import { storeToRefs } from "pinia";
+import { useSettingsStore } from "@/store/settings";
 import WsIcon from "@/components/common/WsIcon.vue";
 import useBaseContext from "@/composables/useBaseContext";
 import { useLootTables } from "@/composables/useLootTables";
@@ -11,6 +13,9 @@ const props = defineProps({
 });
 
 const ctx = useBaseContext();
+
+const settingsStore = useSettingsStore();
+const { activitySettings } = storeToRefs(settingsStore);
 
 const { dropItemInfoMap } = useLootTables(ctx);
 const item = computed(() => dropItemInfoMap.value[props.itemId]);
@@ -36,10 +41,15 @@ const item = computed(() => dropItemInfoMap.value[props.itemId]);
       </div>
       <div v-else class="steps-line border-common">
         <ws-icon :iconPath="icons.steps" size="xs" />
-        <span>{{
+        <span v-if="activitySettings.shownDropRate.display === 1">{{
           item.stepsPerNormal < 100
             ? n(item.stepsPerNormal, 1)
             : n(item.stepsPerNormal, 0)
+        }}</span>
+        <span v-else>{{
+          item.stepsPerItem < 100
+            ? n(item.stepsPerItem, 1)
+            : n(item.stepsPerItem, 0)
         }}</span>
       </div>
       <div v-if="item.stepsPerFine > 0" class="steps-line border-fine">

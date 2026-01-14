@@ -244,6 +244,13 @@ export const useSettingsStore = defineStore("settingsStore", {
             display: 1,
             value: true,
           },
+          shownDropRate: {
+            label: "Shown Drop Rate",
+            display: 0,
+            displayOptions: ["Steps per Item", "Steps per Normal"],
+            value: false,
+            showEnable: false,
+          },
         },
       };
     },
