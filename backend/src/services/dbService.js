@@ -33,6 +33,7 @@ const ALLOWED_SETTINGS = new Set([
   "showCombined",
   "hideOwnedCollectibles",
   "undoRedo",
+  "shownDropRate",
 ]);
 
 async function markUserActiveThrottled(userUuid) {

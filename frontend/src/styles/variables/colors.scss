@@ -56,6 +56,8 @@ $quality-colors: (
   "consumableFine": rgb(176, 247, 238),
   "fine-dark": rgb(122, 156, 152),
   "consumableFine-dark": rgb(122, 156, 152),
+  "petRare":rgb(187, 76, 109),
+  "petRare-dark": rgb(45, 4, 13)
   );
 
 @each $name, $color in $quality-colors {

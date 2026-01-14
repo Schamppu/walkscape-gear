@@ -286,6 +286,8 @@ export function useLootTables(ctx) {
     const canDropFine = (item) =>
       !item.isMoney && item.rowItemID in itemsStore.fineMaterials;
 
+    const canDropRare = (item) => item.type.includes("petEgg");
+
     const data = combinedItemDrops.value.map((sources) => {
       const id = getId(sources);
       const icon = sources[0].icon;
@@ -297,9 +299,13 @@ export function useLootTables(ctx) {
         ? stepsPerItem / fineMaterialFind.value
         : 0;
 
-      const stepsPerNormal = canDropFine(sources[0])
-        ? stepsPerItem / (1 - fineMaterialFind.value)
-        : stepsPerItem;
+      const stepsPerRare = canDropRare(sources[0]) ? stepsPerItem * 10 : 0;
+
+      let stepsPerNormal = stepsPerItem;
+      if (canDropFine(sources[0]))
+        stepsPerNormal = stepsPerItem / (1 - fineMaterialFind.value);
+      else if (canDropRare(sources[0]))
+        stepsPerNormal = stepsPerItem / (9 / 10);
 
       const info = {
         id,
@@ -310,6 +316,7 @@ export function useLootTables(ctx) {
         itemsPerStep: 1000 / stepsPerItem,
         stepsPerNormal,
         stepsPerFine,
+        stepsPerRare,
         dropCounts: getDropCounts(statGroupedSources),
         variableRequirement: getVariableRequirement(sources[0]),
       };
