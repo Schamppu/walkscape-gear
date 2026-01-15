@@ -141,46 +141,53 @@ const editableRows = computed(() => {
 </script>
 
 <template>
-  <div :class="['wrapper', borderClass]">
-    <table class="comparison-table">
-      <thead>
-        <tr>
-          <th></th>
-          <th>Gear set 1</th>
-          <th>Gear set 2</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          v-for="({ title, c1, c2, comp }, index) in tableRows"
-          :key="`row-${index}`"
-        >
-          <td>{{ title }}</td>
-          <td :class="{ positive: comp > 0, negative: comp < 0 }">{{ c1 }}</td>
-          <td :class="{ positive: comp < 0, negative: comp > 0 }">{{ c2 }}</td>
-        </tr>
-
-        <tr v-for="(info, index) in editableRows" :key="`row-${index}`">
-          <td>{{ info[0].title }}</td>
-          <td
-            v-for="({ items, component, itemProps }, cInd) in info"
-            :key="`td-${index}-${cInd}`"
+  <details>
+    <summary>Activity Info</summary>
+    <div :class="['wrapper', borderClass]">
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Gear set 1</th>
+            <th>Gear set 2</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="({ title, c1, c2, comp }, index) in tableRows"
+            :key="`row-${index}`"
           >
-            <div class="info-row">
-              <component
-                v-for="(item, idx) in items"
-                :is="component"
-                v-bind="itemProps(item, idx)"
-                :gear-set-index="cInd"
-                :key="idx"
-                @change="onRowChange"
-              />
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+            <td>{{ title }}</td>
+            <td :class="{ positive: comp > 0, negative: comp < 0 }">
+              {{ c1 }}
+            </td>
+            <td :class="{ positive: comp < 0, negative: comp > 0 }">
+              {{ c2 }}
+            </td>
+          </tr>
+
+          <tr v-for="(info, index) in editableRows" :key="`row-${index}`">
+            <td>{{ info[0].title }}</td>
+            <td
+              v-for="({ items, component, itemProps }, cInd) in info"
+              :key="`td-${index}-${cInd}`"
+            >
+              <div class="info-row">
+                <component
+                  v-for="(item, idx) in items"
+                  :is="component"
+                  v-bind="itemProps(item, idx)"
+                  :gear-set-index="cInd"
+                  :key="idx"
+                  @change="onRowChange"
+                />
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </details>
 </template>
 
 <style lang="scss" scoped>
