@@ -13,6 +13,7 @@ import DropsInfo from "./drops/DropsInfo.vue";
 import ActivityComparison from "./comparison/ActivityComparison.vue";
 import RecipeCalculator from "./calculator/ActivityCalculator.vue";
 import RecipeComparison from "./comparison/RecipeComparison.vue";
+import DropsComparison from "./comparison/DropsComparison.vue";
 
 const activityStore = useActivityStore();
 const playerStore = usePlayerStore();
@@ -143,6 +144,9 @@ const recipeSelected = computed(
       <div v-if="travellingSelected">Travel comparison not supported</div>
       <activity-comparison v-else-if="activitySelected" />
       <recipe-comparison v-if="recipeSelected" />
+      <drops-comparison
+        v-if="(activitySelected || recipeSelected) && !travellingSelected"
+      />
     </template>
     <template v-else>
       <travel-info v-if="travellingSelected" />
