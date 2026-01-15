@@ -7,6 +7,7 @@ import useBaseContext from "@/composables/useBaseContext";
 import { useLootTables } from "@/composables/useLootTables";
 import { icons } from "@/constants/iconPaths";
 import { n } from "@/utils/number";
+import { snakeToTitle } from "@/utils/string";
 
 const props = defineProps({
   itemId: String,
@@ -26,8 +27,8 @@ const item = computed(() => dropItemInfoMap.value[props.itemId]);
     v-if="item?.id"
     class="drop-item-display"
     :class="{ disabled: !item.totalDropChance }"
-    :title="item.isMoney ? 'Gold' : item.name"
-    :aria-label="item.isMoney ? 'Gold' : item.name"
+    :title="item.isMoney ? 'Gold' : snakeToTitle(item.id)"
+    :aria-label="item.isMoney ? 'Gold' : snakeToTitle(item.id)"
   >
     <ws-icon :icon-path="item.icon" size="md" />
     <span>{{ n(item.totalDropChance, 3) }}%</span>
