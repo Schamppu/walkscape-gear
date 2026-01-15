@@ -34,6 +34,8 @@ const ALLOWED_SETTINGS = new Set([
   "hideOwnedCollectibles",
   "undoRedo",
   "shownDropRate",
+  "thousandSeparator",
+  "decimalSeparator",
 ]);
 
 async function markUserActiveThrottled(userUuid) {

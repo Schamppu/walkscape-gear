@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { getSettings, upsertSettings } from "@/utils/axios/db_routes";
 import { useNotificationStore } from "./notifications";
+import { thousandSeparators, decimalSeparators } from "@/constants/separators";
 
 export const useSettingsStore = defineStore("settingsStore", {
   state: () => ({
@@ -248,6 +249,20 @@ export const useSettingsStore = defineStore("settingsStore", {
             label: "Shown Drop Rate",
             display: 0,
             displayOptions: ["Steps per Item", "Steps per Normal"],
+            value: false,
+            showEnable: false,
+          },
+          thousandSeparator: {
+            label: "Thousand separator",
+            display: 0,
+            displayOptions: thousandSeparators.map(({ name }) => name),
+            value: false,
+            showEnable: false,
+          },
+          decimalSeparator: {
+            label: "Decimal separator",
+            display: 0,
+            displayOptions: decimalSeparators.map(({ name }) => name),
             value: false,
             showEnable: false,
           },
