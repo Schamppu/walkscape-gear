@@ -1,6 +1,7 @@
 <script setup>
 import { computed, ref } from "vue";
 import { useActivityStore } from "@/store/activity";
+import { useItemsStore } from "@/store/items";
 import ComparisonTableShell from "./table/ComparisonTableShell.vue";
 import EmitLocationBubble from "@/components/common/EmitLocationBubble.vue";
 import { useGearContext } from "@/composables/context/useGearContext";
@@ -11,6 +12,7 @@ import ComparisonValueRow from "./table/ComparisonValueRow.vue";
 import EditableComparisonRow from "./table/EditableComparisonRow.vue";
 
 const activityStore = useActivityStore();
+const itemsStore = useItemsStore();
 
 const gs1Location = ref(null);
 const gs2Location = ref(null);
@@ -44,6 +46,14 @@ const rewardCount = computed(() => {
 
 const sm1 = useSkillModifiers(gs1Ctx);
 const sm2 = useSkillModifiers(gs2Ctx);
+
+const canUseFineMaterials = computed(() => {
+  const upgraded = itemsStore.itemsByCategory["upgraded_crafted"].map(
+    ({ id }) => id
+  );
+  const reward = Object.keys(gs1Ctx.recipe.value.itemRewards)[0];
+  return !upgraded.includes(reward);
+});
 
 const tableRows = computed(() => {
   const getBothValues = (
@@ -87,9 +97,12 @@ const tableRows = computed(() => {
     },
   ];
 
+  const xpRewardsMultiplier =
+    canUseFineMaterials.value && activityStore.useFineMaterials ? 1.5 : 1;
+
   const xpPerStepRows = sm1["xpPerStep"].value.map(({ skill, value }, idx) => {
-    const v1 = value;
-    const v2 = sm2["xpPerStep"].value[idx].value;
+    const v1 = value * xpRewardsMultiplier;
+    const v2 = sm2["xpPerStep"].value[idx].value * xpRewardsMultiplier;
     const comp = v1 - v2;
 
     return {
@@ -212,6 +225,10 @@ const editableRows = computed(() => {
 </script>
 
 <template>
+  <label v-if="canUseFineMaterials">
+    <input type="checkbox" v-model="activityStore.useFineMaterials" />
+    Fine Materials
+  </label>
   <comparison-table-shell
     title="Recipe Info"
     wrapped

@@ -52,10 +52,16 @@ const getCraftingOdds = () => {
   const levelMap = getLevelRequirementsMap(ctx.recipe.value.requirements);
   const level = Object.values(levelMap)[0];
 
+  const { materials } = ctx.source.value;
+  const allMaterials = materials.flatMap(({ options }) => options[0]);
+  const canUseFineMaterials = allMaterials.every(
+    ({ item }) => item in itemsStore.fineMaterials
+  );
+
   const odds = getOutcomeOdds(
     level,
     qualityOutcome.value,
-    activityStore.useFineMaterials
+    canUseFineMaterials && activityStore.useFineMaterials
   );
   return odds.map((item) => {
     return {

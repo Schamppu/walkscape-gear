@@ -35,7 +35,8 @@ const stats = computed(() => {
     xpPerStep,
   } = useSkillModifiers(ctx);
 
-  const xpRewardsMultiplier = activityStore.useFineMaterials ? 1.5 : 1;
+  const xpRewardsMultiplier =
+    canUseFineMaterials.value && activityStore.useFineMaterials ? 1.5 : 1;
 
   return {
     maxWorkEfficiency: maxWorkEfficiency.value,
@@ -163,7 +164,9 @@ const rewardCount = computed(() => {
                 :tooltip="`${amount}x ${name}`"
                 :iconPath="icon"
                 :border-class="
-                  activityStore.useFineMaterials ? 'border-fine' : ''
+                  canUseFineMaterials && activityStore.useFineMaterials
+                    ? 'border-fine'
+                    : ''
                 "
               />
             </template>
@@ -262,7 +265,9 @@ const rewardCount = computed(() => {
       </div>
       <div v-if="resultHasCO" class="info-section">
         <quality-outcome-table
-          :use-fine-materials="activityStore.useFineMaterials"
+          :use-fine-materials="
+            canUseFineMaterials && activityStore.useFineMaterials
+          "
           :level-requirement="levelRequirement"
           :quality-outcome="stats.qualityOutcome"
           :crafts-per-material="stats.craftsPerMaterial"
