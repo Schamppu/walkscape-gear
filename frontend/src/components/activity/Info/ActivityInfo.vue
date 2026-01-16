@@ -10,7 +10,7 @@ import { useActivityStore } from "@/store/activity";
 import { usePlayerStore } from "@/store/player";
 import { useSkillModifiers } from "@/composables/useSkillModifiers";
 
-import useBaseContext from "@/composables/useBaseContext";
+import useBaseContext from "@/composables/context/useBaseContext";
 import { useRequirements } from "@/composables/useRequirements";
 import { isEmpty } from "@/utils/isEmpty";
 import { n } from "@/utils/number";

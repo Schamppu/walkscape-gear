@@ -3,7 +3,7 @@ import { computed } from "vue";
 import { useItemsStore } from "@/store/items";
 import { useDataStore } from "@/store/data";
 import InfoBubble from "@/components/common/InfoBubble.vue";
-import useBaseContext from "@/composables/useBaseContext";
+import useBaseContext from "@/composables/context/useBaseContext";
 import { useLootTables } from "@/composables/useLootTables";
 import { useRequirements } from "@/composables/useRequirements";
 import { useSkillModifiers } from "@/composables/useSkillModifiers";

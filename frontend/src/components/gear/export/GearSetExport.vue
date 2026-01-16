@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from "vue";
-import useBaseContext from "@/composables/useBaseContext";
+import useBaseContext from "@/composables/context/useBaseContext";
 import { useGearSetExport } from "@/composables/useGearSetExport";
 import { icons } from "@/constants/iconPaths";
 import { useNotificationStore } from "@/store/notifications";

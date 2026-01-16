@@ -4,7 +4,7 @@ import { storeToRefs } from "pinia";
 import { useSettingsStore } from "@/store/settings";
 import { useGearStore } from "@/store/gear";
 import WsIcon from "@/components/common/WsIcon.vue";
-import useBaseContext from "@/composables/useBaseContext";
+import useBaseContext from "@/composables/context/useBaseContext";
 import { useLootTables } from "@/composables/useLootTables";
 import { icons } from "@/constants/iconPaths";
 import { snakeToTitle } from "@/utils/string";

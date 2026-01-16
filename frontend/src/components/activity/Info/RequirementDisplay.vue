@@ -1,5 +1,5 @@
 <script setup>
-import useBaseContext from "@/composables/useBaseContext";
+import useBaseContext from "@/composables/context/useBaseContext";
 import WsIcon from "@/components/common/WsIcon.vue";
 import { useRequirements } from "@/composables/useRequirements";
 import { computed } from "vue";

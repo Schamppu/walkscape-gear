@@ -3,7 +3,7 @@ import { computed, ref } from "vue";
 import { useActivityStore } from "@/store/activity";
 import { useGearStore } from "@/store/gear";
 import EmitLocationBubble from "@/components/common/EmitLocationBubble.vue";
-import useBaseContext from "@/composables/useBaseContext";
+import useBaseContext from "@/composables/context/useBaseContext";
 import { useSkillModifiers } from "@/composables/useSkillModifiers";
 import { n } from "@/utils/number";
 import EmitServiceBubble from "@/components/common/EmitServiceBubble.vue";

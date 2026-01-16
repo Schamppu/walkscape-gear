@@ -2,7 +2,7 @@
 import { computed } from "vue";
 import StatDisplay from "./StatDisplay.vue";
 import { useDataStore } from "@/store/data";
-import useBaseContext from "@/composables/useBaseContext";
+import useBaseContext from "@/composables/context/useBaseContext";
 import { useEffectiveAttrs } from "@/composables/useEffectiveAttrs";
 
 const ctx = useBaseContext();

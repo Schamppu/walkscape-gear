@@ -1,6 +1,6 @@
 <script setup>
 import { computed, ref } from "vue";
-import useBaseContext from "@/composables/useBaseContext";
+import useBaseContext from "@/composables/context/useBaseContext";
 import { useEffectiveAttrs } from "@/composables/useEffectiveAttrs";
 import WsIcon from "@/components/common/WsIcon.vue";
 import StatSourceDisplay from "@/components/stats/StatSourceDisplay.vue";

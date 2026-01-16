@@ -6,7 +6,7 @@ import ConsumableEntry from "./ConsumableEntry.vue";
 import PetEntry from "./PetEntry.vue";
 import { itemQualityNameSort, levelReqNameSort } from "@/utils/sorting";
 import { consumableQualityOptions } from "@/constants/quality";
-import useBaseContext from "@/composables/useBaseContext";
+import useBaseContext from "@/composables/context/useBaseContext";
 
 const props = defineProps({
   group: String,

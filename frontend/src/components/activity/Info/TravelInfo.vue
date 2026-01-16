@@ -8,7 +8,7 @@ import TravelRequirementsList from "./TravelRequirementsList.vue";
 import { usePlayerStore } from "@/store/player";
 import { useRouteStore } from "@/store/route";
 import { useRoutes } from "@/composables/useRoutes";
-import useBaseContext from "@/composables/useBaseContext";
+import useBaseContext from "@/composables/context/useBaseContext";
 import { useRequirements } from "@/composables/useRequirements";
 import { icons } from "@/constants/iconPaths";
 import { n } from "@/utils/number";

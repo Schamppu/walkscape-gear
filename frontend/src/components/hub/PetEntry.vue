@@ -5,7 +5,7 @@ import { useItemsStore } from "@/store/items";
 import WsIcon from "@/components/common/WsIcon.vue";
 import StatsDisplay from "../common/StatsDisplay.vue";
 import AbilitiesDisplay from "../common/abilities/AbilitiesDisplay.vue";
-import useBaseContext from "@/composables/useBaseContext";
+import useBaseContext from "@/composables/context/useBaseContext";
 import RequirementDisplay from "../activity/Info/RequirementDisplay.vue";
 import { getPetIcon } from "@/utils/pets";
 
