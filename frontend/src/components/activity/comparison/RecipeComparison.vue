@@ -8,6 +8,7 @@ import { useSkillModifiers } from "@/composables/useSkillModifiers";
 import { n } from "@/utils/number";
 import EmitServiceBubble from "@/components/common/EmitServiceBubble.vue";
 import ComparisonValueRow from "./table/ComparisonValueRow.vue";
+import EditableComparisonRow from "./table/EditableComparisonRow.vue";
 
 const activityStore = useActivityStore();
 
@@ -156,51 +157,55 @@ const onRowChange = async (info) => {
 };
 
 const editableRows = computed(() => {
-  const serviceRow = [
-    {
-      title: "Service",
-      component: EmitServiceBubble,
-      items: activityStore.services,
-      itemProps: (item, index) => ({
-        service: item,
-        index,
-        selected: index === gs1ServiceIdx.value,
-      }),
-    },
-    {
-      title: "Service",
-      component: EmitServiceBubble,
-      items: activityStore.services,
-      itemProps: (item, index) => ({
-        service: item,
-        index,
-        selected: index === gs2ServiceIdx.value,
-      }),
-    },
-  ];
+  const serviceRow = {
+    title: "Service",
+    component: EmitServiceBubble,
+    columns: [
+      {
+        items: activityStore.services,
+        itemProps: (item, index) => ({
+          service: item,
+          index,
+          selected: index === gs1ServiceIdx.value,
+        }),
+      },
+      {
+        items: activityStore.services,
+        itemProps: (item, index) => ({
+          service: item,
+          index,
+          selected: index === gs2ServiceIdx.value,
+        }),
+      },
+    ],
+  };
 
-  const locationsRow = [
-    {
-      title: "Location",
-      component: EmitLocationBubble,
-      items: gs1Locations.value ? gs1Locations.value : activityStore.locations,
-      itemProps: (item, index) => ({
-        location: item,
-        index,
-        selected: index === gs1LocationIdx.value,
-      }),
-    },
-    {
-      title: "Location",
-      component: EmitLocationBubble,
-      items: gs2Locations.value ? gs2Locations.value : activityStore.locations,
-      itemProps: (item, index) => ({
-        location: item,
-        index,
-        selected: index === gs2LocationIdx.value,
-      }),
-    },
-  ];
+  const locationsRow = {
+    title: "Location",
+    component: EmitLocationBubble,
+    columns: [
+      {
+        items: gs1Locations.value
+          ? gs1Locations.value
+          : activityStore.locations,
+        itemProps: (item, index) => ({
+          location: item,
+          index,
+          selected: index === gs1LocationIdx.value,
+        }),
+      },
+      {
+        items: gs2Locations.value
+          ? gs2Locations.value
+          : activityStore.locations,
+        itemProps: (item, index) => ({
+          location: item,
+          index,
+          selected: index === gs2LocationIdx.value,
+        }),
+      },
+    ],
+  };
 
   return [serviceRow, locationsRow];
 });
@@ -217,24 +222,11 @@ const editableRows = computed(() => {
       :key="row.title"
       v-bind="row"
     />
-
-    <tr v-for="(info, index) in editableRows" :key="`row-${index}`">
-      <td>{{ info[0].title }}</td>
-      <td
-        v-for="({ items, component, itemProps }, cInd) in info"
-        :key="`td-${index}-${cInd}`"
-      >
-        <div class="info-row">
-          <component
-            v-for="(item, idx) in items"
-            :is="component"
-            v-bind="itemProps(item, idx)"
-            :gear-set-index="cInd"
-            :key="idx"
-            @change="onRowChange"
-          />
-        </div>
-      </td>
-    </tr>
+    <editable-comparison-row
+      v-for="row in editableRows"
+      :key="row.title"
+      v-bind="row"
+      @change="onRowChange"
+    />
   </comparison-table-shell>
 </template>

@@ -7,6 +7,7 @@ import { useGearContext } from "@/composables/context/useGearContext";
 import { useSkillModifiers } from "@/composables/useSkillModifiers";
 import { n } from "@/utils/number";
 import ComparisonValueRow from "./table/ComparisonValueRow.vue";
+import EditableComparisonRow from "./table/EditableComparisonRow.vue";
 
 const activityStore = useActivityStore();
 
@@ -87,28 +88,28 @@ const onRowChange = (info) => {
 const editableRows = computed(() => {
   const { id } = gs1Ctx.activity.value;
   const isTravel = id === "travelling";
-  const locationsRow = [
-    {
-      title: "Location",
-      component: EmitLocationBubble,
-      items: !isTravel ? activityStore.locations : [],
-      itemProps: (item, index) => ({
-        location: item,
-        index,
-        selected: index === gs1LocationIdx.value,
-      }),
-    },
-    {
-      title: "Location",
-      component: EmitLocationBubble,
-      items: !isTravel ? activityStore.locations : [],
-      itemProps: (item, index) => ({
-        location: item,
-        index,
-        selected: index === gs2LocationIdx.value,
-      }),
-    },
-  ];
+  const locationsRow = {
+    title: "Location",
+    component: EmitLocationBubble,
+    columns: [
+      {
+        items: !isTravel ? activityStore.locations : [],
+        itemProps: (item, index) => ({
+          location: item,
+          index,
+          selected: gs1LocationIdx.value === index,
+        }),
+      },
+      {
+        items: !isTravel ? activityStore.locations : [],
+        itemProps: (item, index) => ({
+          location: item,
+          index,
+          selected: gs2LocationIdx.value === index,
+        }),
+      },
+    ],
+  };
 
   return [locationsRow];
 });
@@ -125,23 +126,11 @@ const editableRows = computed(() => {
       :key="row.title"
       v-bind="row"
     />
-    <tr v-for="(info, index) in editableRows" :key="`row-${index}`">
-      <td>{{ info[0].title }}</td>
-      <td
-        v-for="({ items, component, itemProps }, cInd) in info"
-        :key="`td-${index}-${cInd}`"
-      >
-        <div class="info-row">
-          <component
-            v-for="(item, idx) in items"
-            :is="component"
-            v-bind="itemProps(item, idx)"
-            :gear-set-index="cInd"
-            :key="idx"
-            @change="onRowChange"
-          />
-        </div>
-      </td>
-    </tr>
+    <editable-comparison-row
+      v-for="row in editableRows"
+      :key="row.title"
+      v-bind="row"
+      @change="onRowChange"
+    />
   </comparison-table-shell>
 </template>
