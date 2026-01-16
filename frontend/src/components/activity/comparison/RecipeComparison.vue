@@ -7,6 +7,7 @@ import { useGearContext } from "@/composables/context/useGearContext";
 import { useSkillModifiers } from "@/composables/useSkillModifiers";
 import { n } from "@/utils/number";
 import EmitServiceBubble from "@/components/common/EmitServiceBubble.vue";
+import ComparisonValueRow from "./table/ComparisonValueRow.vue";
 
 const activityStore = useActivityStore();
 
@@ -55,8 +56,8 @@ const tableRows = computed(() => {
     const v2 = sm2[key].value * multi;
 
     return {
-      c1: `${n(modifyValue(v1), 2)}${isPercent ? "%" : ""}`,
-      c2: `${n(modifyValue(v2), 2)}${isPercent ? "%" : ""}`,
+      left: `${n(modifyValue(v1), 2)}${isPercent ? "%" : ""}`,
+      right: `${n(modifyValue(v2), 2)}${isPercent ? "%" : ""}`,
       comp: negative ? v1 - v2 : v2 - v1,
     };
   };
@@ -92,8 +93,8 @@ const tableRows = computed(() => {
 
     return {
       title: `${skill !== "xp" ? skill : "total"} xp`,
-      c1: n(v1, 2),
-      c2: n(v2, 2),
+      left: n(v1, 2),
+      right: n(v2, 2),
       comp,
     };
   });
@@ -211,18 +212,11 @@ const editableRows = computed(() => {
     wrapped
     :border-class="borderClass"
   >
-    <tr
-      v-for="({ title, c1, c2, comp }, index) in tableRows"
-      :key="`row-${index}`"
-    >
-      <td>{{ title }}</td>
-      <td :class="{ positive: comp > 0, negative: comp < 0 }">
-        {{ c1 }}
-      </td>
-      <td :class="{ positive: comp < 0, negative: comp > 0 }">
-        {{ c2 }}
-      </td>
-    </tr>
+    <comparison-value-row
+      v-for="row in tableRows"
+      :key="row.title"
+      v-bind="row"
+    />
 
     <tr v-for="(info, index) in editableRows" :key="`row-${index}`">
       <td>{{ info[0].title }}</td>
