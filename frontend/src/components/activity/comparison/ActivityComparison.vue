@@ -1,6 +1,7 @@
 <script setup>
 import { computed, ref } from "vue";
 import { useActivityStore } from "@/store/activity";
+import ComparisonTableShell from "./table/ComparisonTableShell.vue";
 import EmitLocationBubble from "@/components/common/EmitLocationBubble.vue";
 import { useGearContext } from "@/composables/context/useGearContext";
 import { useSkillModifiers } from "@/composables/useSkillModifiers";
@@ -110,97 +111,45 @@ const editableRows = computed(() => {
 
   return [locationsRow];
 });
+
 </script>
 
 <template>
-  <details open>
-    <summary>Activity Info</summary>
-    <div :class="['wrapper', borderClass]">
-      <table class="comparison-table">
-        <thead>
-          <tr>
-            <th></th>
-            <th>Gear set 1</th>
-            <th>Gear set 2</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            v-for="({ title, c1, c2, comp }, index) in tableRows"
-            :key="`row-${index}`"
-          >
-            <td>{{ title }}</td>
-            <td :class="{ positive: comp > 0, negative: comp < 0 }">
-              {{ c1 }}
-            </td>
-            <td :class="{ positive: comp < 0, negative: comp > 0 }">
-              {{ c2 }}
-            </td>
-          </tr>
+  <comparison-table-shell
+    title="Activity Info"
+    wrapped
+    :border-class="borderClass"
+  >
+    <tr
+      v-for="({ title, c1, c2, comp }, index) in tableRows"
+      :key="`row-${index}`"
+    >
+      <td>{{ title }}</td>
+      <td :class="{ positive: comp > 0, negative: comp < 0 }">
+        {{ c1 }}
+      </td>
+      <td :class="{ positive: comp < 0, negative: comp > 0 }">
+        {{ c2 }}
+      </td>
+    </tr>
 
-          <tr v-for="(info, index) in editableRows" :key="`row-${index}`">
-            <td>{{ info[0].title }}</td>
-            <td
-              v-for="({ items, component, itemProps }, cInd) in info"
-              :key="`td-${index}-${cInd}`"
-            >
-              <div class="info-row">
-                <component
-                  v-for="(item, idx) in items"
-                  :is="component"
-                  v-bind="itemProps(item, idx)"
-                  :gear-set-index="cInd"
-                  :key="idx"
-                  @change="onRowChange"
-                />
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </details>
+    <tr v-for="(info, index) in editableRows" :key="`row-${index}`">
+      <td>{{ info[0].title }}</td>
+      <td
+        v-for="({ items, component, itemProps }, cInd) in info"
+        :key="`td-${index}-${cInd}`"
+      >
+        <div class="info-row">
+          <component
+            v-for="(item, idx) in items"
+            :is="component"
+            v-bind="itemProps(item, idx)"
+            :gear-set-index="cInd"
+            :key="idx"
+            @change="onRowChange"
+          />
+        </div>
+      </td>
+    </tr>
+  </comparison-table-shell>
 </template>
-
-<style lang="scss" scoped>
-.wrapper {
-  border-radius: $sm;
-  overflow-x: auto;
-}
-
-.comparison-table {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-
-  tr {
-    &:hover {
-      background-color: $boxTransparentDarkOutline;
-    }
-  }
-
-  th,
-  td {
-    padding: $xxs $sm;
-    border-bottom: 1px solid $chipOutline;
-    text-align: center;
-  }
-  th {
-    background: $boxPrimaryBackground;
-  }
-
-  tr:first-child th:first-child {
-    border-top-left-radius: $sm;
-  }
-  tr:first-child th:last-child {
-    border-top-right-radius: $sm;
-  }
-
-  tr:last-child td:first-child {
-    border-bottom-left-radius: $sm;
-  }
-  tr:last-child td:last-child {
-    border-bottom-right-radius: $sm;
-  }
-}
-</style>
