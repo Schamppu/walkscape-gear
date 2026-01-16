@@ -68,12 +68,4 @@ const statList = computed(() => {
   padding: $sm;
   gap: $xxs;
 }
-
-.negative {
-  color: $txNegative;
-}
-
-.positive {
-  color: $txPositive;
-}
 </style>

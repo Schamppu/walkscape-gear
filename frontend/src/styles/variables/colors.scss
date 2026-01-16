@@ -134,3 +134,11 @@ $faction-colors: (
     border: 2px solid $color !important;
   }
 }
+
+.negative {
+  color: $txNegative;
+}
+
+.positive {
+  color: $txPositive;
+}

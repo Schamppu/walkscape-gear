@@ -104,14 +104,6 @@ const toggle = () => {
     display: flex;
     gap: $xxxs;
     align-items: center;
-
-    &.negative {
-      color: $txNegative;
-    }
-
-    &.positive {
-      color: $txPositive;
-    }
   }
 }
 

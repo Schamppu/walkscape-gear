@@ -120,12 +120,4 @@ const xpBubbles = computed(() => {
   flex-wrap: wrap;
   gap: $lg;
 }
-
-.bubble-wrapper.negative {
-  color: $txNegative;
-}
-
-.bubble-wrapper.positive {
-  color: $txPositive;
-}
 </style>

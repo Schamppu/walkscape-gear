@@ -212,14 +212,6 @@ const editableRows = computed(() => {
     padding: $xxs $sm;
     border-bottom: 1px solid $chipOutline;
     text-align: center;
-
-    &.negative {
-      color: $txNegative;
-    }
-
-    &.positive {
-      color: $txPositive;
-    }
   }
   th {
     background: $boxPrimaryBackground;

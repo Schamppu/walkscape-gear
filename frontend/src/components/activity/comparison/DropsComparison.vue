@@ -261,14 +261,6 @@ const dropsMap = computed(() => {
     padding: $xxs $sm;
     border-bottom: 1px solid $chipOutline;
     text-align: center;
-
-    &.negative {
-      color: $txNegative;
-    }
-
-    &.positive {
-      color: $txPositive;
-    }
   }
   th {
     background: $boxPrimaryBackground;
@@ -325,13 +317,5 @@ const dropsMap = computed(() => {
   p {
     text-align: left;
   }
-}
-
-.negative {
-  color: $txNegative;
-}
-
-.positive {
-  color: $txPositive;
 }
 </style>
