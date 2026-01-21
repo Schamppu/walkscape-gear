@@ -13,7 +13,7 @@ export function useRequirements(ctx) {
   const checkRequirements = (reqs, context) => {
     if (!reqs || !reqs.length) return true;
     return reqs.every((requirements) =>
-      checkRequirement(requirements, context || ctx)
+      checkRequirement(requirements, context || ctx),
     );
   };
 
@@ -57,12 +57,12 @@ export function useRequirements(ctx) {
         }
         if (!context.location.value && context.activity.value) {
           const locationKeywords = context.segments.value.map(
-            ({ from }) => from.keywords
+            ({ from }) => from.keywords,
           );
           value = locationKeywords.some(
             (kw) =>
               intersect(kw, requirement.keywords).length ===
-              requirement.keywords.length
+              requirement.keywords.length,
           );
         }
         break;
@@ -71,7 +71,7 @@ export function useRequirements(ctx) {
         break;
       case "distinctKeywordItemsEquipped":
         value = requirement.keywords.every(
-          (kw) => equippedKeywordCounts[kw] >= requirement.quantity
+          (kw) => equippedKeywordCounts[kw] >= requirement.quantity,
         );
         break;
       case "historyData":
@@ -89,7 +89,7 @@ export function useRequirements(ctx) {
           value = factionInfo.some(
             ({ faction, subFactions }) =>
               faction === requirement.realm ||
-              subFactions?.includes(requirement.realm)
+              subFactions?.includes(requirement.realm),
           );
         }
         break;
@@ -108,14 +108,14 @@ export function useRequirements(ctx) {
         value = playerStore.skillLevels[requirement.skill] >= requirement.level;
         break;
       case "activityType":
-        if (context.activity.value)
+        if (context.source.value)
           value =
             ((requirement.activity &&
-              context.activity.value.id === requirement.activity) ||
-              !requirement.activity) &&
+              context.source.value.id === requirement.activity) ||
+              !requirement.source) &&
             ((requirement.keywords &&
               requirement.keywords.every((kw) =>
-                context.activity.value.keywords.includes(kw)
+                context.source.value.keywords.includes(kw),
               )) ||
               !requirement.keywords);
         break;
@@ -128,7 +128,7 @@ export function useRequirements(ctx) {
         value =
           Object.values(playerStore.skillLevels).reduce(
             (a, b) => a + b - 1,
-            0
+            0,
           ) >= requirement.levels;
         break;
       case "itemAnywhereWithYou":
@@ -157,7 +157,7 @@ export function useRequirements(ctx) {
       case "itemEquipped":
         value =
           ctx.equippedGear.value.findIndex(
-            ({ id }) => id === requirement.item
+            ({ id }) => id === requirement.item,
           ) >= 0;
         break;
       case "abilityAvailable":
@@ -165,9 +165,9 @@ export function useRequirements(ctx) {
           ctx.equippedGear.value.filter(({ abilities }) =>
             abilities
               ?.flatMap((ability) =>
-                typeof ability === "object" ? ability.ability : ability
+                typeof ability === "object" ? ability.ability : ability,
               )
-              .includes(requirement.ability)
+              .includes(requirement.ability),
           ).length > 0;
         break;
       default:
@@ -279,7 +279,7 @@ export function useRequirements(ctx) {
       } else if (type === "totalSkillLevel") {
         const skillLevels = Object.values(playerStore.skillLevels).reduce(
           (a, b) => a + b,
-          0
+          0,
         );
 
         out = {
@@ -290,20 +290,20 @@ export function useRequirements(ctx) {
       } else if (type === "totalSkillLevelUps") {
         const skillLevels = Object.values(playerStore.skillLevels).reduce(
           (a, b) => a + b - 1,
-          0
+          0,
         );
 
         out = {
           text: `Level up your skills ${Math.min(
             skillLevels,
-            requirement.levels
+            requirement.levels,
           )}/${requirement.levels} times`,
         };
       } else if (type === "activityType") {
         const act = activityStore.activitiesMap[requirement.activity];
         if (requirement.keywords) {
           const kws = requirement.keywords.map(
-            (kw) => dataStore.keywordsMap[kw]
+            (kw) => dataStore.keywordsMap[kw],
           );
           out = {
             prefix: `While${opposite ? " NOT" : ""} doing`,
@@ -331,7 +331,7 @@ export function useRequirements(ctx) {
         const { gameDataId, data } = requirement;
         const rep = JSON.parse(data).double || 0;
         const reputationFaction = Object.values(playerStore.factions).find(
-          ({ reputation }) => reputation === gameDataId
+          ({ reputation }) => reputation === gameDataId,
         );
         if (reputationFaction) {
           const { name, icon } = reputationFaction;
