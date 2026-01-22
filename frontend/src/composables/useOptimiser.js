@@ -111,10 +111,10 @@ export function useOptimiser() {
       .map(({ _stats, ...item }) => item);
   };
 
-  const filterUsefulStats = (items, target = "stepsByRewardRoll") => {
+  const filterUsefulStats = (items, target = "stepsPerRewardRoll") => {
     const baseStats = ["work_efficiency", "double_action", "steps_required"];
     const usefulStatsByTarget = {
-      stepsByRewardRoll: [...baseStats, "double_rewards"],
+      stepsPerRewardRoll: [...baseStats, "double_rewards"],
       xpPerStep: [...baseStats, "bonus_experience"],
     };
 
