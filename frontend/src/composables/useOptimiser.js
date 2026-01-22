@@ -1,10 +1,13 @@
 import { computed } from "vue";
+import { storeToRefs } from "pinia";
 import { useGearStore } from "@/store/gear";
 import { useDataStore } from "@/store/data";
+import { useSettingsStore } from "@/store/settings";
 import useBaseContext from "@/composables/context/useBaseContext";
 import { useShowItemForActivity } from "@/composables/useShowItemForActivity";
 import { useSkillModifiers } from "./useSkillModifiers";
 import { useRequirements } from "./useRequirements";
+import { optimiserPriorities } from "@/constants/optimizerPriorities";
 import { gearTypes, gearSlots } from "@/utils/createEmptyGearSet";
 import { intersect } from "@/utils/intersect";
 import { usedAttrs } from "@/utils/qualityAttrs";
@@ -14,8 +17,16 @@ export function useOptimiser() {
   const gearStore = useGearStore();
   const dataStore = useDataStore();
 
+  const settingsStore = useSettingsStore();
+  const { gearSettings } = storeToRefs(settingsStore);
+
   const { showItemForActivity } = useShowItemForActivity(baseCtx);
   const { checkRequirements } = useRequirements(baseCtx);
+
+  const selectedPriority = () => {
+    return optimiserPriorities[gearSettings.value.optimiserPriority.display]
+      .value;
+  };
 
   const getGearSetStats = (set) => {
     const gearCtx = {
@@ -23,8 +34,14 @@ export function useOptimiser() {
       equippedGear: computed(() => [...Object.values(set).filter(Boolean)]),
     };
 
-    const skills = useSkillModifiers(gearCtx);
-    return skills.stepsPerRewardRoll.value;
+    const stats = useSkillModifiers(gearCtx);
+
+    const prio = selectedPriority();
+    if (prio === "stepsPerRewardRoll") return stats.stepsPerRewardRoll.value;
+    else if (prio === "xpPerStep") {
+      const xp = stats.xpPerStep.value;
+      return xp[xp.length - 1].value;
+    }
   };
 
   const mapItemToStats = (item) => {
@@ -95,14 +112,10 @@ export function useOptimiser() {
   };
 
   const filterUsefulStats = (items, target = "stepsByRewardRoll") => {
-    const baseStats = [
-      "work_efficiency",
-      "double_rewards",
-      "double_action",
-      "steps_required",
-    ];
+    const baseStats = ["work_efficiency", "double_action", "steps_required"];
     const usefulStatsByTarget = {
-      stepsByRewardRoll: baseStats,
+      stepsByRewardRoll: [...baseStats, "double_rewards"],
+      xpPerStep: [...baseStats, "bonus_experience"],
     };
 
     const usefulStats = usefulStatsByTarget[target];
@@ -151,12 +164,28 @@ export function useOptimiser() {
         const upgradeFiltered = ["tool", "ring"].includes(slot)
           ? mappedItems
           : filterDirectUpgrades(mappedItems);
-        const statFiltered = filterUsefulStats(upgradeFiltered);
+        const statFiltered = filterUsefulStats(
+          upgradeFiltered,
+          selectedPriority(),
+        );
 
         return [slot, statFiltered];
       }),
     );
     return itemsBySlot;
+  };
+
+  const startScore = () => {
+    const prio = selectedPriority();
+    if (prio === "stepsPerRewardRoll") return Infinity;
+    if (prio === "xpPerStep") return -Infinity;
+  };
+
+  const compareScore = (prev, best) => {
+    const prio = selectedPriority();
+    console.log(prio, prev, best);
+    if (prio === "stepsPerRewardRoll") return prev < best;
+    if (prio === "xpPerStep") return prev > best;
   };
 
   function greedyOptimize(gearSlots, gearOptions) {
@@ -208,7 +237,7 @@ export function useOptimiser() {
       const filteredOptions = isNaN(last) ? options : filterMultislot(options);
 
       let bestItem = null;
-      let bestScore = Infinity;
+      let bestScore = startScore();
 
       for (const item of filteredOptions) {
         // Temporarily equip
@@ -216,7 +245,7 @@ export function useOptimiser() {
 
         const score = getGearSetStats({ ...gearSet });
 
-        if (score < bestScore) {
+        if (compareScore(score, bestScore)) {
           bestScore = score;
           bestItem = item;
         }
