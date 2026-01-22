@@ -6,6 +6,7 @@ const props = defineProps({
   left: [String, Number],
   right: [String, Number],
   comp: Number,
+  titleClass: { type: String, default: "" },
 });
 
 const leftClass = computed(() => ({
@@ -21,7 +22,7 @@ const rightClass = computed(() => ({
 
 <template>
   <tr>
-    <td>{{ title }}</td>
+    <td :class="titleClass">{{ title }}</td>
     <td :class="leftClass">{{ left }}</td>
     <td :class="rightClass">{{ right }}</td>
   </tr>

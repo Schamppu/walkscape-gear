@@ -10,6 +10,7 @@ import { n } from "@/utils/number";
 import EmitServiceBubble from "@/components/common/EmitServiceBubble.vue";
 import ComparisonValueRow from "./table/ComparisonValueRow.vue";
 import EditableComparisonRow from "./table/EditableComparisonRow.vue";
+import CraftingQualityComparison from "./CraftingQualityComparison.vue";
 
 const activityStore = useActivityStore();
 const itemsStore = useItemsStore();
@@ -36,7 +37,7 @@ const gs2Ctx = useGearContext(1, {
 });
 
 const borderClass = computed(
-  () => `border-${gs1Ctx.recipe.value?.relatedSkills[0]}`
+  () => `border-${gs1Ctx.recipe.value?.relatedSkills[0]}`,
 );
 
 const rewardCount = computed(() => {
@@ -49,10 +50,18 @@ const sm2 = useSkillModifiers(gs2Ctx);
 
 const canUseFineMaterials = computed(() => {
   const upgraded = itemsStore.itemsByCategory["upgraded_crafted"].map(
-    ({ id }) => id
+    ({ id }) => id,
   );
   const reward = Object.keys(gs1Ctx.recipe.value.itemRewards)[0];
   return !upgraded.includes(reward);
+});
+
+const resultHasCO = computed(() => {
+  const [itemId] = Object.keys(gs1Ctx.recipe.value.itemRewards);
+  return (
+    itemId in itemsStore.allGearItems &&
+    itemsStore.allGearItems[itemId].type === "crafted"
+  );
 });
 
 const tableRows = computed(() => {
@@ -60,7 +69,7 @@ const tableRows = computed(() => {
     key,
     isPercent = false,
     negative = false,
-    modifyValue = (item) => item
+    modifyValue = (item) => item,
   ) => {
     const multi = isPercent ? 100 : 1;
     const v1 = sm1[key].value * multi;
@@ -88,7 +97,7 @@ const tableRows = computed(() => {
         "stepsPerRewardRoll",
         false,
         false,
-        (item) => item / rewardCount.value
+        (item) => item / rewardCount.value,
       ),
     },
     {
@@ -246,4 +255,11 @@ const editableRows = computed(() => {
       @change="onRowChange"
     />
   </comparison-table-shell>
+  <crafting-quality-comparison
+    v-if="resultHasCO"
+    :use-fine-materials="activityStore.useFineMaterials"
+    :gs1Ctx="gs1Ctx"
+    :gs2Ctx="gs2Ctx"
+    :border-class="borderClass"
+  />
 </template>

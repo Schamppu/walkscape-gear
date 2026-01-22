@@ -12,6 +12,7 @@ defineProps({
   <details open>
     <summary>{{ title }}</summary>
 
+    <slot name="prefix" />
     <div v-if="wrapped" :class="['comparison-table-wrapper', borderClass]">
       <table class="comparison-table">
         <TableHead />
