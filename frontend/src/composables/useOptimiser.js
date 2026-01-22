@@ -124,20 +124,29 @@ export function useOptimiser() {
 
     const itemsBySlot = Object.fromEntries(
       gearTypes.map((slot) => {
-        const items = Object.values(baseCtx.allGearItems.value)
-          .filter(
-            ({ gearType, type, egg }) =>
-              gearType === slot || type === slot || (slot === "pet" && egg),
-          )
-          .map((item) => {
-            if (item.type !== "crafted") return item;
-            if (item.id in baseCtx.ownedItems.value) {
-              const owned = baseCtx.ownedItems.value[item.id];
-              return { ...item, quality: owned.quality };
-            } else return item;
-          });
+        const items = Object.values(baseCtx.allGearItems.value).filter(
+          ({ gearType, type, egg }) =>
+            gearType === slot || type === slot || (slot === "pet" && egg),
+        );
 
-        const filteredItems = filterItems(items);
+        const qualityItems = items.map((item) => {
+          if (
+            (!["crafted", "consumable"].includes(item.type) &&
+              slot !== "pet") ||
+            !(item.id in baseCtx.ownedItems.value)
+          ) {
+            return item;
+          } else if (item.id in baseCtx.ownedItems.value) {
+            const owned = baseCtx.ownedItems.value[item.id];
+            return {
+              ...item,
+              quality: owned.quality,
+              quality2: owned.quality2,
+            };
+          }
+        });
+
+        const filteredItems = filterItems(qualityItems);
         const mappedItems = filteredItems.flatMap(mapItemToStats);
         const upgradeFiltered = ["tool", "ring"].includes(slot)
           ? mappedItems
