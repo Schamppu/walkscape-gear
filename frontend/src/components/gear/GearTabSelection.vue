@@ -41,6 +41,7 @@ const handleClick = (idx) => {
   gap: $sm;
   align-items: center;
   justify-content: center;
+  border-radius: $lg;
 
   &:hover {
     background-color: $boxPrimaryBackground;
