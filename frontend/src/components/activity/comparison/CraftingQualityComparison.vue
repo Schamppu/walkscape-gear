@@ -53,7 +53,7 @@ const craftingOdds = computed(() => {
     gs1: value,
     gs2: stats2[index],
     oddsComp: value.value - stats2[index].value,
-    matsComp: value.materialsNeeded - stats2[index].materialsNeeded,
+    matsComp: stats2[index].materialsNeeded - value.materialsNeeded,
   }));
   return out;
 });
@@ -100,6 +100,7 @@ const craftingOdds = computed(() => {
         :left="n(gs1.materialsNeeded, 1)"
         :right="n(gs2.materialsNeeded, 1)"
         :comp="matsComp"
+        :reverse="true"
       />
       <comparison-value-row
         v-if="selectedComparison === 1"
