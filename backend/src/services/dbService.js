@@ -36,6 +36,7 @@ const ALLOWED_SETTINGS = new Set([
   "shownDropRate",
   "thousandSeparator",
   "decimalSeparator",
+  "optimiserPriority",
 ]);
 
 async function markUserActiveThrottled(userUuid) {
@@ -80,7 +81,7 @@ export async function getUserStats(userUuid) {
 export async function upsertUserStats(userUuid, statsObj) {
   await ensureUser(userUuid);
   const validEntries = Object.entries(statsObj).filter(([stat]) =>
-    ALLOWED_STATS.has(stat)
+    ALLOWED_STATS.has(stat),
   );
   if (validEntries.length === 0) throw new Error("No valid stats provided");
   await Promise.all(
@@ -89,8 +90,8 @@ export async function upsertUserStats(userUuid, statsObj) {
         where: { userUuid_stat: { userUuid, stat } },
         update: { stat, value },
         create: { userUuid, stat, value },
-      })
-    )
+      }),
+    ),
   );
 }
 
@@ -127,22 +128,22 @@ export async function upsertUserOwnedItems(userUuid, items) {
           quality: item.quality,
           quality2: item.quality2,
         },
-      })
-    )
+      }),
+    ),
   );
 }
 
 export async function getUserFactionReputations(userUuid) {
   const reps = await prisma.factionReputation.findMany({ where: { userUuid } });
   return Object.fromEntries(
-    reps.map(({ reputation, value }) => [reputation, value])
+    reps.map(({ reputation, value }) => [reputation, value]),
   );
 }
 
 export async function upsertUserFactionReputations(userUuid, reputationsObj) {
   await ensureUser(userUuid);
   const validEntries = Object.entries(reputationsObj).filter(([reputation]) =>
-    ALLOWED_REPUTATIONS.has(reputation)
+    ALLOWED_REPUTATIONS.has(reputation),
   );
   if (validEntries.length === 0)
     throw new Error("No valid reputations provided");
@@ -152,8 +153,8 @@ export async function upsertUserFactionReputations(userUuid, reputationsObj) {
         where: { userUuid_reputation: { userUuid, reputation } },
         update: { reputation, value },
         create: { userUuid, reputation, value },
-      })
-    )
+      }),
+    ),
   );
 }
 
@@ -288,14 +289,17 @@ export async function getUserSettings(userUuid) {
     where: { userUuid },
   });
   return Object.fromEntries(
-    settings.map(({ setting, value, display }) => [setting, { value, display }])
+    settings.map(({ setting, value, display }) => [
+      setting,
+      { value, display },
+    ]),
   );
 }
 
 export async function upsertUserSettings(userUuid, settingsArr) {
   await ensureUser(userUuid);
   const validEntries = settingsArr.filter(({ setting }) =>
-    ALLOWED_SETTINGS.has(setting)
+    ALLOWED_SETTINGS.has(setting),
   );
   if (validEntries.length === 0) throw new Error("No valid settings provided");
 
@@ -306,6 +310,6 @@ export async function upsertUserSettings(userUuid, settingsArr) {
         update: { value, display },
         create: { userUuid, setting, value, display },
       });
-    })
+    }),
   );
 }
