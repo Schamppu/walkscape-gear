@@ -16,6 +16,7 @@ import {
   getReq,
   filterItemsForReq,
   getRequirementCandidates,
+  contributesToReq,
 } from "@/utils/optimiser/requirements";
 
 export function useOptimiser() {
@@ -54,8 +55,17 @@ export function useOptimiser() {
   function reqsBeamSearch(baseCandidate, gearOptions, req) {
     const BEAM_WIDTH = 3;
     const { gearSet, slotCounts } = baseCandidate;
+    const startingFulfilled = Object.entries(gearSet).filter(([, item]) =>
+      contributesToReq(item, req),
+    ).length;
+
     let candidates = [
-      { gearSet, score: startScore(), slotCounts, fulfilled: 0 },
+      {
+        gearSet,
+        score: startScore(),
+        slotCounts,
+        fulfilled: startingFulfilled,
+      },
     ];
 
     const candidatesPool = getRequirementCandidates(gearOptions, req);
