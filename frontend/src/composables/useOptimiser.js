@@ -7,7 +7,7 @@ import useBaseContext from "@/composables/context/useBaseContext";
 import { useShowItemForActivity } from "@/composables/useShowItemForActivity";
 import { useSkillModifiers } from "./useSkillModifiers";
 import { useRequirements } from "./useRequirements";
-import { optimiserPriorities } from "@/constants/optimizerPriorities";
+import { optimiserPriorities } from "@/constants/optimiserPriorities";
 import { gearTypes, gearSlots } from "@/utils/createEmptyGearSet";
 import { intersect } from "@/utils/intersect";
 import { usedAttrs } from "@/utils/qualityAttrs";
@@ -323,7 +323,7 @@ export function useOptimiser() {
   };
 
   function requirementsFill(gearOptions) {
-    const reqs = baseCtx.activity.value.requirements;
+    const reqs = baseCtx.source.value.requirements;
     let candidates = [{ gearSet: {}, score: startScore(), slotCounts: {} }];
     const requiredOptions = getItemOptions(gearOptions, "required");
 

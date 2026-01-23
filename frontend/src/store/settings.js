@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { getSettings, upsertSettings } from "@/utils/axios/db_routes";
 import { useNotificationStore } from "./notifications";
-import { optimiserPriorities } from "@/constants/optimizerPriorities";
+import { optimiserPriorities } from "@/constants/optimiserPriorities";
 import { thousandSeparators, decimalSeparators } from "@/constants/separators";
 
 export const useSettingsStore = defineStore("settingsStore", {
@@ -234,8 +234,8 @@ export const useSettingsStore = defineStore("settingsStore", {
             value: true,
             showEnable: false,
           },
-          optimiserPriority: {
-            label: "Optimiser priority",
+          activityOptimiserPriority: {
+            label: "Activity optimiser priority",
             display: 0,
             displayOptions: optimiserPriorities.map(({ name }) => name),
             value: true,
