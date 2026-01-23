@@ -203,8 +203,6 @@ export function useOptimiser() {
     const reqSets = requirementsFill(options);
     const primarySets = gearFill(gearSlots, reqSets, options, "primary");
 
-    console.log(primarySets);
-
     const [usedSet] = primarySets;
 
     await gearStore.unequipAll();
