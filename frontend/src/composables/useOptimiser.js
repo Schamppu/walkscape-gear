@@ -345,10 +345,6 @@ export function useOptimiser() {
           .map(([slot, items]) => [slot, filterItemsForReq(req, items)])
           .filter(([, value]) => value.length),
       );
-
-      console.log(filteredGearSlots);
-      console.log(candidates);
-
       candidates.forEach((candidate) => {
         next = next.concat(reqsBeamSearch(candidate, filteredGearSlots, req));
       });
@@ -367,14 +363,25 @@ export function useOptimiser() {
     return 1;
   };
 
-  const nextKey = (slotName, slotCounts) => {
-    const count = slotName in slotCounts ? slotCounts[slotName] : 0;
-    if (["ring", "tool"].includes(slotName)) {
-      return `${slotName}${Math.min(count + 1, slotMax(slotName))}`;
-    } else {
-      return slotName;
+  function getRequirementCandidates(gearOptions, req) {
+    const result = [];
+
+    for (const [slotKey, items] of Object.entries(gearOptions)) {
+      const max = slotMax(slotKey);
+
+      for (let i = 1; i <= max; i++) {
+        const slotName = max > 1 ? `${slotKey}${i}` : slotKey;
+
+        for (const item of items) {
+          if (contributesToReq(item, req)) {
+            result.push({ slotName, slotKey, item });
+          }
+        }
+      }
     }
-  };
+
+    return result.sort((a, b) => compareScore(a.item.score, b.item.score));
+  }
 
   function reqsBeamSearch(baseCandidate, gearOptions, req) {
     const BEAM_WIDTH = 3;
@@ -383,35 +390,42 @@ export function useOptimiser() {
       { gearSet, score: startScore(), slotCounts, fulfilled: 0 },
     ];
 
-    Object.entries(gearOptions).forEach(([slotName, filteredOptions]) => {
+    const candidatesPool = getRequirementCandidates(gearOptions, req);
+    console.log("candidatesPool", candidatesPool);
+
+    for (const { slotName, slotKey, item } of candidatesPool) {
       const next = [];
 
-      candidates.forEach(({ gearSet, slotCounts, fulfilled }) => {
-        const slotKey = nextKey(slotName, slotCounts);
-        const prevCount = slotName in slotCounts ? slotCounts[slotName] : 0;
+      for (const { gearSet, fulfilled, slotCounts } of candidates) {
+        // Skip if slot already used
+        if (gearSet[slotName]) continue;
 
-        filteredOptions.forEach((item) => {
-          const contribution = contributesToReq(item, req);
+        // Skip if requirement already fulfilled
+        if (fulfilled >= req.quantity) continue;
 
-          // Skip items that don't help if requirement already fulfilled
-          if (fulfilled >= req.quantity && contribution >= 0) {
-            return;
-          }
+        const newSet = {
+          ...gearSet,
+          [slotName]: item,
+        };
 
-          const newFulfilled = Math.min(req.quantity, fulfilled + contribution);
-          const newSet = { ...gearSet, [slotKey]: item };
-          const score = getGearSetStats(newSet);
-          const newSlotCount = { ...slotCounts, [slotName]: prevCount + 1 };
-          next.push({
-            gearSet: newSet,
-            score,
-            slotCounts: newSlotCount,
-            fulfilled: newFulfilled,
-          });
+        const newFulfilled = fulfilled + 1;
+        const score = getGearSetStats(newSet);
+        const prevCount = slotKey in slotCounts ? slotCounts[slotKey] : 0;
+        const newSlotCount = { ...slotCounts, [slotName]: prevCount + 1 };
+
+        next.push({
+          gearSet: newSet,
+          fulfilled: newFulfilled,
+          score,
+          slotCounts: newSlotCount,
         });
-      });
+      }
 
-      const newCandidates = next
+      // console.log(req);
+      // console.log(next);
+
+      candidates = candidates
+        .concat(next)
         .sort((a, b) => {
           // Prefer fulfilled
           if (a.fulfilled !== b.fulfilled) {
@@ -426,9 +440,7 @@ export function useOptimiser() {
           return compareScore(b.score, a.score);
         })
         .slice(0, BEAM_WIDTH);
-
-      candidates = newCandidates.length ? newCandidates : candidates;
-    });
+    }
 
     return candidates.filter((c) => c.fulfilled >= req.quantity);
   }
@@ -514,6 +526,7 @@ export function useOptimiser() {
 
     const [usedSet] = primarySets;
 
+    await gearStore.unequipAll();
     await gearStore.equipMultiple(usedSet.gearSet, true);
   };
 
