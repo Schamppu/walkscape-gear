@@ -112,7 +112,7 @@ export function useRequirements(ctx) {
           value =
             ((requirement.activity &&
               context.source.value.id === requirement.activity) ||
-              !requirement.source) &&
+              !requirement.activity) &&
             ((requirement.keywords &&
               requirement.keywords.every((kw) =>
                 context.source.value.keywords.includes(kw),
@@ -301,10 +301,11 @@ export function useRequirements(ctx) {
         };
       } else if (type === "activityType") {
         const act = activityStore.activitiesMap[requirement.activity];
-        if (requirement.keywords) {
+        if (requirement.keywords?.keywords?.length) {
           const kws = requirement.keywords.map(
             (kw) => dataStore.keywordsMap[kw],
           );
+
           out = {
             prefix: `While${opposite ? " NOT" : ""} doing`,
             text: `${kws[0].name} activity`,

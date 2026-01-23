@@ -89,7 +89,8 @@ export function useSkillModifiers(ctx) {
     if (!workRequired) return 0;
     return (
       Math.ceil(
-        (workRequired / (1 + workEfficiency.value)) * stepsRequiredPercent.value
+        (workRequired / (1 + workEfficiency.value)) *
+          stepsRequiredPercent.value,
       ) + stepsRequiredFlat.value
     );
   });
@@ -104,6 +105,14 @@ export function useSkillModifiers(ctx) {
 
   const stepsPerRewardRoll = computed(() => {
     return stepsPerAction.value / (1 + doubleRewards.value);
+  });
+
+  const stepsPerFineRoll = computed(() => {
+    return stepsPerRewardRoll.value / (1 + fineMaterialFind.value);
+  });
+
+  const stepsPerCollectibleRoll = computed(() => {
+    return stepsPerRewardRoll.value / (1 + findCollectibles.value);
   });
 
   const craftsPerMaterial = computed(() => {
@@ -173,6 +182,8 @@ export function useSkillModifiers(ctx) {
     uncappedStepsPerCompletion,
     stepsPerCompletion,
     stepsPerRewardRoll,
+    stepsPerFineRoll,
+    stepsPerCollectibleRoll,
     craftsPerMaterial,
     xpRewards,
     xpPerStep,

@@ -44,8 +44,8 @@ const sumApplicable = computed(() => {
   const totalObj = !(type in totalsByStat.value)
     ? empty
     : !(key in totalsByStat.value[type])
-    ? empty
-    : totalsByStat.value[type][key];
+      ? empty
+      : totalsByStat.value[type][key];
 
   const { sum, positive, negative } = totalObj;
 

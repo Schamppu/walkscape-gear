@@ -32,7 +32,7 @@ const { checkRequirements, mapRequirementsText } = useRequirements(ctx);
 const isOpen = ref(gearSettings.value.openStatRequirements.value);
 
 const storeStat = computed(
-  () => dataStore.getStatByType(props.stat.type) || props.stat
+  () => dataStore.getStatByType(props.stat.type) || props.stat,
 );
 
 const iconPath = computed(() => {
@@ -54,7 +54,7 @@ const statActive = computed(() => {
 });
 
 const reqs = computed(() =>
-  mapRequirementsText(props.requirements, requirementsActive.value)
+  mapRequirementsText(props.requirements, requirementsActive.value),
 );
 
 const toggle = () => {

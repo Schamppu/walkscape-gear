@@ -3,7 +3,7 @@ import { toDeepRaw } from "./rawData";
 
 // Create a quality rank mapping for sorting
 const qualityRank = Object.fromEntries(
-  qualityOptions.map(({ value }, index) => [value, index])
+  qualityOptions.map(({ value }, index) => [value, index]),
 );
 
 export const sumAttrs = (itemAttrs, qualityAttrs, buffs, quality) => {
@@ -63,7 +63,7 @@ export const sumAttrs = (itemAttrs, qualityAttrs, buffs, quality) => {
 
 export const sumBuffAttrs = (buffs, quality) => {
   const buffData = buffs.flatMap(({ data }) =>
-    data.flatMap(({ buffs }) => buffs)
+    data.flatMap(({ buffs }) => buffs),
   );
   if (!buffData || buffData.length === 0) {
     return [];

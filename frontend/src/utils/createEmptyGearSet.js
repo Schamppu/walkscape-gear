@@ -1,3 +1,45 @@
+export const gearTypes = [
+  "head",
+  "cape",
+  "back",
+  "chest",
+  "primary",
+  "secondary",
+  "hands",
+  "legs",
+  "neck",
+  "feet",
+  "ring",
+  "tool",
+  "pet",
+  "consumable",
+  "location",
+];
+
+export const gearSlots = [
+  "head",
+  "cape",
+  "back",
+  "chest",
+  "primary",
+  "secondary",
+  "hands",
+  "legs",
+  "neck",
+  "feet",
+  "ring1",
+  "ring2",
+  "tool1",
+  "tool2",
+  "tool3",
+  "tool4",
+  "tool5",
+  "tool6",
+  "pet",
+  "consumable",
+  "service",
+];
+
 export function createEmptyGearSet() {
   return {
     head: null,

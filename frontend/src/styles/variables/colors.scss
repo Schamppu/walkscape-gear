@@ -136,9 +136,9 @@ $faction-colors: (
 }
 
 .negative {
-  color: $txNegative;
+  color: $txNegative !important;
 }
 
 .positive {
-  color: $txPositive;
+  color: $txPositive !important;
 }

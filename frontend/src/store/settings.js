@@ -1,6 +1,10 @@
 import { defineStore } from "pinia";
 import { getSettings, upsertSettings } from "@/utils/axios/db_routes";
 import { useNotificationStore } from "./notifications";
+import {
+  activityOptimiserPriorities,
+  recipeOptimiserPriorities,
+} from "@/constants/optimiserPriorities";
 import { thousandSeparators, decimalSeparators } from "@/constants/separators";
 
 export const useSettingsStore = defineStore("settingsStore", {
@@ -76,7 +80,7 @@ export const useSettingsStore = defineStore("settingsStore", {
         notificationStore.success(
           `${changedSettingsArray.length} setting${
             changedSettingsArray.length > 1 ? "s" : ""
-          } saved`
+          } saved`,
         );
 
         // Clear changed settings after successful save
@@ -230,6 +234,20 @@ export const useSettingsStore = defineStore("settingsStore", {
             label: "Show undo/redo buttons",
             display: 2,
             displayOptions: ["Hidden", "Gear Tab", "Static buttons"],
+            value: true,
+            showEnable: false,
+          },
+          activityOptimiserPriority: {
+            label: "Activity optimiser priority",
+            display: 0,
+            displayOptions: activityOptimiserPriorities.map(({ name }) => name),
+            value: true,
+            showEnable: false,
+          },
+          recipeOptimiserPriority: {
+            label: "Recipe optimiser priority",
+            display: 0,
+            displayOptions: recipeOptimiserPriorities.map(({ name }) => name),
             value: true,
             showEnable: false,
           },

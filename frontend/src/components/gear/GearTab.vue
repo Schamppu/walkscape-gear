@@ -6,6 +6,7 @@ import UndoRedoButtons from "@/components/common/UndoRedoButtons.vue";
 import GearSelection from "./selection/GearSelection.vue";
 import GearButtons from "./export/GearButtons.vue";
 import GearSets from "./gearset/GearSets.vue";
+import GearOptimiser from "./optimiser/GearOptimiser.vue";
 import GearTabSelection from "./GearTabSelection.vue";
 import { useSettingsStore } from "@/store/settings";
 import { useGearStore } from "@/store/gear";
@@ -31,6 +32,7 @@ onMounted(async () => {
     <details open>
       <summary>Gear Set</summary>
       <section class="gear-set">
+        <gear-optimiser />
         <gear-sets />
         <div class="options">
           <label v-if="gearSettings.showOwned.display === 1">

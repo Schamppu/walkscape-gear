@@ -7,6 +7,24 @@ export function useShowItemForActivity(ctx) {
   const { checkRequirements } = useRequirements(ctx);
   const { hasCollectibleDrops, hasFineDrops } = useLootTables(ctx);
 
+  const usefulAbilities = (item, activity) => {
+    if (!activity || !item.abilities) return false;
+
+    const abilityReqs = activity.requirements
+      .filter(({ type }) => type === "abilityAvailable")
+      .map(({ requirement }) => requirement.ability);
+
+    const itemAbilityNames = item.abilities
+      .flatMap((abilityVal) => {
+        if (typeof abilityVal === "string") return abilityVal;
+        const { quality } = item;
+        const { ability, unlockLevel } = abilityVal;
+        return quality >= unlockLevel ? ability : null;
+      })
+      .filter((value) => value);
+    return abilityReqs.filter((ability) => itemAbilityNames.includes(ability));
+  };
+
   const usefulKeywords = (item, activity, service) => {
     if (!activity || !item.keywords) return false;
 
@@ -59,7 +77,7 @@ export function useShowItemForActivity(ctx) {
       const benefitsCO = Object.keys(activity.itemRewards).some(
         (itemId) =>
           itemId in ctx.allGearItems.value &&
-          ctx.allGearItems.value[itemId].type === "crafted"
+          ctx.allGearItems.value[itemId].type === "crafted",
       );
 
       return statIsCO && benefitsCO;
@@ -83,7 +101,7 @@ export function useShowItemForActivity(ctx) {
     const usefulAttr = baseAttrs.filter((attr) => {
       const usedRequirements =
         attr?.requirements?.filter(
-          (req) => !unfilteredRequirementTypes.includes(req.type)
+          (req) => !unfilteredRequirementTypes.includes(req.type),
         ) || [];
 
       return (
@@ -108,7 +126,7 @@ export function useShowItemForActivity(ctx) {
     activity = null,
     service = null,
     quality = null,
-    isRecipe = null
+    isRecipe = null,
   ) => {
     // Use store state if parameters are not provided
     const currentActivity = activity || ctx.source.value;
@@ -130,20 +148,26 @@ export function useShowItemForActivity(ctx) {
 
     const hasUsefulKeywords =
       usefulKeywords(item, currentActivity, currentService).length > 0;
+    const hasUsefulAbilities = usefulAbilities(item, currentActivity) > 0;
+
     const usefulAttributes = usefulAttrs(
       item,
       currentActivity,
       currentQuality,
-      currentIsRecipe
+      currentIsRecipe,
     );
     const hasUsefulAttrs = usefulAttributes.length > 0;
     const hasTables = itemTables(item).length > 0;
-    return hasUsefulKeywords || hasUsefulAttrs || hasTables;
+
+    return (
+      hasUsefulKeywords || hasUsefulAttrs || hasUsefulAbilities || hasTables
+    );
   };
 
   return {
     showItemForActivity,
     usefulKeywords,
+    usefulAbilities,
     usefulAttrs,
     itemTables,
   };

@@ -1,9 +1,11 @@
 <script setup>
+import { onBeforeUnmount } from "vue";
+
 defineProps({
   modelValue: Boolean,
   title: {
     type: String,
-    default: '',
+    default: "",
   },
   showCloseButton: {
     type: Boolean,
@@ -11,34 +13,46 @@ defineProps({
   },
   width: {
     type: String,
-    default: '80%',
+    default: "80%",
   },
   maxWidth: {
     type: String,
-    default: '500px',
+    default: "500px",
   },
   minWidth: {
     type: String,
-    default: '300px',
+    default: "300px",
   },
   minHeight: {
     type: String,
-    default: '200px',
+    default: "200px",
   },
 });
 
-const emit = defineEmits(['update:modelValue', 'close']);
+const emit = defineEmits(["update:modelValue", "close"]);
+
+const onEsc = (e) => {
+  if (e.key === "Escape" || e.key === "Esc") {
+    emit("update:modelValue", false);
+    emit("close");
+  }
+};
+window.addEventListener("keydown", onEsc);
+// Clean up
+onBeforeUnmount(() => {
+  window.removeEventListener("keydown", onEsc);
+});
 
 function close() {
-  emit('update:modelValue', false);
-  emit('close');
+  emit("update:modelValue", false);
+  emit("close");
 }
 </script>
 
 <template>
   <div v-if="modelValue" class="modal-backdrop" @click.self="close">
-    <div 
-      class="modal-content" 
+    <div
+      class="modal-content"
       :style="{
         width: width,
         maxWidth: maxWidth,
@@ -46,23 +60,22 @@ function close() {
         minHeight: minHeight,
       }"
     >
-      <div v-if="title || showCloseButton || $slots.header" class="modal-header">
+      <div
+        v-if="title || showCloseButton || $slots.header"
+        class="modal-header"
+      >
         <slot name="header">
           <h2 v-if="title">{{ title }}</h2>
         </slot>
-        <button 
-          v-if="showCloseButton" 
-          class="close-btn" 
-          @click="close"
-        >
+        <button v-if="showCloseButton" class="close-btn" @click="close">
           ✕
         </button>
       </div>
-      
+
       <div class="modal-body">
         <slot />
       </div>
-      
+
       <div v-if="$slots.footer" class="modal-footer">
         <slot name="footer" />
       </div>
@@ -92,7 +105,7 @@ function close() {
 .modal-header {
   position: relative;
   margin-bottom: $base;
-  
+
   h2 {
     margin: 0;
     padding-right: $xlg; // Space for close button
@@ -108,7 +121,7 @@ function close() {
   font-size: $xlg;
   cursor: pointer;
   color: $txPrimary;
-  
+
   &:hover {
     opacity: 0.7;
   }

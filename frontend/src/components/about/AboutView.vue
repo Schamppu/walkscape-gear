@@ -54,11 +54,13 @@ defineEmits(["back"]);
         <ul>
           <li>Pets not in game data import</li>
           <li>Multiple issues with how rings are handled</li>
-          <li>Services shouldn't affect recipes without service requirements</li>
+          <li>
+            Services shouldn't affect recipes without service requirements
+          </li>
         </ul>
         <h3>Planned features</h3>
         <ul>
-          <li>Gear set optimizer</li>
+          <li>Gear set optimiser</li>
           <li>Comparing gear sets</li>
           <li>Steps to full inventory estimation</li>
           <li>Adding custom data (items, activities)</li>
