@@ -10,13 +10,16 @@ defineEmits(["close"]);
 <template>
   <base-modal
     :model-value="isOpen"
-    title="Gear Set Optimizer"
+    title="Gear Set Optimiser"
     width="80%"
     max-width="600px"
     min-height="600px"
     @update:model-value="$emit('close')"
   >
-    <p>pöö</p>
+    <p>Under Construction</p>
+    <p>Use the quick set function for now</p>
+    <p>You can set its target functionality in options</p>
+    <img src="/tyomaa.png" />
   </base-modal>
 </template>
 
