@@ -58,7 +58,7 @@ function close() {
         maxWidth: maxWidth,
         minWidth: minWidth,
         minHeight: minHeight,
-        maxHeight: '80vw',
+        maxHeight: '80vh',
       }"
     >
       <div
