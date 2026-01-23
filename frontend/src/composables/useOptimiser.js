@@ -20,8 +20,10 @@ export function useOptimiser() {
   const settingsStore = useSettingsStore();
   const { gearSettings } = storeToRefs(settingsStore);
 
-  const { showItemForActivity } = useShowItemForActivity(baseCtx);
-  const { checkRequirements } = useRequirements(baseCtx);
+  const { showItemForActivity, usefulKeywords, usefulAbilities } =
+    useShowItemForActivity(baseCtx);
+  const { checkRequirements, getLevelRequirementsMap } =
+    useRequirements(baseCtx);
 
   const selectedPriority = () => {
     return optimiserPriorities[gearSettings.value.optimiserPriority.display]
@@ -45,28 +47,40 @@ export function useOptimiser() {
   };
 
   const mapItemToStats = (item) => {
-    const getAttrs = (item, quality) =>
-      usedAttrs(item, quality)
-        // TODO check with gear context
-        .filter(({ requirements }) => checkRequirements(requirements, baseCtx))
-        .flatMap(({ stats }) => stats[0]);
+    const getAttrs = (item, quality) => {
+      const attrs = usedAttrs(item, quality);
+      return {
+        stats: attrs.flatMap(({ stats }) => stats[0]),
+        usefulStats: attrs
+          // TODO check with gear context
+          .filter(({ requirements }) =>
+            checkRequirements(requirements, baseCtx),
+          )
+          .flatMap(({ stats }) => stats[0]),
+      };
+    };
 
+    const base = { ...item, ...getAttrs(item, item.quality) };
     if (item.gearType === "ring") {
       const q2 = baseCtx.ownedItems.value[item.id].quality2;
       const out = [
-        { ...item, stats: getAttrs(item, item.quality) },
+        base,
         {
           ...item,
-          stats: getAttrs(item, q2 ? q2 : item.quality),
+          ...getAttrs(item, q2 ? q2 : item.quality),
         },
       ];
       return out;
     } else {
-      return {
-        ...item,
-        stats: getAttrs(item, item.quality),
-      };
+      return base;
     }
+  };
+
+  const getItemScores = (slot, items, baseScore) => {
+    return items.map((item) => ({
+      ...item,
+      score: compareScore(getGearSetStats({ [slot]: item }), baseScore),
+    }));
   };
 
   const filterDirectUpgrades = (items) => {
@@ -98,17 +112,20 @@ export function useOptimiser() {
 
     const normalized = items.map((item) => ({
       ...item,
-      _stats: normalizeStats(item.stats),
+      _stats: normalizeStats(item.usefulStats),
     }));
 
-    return normalized
-      .filter(
-        (item, i) =>
-          !normalized.some(
-            (other, j) => i !== j && dominates(other._stats, item._stats),
-          ),
-      )
-      .map(({ _stats, ...item }) => item);
+    return (
+      normalized
+        .filter(
+          (item, i) =>
+            !normalized.some(
+              (other, j) => i !== j && dominates(other._stats, item._stats),
+            ),
+        )
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        .map(({ _stats, ...item }) => item)
+    );
   };
 
   const filterUsefulStats = (items, target = "stepsPerRewardRoll") => {
@@ -118,13 +135,43 @@ export function useOptimiser() {
       xpPerStep: [...baseStats, "bonus_experience"],
     };
 
-    const usefulStats = usefulStatsByTarget[target];
+    const targetStats = usefulStatsByTarget[target];
     return items.filter(
-      ({ stats }) =>
-        stats.filter(
-          ({ stat, isNegative }) => !isNegative && usefulStats.includes(stat),
+      ({ usefulStats }) =>
+        usefulStats.filter(
+          ({ stat, isNegative }) => !isNegative && targetStats.includes(stat),
         ).length > 0,
     );
+  };
+
+  const filterMultislot = (gearSet, opts, slotKey, slotName) => {
+    const previousSlots = Object.entries(gearSet)
+      .filter(([slot]) => slot.includes(slotKey))
+      .map(([, item]) => {
+        if (!item) return false;
+        const { id, quality } = item;
+        return opts.findIndex(
+          (item) => item.id === id && item.quality === quality,
+        );
+      });
+
+    const filterBannedKeywords = (item) => {
+      const otherSlotsItems = Object.entries(gearSet)
+        .filter(
+          ([slot, item]) => item && slot !== slotName && slot.includes(slotKey),
+        )
+        .map(([, item]) => item);
+      const equippedKeywords = otherSlotsItems.flatMap((item) => item.keywords);
+      const bannedKeywords = equippedKeywords.flatMap(
+        (keyword) => dataStore.keywordsMap[keyword]?.bannedKeywords || [],
+      );
+      const commonKeywords = intersect(item.keywords, bannedKeywords);
+      return commonKeywords.length === 0;
+    };
+
+    return opts.filter((item, index) => {
+      return !previousSlots.includes(index) && filterBannedKeywords(item);
+    });
   };
 
   const getGearOptions = () => {
@@ -134,6 +181,8 @@ export function useOptimiser() {
       items.filter((item) => {
         return filterOwned(item) && showItemForActivity(item);
       });
+
+    const baseScore = getGearSetStats({});
 
     const itemsBySlot = Object.fromEntries(
       gearTypes.map((slot) => {
@@ -161,19 +210,40 @@ export function useOptimiser() {
 
         const filteredItems = filterItems(qualityItems);
         const mappedItems = filteredItems.flatMap(mapItemToStats);
+        const scoredItems = getItemScores(slot, mappedItems, baseScore);
+
+        const keywordItems = scoredItems.filter(
+          (item) =>
+            usefulKeywords(item, baseCtx.activity.value, null).length > 0,
+        );
+        const abilityItems = scoredItems.filter(
+          (item) => usefulAbilities(item, baseCtx.activity.value).length > 0,
+        );
+
         const upgradeFiltered = ["tool", "ring"].includes(slot)
-          ? mappedItems
-          : filterDirectUpgrades(mappedItems);
+          ? scoredItems
+          : filterDirectUpgrades(scoredItems);
         const statFiltered = filterUsefulStats(
           upgradeFiltered,
           selectedPriority(),
         );
 
-        return [slot, statFiltered];
+        return [
+          slot,
+          {
+            required: keywordItems.concat(abilityItems) || [],
+            primary: statFiltered || [],
+          },
+        ];
       }),
     );
     return itemsBySlot;
   };
+
+  const getItemOptions = (options, key) =>
+    Object.fromEntries(
+      Object.entries(options).map(([slot, items]) => [slot, items[key]]),
+    );
 
   const startScore = () => {
     const prio = selectedPriority();
@@ -187,81 +257,264 @@ export function useOptimiser() {
     if (prio === "xpPerStep") return value - best;
   };
 
-  function greedyOptimize(gearSlots, gearOptions) {
-    const gearSet = {};
-
-    for (let slotIndex = 0; slotIndex < gearSlots.length; slotIndex++) {
-      const slotName = gearSlots[slotIndex];
-      const last = slotName.slice(-1);
-      const slotKey = isNaN(last) ? slotName : slotName.slice(0, -1);
-
-      const options = gearOptions[slotKey]?.length
-        ? gearOptions[slotKey]
-        : [null];
-
-      const previousSlots = Object.entries(gearSet)
-        .filter(([slot]) => slot.includes(slotKey))
-        .map(([, item]) => {
-          if (!item) return false;
-          const { id, quality } = item;
-          return options.findIndex(
-            (item) => item.id === id && item.quality === quality,
-          );
-        });
-
-      const filterMultislot = (opts) => {
-        const filterBannedKeywords = (item) => {
-          const otherSlotsItems = Object.entries(gearSet)
-            .filter(
-              ([slot, item]) =>
-                item && slot !== slotName && slot.includes(slotKey),
-            )
-            .map(([, item]) => item);
-          const equippedKeywords = otherSlotsItems.flatMap(
-            (item) => item.keywords,
-          );
-          const bannedKeywords = equippedKeywords.flatMap(
-            (keyword) => dataStore.keywordsMap[keyword]?.bannedKeywords || [],
-          );
-          const commonKeywords = intersect(item.keywords, bannedKeywords);
-          return commonKeywords.length === 0;
-        };
-
-        return opts.filter(
-          (item, index) =>
-            !previousSlots.includes(index) && filterBannedKeywords(item),
-        );
+  const getReq = ({ type, requirement }) => {
+    if (type === "keywordEquipped") {
+      return {
+        keyword: requirement.keyword,
+        quantity: 1,
+        level: 1,
       };
+    } else if (type === "distinctKeywordItemsEquipped") {
+      return {
+        keyword: requirement.keywords[0],
+        quantity: requirement.quantity,
+        level: 1,
+      };
+    } else if (type === "keywordWithLevelEquipped") {
+      return {
+        keyword: requirement.keyword,
+        quantity: 1,
+        level: requirement.level,
+      };
+    } else if (type === "abilityAvailable") {
+      return {
+        ability: requirement.ability,
+        quantity: 1,
+        level: 1,
+      };
+    }
+  };
 
-      const filteredOptions = isNaN(last) ? options : filterMultislot(options);
+  function contributesToReq(item, req) {
+    if (!item) return 0;
 
-      let bestItem = null;
-      let bestScore = startScore();
+    if ("keyword" in req) {
+      if (!item.keywords.includes(req.keyword)) return 0;
+      if (req.level && item.level < req.level) return 0;
 
-      for (const item of filteredOptions) {
-        // Temporarily equip
-        gearSet[slotName] = item;
+      return 1;
+    } else if ("ability" in req) {
+      return 1;
+    }
+  }
 
-        const score = getGearSetStats({ ...gearSet });
+  const filterItemsForReq = (req, items) => {
+    return items.filter((item) => {
+      if ("keyword" in req) {
+        return (
+          item.keywords?.includes(req.keyword) &&
+          (req.level > 1
+            ? Object.values(getLevelRequirementsMap(item.requirements))[0] >
+              req.level
+            : true)
+        );
+      } else if ("ability" in req && "abilities" in item) {
+        const itemAbilityNames = item.abilities
+          .flatMap((abilityVal) => {
+            if (typeof abilityVal === "string") return abilityVal;
+            const { quality } = item;
+            const { ability, unlockLevel } = abilityVal;
+            return quality >= unlockLevel ? ability : null;
+          })
+          .filter((value) => value);
+        return itemAbilityNames.includes(req.ability);
+      }
+    });
+  };
 
-        if (compareScore(score, bestScore) > 0) {
-          bestScore = score;
-          bestItem = item;
+  function requirementsFill(gearOptions) {
+    const reqs = baseCtx.activity.value.requirements;
+    let candidates = [{ gearSet: {}, score: startScore(), slotCounts: {} }];
+    const requiredOptions = getItemOptions(gearOptions, "required");
+
+    const handledReqTypes = [
+      "distinctKeywordItemsEquipped",
+      "keywordEquipped",
+      "keywordWithLevelEquipped",
+      "abilityAvailable",
+    ];
+
+    reqs.forEach((requirement) => {
+      if (!handledReqTypes.includes(requirement.type)) return;
+      let next = [];
+
+      const req = getReq(requirement);
+
+      const filteredGearSlots = Object.fromEntries(
+        Object.entries(requiredOptions)
+          .map(([slot, items]) => [slot, filterItemsForReq(req, items)])
+          .filter(([, value]) => value.length),
+      );
+
+      console.log(filteredGearSlots);
+      console.log(candidates);
+
+      candidates.forEach((candidate) => {
+        next = next.concat(reqsBeamSearch(candidate, filteredGearSlots, req));
+      });
+
+      const newCandidates = next
+        .sort((a, b) => compareScore(b.score, a.score))
+        .slice(0, 3);
+      candidates = newCandidates.length ? newCandidates : candidates;
+    });
+    return candidates;
+  }
+
+  const slotMax = (slotName) => {
+    if (slotName === "tool") return 6;
+    if (slotName === "ring") return 2;
+    return 1;
+  };
+
+  const nextKey = (slotName, slotCounts) => {
+    const count = slotName in slotCounts ? slotCounts[slotName] : 0;
+    if (["ring", "tool"].includes(slotName)) {
+      return `${slotName}${Math.min(count + 1, slotMax(slotName))}`;
+    } else {
+      return slotName;
+    }
+  };
+
+  function reqsBeamSearch(baseCandidate, gearOptions, req) {
+    const BEAM_WIDTH = 3;
+    const { gearSet, slotCounts } = baseCandidate;
+    let candidates = [
+      { gearSet, score: startScore(), slotCounts, fulfilled: 0 },
+    ];
+
+    Object.entries(gearOptions).forEach(([slotName, filteredOptions]) => {
+      const next = [];
+
+      candidates.forEach(({ gearSet, slotCounts, fulfilled }) => {
+        const slotKey = nextKey(slotName, slotCounts);
+        const prevCount = slotName in slotCounts ? slotCounts[slotName] : 0;
+
+        filteredOptions.forEach((item) => {
+          const contribution = contributesToReq(item, req);
+
+          // Skip items that don't help if requirement already fulfilled
+          if (fulfilled >= req.quantity && contribution >= 0) {
+            return;
+          }
+
+          const newFulfilled = Math.min(req.quantity, fulfilled + contribution);
+          const newSet = { ...gearSet, [slotKey]: item };
+          const score = getGearSetStats(newSet);
+          const newSlotCount = { ...slotCounts, [slotName]: prevCount + 1 };
+          next.push({
+            gearSet: newSet,
+            score,
+            slotCounts: newSlotCount,
+            fulfilled: newFulfilled,
+          });
+        });
+      });
+
+      const newCandidates = next
+        .sort((a, b) => {
+          // Prefer fulfilled
+          if (a.fulfilled !== b.fulfilled) {
+            return b.fulfilled - a.fulfilled;
+          }
+          // Prefer fewer slots used
+          const slotsA = Object.keys(a.gearSet).length;
+          const slotsB = Object.keys(b.gearSet).length;
+          if (slotsA !== slotsB) {
+            return slotsA - slotsB;
+          }
+          return compareScore(b.score, a.score);
+        })
+        .slice(0, BEAM_WIDTH);
+
+      candidates = newCandidates.length ? newCandidates : candidates;
+    });
+
+    return candidates.filter((c) => c.fulfilled >= req.quantity);
+  }
+
+  function beamSearch(baseCandidate, gearSlots, gearOptions) {
+    const BEAM_WIDTH = 3;
+    let candidates = [baseCandidate];
+
+    for (const slotName of gearSlots) {
+      // Skip slots already filled by requirements
+      if (baseCandidate.gearSet[slotName]) {
+        continue;
+      }
+
+      const slotKey = slotName.replace(/\d+$/, "");
+      const options = gearOptions[slotKey]?.length ? gearOptions[slotKey] : [];
+
+      const next = [];
+
+      for (const candidate of candidates) {
+        const filteredOptions = ["ring", "tool"].includes(slotKey)
+          ? filterMultislot(candidate.gearSet, options, slotKey, slotName)
+          : options;
+
+        for (const item of filteredOptions) {
+          const newSet = {
+            ...candidate.gearSet,
+            [slotName]: item,
+          };
+
+          const score = getGearSetStats(newSet);
+
+          next.push({
+            gearSet: newSet,
+            score,
+          });
         }
       }
 
-      // Lock in best item for this slot
-      gearSet[slotName] = bestItem;
+      const newCandidates = next
+        .sort((a, b) => compareScore(b.score, a.score))
+        .slice(0, BEAM_WIDTH);
+      candidates = newCandidates.length ? newCandidates : candidates;
     }
 
-    return gearSet;
+    return candidates;
+  }
+
+  function gearFill(gearSlots, baseCandidates, gearOptions, gearKey) {
+    let candidates = baseCandidates.length
+      ? baseCandidates
+      : [{ gearSet: {}, score: startScore(), slotCounts: {} }];
+
+    candidates.forEach((candidate) => {
+      const remainingGearOptions = Object.fromEntries(
+        Object.entries(getItemOptions(gearOptions, gearKey)).filter(
+          ([slot]) =>
+            !(
+              slot in candidate.slotCounts &&
+              candidate.slotCounts[slot] >= slotMax(slot)
+            ),
+        ),
+      );
+
+      const searchResult = beamSearch(
+        candidate,
+        gearSlots,
+        remainingGearOptions,
+      );
+      candidates = candidates.concat(searchResult);
+    });
+
+    return candidates
+      .sort((a, b) => compareScore(b.score, a.score))
+      .slice(0, 3);
   }
 
   const optimise = async () => {
     const options = getGearOptions();
-    const set = greedyOptimize(gearSlots, options);
-    console.log(set);
-    await gearStore.equipMultiple(set, true);
+
+    const reqSets = requirementsFill(options);
+    const primarySets = gearFill(gearSlots, reqSets, options, "primary");
+
+    const [usedSet] = primarySets;
+
+    await gearStore.equipMultiple(usedSet.gearSet, true);
   };
 
   return {
