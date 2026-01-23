@@ -58,6 +58,7 @@ function close() {
         maxWidth: maxWidth,
         minWidth: minWidth,
         minHeight: minHeight,
+        maxHeight: '80vw',
       }"
     >
       <div
@@ -100,6 +101,7 @@ function close() {
   padding: $xxxlg;
   border-radius: $sm;
   position: relative;
+  overflow-y: scroll;
 }
 
 .modal-header {
