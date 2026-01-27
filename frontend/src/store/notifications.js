@@ -21,7 +21,7 @@ export const useNotificationStore = defineStore("notificationStore", {
     nextId: 1,
   }),
   actions: {
-    addNotification(message, type = "success", duration = 3000) {
+    async addNotification(message, type = "success", duration = 3000) {
       const notification = {
         id: this.nextId++,
         message,
@@ -39,6 +39,7 @@ export const useNotificationStore = defineStore("notificationStore", {
         }, duration);
       }
 
+      await new Promise(requestAnimationFrame);
       return notification.id;
     },
 
@@ -53,15 +54,15 @@ export const useNotificationStore = defineStore("notificationStore", {
       this.notifications = [];
     },
 
-    success(message, duration = 3000) {
+    async success(message, duration = 3000) {
       return this.addNotification(message, "success", duration);
     },
 
-    warning(message, duration = 3000) {
+    async warning(message, duration = 3000) {
       return this.addNotification(message, "warning", duration);
     },
 
-    error(message, duration = 3000) {
+    async error(message, duration = 3000) {
       return this.addNotification(message, "error", duration);
     },
 
