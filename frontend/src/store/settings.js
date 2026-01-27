@@ -12,17 +12,23 @@ export const useSettingsStore = defineStore("settingsStore", {
     userSettings: {},
     gearSettings: {},
     activitySettings: {},
+    toolSettings: {},
     isLoaded: false,
     changedSettings: new Map(),
     saveTimeout: null,
   }),
+  getters: {
+    settingsGroups: () => ["gearSettings", "activitySettings", "toolSettings"],
+  },
+
   actions: {
     async fetchSettingsData() {
       try {
         // Start with default settings
         const defaultSettings = this.defaultSettingsData();
-        this.gearSettings = { ...defaultSettings.gearSettings };
-        this.activitySettings = { ...defaultSettings.activitySettings };
+        this.settingsGroups.forEach((group) => {
+          this[group] = { ...defaultSettings[group] };
+        });
 
         // Fetch settings from backend
         const backendSettings = await getSettings();
@@ -51,16 +57,12 @@ export const useSettingsStore = defineStore("settingsStore", {
       // Backend format: { setting: { display, value } }
       // Merge with existing settings structure
       Object.entries(backendSettings).forEach(([settingKey, settingData]) => {
-        // Check if this setting exists in gearSettings
-        if (this.gearSettings[settingKey]) {
-          this.gearSettings[settingKey].display = settingData.display;
-          this.gearSettings[settingKey].value = settingData.value;
-        }
-        // Check if this setting exists in activitySettings
-        else if (this.activitySettings[settingKey]) {
-          this.activitySettings[settingKey].display = settingData.display;
-          this.activitySettings[settingKey].value = settingData.value;
-        }
+        this.settingsGroups.forEach((group) => {
+          if (this[group][settingKey]) {
+            this[group][settingKey].display = settingData.display;
+            this[group][settingKey].value = settingData.value;
+          }
+        });
       });
     },
 
@@ -112,13 +114,14 @@ export const useSettingsStore = defineStore("settingsStore", {
     markSettingChanged(settingKey, newValue, newDisplay) {
       // Get current setting values (before the change)
       let current;
-      if (this.gearSettings[settingKey]) {
-        current = this.gearSettings[settingKey];
-      } else if (this.activitySettings[settingKey]) {
-        current = this.activitySettings[settingKey];
-      } else {
-        return; // Setting not found
-      }
+      let settingGroup;
+      this.settingsGroups.forEach((group) => {
+        if (this[group][settingKey]) {
+          current = this[group][settingKey];
+          settingGroup = group;
+        }
+      });
+      if (!current) return;
 
       // Check if we already have this setting tracked
       const tracked = this.changedSettings.get(settingKey);
@@ -126,28 +129,21 @@ export const useSettingsStore = defineStore("settingsStore", {
       if (!tracked) {
         // First time changing this setting, track the ORIGINAL value (before any change)
         this.changedSettings.set(settingKey, {
+          group: settingGroup,
           display: current.display,
           value: current.value,
         });
       }
 
-      // Now update the actual setting
-      if (this.gearSettings[settingKey]) {
-        if (newValue !== undefined)
-          this.gearSettings[settingKey].value = newValue;
-        if (newDisplay !== undefined)
-          this.gearSettings[settingKey].display = newDisplay;
-      } else if (this.activitySettings[settingKey]) {
-        if (newValue !== undefined)
-          this.activitySettings[settingKey].value = newValue;
-        if (newDisplay !== undefined)
-          this.activitySettings[settingKey].display = newDisplay;
+      if (newValue !== undefined) {
+        this[settingGroup][settingKey].value = newValue;
+      } else if (newDisplay !== undefined) {
+        this[settingGroup][settingKey].display = newDisplay;
       }
 
       // After updating, check if we're back to the original values
       const trackedAfterUpdate = this.changedSettings.get(settingKey);
-      const currentAfterUpdate =
-        this.gearSettings[settingKey] || this.activitySettings[settingKey];
+      const currentAfterUpdate = this[settingGroup][settingKey];
 
       if (
         trackedAfterUpdate &&
@@ -164,22 +160,12 @@ export const useSettingsStore = defineStore("settingsStore", {
     convertChangedSettingsToBackendFormat() {
       const settingsArray = [];
 
-      // Only convert changed settings
-      this.changedSettings.forEach((trackedValue, settingKey) => {
-        // Check if this setting exists in gearSettings
-        if (this.gearSettings[settingKey]) {
+      this.changedSettings.forEach(({ group }, settingKey) => {
+        if (this[group][settingKey]) {
           settingsArray.push({
             setting: settingKey,
-            display: this.gearSettings[settingKey].display,
-            value: this.gearSettings[settingKey].value,
-          });
-        }
-        // Check if this setting exists in activitySettings
-        else if (this.activitySettings[settingKey]) {
-          settingsArray.push({
-            setting: settingKey,
-            display: this.activitySettings[settingKey].display,
-            value: this.activitySettings[settingKey].value,
+            display: this[group][settingKey].display,
+            value: this[group][settingKey].value,
           });
         }
       });
@@ -190,21 +176,13 @@ export const useSettingsStore = defineStore("settingsStore", {
     convertSettingsToBackendFormat() {
       const settingsArray = [];
 
-      // Convert gearSettings
-      Object.entries(this.gearSettings).forEach(([key, setting]) => {
-        settingsArray.push({
-          setting: key,
-          display: setting.display,
-          value: setting.value,
-        });
-      });
-
-      // Convert activitySettings
-      Object.entries(this.activitySettings).forEach(([key, setting]) => {
-        settingsArray.push({
-          setting: key,
-          display: setting.display,
-          value: setting.value,
+      this.settingsGroups.forEach((group) => {
+        Object.entries(this[group]).forEach(([key, setting]) => {
+          settingsArray.push({
+            setting: key,
+            display: setting.display,
+            value: setting.value,
+          });
         });
       });
 
@@ -283,6 +261,14 @@ export const useSettingsStore = defineStore("settingsStore", {
             displayOptions: decimalSeparators.map(({ name }) => name),
             value: false,
             showEnable: false,
+          },
+        },
+        toolSettings: {
+          enableDebug: {
+            label: "Show Debug Messages",
+            showDisplay: false,
+            display: 0,
+            value: false,
           },
         },
       };
