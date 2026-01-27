@@ -163,7 +163,7 @@ export const getGearOptions = () => {
 
   const itemsBySlot = Object.fromEntries(
     gearTypes.map((slot) => {
-      if (slot === "location" && baseCtx.activitySelected.value) {
+      if (slot === "location" && activityStore.locations) {
         return [slot, { required: [], primary: activityStore.locations }];
       }
 

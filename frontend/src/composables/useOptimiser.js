@@ -174,7 +174,9 @@ export function useOptimiser() {
       ? baseCandidates
       : [{ gearSet: {}, score: startScore(), slotCounts: {} }];
 
-    const locationOptions = gearOptions.location.primary || [null];
+    const locationOptions = gearOptions.location.primary?.length
+      ? gearOptions.location.primary
+      : [null];
     locationOptions.forEach((location) => {
       candidates.forEach((candidate) => {
         const remainingGearOptions = Object.fromEntries(
@@ -189,7 +191,10 @@ export function useOptimiser() {
 
         const usedCandidate = {
           ...candidate,
-          gearSet: { ...candidate.gearSet, location: location },
+          gearSet: {
+            ...candidate.gearSet,
+            location: location || baseCtx.location.value,
+          },
         };
         const searchResult = beamSearch(
           usedCandidate,
