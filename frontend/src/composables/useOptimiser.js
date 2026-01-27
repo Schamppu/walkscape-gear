@@ -174,7 +174,8 @@ export function useOptimiser() {
       ? baseCandidates
       : [{ gearSet: {}, score: startScore(), slotCounts: {} }];
 
-    [gearOptions.location.primary || [null]].forEach((location) => {
+    const locationOptions = gearOptions.location.primary || [null];
+    locationOptions.forEach((location) => {
       candidates.forEach((candidate) => {
         const remainingGearOptions = Object.fromEntries(
           Object.entries(getItemOptions(gearOptions, gearKey)).filter(
