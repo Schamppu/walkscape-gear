@@ -1,5 +1,20 @@
 import { defineStore } from "pinia";
 
+// Lazy import for history store to avoid circular dependencies
+let useSettingsStore = null;
+const getSettingsStore = async () => {
+  if (!useSettingsStore) {
+    try {
+      const module = await import("@/store/settings");
+      useSettingsStore = module.useSettingsStore;
+    } catch {
+      console.debug("Settings store not available");
+      return null;
+    }
+  }
+  return useSettingsStore?.();
+};
+
 export const useNotificationStore = defineStore("notificationStore", {
   state: () => ({
     notifications: [],
@@ -42,8 +57,21 @@ export const useNotificationStore = defineStore("notificationStore", {
       return this.addNotification(message, "success", duration);
     },
 
+    warning(message, duration = 3000) {
+      return this.addNotification(message, "warning", duration);
+    },
+
     error(message, duration = 3000) {
       return this.addNotification(message, "error", duration);
+    },
+
+    async debug(message, data = [], duration = 3000) {
+      const settingsStore = await getSettingsStore();
+
+      if (settingsStore && settingsStore.toolSettings.enableDebug.value) {
+        console.debug(message, data);
+        return this.addNotification(message, "warning", duration);
+      }
     },
   },
 });

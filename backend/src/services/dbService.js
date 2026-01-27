@@ -38,6 +38,7 @@ const ALLOWED_SETTINGS = new Set([
   "decimalSeparator",
   "activityOptimiserPriority",
   "recipeOptimiserPriority",
+  "enableDebug",
 ]);
 
 async function markUserActiveThrottled(userUuid) {

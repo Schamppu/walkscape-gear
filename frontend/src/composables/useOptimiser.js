@@ -1,5 +1,7 @@
 import { useGearStore } from "@/store/gear";
 import { useActivityStore } from "@/store/activity";
+import { useNotificationStore } from "@/store/notifications";
+
 import useBaseContext from "@/composables/context/useBaseContext";
 import { gearSlots } from "@/utils/createEmptyGearSet";
 
@@ -23,6 +25,7 @@ export function useOptimiser() {
   const baseCtx = useBaseContext();
   const gearStore = useGearStore();
   const activityStore = useActivityStore();
+  const notificationStore = useNotificationStore();
 
   function requirementsFill(gearOptions) {
     const reqs = baseCtx.source.value.requirements;
@@ -171,7 +174,7 @@ export function useOptimiser() {
       ? baseCandidates
       : [{ gearSet: {}, score: startScore(), slotCounts: {} }];
 
-    gearOptions.location.primary.forEach((location) => {
+    [gearOptions.location.primary || [null]].forEach((location) => {
       candidates.forEach((candidate) => {
         const remainingGearOptions = Object.fromEntries(
           Object.entries(getItemOptions(gearOptions, gearKey)).filter(
@@ -202,16 +205,41 @@ export function useOptimiser() {
   }
 
   const optimise = async () => {
-    const options = getGearOptions();
+    if (!baseCtx.source.value) {
+      notificationStore.warning("No activity selected");
+      return;
+    }
 
-    const reqSets = requirementsFill(options);
-    const primarySets = gearFill(gearSlots, reqSets, options, "primary");
+    try {
+      const options = getGearOptions();
+      notificationStore.debug("Generated gear options", options);
 
-    const [usedSet] = primarySets;
+      const reqSets = requirementsFill(options);
+      notificationStore.debug(
+        "Generated sets fulfilling requirements",
+        reqSets,
+      );
 
-    await gearStore.unequipAll();
-    await activityStore.setLocation(usedSet.gearSet.location);
-    await gearStore.equipMultiple(usedSet.gearSet, true);
+      const primarySets = gearFill(gearSlots, reqSets, options, "primary");
+      notificationStore.debug(
+        "Created gear sets with items helping target",
+        primarySets,
+      );
+
+      const [usedSet] = primarySets;
+
+      await gearStore.unequipAll();
+      notificationStore.debug("Unequipped all gear");
+
+      await activityStore.setLocation(usedSet.gearSet.location);
+      notificationStore.debug("Changed location", usedSet.gearSet.location);
+
+      await gearStore.equipMultiple(usedSet.gearSet, true);
+      notificationStore.debug("Equipped gear set", usedSet);
+    } catch (e) {
+      notificationStore.error("Error duing gear set creation");
+      console.error(e);
+    }
   };
 
   return {

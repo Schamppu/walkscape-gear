@@ -17,6 +17,8 @@ $txDarker: rgb(145, 134, 117);
 
 $txPositive: rgb(142, 228, 123);
 $txPositiveDark: rgb(97, 145, 86);
+$txWarning: rgb(230, 210, 120);
+$txWarningDark: rgb(170, 150, 85);
 $txNegative: rgb(209, 111, 116);
 $txNegativeDark: rgb(145, 63, 68);
 $txHighlight: rgb(223, 209, 189);
@@ -137,8 +139,16 @@ $faction-colors: (
 
 .negative {
   color: $txNegative !important;
+  
+  &.disabled {
+    color: $txNegativeDark !important;
+  }
 }
 
 .positive {
   color: $txPositive !important;
+
+  &.disabled {
+    color: $txPositiveDark !important;
+  }
 }

@@ -70,6 +70,10 @@ function handleNotificationClick(id) {
     border: 2px solid $txPositive;
   }
 
+  &-warning {
+    border: 2px solid $txWarning;
+  }
+
   &-error {
     border: 2px solid $txNegative;
   }
