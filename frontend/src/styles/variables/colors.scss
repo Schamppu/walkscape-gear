@@ -137,8 +137,16 @@ $faction-colors: (
 
 .negative {
   color: $txNegative !important;
+  
+  &.disabled {
+    color: $txNegativeDark !important;
+  }
 }
 
 .positive {
   color: $txPositive !important;
+
+  &.disabled {
+    color: $txPositiveDark !important;
+  }
 }

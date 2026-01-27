@@ -132,13 +132,6 @@ const toggle = () => {
     margin-left: $xxxxs;
   }
 
-  &.negative.disabled {
-    color: $txNegativeDark;
-  }
-  &.positive.disabled {
-    color: $txPositiveDark;
-  }
-
   &.disabled {
     color: $txDarker;
   }
