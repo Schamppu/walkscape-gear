@@ -233,11 +233,13 @@ export function useOptimiser() {
       const [usedSet] = primarySets;
 
       await gearStore.unequipAll();
-      await activityStore.setLocation(usedSet.gearSet.location.name);
-      await notificationStore.debug(
-        `Selected location ${usedSet.gearSet.location.name}`,
-        usedSet.gearSet.location,
-      );
+      if (usedSet.gearSet.location) {
+        await activityStore.setLocation(usedSet.gearSet.location);
+        await notificationStore.debug(
+          `Selected location ${usedSet.gearSet.location?.name}`,
+          usedSet.gearSet.location,
+        );
+      }
 
       await gearStore.equipMultiple(usedSet.gearSet, true);
       await notificationStore.debug("Equipped gear set", usedSet);
