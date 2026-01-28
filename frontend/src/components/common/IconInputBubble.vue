@@ -25,7 +25,7 @@ watch(
   () => props.getValue(props.id),
   (val) => {
     if (val !== localValue.value) localValue.value = val;
-  }
+  },
 );
 
 function onInput(e) {
@@ -68,7 +68,9 @@ function onBlur() {
         @input="onInput"
         @blur="onBlur"
         class="input"
-        type="number"
+        type="text"
+        inputmode="numeric"
+        pattern="[0-9]*"
         :min="min"
         :max="max"
       />
@@ -91,13 +93,13 @@ function onBlur() {
   background: $boxPrimaryBackground;
 }
 
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button {
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 
-input[type="number"] {
+input {
   -moz-appearance: textfield;
 }
 </style>
