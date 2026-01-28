@@ -17,10 +17,10 @@ function useBaseContext() {
     recipeSelected: computed(() => activityStore.recipeSelected),
 
     activity: computed(() =>
-      activityStore.activitySelected ? activityStore.activity : null
+      activityStore.activitySelected ? activityStore.activity : null,
     ),
     recipe: computed(() =>
-      activityStore.recipeSelected ? activityStore.recipe : null
+      activityStore.recipeSelected ? activityStore.recipe : null,
     ),
     source: computed(() => {
       if (activityStore.activitySelected) return activityStore.activity;
@@ -46,6 +46,8 @@ function useBaseContext() {
     filledGearSlots: computed(() => gearStore.filledGearSlots),
 
     segments: computed(() => routeStore.segments),
+
+    ownedItemsByCategory: itemsStore.ownedItemsByCategory,
   };
 }
 

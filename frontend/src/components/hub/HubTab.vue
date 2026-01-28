@@ -180,7 +180,7 @@ const playerSkills = computed(() => {
               }
             "
             :min="0"
-            :max="999"
+            :max="9999"
             :default-value="0"
             :border-color="argbToRgba(faction.color)"
             @input="updateFactionReputation"

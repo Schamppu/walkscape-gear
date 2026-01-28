@@ -22,14 +22,14 @@ export const useItemsStore = defineStore("itemStore", {
     isLoaded: false,
   }),
   getters: {
-    ownedCollectibles: (state) => {
-      return Object.fromEntries(
-        state.categorizedItems
-          .find(({ title }) => title.toLowerCase() === "collectibles")
-          .categories.flatMap(({ items }) =>
-            items.map((item) => [item.id, item.id in state.ownedItems])
-          )
-      );
+    ownedItemsByCategory: (state) => (category) => {
+      return Object.entries(state.itemsByCategory)
+        .filter(([itemCategory]) =>
+          itemCategory.toLowerCase().includes(category),
+        )
+        .flatMap(([, items]) =>
+          items.filter((item) => item.id in state.ownedItems),
+        );
     },
   },
   actions: {
@@ -49,32 +49,32 @@ export const useItemsStore = defineStore("itemStore", {
       ]);
 
       this.ownedItems = Object.fromEntries(
-        ownedItems.map(({ itemId, ...data }) => [itemId, data])
+        ownedItems.map(({ itemId, ...data }) => [itemId, data]),
       );
       this.categorizedItems = categorizedItems;
 
       const categories = categorizedItems.flatMap(
-        ({ categories }) => categories
+        ({ categories }) => categories,
       );
       this.itemsByCategory = Object.fromEntries(
-        categories.map(({ key, items }) => [key, items])
+        categories.map(({ key, items }) => [key, items]),
       );
       this.allGearItems = Object.fromEntries(
-        categories.flatMap(({ items }) => items).map((item) => [item.id, item])
+        categories.flatMap(({ items }) => items).map((item) => [item.id, item]),
       );
       this.embargoedItems = new Set(
         Object.values(this.allGearItems)
           .filter((item) => "embargo" in item)
-          .map(({ id }) => id)
+          .map(({ id }) => id),
       );
       this.materials = Object.fromEntries(
-        materials.map(({ id, icon, name }) => [id, { icon, name }])
+        materials.map(({ id, icon, name }) => [id, { icon, name }]),
       );
       this.fineMaterials = Object.fromEntries(
-        fineMaterials.map((id) => [id, true])
+        fineMaterials.map((id) => [id, true]),
       );
       this.petsMap = Object.fromEntries(
-        this.itemsByCategory["pets"].map((pet) => [pet.id, pet])
+        this.itemsByCategory["pets"].map((pet) => [pet.id, pet]),
       );
 
       this.isLoaded = true;
@@ -94,7 +94,7 @@ export const useItemsStore = defineStore("itemStore", {
       const changed = Object.entries(this.changedOwnedItems).map(
         ([itemId, data]) => {
           return { itemId, ...data };
-        }
+        },
       );
       if (changed.length === 0) return;
 
@@ -111,7 +111,7 @@ export const useItemsStore = defineStore("itemStore", {
         this.flushChangedOwnedItems();
       },
       5000,
-      this
+      this,
     ),
 
     batchUpdateOwnedItems(itemsToUpdate) {

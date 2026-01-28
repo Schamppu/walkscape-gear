@@ -42,6 +42,21 @@ const mapItemToStats = (item, ctx) => {
   }
 };
 
+const filterLocations = (locations) => {
+  const filtered = locations.reduce(
+    (acc, cur) => {
+      const key = `${cur.faction}-${cur.keywords.join("-")}`;
+      if (key in acc.seen) return acc;
+      acc.seen[key] = true;
+      acc.locations.push(cur);
+      return acc;
+    },
+    { locations: [], seen: {} },
+  );
+
+  return filtered.locations;
+};
+
 const filterDirectUpgrades = (items, source = null) => {
   function normalizeStats(stats) {
     const map = new Map();
@@ -164,7 +179,10 @@ export const getGearOptions = () => {
   const itemsBySlot = Object.fromEntries(
     gearTypes.map((slot) => {
       if (slot === "location" && activityStore.locations) {
-        return [slot, { required: [], primary: activityStore.locations }];
+        return [
+          slot,
+          { required: [], primary: filterLocations(activityStore.locations) },
+        ];
       }
 
       const items = Object.values(baseCtx.allGearItems.value).filter(

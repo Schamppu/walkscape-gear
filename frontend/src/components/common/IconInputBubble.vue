@@ -2,7 +2,6 @@
 import { ref, watch } from "vue";
 import WsIcon from "@/components/common/WsIcon.vue";
 import WsLabel from "@/components/common/WsLabel.vue";
-import { n } from "@/utils/number";
 
 const emit = defineEmits(["input"]);
 
@@ -25,7 +24,7 @@ watch(
   () => props.getValue(props.id),
   (val) => {
     if (val !== localValue.value) localValue.value = val;
-  }
+  },
 );
 
 function onInput(e) {
@@ -53,6 +52,13 @@ function onBlur() {
   props.setValue(props.id, clamped);
   emit("input", clamped);
 }
+
+function widthClass() {
+  const len = props.max.toString().length;
+  if (len < 3) return "thin";
+  if (len < 5) return "mid";
+  return "wide";
+}
 </script>
 
 <template>
@@ -67,8 +73,11 @@ function onBlur() {
         :value="Math.ceil(localValue)"
         @input="onInput"
         @blur="onBlur"
-        class="input"
-        type="number"
+        :class="['input', widthClass()]"
+        type="text"
+        inputmode="numeric"
+        pattern="[0-9]*"
+        :maxlength="max.toString().length"
         :min="min"
         :max="max"
       />
@@ -91,13 +100,25 @@ function onBlur() {
   background: $boxPrimaryBackground;
 }
 
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button {
+.thin {
+  width: 2ch;
+}
+
+.mid {
+  width: 4ch;
+}
+
+.wide {
+  width: 8ch;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 
-input[type="number"] {
+input {
   -moz-appearance: textfield;
 }
 </style>
