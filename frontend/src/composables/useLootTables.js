@@ -29,7 +29,7 @@ export function useLootTables(ctx) {
 
   const lootTables = computed(() => getCtxLootTables(ctx));
   const lootTableIds = computed(() =>
-    lootTables.value.flatMap(({ tables }) => tables)
+    lootTables.value.flatMap(({ tables }) => tables),
   );
 
   watch(
@@ -37,7 +37,7 @@ export function useLootTables(ctx) {
     (ids) => {
       dataStore.fetchDetailedLootTables(ids);
     },
-    { immediate: true }
+    { immediate: true },
   );
 
   const detailedLootTables = computed(() => {
@@ -45,7 +45,7 @@ export function useLootTables(ctx) {
       ...table,
       rollChance: table.rollChance || 1,
       tables: normalizeLootTable(
-        table.tables.map(dataStore.getDetailedLootTable).filter(Boolean)
+        table.tables.map(dataStore.getDetailedLootTable).filter(Boolean),
       ),
     }));
   });
@@ -58,13 +58,13 @@ export function useLootTables(ctx) {
       return detailedLootTables.value;
     }
 
+    const ownedCollectibles = ctx
+      .ownedItemsByCategory("collectible")
+      .map(({ id }) => id);
     return detailedLootTables.value.filter((table) => {
       if (hideOwnedCollectibles && table.type.includes("collectible")) {
         const id = table.tables?.[0]?.tableRows?.[0]?.rowItemID || null;
-        return (
-          id in itemsStore.ownedCollectibles &&
-          !itemsStore.ownedCollectibles[id]
-        );
+        return !ownedCollectibles.includes(id);
       }
       return table.tables.some((t) => t.tableRows.length > 0);
     });
@@ -113,7 +113,7 @@ export function useLootTables(ctx) {
           // Combine rollChance values (capped at 1) instead of adding more tables
           const combinedRollChance = Math.min(
             1,
-            grouped[key].rollChance + table.rollChance
+            grouped[key].rollChance + table.rollChance,
           );
           grouped[key] = {
             ...grouped[key],
@@ -171,7 +171,7 @@ export function useLootTables(ctx) {
     const { rowWeight, tableWeight, noDropChance, rollChance, type } = source;
     const effectiveRollChance = Math.min(
       1,
-      combinedRollChance ?? (rollChance || 1)
+      combinedRollChance ?? (rollChance || 1),
     );
     return (
       (1 - noDropChance) *
@@ -201,13 +201,13 @@ export function useLootTables(ctx) {
           // Use the first source as template but with combined rollChance
           return sourceDropChance(sourcesInGroup[0], combinedRollChance);
         }
-      }
+      },
     );
 
     // Calculate overall probability (1 - probability that none of the stat groups proc)
     const probabilityNone = statGroupProbabilities.reduce(
       (acc, prob) => acc * (1 - prob),
-      1
+      1,
     );
     const totalChance = 100 * (1 - probabilityNone);
     const rounded = Math.round(totalChance * 10000) / 10000;
@@ -244,7 +244,7 @@ export function useLootTables(ctx) {
 
           return stepsPerRewardRoll.value / expectedItemsPerAction;
         }
-      }
+      },
     );
 
     return (
@@ -264,7 +264,7 @@ export function useLootTables(ctx) {
           return `${rowMinimumAmount}`;
         }
         return `${rowMinimumAmount}-${rowMaximumAmount}`;
-      }
+      },
     );
 
     return statGroupCounts.join(", ");
@@ -327,13 +327,13 @@ export function useLootTables(ctx) {
 
   const hasCollectibleDrops = computed(() => {
     return filteredLootTables.value.some(({ type }) =>
-      type.includes("collectible")
+      type.includes("collectible"),
     );
   });
 
   const hasFineDrops = computed(() => {
     return Object.values(dropItemInfoMap.value).some(
-      ({ stepsPerFine }) => stepsPerFine > 0
+      ({ stepsPerFine }) => stepsPerFine > 0,
     );
   });
 
