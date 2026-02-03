@@ -200,20 +200,20 @@ const rewardCount = computed(() => {
           <info-bubble
             label="Work Efficiency"
             :text="`${n(stats.uncappedWorkEfficiency * 100)} / ${Math.round(
-              (stats.maxWorkEfficiency - 1) * 100
+              (stats.maxWorkEfficiency) * 100
             )}%`"
             :tooltip="`Your Work Efficiency: ${Math.round(
               stats.uncappedWorkEfficiency * 100
             )}%\nMax Work Efficiency: ${n(
-              (stats.maxWorkEfficiency - 1) * 100,
+              (stats.maxWorkEfficiency) * 100,
               0
             )}%\nMax benefit at: ${
-              Math.ceil((stats.effectiveMaxWorkEfficiency - 1) * 400) / 4
+              Math.ceil((stats.effectiveMaxWorkEfficiency) * 400) / 4
             }%`"
             iconPath="assets/icons/text/stats/skilling/work_efficiency.png"
             :borderClass="
               n(stats.uncappedWorkEfficiency) >=
-              n(stats.effectiveMaxWorkEfficiency - 1)
+              n(stats.effectiveMaxWorkEfficiency)
                 ? 'border-green'
                 : ''
             "

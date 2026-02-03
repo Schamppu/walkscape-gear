@@ -25,11 +25,11 @@ export function useSkillModifiers(ctx) {
 
   const workEfficiency = computed(() => {
     const workEfficiency = getStat("workEfficiency");
-    return Math.min(workEfficiency, maxWorkEfficiency.value - 1);
+    return Math.min(1 + workEfficiency, maxWorkEfficiency.value);
   });
 
   const uncappedWorkEfficiency = computed(() => {
-    return getStat("workEfficiency");
+    return 1 + getStat("workEfficiency");
   });
 
   const xpFlat = computed(() => {
@@ -89,7 +89,7 @@ export function useSkillModifiers(ctx) {
     if (!workRequired) return 0;
     return (
       Math.ceil(
-        (workRequired / (1 + workEfficiency.value)) *
+        (workRequired / (workEfficiency.value)) *
           stepsRequiredPercent.value,
       ) + stepsRequiredFlat.value
     );
