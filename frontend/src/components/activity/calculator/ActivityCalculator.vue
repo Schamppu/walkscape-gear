@@ -7,6 +7,7 @@ import { useItemsStore } from "@/store/items";
 import IconInputBubble from "@/components/common/IconInputBubble.vue";
 import useBaseContext from "@/composables/context/useBaseContext";
 import { useSkillModifiers } from "@/composables/useSkillModifiers";
+import { useFineMaterials } from "@/composables/useFineMaterialsCalculations";
 import WsIcon from "@/components/common/WsIcon.vue";
 import WsLabel from "@/components/common/WsLabel.vue";
 import CalculatorQualityOutcomeTable from "./CalculatorQualityOutcomeTable.vue";
@@ -20,6 +21,7 @@ const {
   noMaterialsConsumed,
   doubleRewards,
 } = useSkillModifiers(ctx);
+const { xpRewardsMultiplier } = useFineMaterials(ctx);
 const playerStore = usePlayerStore();
 const itemsStore = useItemsStore();
 
@@ -27,14 +29,14 @@ const activityStore = useActivityStore();
 const { activity, recipe, activitySelected, recipeSelected } =
   storeToRefs(activityStore);
 const source = computed(() =>
-  activitySelected.value ? activity.value : recipe.value
+  activitySelected.value ? activity.value : recipe.value,
 );
 
 const { skillLevels } = storeToRefs(playerStore);
 const skillList = computed(() =>
   activitySelected.value
     ? Object.keys(source.value.xpRewardsMap)
-    : Object.keys(source.value.xpRewards)
+    : Object.keys(source.value.xpRewards),
 );
 
 const steps = ref(0);
@@ -76,10 +78,12 @@ const skillLevelStartRefs = reactive({});
 const skillLevelEndRefs = reactive({});
 
 const getXpPerStepFor = (skill) =>
-  xpPerStep.value.find((o) => o.skill === skill).value;
+  xpPerStep.value.find((o) => o.skill === skill).value *
+  xpRewardsMultiplier.value;
 
 const getXpPerActionFor = (skill) =>
-  xpRewards.value.find((o) => o.skill === skill).value;
+  xpRewards.value.find((o) => o.skill === skill).value *
+  xpRewardsMultiplier.value;
 
 watchEffect(() => {
   const list = skillList.value;

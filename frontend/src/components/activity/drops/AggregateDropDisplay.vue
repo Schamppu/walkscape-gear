@@ -12,7 +12,6 @@ import getOutcomeOdds from "@/utils/qualityOutcomeOdds";
 import { n } from "@/utils/number";
 import { icons } from "@/constants/iconPaths";
 import { tokenValues } from "@/constants/tokenValues";
-import { useActivityStore } from "@/store/activity";
 
 const props = defineProps({
   type: {
