@@ -50,7 +50,7 @@ const statList = computed(() => {
           size="sm"
           :outlineClass="`outline-${item.quality}`"
         />
-        <span v-if="item" :class="effective ? 'postitive' : 'negative'">{{
+        <span v-if="item" :class="effective ? 'positive' : 'negative'">{{
           item.name
         }}</span>
       </p>

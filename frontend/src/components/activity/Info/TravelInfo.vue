@@ -124,7 +124,7 @@ const stats = (segment) => {
         tooltip: `Work Efficiency: ${n(uncappedWorkEfficiency * 100)}%`,
         iconPath: icons.WE,
         borderClass:
-          workEfficiency >= effectiveMaxWorkEfficiency - 1
+          workEfficiency >= effectiveMaxWorkEfficiency
             ? "border-green"
             : "",
       },

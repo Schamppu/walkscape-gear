@@ -12,6 +12,7 @@ import { useActivityStore } from "@/store/activity";
 import { useItemsStore } from "@/store/items";
 import useBaseContext from "@/composables/context/useBaseContext";
 import { useSkillModifiers } from "@/composables/useSkillModifiers";
+import { useFineMaterials } from "@/composables/useFineMaterialsCalculations";
 import { isEmpty } from "@/utils/isEmpty";
 import { n } from "@/utils/number";
 
@@ -20,6 +21,9 @@ const itemsStore = useItemsStore();
 
 const { recipe } = storeToRefs(activityStore);
 const ctx = useBaseContext();
+const { xpRewardsMultiplier, canUseFineMaterials, useFine } =
+  useFineMaterials(ctx);
+
 const stats = computed(() => {
   const {
     maxWorkEfficiency,
@@ -35,9 +39,6 @@ const stats = computed(() => {
     xpPerStep,
   } = useSkillModifiers(ctx);
 
-  const xpRewardsMultiplier =
-    canUseFineMaterials.value && activityStore.useFineMaterials ? 1.5 : 1;
-
   return {
     maxWorkEfficiency: maxWorkEfficiency.value,
     workEfficiency: workEfficiency.value,
@@ -50,11 +51,11 @@ const stats = computed(() => {
     craftsPerMaterial: craftsPerMaterial.value,
     xpRewards: xpRewards.value.map((reward) => ({
       ...reward,
-      value: reward.value * xpRewardsMultiplier,
+      value: reward.value * xpRewardsMultiplier.value,
     })),
     xpPerStep: xpPerStep.value.map((reward) => ({
       ...reward,
-      value: reward.value * xpRewardsMultiplier,
+      value: reward.value * xpRewardsMultiplier.value,
     })),
   };
 });
@@ -67,7 +68,7 @@ const levelRequirement = computed(() => {
 });
 
 const borderClass = computed(
-  () => `border-${activityStore.recipe?.relatedSkills[0]}`
+  () => `border-${activityStore.recipe?.relatedSkills[0]}`,
 );
 
 const sections = computed(() => {
@@ -95,14 +96,6 @@ const resultHasCO = computed(() => {
   );
 });
 
-const canUseFineMaterials = computed(() => {
-  const upgraded = itemsStore.itemsByCategory["upgraded_crafted"].map(
-    ({ id }) => id
-  );
-  const reward = Object.keys(recipe.value.itemRewards)[0];
-  return !upgraded.includes(reward);
-});
-
 const materials = computed(() => {
   return recipe.value.materials.map(({ options }) =>
     options
@@ -119,7 +112,7 @@ const materials = computed(() => {
           amount,
         };
       })
-      .filter(({ name }) => name)
+      .filter(({ name }) => name),
   );
 });
 
@@ -163,11 +156,7 @@ const rewardCount = computed(() => {
                 :text="`${amount}`"
                 :tooltip="`${amount}x ${name}`"
                 :iconPath="icon"
-                :border-class="
-                  canUseFineMaterials && activityStore.useFineMaterials
-                    ? 'border-fine'
-                    : ''
-                "
+                :border-class="useFine ? 'border-fine' : ''"
               />
             </template>
           </div>
@@ -182,7 +171,7 @@ const rewardCount = computed(() => {
             :text="`${n(stats.stepsPerRewardRoll / rewardCount, 2)}`"
             :tooltip="`${n(
               stats.stepsPerRewardRoll / rewardCount,
-              2
+              2,
             )} steps per item`"
             iconPath="assets/icons/text/general_icons/steps.png"
           />
@@ -200,20 +189,20 @@ const rewardCount = computed(() => {
           <info-bubble
             label="Work Efficiency"
             :text="`${n(stats.uncappedWorkEfficiency * 100)} / ${Math.round(
-              (stats.maxWorkEfficiency - 1) * 100
+              stats.maxWorkEfficiency * 100,
             )}%`"
             :tooltip="`Your Work Efficiency: ${Math.round(
-              stats.uncappedWorkEfficiency * 100
+              stats.uncappedWorkEfficiency * 100,
             )}%\nMax Work Efficiency: ${n(
-              (stats.maxWorkEfficiency - 1) * 100,
-              0
+              stats.maxWorkEfficiency * 100,
+              0,
             )}%\nMax benefit at: ${
-              Math.ceil((stats.effectiveMaxWorkEfficiency - 1) * 400) / 4
+              Math.ceil(stats.effectiveMaxWorkEfficiency * 400) / 4
             }%`"
             iconPath="assets/icons/text/stats/skilling/work_efficiency.png"
             :borderClass="
               n(stats.uncappedWorkEfficiency) >=
-              n(stats.effectiveMaxWorkEfficiency - 1)
+              n(stats.effectiveMaxWorkEfficiency)
                 ? 'border-green'
                 : ''
             "
@@ -265,9 +254,7 @@ const rewardCount = computed(() => {
       </div>
       <div v-if="resultHasCO" class="info-section">
         <quality-outcome-table
-          :use-fine-materials="
-            canUseFineMaterials && activityStore.useFineMaterials
-          "
+          :use-fine-materials="useFine"
           :level-requirement="levelRequirement"
           :quality-outcome="stats.qualityOutcome"
           :crafts-per-material="stats.craftsPerMaterial"

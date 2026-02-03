@@ -89,20 +89,20 @@ const sections = computed(() => {
       },
       {
         text: `${n(uncappedWorkEfficiency.value * 100)} / ${Math.round(
-          (maxWorkEfficiency.value - 1) * 100
+          (maxWorkEfficiency.value) * 100
         )}%`,
         tooltip: [
           `Your Work Efficiency: ${Math.round(
             uncappedWorkEfficiency.value * 100
           )}%`,
-          `Max Work Efficiency: ${n((maxWorkEfficiency.value - 1) * 100, 0)}%`,
+          `Max Work Efficiency: ${n((maxWorkEfficiency.value) * 100, 0)}%`,
           `Max benefit at: ${
-            Math.ceil((effectiveMaxWorkEfficiency.value - 1) * 400) / 4
+            Math.ceil((effectiveMaxWorkEfficiency.value) * 400) / 4
           }%`,
         ].join("\n"),
         iconPath: icons.WE,
         borderClass:
-          workEfficiency.value >= effectiveMaxWorkEfficiency.value - 1
+          workEfficiency.value >= effectiveMaxWorkEfficiency.value
             ? "border-green"
             : "",
       },
