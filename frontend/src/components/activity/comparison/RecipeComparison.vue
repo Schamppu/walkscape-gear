@@ -107,7 +107,7 @@ const tableRows = computed(() => {
   ];
 
   const xpRewardsMultiplier =
-    canUseFineMaterials.value && activityStore.useFineMaterials ? 1.5 : 1;
+    canUseFineMaterials.value && activityStore.useFineMaterials ? 1.75 : 1;
 
   const xpPerStepRows = sm1["xpPerStep"].value.map(({ skill, value }, idx) => {
     const v1 = value * xpRewardsMultiplier;

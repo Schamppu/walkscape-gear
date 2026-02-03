@@ -36,7 +36,7 @@ const stats = computed(() => {
   } = useSkillModifiers(ctx);
 
   const xpRewardsMultiplier =
-    canUseFineMaterials.value && activityStore.useFineMaterials ? 1.5 : 1;
+    canUseFineMaterials.value && activityStore.useFineMaterials ? 1.75 : 1;
 
   return {
     maxWorkEfficiency: maxWorkEfficiency.value,
