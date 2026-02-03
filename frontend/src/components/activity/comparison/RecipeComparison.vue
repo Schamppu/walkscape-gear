@@ -6,6 +6,7 @@ import ComparisonTableShell from "./table/ComparisonTableShell.vue";
 import EmitLocationBubble from "@/components/common/EmitLocationBubble.vue";
 import { useGearContext } from "@/composables/context/useGearContext";
 import { useSkillModifiers } from "@/composables/useSkillModifiers";
+import { useFineMaterials } from "@/composables/useFineMaterialsCalculations";
 import { n } from "@/utils/number";
 import EmitServiceBubble from "@/components/common/EmitServiceBubble.vue";
 import ComparisonValueRow from "./table/ComparisonValueRow.vue";
@@ -36,6 +37,9 @@ const gs2Ctx = useGearContext(1, {
   service: gs2Service,
 });
 
+const { canUseFineMaterials, xpRewardsMultiplier, useFine } =
+  useFineMaterials(gs1Ctx);
+
 const borderClass = computed(
   () => `border-${gs1Ctx.recipe.value?.relatedSkills[0]}`,
 );
@@ -47,14 +51,6 @@ const rewardCount = computed(() => {
 
 const sm1 = useSkillModifiers(gs1Ctx);
 const sm2 = useSkillModifiers(gs2Ctx);
-
-const canUseFineMaterials = computed(() => {
-  const upgraded = itemsStore.itemsByCategory["upgraded_crafted"].map(
-    ({ id }) => id,
-  );
-  const reward = Object.keys(gs1Ctx.recipe.value.itemRewards)[0];
-  return !upgraded.includes(reward);
-});
 
 const resultHasCO = computed(() => {
   const [itemId] = Object.keys(gs1Ctx.recipe.value.itemRewards);
@@ -106,12 +102,9 @@ const tableRows = computed(() => {
     },
   ];
 
-  const xpRewardsMultiplier =
-    canUseFineMaterials.value && activityStore.useFineMaterials ? 1.75 : 1;
-
   const xpPerStepRows = sm1["xpPerStep"].value.map(({ skill, value }, idx) => {
-    const v1 = value * xpRewardsMultiplier;
-    const v2 = sm2["xpPerStep"].value[idx].value * xpRewardsMultiplier;
+    const v1 = value * xpRewardsMultiplier.value;
+    const v2 = sm2["xpPerStep"].value[idx].value * xpRewardsMultiplier.value;
     const comp = v1 - v2;
 
     return {
@@ -257,7 +250,7 @@ const editableRows = computed(() => {
   </comparison-table-shell>
   <crafting-quality-comparison
     v-if="resultHasCO"
-    :use-fine-materials="activityStore.useFineMaterials"
+    :use-fine-materials="useFine"
     :gs1Ctx="gs1Ctx"
     :gs2Ctx="gs2Ctx"
     :border-class="borderClass"

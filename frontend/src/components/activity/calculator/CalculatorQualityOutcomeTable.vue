@@ -2,10 +2,10 @@
 import { computed } from "vue";
 import { storeToRefs } from "pinia";
 import { useActivityStore } from "@/store/activity";
-import { useItemsStore } from "@/store/items";
 import useBaseContext from "@/composables/context/useBaseContext";
 import { useRequirements } from "@/composables/useRequirements";
 import { useSkillModifiers } from "@/composables/useSkillModifiers";
+import { useFineMaterials } from "@/composables/useFineMaterialsCalculations";
 import WsLabel from "@/components/common/WsLabel.vue";
 import getOutcomeOdds from "@/utils/qualityOutcomeOdds";
 import { n } from "@/utils/number";
@@ -15,19 +15,11 @@ const props = defineProps({
 });
 
 const activityStore = useActivityStore();
-const itemsStore = useItemsStore();
 const { recipe } = storeToRefs(activityStore);
 const ctx = useBaseContext();
 const { getLevelRequirementsMap } = useRequirements(ctx);
 const { qualityOutcome } = useSkillModifiers(ctx);
-
-const canUseFineMaterials = computed(() => {
-  const upgraded = itemsStore.itemsByCategory["upgraded_crafted"].map(
-    ({ id }) => id
-  );
-  const reward = Object.keys(recipe.value.itemRewards)[0];
-  return !upgraded.includes(reward);
-});
+const { canUseFineMaterials } = useFineMaterials(ctx);
 
 const craftingOdds = computed(() => {
   const levelMap = getLevelRequirementsMap(recipe.value.requirements);
@@ -36,7 +28,7 @@ const craftingOdds = computed(() => {
   const odds = getOutcomeOdds(
     level,
     qualityOutcome.value,
-    activityStore.useFineMaterials
+    activityStore.useFineMaterials,
   );
   return odds.map((item) => {
     return {

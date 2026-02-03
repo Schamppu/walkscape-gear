@@ -7,6 +7,7 @@ import useBaseContext from "@/composables/context/useBaseContext";
 import { useLootTables } from "@/composables/useLootTables";
 import { useRequirements } from "@/composables/useRequirements";
 import { useSkillModifiers } from "@/composables/useSkillModifiers";
+import { useFineMaterials } from "@/composables/useFineMaterialsCalculations";
 import getOutcomeOdds from "@/utils/qualityOutcomeOdds";
 import { n } from "@/utils/number";
 import { icons } from "@/constants/iconPaths";
@@ -26,7 +27,6 @@ const { dropItemInfoMap } = useLootTables(ctx);
 
 const dataStore = useDataStore();
 const itemsStore = useItemsStore();
-const activityStore = useActivityStore();
 const { getLevelRequirementsMap } = useRequirements(ctx);
 const {
   stepsPerRewardRoll,
@@ -34,6 +34,7 @@ const {
   noMaterialsConsumed,
   qualityOutcome,
 } = useSkillModifiers(ctx);
+const { useFine } = useFineMaterials(ctx);
 
 const materialValue = (id, itemInfo, valueSource) => {
   const { stepsPerNormal, stepsPerFine } = itemInfo;
@@ -52,17 +53,7 @@ const getCraftingOdds = () => {
   const levelMap = getLevelRequirementsMap(ctx.recipe.value.requirements);
   const level = Object.values(levelMap)[0];
 
-  const { materials } = ctx.source.value;
-  const allMaterials = materials.flatMap(({ options }) => options[0]);
-  const canUseFineMaterials = allMaterials.every(
-    ({ item }) => item in itemsStore.fineMaterials
-  );
-
-  const odds = getOutcomeOdds(
-    level,
-    qualityOutcome.value,
-    canUseFineMaterials && activityStore.useFineMaterials
-  );
+  const odds = getOutcomeOdds(level, qualityOutcome.value, useFine.value);
   return odds.map((item) => {
     return {
       ...item,
@@ -85,15 +76,14 @@ const recipeValue = computed(() => {
       const values = odds.reduce(
         (total, { qualityValue, value }) =>
           total + value * dataStore.itemValues[item][qualityValue],
-        0
+        0,
       );
       return values * (1000 / stepsPerRewardRoll.value);
     } else {
-      const useFine = activityStore.useFineMaterials;
       const steps = stepsPerRewardRoll.value;
       const info = {
-        stepsPerNormal: useFine ? 0 : steps,
-        stepsPerFine: useFine ? steps : 0,
+        stepsPerNormal: useFine.value ? 0 : steps,
+        stepsPerFine: useFine.value ? steps : 0,
       };
       return amount * materialValue(item, info, dataStore.itemValues);
     }
@@ -101,18 +91,11 @@ const recipeValue = computed(() => {
   const rewardValue1k = rewardValues.reduce((a, b) => a + b, 0);
 
   const allMaterials = materials.flatMap(({ options }) => options[0]);
-  const canUseFineMaterials = allMaterials.every(
-    ({ item }) => item in itemsStore.fineMaterials
-  );
-
   const materialCost = allMaterials.map(({ amount, item }) => {
     if (item in itemsStore.allGearItems) {
       return amount * Object.values(dataStore.itemValues[item])[0];
     } else {
-      const quality =
-        canUseFineMaterials && activityStore.useFineMaterials
-          ? "fine"
-          : "common";
+      const quality = useFine.value ? "fine" : "common";
       return amount * dataStore.itemValues[item][quality];
     }
   });
