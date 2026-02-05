@@ -113,6 +113,12 @@ export function searchLocations({ activityList, serviceList }) {
   });
 }
 
+export function getRealmDefaultLocations() {
+  return proxy({
+    url: "locations/realm_default_locations",
+  });
+}
+
 export function searchItems({ types, gearType, search }) {
   return proxy({
     url: "items/search",
