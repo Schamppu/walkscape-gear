@@ -2,6 +2,7 @@ import BaseService from "./baseService.js";
 import IconService from "./iconService.js";
 import SkillService from "./skillService.js";
 import ItemService from "./itemService.js";
+import LocationService from "./locationService.js";
 import RecipeService from "./recipeService.js";
 import PetsService from "./petsService.js";
 
@@ -13,7 +14,7 @@ const factionService = new BaseService("factions");
 const iconService = new IconService();
 const itemService = new ItemService();
 const keywordService = new BaseService("keywords");
-const locationService = new BaseService("locations");
+const locationService = new LocationService();
 const lootTableService = new BaseService("loot_tables");
 const petService = new PetsService();
 const recipeService = new RecipeService();

@@ -5,6 +5,7 @@ import WsLabel from "@/components/common/WsLabel.vue";
 import InfoBubble from "@/components/common/InfoBubble.vue";
 import ServiceBubble from "@/components/common/ServiceBubble.vue";
 import LocationBubble from "@/components/common/LocationBubble.vue";
+import RealmSelection from "./RealmSelection.vue";
 import SkillBubble from "@/components/common/SkillBubble.vue";
 import WikiButton from "@/components/common/WikiButton.vue";
 import QualityOutcomeTable from "./QualityOutcomeTable.vue";
@@ -72,20 +73,33 @@ const borderClass = computed(
 );
 
 const sections = computed(() => {
+  const serviceRequirements = ctx.recipe.value.requirements.filter(
+    ({ type }) => type === "service",
+  );
+  if (serviceRequirements.length) {
+    return [
+      {
+        label: "Services",
+        component: ServiceBubble,
+        items: activityStore.services,
+        itemProps: (item) => ({ service: item }),
+      },
+      {
+        label: "Locations",
+        component: LocationBubble,
+        items: activityStore.locations,
+        itemProps: (item) => ({ location: item }),
+      },
+    ].filter(({ items }) => !isEmpty(items));
+  }
   return [
     {
-      label: "Services",
-      component: ServiceBubble,
-      items: activityStore.services,
-      itemProps: (item) => ({ service: item }),
+      label: "Location",
+      component: RealmSelection,
+      items: [null],
+      itemProps: () => {},
     },
-    {
-      label: "Locations",
-      component: LocationBubble,
-      items: activityStore.locations,
-      itemProps: (item) => ({ location: item }),
-    },
-  ].filter(({ items }) => !isEmpty(items));
+  ];
 });
 
 const resultHasCO = computed(() => {

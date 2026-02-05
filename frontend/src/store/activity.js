@@ -3,6 +3,7 @@ import {
   getActivity,
   getRecipe,
   searchLocations,
+  getRealmDefaultLocations,
   searchServices,
   getActivities,
   getRecipes,
@@ -66,10 +67,10 @@ export const useActivityStore = defineStore("activityStore", {
 
       this.activities = activities;
       this.activitiesMap = Object.fromEntries(
-        activities.map(({ id, name, icon }) => [id, { name, icon }])
+        activities.map(({ id, name, icon }) => [id, { name, icon }]),
       );
       this.embargoedActivities = new Set(
-        activities.filter((item) => "embargo" in item).map(({ id }) => id)
+        activities.filter((item) => "embargo" in item).map(({ id }) => id),
       );
       this.recipes = recipes;
 
@@ -90,7 +91,7 @@ export const useActivityStore = defineStore("activityStore", {
         previousActivity,
         previousRecipe,
         previousLocation,
-        previousLocations
+        previousLocations,
       );
       this._executeCommand(command);
     },
@@ -121,7 +122,7 @@ export const useActivityStore = defineStore("activityStore", {
         previousLocation,
         previousLocations,
         previousService,
-        previousServices
+        previousServices,
       );
       this._executeCommand(command);
     },
@@ -165,7 +166,7 @@ export const useActivityStore = defineStore("activityStore", {
         service,
         previousService,
         previousLocation,
-        previousLocations
+        previousLocations,
       );
       this._executeCommand(command);
     },
@@ -224,7 +225,7 @@ export const useActivityStore = defineStore("activityStore", {
       await this.loadRecipeServices(skill, serviceRequirements);
     },
     async loadRecipeServices(skill, serviceRequirements) {
-      if (!skill) {
+      if (!skill || !serviceRequirements) {
         this.services = [];
         this.service = null;
         this._setLocationsDirect(null);
@@ -237,21 +238,25 @@ export const useActivityStore = defineStore("activityStore", {
       let filteredServices = services;
       if (serviceRequirements && serviceRequirements.length) {
         filteredServices = filterServices(services, serviceRequirements[0]);
+      } else {
+        filteredServices = [];
       }
 
       this.services = filteredServices.sort(sortServicesByTier);
+
       if (filteredServices.length) {
         await this._setServiceDirect(filteredServices[0]);
         // Load locations for the auto-selected service
         await this.loadServiceLocations(filteredServices[0].id);
       } else {
         this._setServiceDirect(null);
-        this._setLocationsDirect(null);
-        this._setLocationDirect(null);
+        await this.loadServiceLocations(null, false, true);
       }
     },
-    async loadServiceLocations(id, skipAutoSelect = false) {
-      const { data: locations } = await searchLocations({ serviceList: id });
+    async loadServiceLocations(id, skipAutoSelect = false, noService = false) {
+      const { data: locations } = !noService
+        ? await searchLocations({ serviceList: id })
+        : await getRealmDefaultLocations();
       this.setLocations(locations);
       if (locations.length && !skipAutoSelect && !this._isUndoRedoOperation)
         this._setLocationDirect(locations[0]);
