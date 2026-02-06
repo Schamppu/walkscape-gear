@@ -1,6 +1,7 @@
 <script setup>
 import GearSetImport from "./GearSetImport.vue";
 import GearSetExport from "./GearSetExport.vue";
+import GearCopyToOtherButton from "./GearCopyToOtherButton.vue";
 import GearUnequipButton from "./GearUnequipButton.vue";
 </script>
 
@@ -8,6 +9,7 @@ import GearUnequipButton from "./GearUnequipButton.vue";
   <div class="buttons-wrapper">
     <gear-set-import />
     <gear-set-export />
+    <gear-copy-to-other-button />
     <gear-unequip-button />
   </div>
 </template>

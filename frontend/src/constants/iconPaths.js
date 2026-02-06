@@ -32,6 +32,7 @@ export const icons = {
     activity: "activity.png",
     character: "character.png",
     gear2: "gear2.png",
+    switch: "switch_gear_set.png",
     settings: "settings.png",
     steps: "steps.png",
     show: "show.png",

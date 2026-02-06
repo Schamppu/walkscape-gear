@@ -10,7 +10,7 @@ import { intersect } from "@/utils/intersect";
 import { getReq, handledReqTypes, contributesToReq } from "./requirements";
 import { getGearSetStats, filterUsefulStats } from "./stats";
 import { getItemScores } from "./score";
-import { selectedPriority } from "./priority";
+import { priorityValue } from "./priority";
 
 const mapItemToStats = (item, ctx) => {
   const { checkRequirements } = useRequirements(ctx);
@@ -222,10 +222,7 @@ export const getGearOptions = () => {
       const upgradeFiltered = ["ring"].includes(slot)
         ? scoredItems
         : filterDirectUpgrades(scoredItems);
-      const statFiltered = filterUsefulStats(
-        upgradeFiltered,
-        selectedPriority(),
-      );
+      const statFiltered = filterUsefulStats(upgradeFiltered, priorityValue());
 
       return [
         slot,

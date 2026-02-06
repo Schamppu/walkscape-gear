@@ -14,8 +14,16 @@ export const selectedPriority = () => {
   return baseCtx.recipeSelected.value
     ? recipeOptimiserPriorities[
         gearSettings.value.recipeOptimiserPriority.display
-      ].value
+      ]
     : activityOptimiserPriorities[
         gearSettings.value.activityOptimiserPriority.display
-      ].value;
+      ];
+};
+
+export const priorityValue = () => {
+  return selectedPriority().value;
+};
+
+export const priorityName = () => {
+  return selectedPriority().name;
 };
