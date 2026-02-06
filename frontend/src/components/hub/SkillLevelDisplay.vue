@@ -19,6 +19,7 @@ const setSkill = (id, val) => {
 <template>
   <icon-input-bubble
     :id="skill.id"
+    :title="`${skill.name} level: ${store.skillLevels[skill.id]}`"
     :icon="skill.icon"
     :min="1"
     :max="99"

@@ -180,6 +180,7 @@ export function useRequirements(ctx) {
   const mapRequirementsText = (requirements, requirementsActive) => {
     return requirements.map((req, idx) => {
       const { type, opposite, requirement } = req;
+
       let out;
       if (type === "mainSkill") {
         const skill = playerStore.skillsMap[requirement.skill];
@@ -301,7 +302,7 @@ export function useRequirements(ctx) {
         };
       } else if (type === "activityType") {
         const act = activityStore.activitiesMap[requirement.activity];
-        if (requirement.keywords?.keywords?.length) {
+        if (requirement.keywords?.length) {
           const kws = requirement.keywords.map(
             (kw) => dataStore.keywordsMap[kw],
           );

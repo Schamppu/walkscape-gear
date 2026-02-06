@@ -1,6 +1,19 @@
 import { levelFromXp } from "./skillXp";
+import { levelFromSteps } from "./characterLevel";
 import { qualityOptions } from "@/constants/quality";
 import { isEqual } from "./isEqual";
+
+function processSteps(stepsData, playerStore) {
+  if (!stepsData || typeof stepsData !== "number") {
+    return null;
+  }
+
+  const currentLevel = playerStore.level;
+  const newLevel = levelFromSteps(stepsData);
+  if (currentLevel === newLevel) return { hasUpdates: false };
+  playerStore.level = newLevel;
+  return { hasUpdates: true, data: newLevel };
+}
 
 /**
  * Processes skills data from import
@@ -267,7 +280,7 @@ function processItems(parsedData, reset, itemsStore) {
   // Build updated owned items
   const updatedOwnedItems = { ...itemsStore.ownedItems };
   const processedItems = Object.fromEntries(
-    Object.keys(updatedOwnedItems).map((id) => [id, false])
+    Object.keys(updatedOwnedItems).map((id) => [id, false]),
   );
   if (reset)
     Object.entries(updatedOwnedItems).forEach(([id, item]) => {
@@ -338,7 +351,7 @@ function processItems(parsedData, reset, itemsStore) {
   }
 
   const unprocessedItems = Object.entries(processedItems).filter(
-    ([, val]) => !val
+    ([, val]) => !val,
   );
 
   return {
@@ -362,10 +375,11 @@ export function processCharacterImport(data, reset, playerStore, itemsStore) {
   const parsedData = JSON.parse(data);
 
   return {
+    level: processSteps(parsedData.steps, playerStore),
     skills: processSkills(parsedData.skills, playerStore),
     achievementPoints: processAchievementPoints(
       parsedData.achievement_points,
-      playerStore
+      playerStore,
     ),
     reputation: processReputation(parsedData.reputation, playerStore),
     items: processItems(parsedData, reset, itemsStore),

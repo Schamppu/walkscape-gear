@@ -30,12 +30,13 @@ export const icons = {
   ...withBase("general", {
     actions: "actions.png",
     activity: "activity.png",
+    AP: "achievement_point.png",
     character: "character.png",
     gear2: "gear2.png",
-    switch: "switch_gear_set.png",
     settings: "settings.png",
     steps: "steps.png",
     show: "show.png",
+    switch: "switch_gear_set.png",
   }),
   ...withBase("button", {
     deposit: "deposit.png",

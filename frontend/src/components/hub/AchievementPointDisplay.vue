@@ -3,6 +3,7 @@ import { ref, onMounted } from "vue";
 import IconInputBubble from "@/components/common/IconInputBubble.vue";
 import { usePlayerStore } from "@/store/player";
 import { getApInfo } from "@/utils/axios/api_routes";
+import { icons } from "@/constants/iconPaths";
 
 const emit = defineEmits(["input"]);
 const store = usePlayerStore();
@@ -27,7 +28,8 @@ onMounted(async () => {
   <icon-input-bubble
     v-if="!loading"
     id="AP"
-    icon="assets/icons/text/general_icons/achievement_point.png"
+    :title="`Achievement Points: ${store.achievementPoints}`"
+    :icon="icons.AP"
     :min="0"
     :max="maxAP"
     :default-value="0"

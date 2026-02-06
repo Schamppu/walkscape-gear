@@ -11,6 +11,7 @@ import WsIcon from "@/components/common/WsIcon.vue";
 import TabContentWrapper from "@/components/common/TabContentWrapper.vue";
 import SkillLevelDisplay from "./SkillLevelDisplay.vue";
 import IconInputBubble from "@/components/common/IconInputBubble.vue";
+import CharacterLevelDisplay from "./CharacterLevelDisplay.vue";
 import AchievementPointDisplay from "./AchievementPointDisplay.vue";
 import ItemSelection from "./ItemSelection.vue";
 import ImportButton from "./ImportButton.vue";
@@ -27,6 +28,7 @@ const notificationStore = useNotificationStore();
 const postPlayerStats = () => {
   const payload = {
     ...playerStore.skillLevels,
+    level: playerStore.level,
     achievementPoints: playerStore.achievementPoints,
   };
   upsertPlayerStats(payload);
@@ -57,7 +59,11 @@ const handleCharacterImport = (data, reset) => {
       playerStore.setAchievementPoints(result.achievementPoints.data);
     }
 
-    if (result.skills?.hasUpdates || result.achievementPoints?.hasUpdates) {
+    if (
+      result.skills?.hasUpdates ||
+      result.achievementPoints?.hasUpdates ||
+      result.level.hasUpdates
+    ) {
       postPlayerStats();
     }
 
@@ -84,7 +90,7 @@ const handleCharacterImport = (data, reset) => {
 
     if (updatedSections.length > 0) {
       notificationStore.success(
-        `Successfully updated: ${updatedSections.join(", ")}`
+        `Successfully updated: ${updatedSections.join(", ")}`,
       );
     } else {
       notificationStore.success(`Valid import data, but nothing to update`);
@@ -92,7 +98,7 @@ const handleCharacterImport = (data, reset) => {
   } catch (e) {
     console.error(e);
     notificationStore.error(
-      "Failed to import character data. Please check the file format."
+      "Failed to import character data. Please check the file format.",
     );
   }
 };
@@ -101,7 +107,7 @@ const playerSkills = computed(() => {
   const sortedSkills = [...playerStore.skills].sort(
     ({ type: typeA }, { type: typeB }) => {
       return typeA.localeCompare(typeB);
-    }
+    },
   );
 
   const skillTypes = {};
@@ -119,14 +125,14 @@ const playerSkills = computed(() => {
     type["total"] = skills.length * 99;
     type["sum"] = skills.reduce(
       (prev, { id }) => prev + playerStore.skillLevels[id],
-      0
+      0,
     );
   });
 
   return Object.fromEntries(
     Object.entries(skillTypes).sort(
-      ([, { type: typeA }], [, { type: typeB }]) => typeB - typeA
-    )
+      ([, { type: typeA }], [, { type: typeB }]) => typeB - typeA,
+    ),
   );
 });
 </script>
@@ -135,7 +141,7 @@ const playerSkills = computed(() => {
   <tab-content-wrapper class="sections">
     <import-button @import-data="handleCharacterImport" />
     <details open>
-      <summary class="typography-h4">Skills & AP</summary>
+      <summary class="typography-h4">Character</summary>
 
       <div class="skills">
         <div
@@ -157,8 +163,9 @@ const playerSkills = computed(() => {
           </div>
         </div>
         <div class="skill-type">
-          <p>Achievement Points</p>
+          <p>Character</p>
           <div class="skill-bubbles">
+            <character-level-display @input="updatePlayerStats" />
             <achievement-point-display @input="updatePlayerStats" />
           </div>
         </div>

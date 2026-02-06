@@ -7,6 +7,7 @@ import {
 
 export const usePlayerStore = defineStore("playerStore", {
   state: () => ({
+    level: 1,
     skills: [],
     skillsMap: {},
     skillLevels: {},
@@ -40,12 +41,13 @@ export const usePlayerStore = defineStore("playerStore", {
         })
         .sort((a, b) => a.name.localeCompare(b.name));
       this.skillsMap = Object.fromEntries(
-        skills.map(({ id, icon, name, type }) => [id, { icon, name, type }])
+        skills.map(({ id, icon, name, type }) => [id, { icon, name, type }]),
       );
       this.skillLevels = Object.fromEntries(
-        skills.map(({ id }) => [id, playerStats[id] ?? 1])
+        skills.map(({ id }) => [id, playerStats[id] ?? 1]),
       );
       this.setAchievementPoints(playerStats.achievementPoints ?? 0);
+      this.level = playerStats.level ?? 1;
 
       this.factions = factions.sort((a, b) => a.name.localeCompare(b.name));
       const hiddenReputation = new Set([
@@ -54,22 +56,25 @@ export const usePlayerStore = defineStore("playerStore", {
       ]);
       this.reputationFactions = this.factions.filter(
         ({ reputation }) =>
-          reputation !== null && !hiddenReputation.has(reputation)
+          reputation !== null && !hiddenReputation.has(reputation),
       );
       this.factionReputation = Object.fromEntries(
         factions.map(({ reputation }) => [
           reputation,
           factionReputations[reputation] ?? 0,
-        ])
+        ]),
       );
       this.factionsMap = Object.fromEntries(
         factions.map(({ id, icon, name, color, reputation }) => [
           id,
           { icon, name, color, reputation },
-        ])
+        ]),
       );
 
       this.isLoaded = true;
+    },
+    setCharacterLevel(value) {
+      this.level = Math.min(99, value);
     },
     setSkillLevel(id, value) {
       this.skillLevels[id] = value;
