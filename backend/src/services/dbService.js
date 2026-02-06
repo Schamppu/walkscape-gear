@@ -4,6 +4,7 @@ import { validTags } from "../../prisma/tag-data.js";
 const prisma = new PrismaClient();
 
 const ALLOWED_STATS = new Set([
+  "level",
   "achievementPoints",
   "agility",
   "carpentry",
