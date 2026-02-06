@@ -141,7 +141,7 @@ const playerSkills = computed(() => {
   <tab-content-wrapper class="sections">
     <import-button @import-data="handleCharacterImport" />
     <details open>
-      <summary class="typography-h4">Skills & AP</summary>
+      <summary class="typography-h4">Character</summary>
 
       <div class="skills">
         <div
