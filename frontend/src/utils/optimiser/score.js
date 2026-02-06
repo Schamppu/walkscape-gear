@@ -1,5 +1,5 @@
 import { getGearSetStats } from "./stats";
-import { selectedPriority } from "./priority";
+import { priorityValue } from "./priority";
 
 const lowStats = [
   "stepsPerRewardRoll",
@@ -8,16 +8,16 @@ const lowStats = [
 ];
 const highStats = ["xpPerStep", "craftsPerMaterial"];
 
-export const isHighStat = () => highStats.includes(selectedPriority());
+export const isHighStat = () => highStats.includes(priorityValue());
 
 export const startScore = () => {
-  const prio = selectedPriority();
+  const prio = priorityValue();
   if (lowStats.includes(prio)) return Infinity;
   if (highStats.includes(prio)) return -Infinity;
 };
 
 export const compareScore = (value, best) => {
-  const prio = selectedPriority();
+  const prio = priorityValue();
   if (lowStats.includes(prio)) return best - value;
   if (highStats.includes(prio)) return value - best;
 };

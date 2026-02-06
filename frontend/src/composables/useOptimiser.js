@@ -13,6 +13,7 @@ import {
 } from "@/utils/optimiser/gear";
 import { getGearSetStats } from "@/utils/optimiser/stats";
 import { startScore, compareScore } from "@/utils/optimiser/score";
+import { priorityName } from "@/utils/optimiser/priority";
 import {
   handledReqTypes,
   getReq,
@@ -218,7 +219,7 @@ export function useOptimiser() {
 
     try {
       await notificationStore.success(
-        `Generating gear set for ${baseCtx.source.value.name}`,
+        `Generating gear set with target ${priorityName()}`,
       );
       const options = getGearOptions();
       await notificationStore.debug("Generated gear options", options);

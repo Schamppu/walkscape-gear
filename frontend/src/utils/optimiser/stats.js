@@ -1,5 +1,5 @@
 import { computed } from "vue";
-import { selectedPriority } from "./priority";
+import { priorityValue } from "./priority";
 import { useSkillModifiers } from "@/composables/useSkillModifiers";
 import useBaseContext from "@/composables/context/useBaseContext";
 
@@ -15,7 +15,7 @@ export const getGearSetStats = (set) => {
   };
 
   const stats = useSkillModifiers(gearCtx);
-  const prio = selectedPriority(baseCtx);
+  const prio = priorityValue(baseCtx);
   if (prio === "stepsPerRewardRoll") return stats.stepsPerRewardRoll.value;
   else if (prio === "xpPerStep") {
     const xp = stats.xpPerStep.value;
