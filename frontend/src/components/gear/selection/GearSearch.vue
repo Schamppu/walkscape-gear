@@ -9,7 +9,7 @@ import { useShowItemForActivity } from "@/composables/useShowItemForActivity";
 import { consumableQualityOptions } from "@/domain/constants/quality.ts";
 import { itemQualityNameSort } from "@/utils/sorting";
 import { usedAttrs } from "@/utils/qualityAttrs";
-import { intersect } from "@/utils/intersect";
+import { intersect } from "@/utils/intersect.ts";
 import WsIcon from "@/components/common/WsIcon.vue";
 import SearchItemDisplay from "./SearchItemDisplay.vue";
 

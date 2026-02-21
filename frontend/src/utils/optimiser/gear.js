@@ -5,7 +5,7 @@ import { useRequirements } from "@/composables/useRequirements";
 import { useDataStore } from "@/store/data";
 import { gearTypes } from "@/utils/createEmptyGearSet";
 import { usedAttrs } from "@/utils/qualityAttrs";
-import { intersect } from "@/utils/intersect";
+import { intersect } from "@/utils/intersect.ts";
 
 import { getReq, handledReqTypes, contributesToReq } from "./requirements";
 import { getGearSetStats, filterUsefulStats } from "./stats";

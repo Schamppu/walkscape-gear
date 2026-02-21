@@ -13,9 +13,9 @@ import CharacterLevelDisplay from "./CharacterLevelDisplay.vue";
 import AchievementPointDisplay from "./AchievementPointDisplay.vue";
 import ItemSelection from "./ItemSelection.vue";
 import ImportButton from "./ImportButton.vue";
-import debounce from "@/utils/debounce";
+import debounce from "@/utils/debounce.ts";
 import { capitalize } from "@/utils/string";
-import { argbToRgba } from "@/utils/argbToRgba";
+import { argbToRgba } from "@/utils/argbToRgba.ts";
 import { useCharacterImport } from "@/composables/useCharacterImport";
 
 const playerStore = usePlayerStore();

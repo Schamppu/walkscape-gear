@@ -6,7 +6,7 @@ import {
   getMaterials,
 } from "@/utils/axios/api_routes";
 import { fetchOwnedItems } from "@/utils/axios/db_routes";
-import debounce from "@/utils/debounce";
+import debounce from "@/utils/debounce.ts";
 
 export const useItemsStore = defineStore("itemStore", {
   state: () => ({

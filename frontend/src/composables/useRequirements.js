@@ -1,4 +1,4 @@
-import { intersect } from "../utils/intersect";
+import { intersect } from "../utils/intersect.ts";
 import { useActivityStore } from "@/store/activity";
 import { usePlayerStore } from "@/store/player";
 import { useItemsStore } from "@/store/items";

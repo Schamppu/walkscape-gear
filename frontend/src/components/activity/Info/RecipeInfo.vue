@@ -14,7 +14,7 @@ import { useItemsStore } from "@/store/items";
 import useBaseContext from "@/composables/context/useBaseContext";
 import { useSkillModifiers } from "@/composables/useSkillModifiers";
 import { useFineMaterials } from "@/composables/useFineMaterialsCalculations";
-import { isEmpty } from "@/utils/isEmpty";
+import { isEmpty } from "@/utils/isEmpty.ts";
 import { n } from "@/utils/number.ts";
 
 const activityStore = useActivityStore();

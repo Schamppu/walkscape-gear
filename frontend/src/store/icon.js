@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { getIcon, getIconsBatch } from "@/utils/axios/api_routes";
-import debounce from "@/utils/debounce";
+import debounce from "@/utils/debounce.ts";
 
 export const useIconStore = defineStore("iconStore", {
   state: () => ({
