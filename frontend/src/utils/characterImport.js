@@ -1,6 +1,25 @@
 import { skillLevelFromXp, characterLevelFromSteps } from "@/domain/character";
 import { qualityOptions } from "@/domain/constants/quality.ts";
-import { isEqual } from "./isEqual";
+import { isEqual } from "./isEqual.ts";
+
+/**
+ * Purpose:
+ * Utility functions for processing character import data, including validation and transformation of skills, levels, items, and reputations.
+ * 
+ * Responsibilities:
+ * - Validate and process character level based on steps - ensuring it falls within valid ranges.
+ * - Validate and process skill levels based on XP, ensuring they correspond to valid skill levels.
+ * - Validate and process achievement points, ensuring they are non-negative integers.
+ * - Validate and process faction reputation, ensuring it falls within valid ranges.
+ * - Process items from various sources (collectibles, inventory, bank, consumables, gear) while validating item IDs and counts against the items store.
+ * - Handle quality suffixes in item IDs to determine item quality and ensure it aligns with the items store data.
+ * 
+ * Must remain framework-independent.
+ * 
+ * Does NOT:
+ * - Handle any UI-related logic or state management directly - it should return processed data that can be used by the store or components.
+ * - Perform any side effects such as saving to backend or updating stores - it should only return the processed data for the caller to handle.
+ */
 
 function processSteps(stepsData, playerStore) {
   if (!stepsData || typeof stepsData !== "number") {
