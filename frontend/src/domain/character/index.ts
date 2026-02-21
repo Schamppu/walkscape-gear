@@ -12,9 +12,9 @@
  * - Contain UI logic or stateful stores
  */
 
-export * from "./characterLevel";
-export { default as characterLevel } from "./characterLevel";
 
-export default {
-  characterLevel,
-};
+export * from "./characterLevel";
+export * from "./skillLevel";
+
+export { default as characterLevel } from "./characterLevel";
+export { default as skillLevel } from "./skillLevel";

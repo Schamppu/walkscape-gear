@@ -1,5 +1,4 @@
-import { levelFromXp } from "./skillXp";
-import { levelFromSteps } from "@/domain/character";
+import { skillLevelFromXp, characterLevelFromSteps } from "@/domain/character";
 import { qualityOptions } from "@/domain/constants/quality.ts";
 import { isEqual } from "./isEqual";
 
@@ -9,7 +8,7 @@ function processSteps(stepsData, playerStore) {
   }
 
   const currentLevel = playerStore.level;
-  const newLevel = levelFromSteps(stepsData);
+  const newLevel = characterLevelFromSteps(stepsData);
   if (currentLevel === newLevel) return { hasUpdates: false };
   playerStore.level = newLevel;
   return { hasUpdates: true, data: newLevel };
@@ -34,7 +33,7 @@ function processSkills(skillsData, playerStore) {
   for (const [skillId, xp] of Object.entries(skillsData)) {
     // Validate: skill must exist in our store and xp must be a valid number
     if (skillId in updatedSkillLevels && typeof xp === "number" && xp >= 0) {
-      const level = levelFromXp(xp);
+      const level = skillLevelFromXp(xp);
       updatedSkillLevels[skillId] = level;
       if (level !== playerStore.skillLevels[skillId]) updated = true;
     } else {
