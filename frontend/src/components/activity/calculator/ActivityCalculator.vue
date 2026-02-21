@@ -11,7 +11,7 @@ import { useFineMaterials } from "@/composables/useFineMaterialsCalculations";
 import WsIcon from "@/components/common/WsIcon.vue";
 import WsLabel from "@/components/common/WsLabel.vue";
 import CalculatorQualityOutcomeTable from "./CalculatorQualityOutcomeTable.vue";
-import { levelFromXp, xpToLevelSkill } from "@/utils/skillXp";
+import { skillLevelFromXp, xpToSkillLevel } from "@/domain/character";
 
 const ctx = useBaseContext();
 const {
@@ -108,10 +108,10 @@ watchEffect(() => {
       },
     });
 
-    skillXpStartRefs[s] = xpToLevelSkill(skillLevels.value[s] - 1);
+    skillXpStartRefs[s] = xpToSkillLevel(skillLevels.value[s] - 1);
     skillLevelStartRefs[s] = computed({
-      get: () => levelFromXp(skillXpStartRefs[s]),
-      set: (val) => (skillXpStartRefs[s] = xpToLevelSkill(val - 1)),
+      get: () => skillLevelFromXp(skillXpStartRefs[s]),
+      set: (val) => (skillXpStartRefs[s] = xpToSkillLevel(val - 1)),
     });
 
     skillXpEndRefs[s] = computed({
@@ -123,8 +123,8 @@ watchEffect(() => {
       },
     });
     skillLevelEndRefs[s] = computed({
-      get: () => levelFromXp(skillXpEndRefs[s]),
-      set: (val) => (skillXpEndRefs[s] = xpToLevelSkill(val - 1)),
+      get: () => skillLevelFromXp(skillXpEndRefs[s]),
+      set: (val) => (skillXpEndRefs[s] = xpToSkillLevel(val - 1)),
     });
   }
 });

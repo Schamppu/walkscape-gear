@@ -14,6 +14,8 @@
 
 export * from "./characterLevel";
 export { default as characterLevel } from "./characterLevel";
+export * from "./skillLevel";
+export { default as skillLevel } from "./skillLevel";
 
 export default {
   characterLevel,
