@@ -4,7 +4,7 @@ import ComparisonTableShell from "./table/ComparisonTableShell.vue";
 import getOutcomeOdds from "@/utils/qualityOutcomeOdds";
 import { useRequirements } from "@/composables/useRequirements";
 import { useSkillModifiers } from "@/composables/useSkillModifiers";
-import { n } from "@/utils/number";
+import { n } from "@/utils/number.ts";
 import ComparisonValueRow from "./table/ComparisonValueRow.vue";
 
 const props = defineProps({

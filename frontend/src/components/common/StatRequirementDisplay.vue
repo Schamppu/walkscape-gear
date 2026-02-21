@@ -7,7 +7,7 @@ import { useRequirements } from "@/composables/useRequirements";
 import useBaseContext from "@/composables/context/useBaseContext";
 import WsIcon from "@/components/common/WsIcon.vue";
 
-import { n } from "@/utils/number";
+import { n } from "@/utils/number.ts";
 
 const props = defineProps({
   stat: {

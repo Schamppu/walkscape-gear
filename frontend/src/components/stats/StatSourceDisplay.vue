@@ -3,7 +3,7 @@ import { computed } from "vue";
 import useBaseContext from "@/composables/context/useBaseContext";
 import { useEffectiveAttrs } from "@/composables/useEffectiveAttrs";
 import WsIcon from "@/components/common/WsIcon.vue";
-import { n } from "@/utils/number";
+import { n } from "@/utils/number.ts";
 
 const props = defineProps({
   stat: {

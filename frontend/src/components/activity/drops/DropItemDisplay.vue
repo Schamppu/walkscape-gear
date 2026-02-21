@@ -6,7 +6,7 @@ import WsIcon from "@/components/common/WsIcon.vue";
 import useBaseContext from "@/composables/context/useBaseContext";
 import { useLootTables } from "@/composables/useLootTables";
 import { icons } from "@/constants/iconPaths.ts";
-import { n } from "@/utils/number";
+import { n } from "@/utils/number.ts";
 import { snakeToTitle } from "@/utils/string";
 
 const props = defineProps({

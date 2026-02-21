@@ -8,7 +8,7 @@ import { useSkillModifiers } from "@/composables/useSkillModifiers";
 import { useFineMaterials } from "@/composables/useFineMaterialsCalculations";
 import WsLabel from "@/components/common/WsLabel.vue";
 import getOutcomeOdds from "@/utils/qualityOutcomeOdds";
-import { n } from "@/utils/number";
+import { n } from "@/utils/number.ts";
 
 const props = defineProps({
   crafts: Number,

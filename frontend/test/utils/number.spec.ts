@@ -1,7 +1,27 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
+import { setActivePinia, createPinia } from "pinia";
+import { useSettingsStore } from "@/store/settings";
 import { n } from "@/utils/number";
 
+/* Setup settings store with enough data to run the tests.
+ * thousandSeparator.display = 0 → space ( )
+ * decimalSeparator.display  = 0 → dot   (.)
+ */
+function setupSettingsStore(): void {
+  const settingsStore = useSettingsStore();
+  (settingsStore.activitySettings as Record<string, unknown>) = {
+    thousandSeparator: { display: 0 },
+    decimalSeparator: { display: 0 },
+  };
+}
+
 describe("n utility", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    setActivePinia(createPinia());
+    setupSettingsStore();
+  });
+
   it("formats integers with thousand separators", () => {
     expect(n(1000)).toBe("1 000");
     expect(n(1000000)).toBe("1 000 000");

@@ -14,7 +14,7 @@ import { useSkillModifiers } from "@/composables/useSkillModifiers";
 import useBaseContext from "@/composables/context/useBaseContext";
 import { useRequirements } from "@/composables/useRequirements";
 import { isEmpty } from "@/utils/isEmpty";
-import { n } from "@/utils/number";
+import { n } from "@/utils/number.ts";
 import AbilitiesDisplay from "../../common/abilities/AbilitiesDisplay.vue";
 import { icons } from "@/constants/iconPaths.ts";
 

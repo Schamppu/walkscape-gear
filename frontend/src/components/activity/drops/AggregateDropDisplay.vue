@@ -9,7 +9,7 @@ import { useRequirements } from "@/composables/useRequirements";
 import { useSkillModifiers } from "@/composables/useSkillModifiers";
 import { useFineMaterials } from "@/composables/useFineMaterialsCalculations";
 import getOutcomeOdds from "@/utils/qualityOutcomeOdds";
-import { n } from "@/utils/number";
+import { n } from "@/utils/number.ts";
 import { icons } from "@/constants/iconPaths.ts";
 import { tokenValues } from "@/domain/constants/tokenValues.ts";
 

@@ -7,7 +7,7 @@ import EmitLocationBubble from "@/components/common/EmitLocationBubble.vue";
 import { useGearContext } from "@/composables/context/useGearContext";
 import { useSkillModifiers } from "@/composables/useSkillModifiers";
 import { useFineMaterials } from "@/composables/useFineMaterialsCalculations";
-import { n } from "@/utils/number";
+import { n } from "@/utils/number.ts";
 import EmitServiceBubble from "@/components/common/EmitServiceBubble.vue";
 import ComparisonValueRow from "./table/ComparisonValueRow.vue";
 import EditableComparisonRow from "./table/EditableComparisonRow.vue";
