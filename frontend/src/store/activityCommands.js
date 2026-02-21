@@ -1,4 +1,4 @@
-import { activityNone } from "@/constants/activityNone";
+import { activityNone } from "@/domain/constants/activityNone.ts";
 
 export class SetActivityCommand {
   constructor(

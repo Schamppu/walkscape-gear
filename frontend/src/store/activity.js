@@ -9,7 +9,7 @@ import {
   getRecipes,
 } from "@/utils/axios/api_routes";
 import { filterServices, sortServicesByTier } from "@/utils/services";
-import { activityNone } from "@/constants/activityNone";
+import { activityNone } from "@/domain/constants/activityNone.ts";
 import {
   SetActivityCommand,
   SetRecipeCommand,

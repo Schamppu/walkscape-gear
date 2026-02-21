@@ -1,4 +1,4 @@
-export const baseAttrs = [
+export const baseAttrs: string[] = [
   "bonus_experience",
   "chest_finding",
   "double_action",
@@ -12,3 +12,5 @@ export const baseAttrs = [
   "work_efficiency",
   "roll_special_table",
 ];
+
+export default baseAttrs;

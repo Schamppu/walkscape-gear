@@ -4,7 +4,7 @@ import { useNotificationStore } from "./notifications";
 import {
   activityOptimiserPriorities,
   recipeOptimiserPriorities,
-} from "@/constants/optimiserPriorities";
+} from "@/domain/constants/optimiserPriorities.ts";
 import { thousandSeparators, decimalSeparators } from "@/constants/separators";
 
 export const useSettingsStore = defineStore("settingsStore", {
