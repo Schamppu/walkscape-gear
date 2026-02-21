@@ -1,5 +1,5 @@
 import { levelFromXp } from "./skillXp";
-import { levelFromSteps } from "./characterLevel";
+import { levelFromSteps } from "@/domain/character";
 import { qualityOptions } from "@/domain/constants/quality.ts";
 import { isEqual } from "./isEqual";
 
