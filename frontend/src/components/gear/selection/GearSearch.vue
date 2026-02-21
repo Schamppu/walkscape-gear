@@ -6,7 +6,7 @@ import { useSettingsStore } from "@/store/settings";
 import useBaseContext from "@/composables/context/useBaseContext";
 import { useRequirements } from "@/composables/useRequirements";
 import { useShowItemForActivity } from "@/composables/useShowItemForActivity";
-import { consumableQualityOptions } from "@/constants/quality";
+import { consumableQualityOptions } from "@/domain/constants/quality.ts";
 import { itemQualityNameSort } from "@/utils/sorting";
 import { usedAttrs } from "@/utils/qualityAttrs";
 import { intersect } from "@/utils/intersect";

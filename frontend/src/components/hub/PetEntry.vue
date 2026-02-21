@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, onMounted } from "vue";
-import { petQualityOptions } from "@/constants/quality";
+import { petQualityOptions } from "@/domain/constants/quality.ts";
 import { useItemsStore } from "@/store/items";
 import WsIcon from "@/components/common/WsIcon.vue";
 import StatsDisplay from "../common/StatsDisplay.vue";

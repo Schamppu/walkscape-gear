@@ -2,7 +2,7 @@
 import {
   craftingQualityOptions,
   consumableQualityOptions,
-} from "@/constants/quality";
+} from "@/domain/constants/quality.ts";
 import { computed } from "vue";
 
 const props = defineProps({

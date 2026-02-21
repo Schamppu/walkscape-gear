@@ -1,6 +1,6 @@
 import { levelFromXp } from "./skillXp";
 import { levelFromSteps } from "./characterLevel";
-import { qualityOptions } from "@/constants/quality";
+import { qualityOptions } from "@/domain/constants/quality.ts";
 import { isEqual } from "./isEqual";
 
 function processSteps(stepsData, playerStore) {

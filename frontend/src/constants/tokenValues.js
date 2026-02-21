@@ -1,3 +1,17 @@
+/**
+ * Purpose:
+ * Stores the token values for various items in the game, 
+ * allowing the tool to compute the total token value of an activity
+ * with the equipped items.
+ *
+ * Responsibilities:
+ * - Provide a centralized mapping of item identifiers to their token values
+ * - Support different qualities of items (e.g., common, fine) with corresponding token values
+ *
+ * Does NOT:
+ * - Mutate global state
+ */
+
 export const tokenValues = {
   adventurers_guild_token: {
     common: 1,
