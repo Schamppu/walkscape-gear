@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed } from "vue";
 import ComparisonTableShell from "./table/ComparisonTableShell.vue";
-import getOutcomeOdds from "@/utils/qualityOutcomeOdds";
+import { getOutcomeOdds } from "@/domain/quality/qualityOutcomeOdds";
 import { useRequirements } from "@/composables/useRequirements";
 import { useSkillModifiers } from "@/composables/useSkillModifiers";
 import { n } from "@/utils/number";

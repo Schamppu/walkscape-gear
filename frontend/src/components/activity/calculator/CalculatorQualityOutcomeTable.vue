@@ -7,7 +7,7 @@ import { useRequirements } from "@/composables/useRequirements";
 import { useSkillModifiers } from "@/composables/useSkillModifiers";
 import { useFineMaterials } from "@/composables/useFineMaterialsCalculations";
 import WsLabel from "@/components/common/WsLabel.vue";
-import getOutcomeOdds from "@/utils/qualityOutcomeOdds";
+import { getOutcomeOdds } from "@/domain/quality/qualityOutcomeOdds";
 import { n } from "@/utils/number";
 
 const props = defineProps({

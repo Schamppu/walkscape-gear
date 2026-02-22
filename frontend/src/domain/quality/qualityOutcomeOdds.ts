@@ -1,7 +1,40 @@
+/**
+ * Purpose:
+ * Pure calculation of quality outcome odds for crafting.
+ *
+ * Responsibilities:
+ * - Calculate the probability of each quality tier given crafting parameters.
+ * - Return expected crafts needed per tier.
+ *
+ * Does NOT:
+ * - Mutate global state
+ * - Import any Vue / reactive APIs
+ */
+
 import { craftingQualityOptions } from "@/domain/constants/quality";
 
-const getOutcomeOdds = (levelReq, qualityOutcome, useFineMaterials) => {
-  const weights = [
+export type QualityOutcomeResult = {
+  qualityValue: string;
+  name: string;
+  value: number;
+  crafts: number;
+};
+
+/**
+ * Calculates the odds of achieving different quality outcomes based on the
+ * provided parameters.
+ *
+ * @param levelReq      The level requirement for the recipe.
+ * @param qualityOutcome A numerical value representing the crafting quality outcome stat.
+ * @param useFineMaterials Whether fine materials are used (shifts all tiers up by one).
+ * @returns An array of quality outcome results ordered from lowest to highest tier.
+ */
+export function getOutcomeOdds(
+  levelReq: number,
+  qualityOutcome: number,
+  useFineMaterials: boolean
+): QualityOutcomeResult[] {
+  const weights: [number, number][] = [
     [1000, 4],
     [200, 4],
     [50, 4],
@@ -10,9 +43,20 @@ const getOutcomeOdds = (levelReq, qualityOutcome, useFineMaterials) => {
     [0.05, 0.05],
   ];
 
-  let base = craftingQualityOptions
+  type BaseEntry = {
+    name: string;
+    qualityValue: string;
+    bandStart: number;
+    bandEnd: number;
+    weightStart: number;
+    weightEnd: number;
+    slope: number;
+    weight: number;
+  };
+
+  let base: BaseEntry[] = craftingQualityOptions
     .map((quality, index) => ({
-      ...quality,
+      name: quality.name,
       qualityValue: quality.value,
       bandStart: index * 100,
       bandEnd: (index + 1) * (100 + levelReq),
@@ -58,15 +102,10 @@ const getOutcomeOdds = (levelReq, qualityOutcome, useFineMaterials) => {
   }
 
   const totalWeight = base.reduce((acc, item) => acc + item.weight, 0);
-  return base.map((item) => {
-    const { qualityValue, name, weight } = item;
-    return {
-      qualityValue,
-      name,
-      value: weight / totalWeight,
-      crafts: totalWeight / weight,
-    };
-  });
-};
-
-export default getOutcomeOdds;
+  return base.map(({ qualityValue, name, weight }) => ({
+    qualityValue,
+    name,
+    value: weight / totalWeight,
+    crafts: totalWeight / weight,
+  }));
+}

@@ -8,7 +8,7 @@ import { useLootTables } from "@/composables/useLootTables";
 import { useRequirements } from "@/composables/useRequirements";
 import { useSkillModifiers } from "@/composables/useSkillModifiers";
 import { useFineMaterials } from "@/composables/useFineMaterialsCalculations";
-import getOutcomeOdds from "@/utils/qualityOutcomeOdds";
+import { getOutcomeOdds } from "@/domain/quality/qualityOutcomeOdds";
 import { n } from "@/utils/number";
 import { icons } from "@/constants/iconPaths";
 import { tokenValues } from "@/domain/constants/tokenValues";
