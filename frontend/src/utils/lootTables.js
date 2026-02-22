@@ -1,4 +1,4 @@
-import { usedAttrs } from "./qualityAttrs";
+import { usedAttrs } from "@/domain/quality/qualityAttrs";
 import { usePlayerStore } from "@/store/player";
 import { useRequirements } from "@/composables/useRequirements";
 import { stripHtmlTags } from "@/utils/stripHtmlTags";

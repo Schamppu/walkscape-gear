@@ -1,7 +1,7 @@
 import { computed } from "vue";
 import { useRequirements } from "./useRequirements";
 import { useLevelBonus } from "./useLevelBonus";
-import { usedAttrs } from "../utils/qualityAttrs";
+import { usedAttrs } from "@/domain/quality/qualityAttrs";
 import { toDeepRaw } from "../utils/rawData";
 import { makePseudoStat } from "@/utils/domain/rollSpecialTable";
 

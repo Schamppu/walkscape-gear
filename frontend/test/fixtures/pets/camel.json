@@ -1,0 +1,486 @@
+{
+  "id": "camel",
+  "name": "Camel",
+  "desc": "A sturdy camel, perfect for desert travels.",
+  "egg": {
+    "name": "Camel egg",
+    "desc": "The egg left behind by a camel, you can tell because it has a hump on it. That's how you tell, right?",
+    "sprite": "assets/icons/pets/camel/egg_static.png",
+    "sheet": "assets/icons/pets/camel/egg_sheet.png"
+  },
+  "looks": [
+    {
+      "id": "default",
+      "sprites": [
+        {
+          "sprite": "assets/icons/pets/camel/baby_static.png",
+          "sheet": "assets/icons/pets/camel/baby_idle_sheet.png",
+          "stage": "juvenile"
+        },
+        {
+          "sprite": "assets/icons/pets/camel/adult_static.png",
+          "sheet": "assets/icons/pets/camel/adult_idle_sheet.png",
+          "stage": "adult"
+        }
+      ]
+    },
+    {
+      "id": "light",
+      "sprites": [
+        {
+          "sprite": "assets/icons/pets/camel/baby_light_static.png",
+          "sheet": "assets/icons/pets/camel/baby_light_idle_sheet.png",
+          "stage": "juvenile"
+        },
+        {
+          "sprite": "assets/icons/pets/camel/adult_light_static.png",
+          "sheet": "assets/icons/pets/camel/adult_light_idle_sheet.png",
+          "stage": "adult"
+        }
+      ]
+    },
+    {
+      "id": "dark",
+      "sprites": [
+        {
+          "sprite": "assets/icons/pets/camel/baby_dark_static.png",
+          "sheet": "assets/icons/pets/camel/baby_dark_idle_sheet.png",
+          "stage": "juvenile"
+        },
+        {
+          "sprite": "assets/icons/pets/camel/adult_dark_static.png",
+          "sheet": "assets/icons/pets/camel/adult_dark_idle_sheet.png",
+          "stage": "adult"
+        }
+      ]
+    }
+  ],
+  "rareLooks": [
+    {
+      "id": "default",
+      "sprites": [
+        {
+          "sprite": "assets/icons/pets/camel/baby_shiny_static.png",
+          "sheet": "assets/icons/pets/camel/baby_shiny_idle_sheet.png",
+          "stage": "juvenile"
+        },
+        {
+          "sprite": "assets/icons/pets/camel/adult_shiny_static.png",
+          "sheet": "assets/icons/pets/camel/adult_shiny_idle_sheet.png",
+          "stage": "adult"
+        }
+      ]
+    }
+  ],
+  "hatchingRequirements": null,
+  "xpRequirements": [
+    {
+      "type": "realm",
+      "name": "",
+      "opposite": false,
+      "requirement": { "realm": "wrentmark" }
+    }
+  ],
+  "levels": [
+    {
+      "level": 1,
+      "xp": 50000,
+      "stage": "juvenile",
+      "attributes": [
+        {
+          "id": "1d5f0cbb-bfca-4cf8-bfd8-168300b54e54",
+          "customIcon": null,
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "",
+          "text": "",
+          "statText": "Work efficiency",
+          "skillText": "",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "realm",
+              "name": "",
+              "opposite": false,
+              "requirement": { "realm": "wrentmark" }
+            },
+            {
+              "type": "mainSkillType",
+              "name": "",
+              "opposite": false,
+              "requirement": { "type": "gathering" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "work_efficiency",
+              "name": "Work efficiency",
+              "type": "workEfficiency",
+              "isPercent": true,
+              "value": -0.3,
+              "isNegative": true,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "30ed860e-58ae-4bca-b242-ab72078cb2ec",
+          "customIcon": null,
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "",
+          "text": "",
+          "statText": "Work efficiency",
+          "skillText": "",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "realm",
+              "name": "",
+              "opposite": false,
+              "requirement": { "realm": "wrentmark" }
+            },
+            {
+              "type": "mainSkillType",
+              "name": "",
+              "opposite": false,
+              "requirement": { "type": "artisan" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "work_efficiency",
+              "name": "Work efficiency",
+              "type": "workEfficiency",
+              "isPercent": true,
+              "value": -0.2,
+              "isNegative": true,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "0ff8d38c-666c-46f9-a16d-66b7ca4bad6f",
+          "customIcon": null,
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "",
+          "text": "",
+          "statText": "Steps required",
+          "skillText": "",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "realm",
+              "name": "",
+              "opposite": false,
+              "requirement": { "realm": "wrentmark" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "steps_required",
+              "name": "Steps required",
+              "type": "stepsRequired",
+              "isPercent": false,
+              "value": 2,
+              "isNegative": true,
+              "isMultiplicative": false
+            }
+          ]
+        },
+        {
+          "id": "20467e7c-2147-44ad-95e6-8e9218afa5ee",
+          "customIcon": null,
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "",
+          "text": "",
+          "statText": "Inventory space",
+          "skillText": "",
+          "tables": null,
+          "requirements": [],
+          "stats": [
+            {
+              "stat": "inventory_space",
+              "name": "Inventory space",
+              "type": "inventorySpace",
+              "isPercent": false,
+              "value": 1,
+              "isNegative": false,
+              "isMultiplicative": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "level": 2,
+      "xp": 100000,
+      "stage": "juvenile",
+      "attributes": [
+        {
+          "id": "ff11e26d-1b5c-4a0a-ae40-5282ec2f1f06",
+          "customIcon": null,
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "",
+          "text": "",
+          "statText": "Work efficiency",
+          "skillText": "",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "realm",
+              "name": "",
+              "opposite": false,
+              "requirement": { "realm": "wrentmark" }
+            },
+            {
+              "type": "mainSkillType",
+              "name": "",
+              "opposite": false,
+              "requirement": { "type": "gathering" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "work_efficiency",
+              "name": "Work efficiency",
+              "type": "workEfficiency",
+              "isPercent": true,
+              "value": -0.15,
+              "isNegative": true,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "5e563b13-0846-4a01-bce5-933f63607eaa",
+          "customIcon": null,
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "",
+          "text": "",
+          "statText": "Work efficiency",
+          "skillText": "",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "realm",
+              "name": "",
+              "opposite": false,
+              "requirement": { "realm": "wrentmark" }
+            },
+            {
+              "type": "mainSkillType",
+              "name": "",
+              "opposite": false,
+              "requirement": { "type": "artisan" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "work_efficiency",
+              "name": "Work efficiency",
+              "type": "workEfficiency",
+              "isPercent": true,
+              "value": -0.1,
+              "isNegative": true,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "2042d1e4-ef03-49b8-bc9e-e49d5c37eb6b",
+          "customIcon": null,
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "",
+          "text": "",
+          "statText": "Steps required",
+          "skillText": "",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "realm",
+              "name": "",
+              "opposite": false,
+              "requirement": { "realm": "wrentmark" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "steps_required",
+              "name": "Steps required",
+              "type": "stepsRequired",
+              "isPercent": false,
+              "value": 1,
+              "isNegative": true,
+              "isMultiplicative": false
+            }
+          ]
+        },
+        {
+          "id": "126a7bd2-60d1-42b2-93b5-bb157452952d",
+          "customIcon": null,
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "",
+          "text": "",
+          "statText": "Inventory space",
+          "skillText": "",
+          "tables": null,
+          "requirements": [],
+          "stats": [
+            {
+              "stat": "inventory_space",
+              "name": "Inventory space",
+              "type": "inventorySpace",
+              "isPercent": false,
+              "value": 2,
+              "isNegative": false,
+              "isMultiplicative": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "level": 3,
+      "xp": 150000,
+      "stage": "adult",
+      "attributes": [
+        {
+          "id": "e720a1ea-acde-4fd7-8122-443a1966fd95",
+          "customIcon": null,
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "",
+          "text": "",
+          "statText": "Work efficiency",
+          "skillText": "",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "realm",
+              "name": "",
+              "opposite": false,
+              "requirement": { "realm": "wrentmark" }
+            },
+            {
+              "type": "mainSkillType",
+              "name": "",
+              "opposite": false,
+              "requirement": { "type": "gathering" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "work_efficiency",
+              "name": "Work efficiency",
+              "type": "workEfficiency",
+              "isPercent": true,
+              "value": 0.05,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "d0bdcdc6-7d41-4f53-a0bb-ee4923152c50",
+          "customIcon": null,
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "",
+          "text": "",
+          "statText": "Work efficiency",
+          "skillText": "",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "realm",
+              "name": "",
+              "opposite": false,
+              "requirement": { "realm": "wrentmark" }
+            },
+            {
+              "type": "mainSkillType",
+              "name": "",
+              "opposite": false,
+              "requirement": { "type": "artisan" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "work_efficiency",
+              "name": "Work efficiency",
+              "type": "workEfficiency",
+              "isPercent": true,
+              "value": 0.02,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "f2db5ffc-5744-4a6d-9f4a-a9a0f421d175",
+          "customIcon": null,
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "",
+          "text": "",
+          "statText": "Steps required",
+          "skillText": "",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "realm",
+              "name": "",
+              "opposite": false,
+              "requirement": { "realm": "wrentmark" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "steps_required",
+              "name": "Steps required",
+              "type": "stepsRequired",
+              "isPercent": false,
+              "value": -1,
+              "isNegative": false,
+              "isMultiplicative": false
+            }
+          ]
+        },
+        {
+          "id": "71cf5b1a-7b33-47d5-9742-3391af8f4f6c",
+          "customIcon": null,
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "",
+          "text": "",
+          "statText": "Inventory space",
+          "skillText": "",
+          "tables": null,
+          "requirements": [],
+          "stats": [
+            {
+              "stat": "inventory_space",
+              "name": "Inventory space",
+              "type": "inventorySpace",
+              "isPercent": false,
+              "value": 3,
+              "isNegative": false,
+              "isMultiplicative": false
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "abilities": [
+    { "unlockLevel": 1, "ability": "navigate_desert" },
+    { "unlockLevel": 3, "ability": "i_miss_the_sun" }
+  ]
+}

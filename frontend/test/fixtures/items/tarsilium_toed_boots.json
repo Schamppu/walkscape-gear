@@ -1,0 +1,478 @@
+{
+  "id": "tarsilium_toed_boots",
+  "name": "Tarsilium-toed boots",
+  "keywords": ["mining", "smithing"],
+  "type": "crafted",
+  "quality": "common",
+  "consumableType": null,
+  "gearType": "feet",
+  "requirements": [
+    {
+      "type": "skillLevel",
+      "name": null,
+      "opposite": false,
+      "requirement": { "level": 41, "skill": "smithing" }
+    },
+    {
+      "type": "skillLevel",
+      "name": null,
+      "opposite": false,
+      "requirement": { "level": 33, "skill": "mining" }
+    }
+  ],
+  "itemAttrs": [
+    {
+      "id": "63afe25d-b281-4293-99a1-1dfbc5ed21ab",
+      "customIcon": null,
+      "customTextLocalizationKey": null,
+      "customText": "",
+      "textLocalizationKey": "attributes.singulars.skilling.workEfficiency.whileMainSkill.text",
+      "text": "<stat s=\"workEfficiency\"/> while <supp k=\"skill\"/>",
+      "statText": "Work efficiency",
+      "skillText": "Mining",
+      "tables": null,
+      "requirements": [
+        {
+          "type": "mainSkill",
+          "name": null,
+          "opposite": false,
+          "requirement": { "skill": "mining" }
+        }
+      ],
+      "stats": [
+        {
+          "stat": "work_efficiency",
+          "name": "Work efficiency",
+          "type": "workEfficiency",
+          "isPercent": true,
+          "value": 0.04,
+          "isNegative": false,
+          "isMultiplicative": true
+        }
+      ]
+    },
+    {
+      "id": "73205811-420c-436b-aa01-64d178061315",
+      "customIcon": null,
+      "customTextLocalizationKey": null,
+      "customText": "",
+      "textLocalizationKey": "attributes.singulars.skilling.workEfficiency.whileMainSkill.text",
+      "text": "<stat s=\"workEfficiency\"/> while <supp k=\"skill\"/>",
+      "statText": "Work efficiency",
+      "skillText": "Smithing",
+      "tables": null,
+      "requirements": [
+        {
+          "type": "mainSkill",
+          "name": null,
+          "opposite": false,
+          "requirement": { "skill": "smithing" }
+        }
+      ],
+      "stats": [
+        {
+          "stat": "work_efficiency",
+          "name": "Work efficiency",
+          "type": "workEfficiency",
+          "isPercent": true,
+          "value": 0.06,
+          "isNegative": false,
+          "isMultiplicative": true
+        }
+      ]
+    },
+    {
+      "id": "400bf0b0-ba77-416d-adf8-700c17298042",
+      "customIcon": "",
+      "customTextLocalizationKey": "",
+      "customText": "",
+      "textLocalizationKey": "attributes.singulars.skilling.doubleAction.whileMainSkill.text",
+      "text": "<stat s=\"doubleAction\"/> while <supp k=\"skill\"/>",
+      "statText": "Double action",
+      "skillText": "Mining",
+      "tables": null,
+      "requirements": [
+        {
+          "type": "mainSkill",
+          "name": "",
+          "opposite": false,
+          "requirement": { "skill": "mining" }
+        }
+      ],
+      "stats": [
+        {
+          "stat": "double_action",
+          "name": "Double action",
+          "type": "doubleAction",
+          "isPercent": true,
+          "value": 0.01,
+          "isNegative": false,
+          "isMultiplicative": true
+        }
+      ]
+    },
+    {
+      "id": "e140bf67-4290-44d0-b4b2-3037a7ae4f59",
+      "customIcon": "",
+      "customTextLocalizationKey": "",
+      "customText": "",
+      "textLocalizationKey": "attributes.singulars.skilling.doubleAction.whileMainSkill.text",
+      "text": "<stat s=\"doubleAction\"/> while <supp k=\"skill\"/>",
+      "statText": "Double action",
+      "skillText": "Smithing",
+      "tables": null,
+      "requirements": [
+        {
+          "type": "mainSkill",
+          "name": "",
+          "opposite": false,
+          "requirement": { "skill": "smithing" }
+        }
+      ],
+      "stats": [
+        {
+          "stat": "double_action",
+          "name": "Double action",
+          "type": "doubleAction",
+          "isPercent": true,
+          "value": 0.01,
+          "isNegative": false,
+          "isMultiplicative": true
+        }
+      ]
+    }
+  ],
+  "itemQualityAttrs": [
+    {
+      "quality": "uncommon",
+      "attributes": [
+        {
+          "id": "0447a713-0567-4d17-8dac-032e40cfe203",
+          "customIcon": null,
+          "customTextLocalizationKey": null,
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.skilling.doubleAction.whileMainSkill.text",
+          "text": "<stat s=\"doubleAction\"/> while <supp k=\"skill\"/>",
+          "statText": "Double action",
+          "skillText": "Mining",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": null,
+              "opposite": false,
+              "requirement": { "skill": "mining" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "double_action",
+              "name": "Double action",
+              "type": "doubleAction",
+              "isPercent": true,
+              "value": 0.01,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "c40eab45-ffb6-4431-87c3-a1e9a0b690e2",
+          "customIcon": null,
+          "customTextLocalizationKey": null,
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.skilling.doubleAction.whileMainSkill.text",
+          "text": "<stat s=\"doubleAction\"/> while <supp k=\"skill\"/>",
+          "statText": "Double action",
+          "skillText": "Smithing",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": null,
+              "opposite": false,
+              "requirement": { "skill": "smithing" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "double_action",
+              "name": "Double action",
+              "type": "doubleAction",
+              "isPercent": true,
+              "value": 0.0125,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "quality": "rare",
+      "attributes": [
+        {
+          "id": "ceb96ee2-e203-42e9-bc69-0c482e732e35",
+          "customIcon": null,
+          "customTextLocalizationKey": null,
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.skilling.doubleAction.whileMainSkill.text",
+          "text": "<stat s=\"doubleAction\"/> while <supp k=\"skill\"/>",
+          "statText": "Double action",
+          "skillText": "Mining",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": null,
+              "opposite": false,
+              "requirement": { "skill": "mining" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "double_action",
+              "name": "Double action",
+              "type": "doubleAction",
+              "isPercent": true,
+              "value": 0.01,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "02b1268e-0f16-4fee-9d16-f8cea67f8d7b",
+          "customIcon": null,
+          "customTextLocalizationKey": null,
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.skilling.doubleAction.whileMainSkill.text",
+          "text": "<stat s=\"doubleAction\"/> while <supp k=\"skill\"/>",
+          "statText": "Double action",
+          "skillText": "Smithing",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": null,
+              "opposite": false,
+              "requirement": { "skill": "smithing" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "double_action",
+              "name": "Double action",
+              "type": "doubleAction",
+              "isPercent": true,
+              "value": 0.0125,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "quality": "epic",
+      "attributes": [
+        {
+          "id": "f6e1dcc9-9ec0-4148-bfda-3c2702c36cc4",
+          "customIcon": null,
+          "customTextLocalizationKey": null,
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.skilling.doubleAction.whileMainSkill.text",
+          "text": "<stat s=\"doubleAction\"/> while <supp k=\"skill\"/>",
+          "statText": "Double action",
+          "skillText": "Mining",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": null,
+              "opposite": false,
+              "requirement": { "skill": "mining" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "double_action",
+              "name": "Double action",
+              "type": "doubleAction",
+              "isPercent": true,
+              "value": 0.01,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "f415cd06-ea0e-419a-8fb0-9053255b0cc2",
+          "customIcon": null,
+          "customTextLocalizationKey": null,
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.skilling.doubleAction.whileMainSkill.text",
+          "text": "<stat s=\"doubleAction\"/> while <supp k=\"skill\"/>",
+          "statText": "Double action",
+          "skillText": "Smithing",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": null,
+              "opposite": false,
+              "requirement": { "skill": "smithing" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "double_action",
+              "name": "Double action",
+              "type": "doubleAction",
+              "isPercent": true,
+              "value": 0.0125,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "quality": "legendary",
+      "attributes": [
+        {
+          "id": "972f3196-d80e-4a7a-bfaf-bd8f8a870d9b",
+          "customIcon": null,
+          "customTextLocalizationKey": null,
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.skilling.doubleAction.whileMainSkill.text",
+          "text": "<stat s=\"doubleAction\"/> while <supp k=\"skill\"/>",
+          "statText": "Double action",
+          "skillText": "Mining",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": null,
+              "opposite": false,
+              "requirement": { "skill": "mining" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "double_action",
+              "name": "Double action",
+              "type": "doubleAction",
+              "isPercent": true,
+              "value": 0.01,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "5a5c6e2a-b305-4283-bd31-ae0565b2f64d",
+          "customIcon": null,
+          "customTextLocalizationKey": null,
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.skilling.doubleAction.whileMainSkill.text",
+          "text": "<stat s=\"doubleAction\"/> while <supp k=\"skill\"/>",
+          "statText": "Double action",
+          "skillText": "Smithing",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": null,
+              "opposite": false,
+              "requirement": { "skill": "smithing" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "double_action",
+              "name": "Double action",
+              "type": "doubleAction",
+              "isPercent": true,
+              "value": 0.0125,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "quality": "ethereal",
+      "attributes": [
+        {
+          "id": "d0ca56a9-79a3-40d1-8848-3967eca7fecd",
+          "customIcon": null,
+          "customTextLocalizationKey": null,
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.skilling.doubleAction.whileMainSkill.text",
+          "text": "<stat s=\"doubleAction\"/> while <supp k=\"skill\"/>",
+          "statText": "Double action",
+          "skillText": "Mining",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": null,
+              "opposite": false,
+              "requirement": { "skill": "mining" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "double_action",
+              "name": "Double action",
+              "type": "doubleAction",
+              "isPercent": true,
+              "value": 0.01,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "83ca57c5-66a3-4c3f-9a67-d869b645874b",
+          "customIcon": null,
+          "customTextLocalizationKey": null,
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.skilling.doubleAction.whileMainSkill.text",
+          "text": "<stat s=\"doubleAction\"/> while <supp k=\"skill\"/>",
+          "statText": "Double action",
+          "skillText": "Smithing",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": null,
+              "opposite": false,
+              "requirement": { "skill": "smithing" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "double_action",
+              "name": "Double action",
+              "type": "doubleAction",
+              "isPercent": true,
+              "value": 0.0125,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "itemValue": "medium",
+  "itemValueModifier": 2,
+  "buffs": null,
+  "tables": null,
+  "canBeFine": true,
+  "icon": "assets/icons/items/gear/skill_gear/mining/tarsilium_toe_boots.png"
+}

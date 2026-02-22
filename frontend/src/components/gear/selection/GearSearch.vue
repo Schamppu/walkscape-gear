@@ -8,7 +8,7 @@ import { useRequirements } from "@/composables/useRequirements";
 import { useShowItemForActivity } from "@/composables/useShowItemForActivity";
 import { consumableQualityOptions } from "@/domain/constants/quality";
 import { itemQualityNameSort } from "@/utils/sorting";
-import { usedAttrs } from "@/utils/qualityAttrs";
+import { usedAttrs } from "@/domain/quality/qualityAttrs";
 import { intersect } from "@/utils/intersect";
 import WsIcon from "@/components/common/WsIcon.vue";
 import SearchItemDisplay from "./SearchItemDisplay.vue";

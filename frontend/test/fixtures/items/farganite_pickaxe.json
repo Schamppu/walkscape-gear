@@ -1,0 +1,982 @@
+{
+  "id": "farganite_pickaxe",
+  "name": "Farganite pickaxe",
+  "keywords": ["tool", "mining_tool", "pickaxe", "mining"],
+  "type": "crafted",
+  "quality": "common",
+  "consumableType": null,
+  "gearType": "tool",
+  "requirements": [
+    {
+      "type": "skillLevel",
+      "name": null,
+      "opposite": false,
+      "requirement": { "level": 50, "skill": "mining" }
+    }
+  ],
+  "itemAttrs": [
+    {
+      "id": "attribute-copy-item_attr-26658f80-79f4-43dd-9afe-9417ba3f90af",
+      "customIcon": null,
+      "customTextLocalizationKey": null,
+      "customText": "",
+      "textLocalizationKey": "attributes.singulars.skilling.workEfficiency.whileMainSkill.text",
+      "text": "<stat s=\"workEfficiency\"/> while <supp k=\"skill\"/>",
+      "statText": "Work efficiency",
+      "skillText": "Mining",
+      "tables": null,
+      "requirements": [
+        {
+          "type": "mainSkill",
+          "name": null,
+          "opposite": false,
+          "requirement": { "skill": "mining" }
+        }
+      ],
+      "stats": [
+        {
+          "stat": "work_efficiency",
+          "name": "Work efficiency",
+          "type": "workEfficiency",
+          "isPercent": true,
+          "value": 0.15,
+          "isNegative": false,
+          "isMultiplicative": true
+        }
+      ]
+    }
+  ],
+  "itemQualityAttrs": [
+    {
+      "quality": "uncommon",
+      "attributes": [
+        {
+          "id": "attribute-copy-item_attr-1d84c733-eae6-4cb0-ab3f-e42e435aa893",
+          "customIcon": null,
+          "customTextLocalizationKey": null,
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.skilling.workEfficiency.whileMainSkill.text",
+          "text": "<stat s=\"workEfficiency\"/> while <supp k=\"skill\"/>",
+          "statText": "Work efficiency",
+          "skillText": "Mining",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": null,
+              "opposite": false,
+              "requirement": { "skill": "mining" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "work_efficiency",
+              "name": "Work efficiency",
+              "type": "workEfficiency",
+              "isPercent": true,
+              "value": 0.03,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "attribute-copy-item_attr-aa794824-fa21-4f91-8f38-f9db57102bec",
+          "customIcon": null,
+          "customTextLocalizationKey": null,
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.special.findGems.whileMining.text",
+          "text": "<stat s=\"findGems\">chance to find gems</stat> while <supp k=\"skill\"/>",
+          "statText": "Find gems",
+          "skillText": "Mining",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": null,
+              "opposite": false,
+              "requirement": { "skill": "mining" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "find_gems",
+              "name": "Find gems",
+              "type": "findGems",
+              "isPercent": true,
+              "value": 0.21,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "attribute-copy-item_attr-b25eddf3-1463-4d76-b0cd-2a6d0889b679",
+          "customIcon": null,
+          "customTextLocalizationKey": null,
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.skilling.chestFind.whileMainSkill.text",
+          "text": "<stat s=\"chestFind\"/> while <supp k=\"skill\"/>",
+          "statText": "Chest finding",
+          "skillText": "Mining",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": null,
+              "opposite": false,
+              "requirement": { "skill": "mining" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "chest_finding",
+              "name": "Chest finding",
+              "type": "chestFind",
+              "isPercent": true,
+              "value": 0.18,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "attribute-copy-item_attr-6d79fd72-724b-4b6b-b912-c277b6dd7cfd",
+          "customIcon": null,
+          "customTextLocalizationKey": null,
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.skilling.fineMaterialFind.whileMainSkill.text",
+          "text": "<stat s=\"fineMaterialFind\"/> while <supp k=\"skill\"/>",
+          "statText": "Fine material finding",
+          "skillText": "Mining",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": null,
+              "opposite": false,
+              "requirement": { "skill": "mining" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "fine_material_finding",
+              "name": "Fine material finding",
+              "type": "fineMaterialFind",
+              "isPercent": true,
+              "value": 0.21,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "attribute-copy-item_attr-15ff28fb-6a41-4812-97e7-b3e2b6fcfb43",
+          "customIcon": null,
+          "customTextLocalizationKey": null,
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.skilling.doubleRewards.whileMainSkill.text",
+          "text": "<stat s=\"doubleRewards\"/> while <supp k=\"skill\"/>",
+          "statText": "Double rewards",
+          "skillText": "Mining",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": null,
+              "opposite": false,
+              "requirement": { "skill": "mining" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "double_rewards",
+              "name": "Double rewards",
+              "type": "doubleRewards",
+              "isPercent": true,
+              "value": 0.03,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "attribute-copy-item_attr-fc82ab3d-352c-472c-815c-530c0bdc7478",
+          "customIcon": null,
+          "customTextLocalizationKey": null,
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.skilling.doubleAction.whileMainSkill.text",
+          "text": "<stat s=\"doubleAction\"/> while <supp k=\"skill\"/>",
+          "statText": "Double action",
+          "skillText": "Mining",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": null,
+              "opposite": false,
+              "requirement": { "skill": "mining" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "double_action",
+              "name": "Double action",
+              "type": "doubleAction",
+              "isPercent": true,
+              "value": 0.01,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "quality": "rare",
+      "attributes": [
+        {
+          "id": "attribute-copy-item_attr-70378c8d-562a-4060-b969-33fcb284bc4e",
+          "customIcon": null,
+          "customTextLocalizationKey": null,
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.skilling.workEfficiency.whileMainSkill.text",
+          "text": "<stat s=\"workEfficiency\"/> while <supp k=\"skill\"/>",
+          "statText": "Work efficiency",
+          "skillText": "Mining",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": null,
+              "opposite": false,
+              "requirement": { "skill": "mining" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "work_efficiency",
+              "name": "Work efficiency",
+              "type": "workEfficiency",
+              "isPercent": true,
+              "value": 0.05,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "attribute-copy-item_attr-9b1fefd5-db70-46df-a541-3fdf0281f212",
+          "customIcon": null,
+          "customTextLocalizationKey": null,
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.special.findGems.whileMining.text",
+          "text": "<stat s=\"findGems\">chance to find gems</stat> while <supp k=\"skill\"/>",
+          "statText": "Find gems",
+          "skillText": "Mining",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": null,
+              "opposite": false,
+              "requirement": { "skill": "mining" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "find_gems",
+              "name": "Find gems",
+              "type": "findGems",
+              "isPercent": true,
+              "value": 0.12,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "attribute-copy-item_attr-19b6fb0d-b3c7-4a02-9ecc-acd27a735b2f",
+          "customIcon": null,
+          "customTextLocalizationKey": null,
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.skilling.chestFind.whileMainSkill.text",
+          "text": "<stat s=\"chestFind\"/> while <supp k=\"skill\"/>",
+          "statText": "Chest finding",
+          "skillText": "Mining",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": null,
+              "opposite": false,
+              "requirement": { "skill": "mining" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "chest_finding",
+              "name": "Chest finding",
+              "type": "chestFind",
+              "isPercent": true,
+              "value": 0.11,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "attribute-copy-item_attr-22532f31-67e0-42cb-ae08-e76a9cd02902",
+          "customIcon": null,
+          "customTextLocalizationKey": null,
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.skilling.fineMaterialFind.whileMainSkill.text",
+          "text": "<stat s=\"fineMaterialFind\"/> while <supp k=\"skill\"/>",
+          "statText": "Fine material finding",
+          "skillText": "Mining",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": null,
+              "opposite": false,
+              "requirement": { "skill": "mining" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "fine_material_finding",
+              "name": "Fine material finding",
+              "type": "fineMaterialFind",
+              "isPercent": true,
+              "value": 0.12,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "attribute-copy-item_attr-55dcc707-80ae-4f4a-b0f9-f10f491fcf69",
+          "customIcon": null,
+          "customTextLocalizationKey": null,
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.skilling.doubleRewards.whileMainSkill.text",
+          "text": "<stat s=\"doubleRewards\"/> while <supp k=\"skill\"/>",
+          "statText": "Double rewards",
+          "skillText": "Mining",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": null,
+              "opposite": false,
+              "requirement": { "skill": "mining" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "double_rewards",
+              "name": "Double rewards",
+              "type": "doubleRewards",
+              "isPercent": true,
+              "value": 0.03,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "attribute-copy-item_attr-01fcc768-1d66-4d6e-984f-d36a84ee6d8a",
+          "customIcon": null,
+          "customTextLocalizationKey": null,
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.skilling.doubleAction.whileMainSkill.text",
+          "text": "<stat s=\"doubleAction\"/> while <supp k=\"skill\"/>",
+          "statText": "Double action",
+          "skillText": "Mining",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": null,
+              "opposite": false,
+              "requirement": { "skill": "mining" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "double_action",
+              "name": "Double action",
+              "type": "doubleAction",
+              "isPercent": true,
+              "value": 0.01,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "quality": "epic",
+      "attributes": [
+        {
+          "id": "attribute-copy-item_attr-271f5b34-1f94-40bf-b49d-d615b8503c2a",
+          "customIcon": null,
+          "customTextLocalizationKey": null,
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.skilling.workEfficiency.whileMainSkill.text",
+          "text": "<stat s=\"workEfficiency\"/> while <supp k=\"skill\"/>",
+          "statText": "Work efficiency",
+          "skillText": "Mining",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": null,
+              "opposite": false,
+              "requirement": { "skill": "mining" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "work_efficiency",
+              "name": "Work efficiency",
+              "type": "workEfficiency",
+              "isPercent": true,
+              "value": 0.07,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "attribute-copy-item_attr-b7dfb522-dae4-4051-b735-046da6d8a200",
+          "customIcon": null,
+          "customTextLocalizationKey": null,
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.special.findGems.whileMining.text",
+          "text": "<stat s=\"findGems\">chance to find gems</stat> while <supp k=\"skill\"/>",
+          "statText": "Find gems",
+          "skillText": "Mining",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": null,
+              "opposite": false,
+              "requirement": { "skill": "mining" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "find_gems",
+              "name": "Find gems",
+              "type": "findGems",
+              "isPercent": true,
+              "value": 0.04,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "attribute-copy-item_attr-18988f7e-a6e9-47a4-a469-50035fe84af6",
+          "customIcon": null,
+          "customTextLocalizationKey": null,
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.skilling.chestFind.whileMainSkill.text",
+          "text": "<stat s=\"chestFind\"/> while <supp k=\"skill\"/>",
+          "statText": "Chest finding",
+          "skillText": "Mining",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": null,
+              "opposite": false,
+              "requirement": { "skill": "mining" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "chest_finding",
+              "name": "Chest finding",
+              "type": "chestFind",
+              "isPercent": true,
+              "value": 0.04,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "attribute-copy-item_attr-e65a3437-5311-431b-bd91-6b7b6007d6e7",
+          "customIcon": null,
+          "customTextLocalizationKey": null,
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.skilling.fineMaterialFind.whileMainSkill.text",
+          "text": "<stat s=\"fineMaterialFind\"/> while <supp k=\"skill\"/>",
+          "statText": "Fine material finding",
+          "skillText": "Mining",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": null,
+              "opposite": false,
+              "requirement": { "skill": "mining" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "fine_material_finding",
+              "name": "Fine material finding",
+              "type": "fineMaterialFind",
+              "isPercent": true,
+              "value": 0.04,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "attribute-copy-item_attr-790a6c8e-27e7-47d5-92c1-4a0ce4dbd864",
+          "customIcon": null,
+          "customTextLocalizationKey": null,
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.skilling.doubleRewards.whileMainSkill.text",
+          "text": "<stat s=\"doubleRewards\"/> while <supp k=\"skill\"/>",
+          "statText": "Double rewards",
+          "skillText": "Mining",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": null,
+              "opposite": false,
+              "requirement": { "skill": "mining" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "double_rewards",
+              "name": "Double rewards",
+              "type": "doubleRewards",
+              "isPercent": true,
+              "value": 0.03,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "attribute-copy-item_attr-e838d211-faec-4df1-83e5-eb56b01d71dc",
+          "customIcon": null,
+          "customTextLocalizationKey": null,
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.skilling.doubleAction.whileMainSkill.text",
+          "text": "<stat s=\"doubleAction\"/> while <supp k=\"skill\"/>",
+          "statText": "Double action",
+          "skillText": "Mining",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": null,
+              "opposite": false,
+              "requirement": { "skill": "mining" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "double_action",
+              "name": "Double action",
+              "type": "doubleAction",
+              "isPercent": true,
+              "value": 0.02,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "quality": "legendary",
+      "attributes": [
+        {
+          "id": "attribute-copy-item_attr-edf75f13-18c0-40f5-ac2e-25ccc2923cca",
+          "customIcon": null,
+          "customTextLocalizationKey": null,
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.skilling.workEfficiency.whileMainSkill.text",
+          "text": "<stat s=\"workEfficiency\"/> while <supp k=\"skill\"/>",
+          "statText": "Work efficiency",
+          "skillText": "Mining",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": null,
+              "opposite": false,
+              "requirement": { "skill": "mining" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "work_efficiency",
+              "name": "Work efficiency",
+              "type": "workEfficiency",
+              "isPercent": true,
+              "value": 0.07,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "attribute-copy-item_attr-736ffc59-8dca-4929-a733-8187ab8c3354",
+          "customIcon": null,
+          "customTextLocalizationKey": null,
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.special.findGems.whileMining.text",
+          "text": "<stat s=\"findGems\">chance to find gems</stat> while <supp k=\"skill\"/>",
+          "statText": "Find gems",
+          "skillText": "Mining",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": null,
+              "opposite": false,
+              "requirement": { "skill": "mining" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "find_gems",
+              "name": "Find gems",
+              "type": "findGems",
+              "isPercent": true,
+              "value": 0.02,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "attribute-copy-item_attr-880a28c8-d34d-4f39-9118-27eac5dd0c25",
+          "customIcon": null,
+          "customTextLocalizationKey": null,
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.skilling.chestFind.whileMainSkill.text",
+          "text": "<stat s=\"chestFind\"/> while <supp k=\"skill\"/>",
+          "statText": "Chest finding",
+          "skillText": "Mining",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": null,
+              "opposite": false,
+              "requirement": { "skill": "mining" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "chest_finding",
+              "name": "Chest finding",
+              "type": "chestFind",
+              "isPercent": true,
+              "value": 0.02,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "attribute-copy-item_attr-4dbf1b0b-81e6-4a3c-8cee-2579b5782182",
+          "customIcon": null,
+          "customTextLocalizationKey": null,
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.skilling.fineMaterialFind.whileMainSkill.text",
+          "text": "<stat s=\"fineMaterialFind\"/> while <supp k=\"skill\"/>",
+          "statText": "Fine material finding",
+          "skillText": "Mining",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": null,
+              "opposite": false,
+              "requirement": { "skill": "mining" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "fine_material_finding",
+              "name": "Fine material finding",
+              "type": "fineMaterialFind",
+              "isPercent": true,
+              "value": 0.02,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "attribute-copy-item_attr-53bbe9cf-080e-4397-8dbd-dca863745acf",
+          "customIcon": null,
+          "customTextLocalizationKey": null,
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.skilling.doubleRewards.whileMainSkill.text",
+          "text": "<stat s=\"doubleRewards\"/> while <supp k=\"skill\"/>",
+          "statText": "Double rewards",
+          "skillText": "Mining",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": null,
+              "opposite": false,
+              "requirement": { "skill": "mining" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "double_rewards",
+              "name": "Double rewards",
+              "type": "doubleRewards",
+              "isPercent": true,
+              "value": 0.03,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "attribute-copy-item_attr-7f0cdccc-0938-40c4-8dd3-7f1dc8eddef8",
+          "customIcon": null,
+          "customTextLocalizationKey": null,
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.skilling.doubleAction.whileMainSkill.text",
+          "text": "<stat s=\"doubleAction\"/> while <supp k=\"skill\"/>",
+          "statText": "Double action",
+          "skillText": "Mining",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": null,
+              "opposite": false,
+              "requirement": { "skill": "mining" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "double_action",
+              "name": "Double action",
+              "type": "doubleAction",
+              "isPercent": true,
+              "value": 0.03,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "quality": "ethereal",
+      "attributes": [
+        {
+          "id": "attribute-copy-item_attr-2c3ad530-59ff-4064-b8bd-fe1145830d66",
+          "customIcon": null,
+          "customTextLocalizationKey": null,
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.skilling.workEfficiency.whileMainSkill.text",
+          "text": "<stat s=\"workEfficiency\"/> while <supp k=\"skill\"/>",
+          "statText": "Work efficiency",
+          "skillText": "Mining",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": null,
+              "opposite": false,
+              "requirement": { "skill": "mining" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "work_efficiency",
+              "name": "Work efficiency",
+              "type": "workEfficiency",
+              "isPercent": true,
+              "value": 0.09,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "attribute-copy-item_attr-383aa1bb-7d33-408f-8213-901329064596",
+          "customIcon": null,
+          "customTextLocalizationKey": null,
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.special.findGems.whileMining.text",
+          "text": "<stat s=\"findGems\">chance to find gems</stat> while <supp k=\"skill\"/>",
+          "statText": "Find gems",
+          "skillText": "Mining",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": null,
+              "opposite": false,
+              "requirement": { "skill": "mining" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "find_gems",
+              "name": "Find gems",
+              "type": "findGems",
+              "isPercent": true,
+              "value": 0.02,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "attribute-copy-item_attr-ab4fcdc4-debd-4cae-9d2f-a2c500f9957d",
+          "customIcon": null,
+          "customTextLocalizationKey": null,
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.skilling.chestFind.whileMainSkill.text",
+          "text": "<stat s=\"chestFind\"/> while <supp k=\"skill\"/>",
+          "statText": "Chest finding",
+          "skillText": "Mining",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": null,
+              "opposite": false,
+              "requirement": { "skill": "mining" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "chest_finding",
+              "name": "Chest finding",
+              "type": "chestFind",
+              "isPercent": true,
+              "value": 0.02,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "attribute-copy-item_attr-d26b7f18-1e95-4cdb-9674-f1a8a45d0b08",
+          "customIcon": null,
+          "customTextLocalizationKey": null,
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.skilling.fineMaterialFind.whileMainSkill.text",
+          "text": "<stat s=\"fineMaterialFind\"/> while <supp k=\"skill\"/>",
+          "statText": "Fine material finding",
+          "skillText": "Mining",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": null,
+              "opposite": false,
+              "requirement": { "skill": "mining" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "fine_material_finding",
+              "name": "Fine material finding",
+              "type": "fineMaterialFind",
+              "isPercent": true,
+              "value": 0.02,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "attribute-copy-item_attr-e77e5905-fd27-4ec6-ba16-d79c99a33446",
+          "customIcon": null,
+          "customTextLocalizationKey": null,
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.skilling.doubleRewards.whileMainSkill.text",
+          "text": "<stat s=\"doubleRewards\"/> while <supp k=\"skill\"/>",
+          "statText": "Double rewards",
+          "skillText": "Mining",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": null,
+              "opposite": false,
+              "requirement": { "skill": "mining" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "double_rewards",
+              "name": "Double rewards",
+              "type": "doubleRewards",
+              "isPercent": true,
+              "value": 0.03,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "attribute-copy-item_attr-e7468066-cf2c-4912-8678-9377a5584f7d",
+          "customIcon": null,
+          "customTextLocalizationKey": null,
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.skilling.doubleAction.whileMainSkill.text",
+          "text": "<stat s=\"doubleAction\"/> while <supp k=\"skill\"/>",
+          "statText": "Double action",
+          "skillText": "Mining",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": null,
+              "opposite": false,
+              "requirement": { "skill": "mining" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "double_action",
+              "name": "Double action",
+              "type": "doubleAction",
+              "isPercent": true,
+              "value": 0.1,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "itemValue": "lowHigh",
+  "itemValueModifier": 0.7,
+  "buffs": [],
+  "tables": [],
+  "canBeFine": true,
+  "icon": "assets/icons/items/gear/pickaxes/farganite_pickaxe.png"
+}

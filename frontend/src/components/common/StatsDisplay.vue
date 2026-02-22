@@ -2,7 +2,7 @@
 import { computed } from "vue";
 import { useDataStore } from "@/store/data";
 import { toDeepRaw } from "@/utils/rawData";
-import { usedAttrs } from "@/utils/qualityAttrs";
+import { usedAttrs } from "@/domain/quality/qualityAttrs";
 import { stripHtmlTags } from "@/utils/stripHtmlTags";
 import WikiButton from "@/components/common/WikiButton.vue";
 import StatRequirementDisplay from "./StatRequirementDisplay.vue";

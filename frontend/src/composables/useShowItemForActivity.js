@@ -1,6 +1,6 @@
 import { useRequirements } from "@/composables/useRequirements";
 import { getRawData } from "@/utils/rawData";
-import { usedAttrs } from "@/utils/qualityAttrs";
+import { usedAttrs } from "@/domain/quality/qualityAttrs";
 import { useLootTables } from "./useLootTables";
 
 export function useShowItemForActivity(ctx) {

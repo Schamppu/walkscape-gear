@@ -1,0 +1,98 @@
+{
+  "id": "cooked_squid",
+  "name": "Cooked squid",
+  "keywords": ["food", "cooked_fish", "food", "traveling"],
+  "type": "consumable",
+  "quality": "common",
+  "consumableType": "food",
+  "gearType": null,
+  "requirements": [],
+  "itemAttrs": [],
+  "itemQualityAttrs": [],
+  "itemValue": "low",
+  "itemValueModifier": 1,
+  "buffs": [
+    {
+      "id": "buff-copy-item_buff-1841b1bb-c112-4422-a49a-c342da4d7d65",
+      "data": [
+        {
+          "type": "normal",
+          "buffs": [
+            {
+              "id": "buffobj-copy-buff_obj-d7935387-3fe9-48ef-9286-94f79dafccb2",
+              "type": "attributes",
+              "runtimeType": "attributes",
+              "attributes": [
+                {
+                  "id": "attribute-copy-buff_attr-ed9e1155-249f-4250-9187-5057b23a5972",
+                  "customIcon": null,
+                  "customTextLocalizationKey": null,
+                  "customText": "",
+                  "textLocalizationKey": "attributes.singulars.skilling.doubleAction.whileTraveling.text",
+                  "text": "<stat s=\"doubleAction\"/> while traveling",
+                  "statText": "Double action",
+                  "skillText": "",
+                  "tables": null,
+                  "requirements": [
+                    {
+                      "type": "traveling",
+                      "name": null,
+                      "opposite": false,
+                      "requirement": {}
+                    }
+                  ],
+                  "stats": [
+                    {
+                      "stat": "double_action",
+                      "name": "Double action",
+                      "type": "doubleAction",
+                      "isPercent": true,
+                      "value": 0.08,
+                      "isNegative": false,
+                      "isMultiplicative": true
+                    }
+                  ]
+                }
+              ],
+              "fineAttributes": [
+                {
+                  "id": "27f23548-93a5-4aff-8c67-2924110237f3",
+                  "customIcon": null,
+                  "customTextLocalizationKey": null,
+                  "customText": "",
+                  "textLocalizationKey": "attributes.singulars.skilling.doubleAction.whileTraveling.text",
+                  "text": "<stat s=\"doubleAction\"/> while traveling",
+                  "statText": "Double action",
+                  "skillText": "",
+                  "tables": null,
+                  "requirements": [
+                    {
+                      "type": "traveling",
+                      "name": null,
+                      "opposite": false,
+                      "requirement": {}
+                    }
+                  ],
+                  "stats": [
+                    {
+                      "stat": "double_action",
+                      "name": "Double action",
+                      "type": "doubleAction",
+                      "isPercent": true,
+                      "value": 0.16,
+                      "isNegative": false,
+                      "isMultiplicative": true
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "tables": [],
+  "canBeFine": true,
+  "icon": "assets/icons/items/materials/cooked_fish/squid.png"
+}
