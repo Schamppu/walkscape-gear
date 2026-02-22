@@ -53,6 +53,15 @@ function isPet(item: Item): item is PetItem {
   return "egg" in item;
 }
 
+/**
+ * Deep-clones a value using JSON round-trip so it works with Vue reactive
+ * proxy objects (which `structuredClone` rejects with a DOMException).
+ * Safe for all plain JSON-serialisable game data.
+ */
+function deepClone<T>(obj: T): T {
+  return JSON.parse(JSON.stringify(obj));
+}
+
 // Pre-compute rank lookup so callers don't pay the cost on every invocation.
 const qualityRank = Object.fromEntries(
   qualityOptions.map(({ value }, index) => [value, index]),
@@ -78,7 +87,7 @@ export function sumAttrs(
   }
 
   const attrs: Attribute[] = itemAttrs
-    .map((a) => structuredClone(a))
+    .map((a) => deepClone(a))
     .map((attribute) => ({
       ...attribute,
       stats: attribute.stats,
@@ -97,13 +106,13 @@ export function sumAttrs(
     sortedQualityAttrs.findIndex(({ quality: q }) => q === quality) ?? 0;
 
   for (let qi = 0; qi <= qIndex; qi++) {
-    const { attributes } = structuredClone(sortedQualityAttrs[qi]);
+    const { attributes } = deepClone(sortedQualityAttrs[qi]);
     const statIds = attrs.map(({ stats, skillText }) => {
       return `${stats[0].type}-${skillText}`;
     });
 
     attributes.forEach((attr) => {
-      const stat = structuredClone(attr.stats)[0];
+      const stat = deepClone(attr.stats)[0];
       const key = `${stat.type}-${attr.skillText}`;
       const prev = statIds.findIndex((id) => id === key);
       const exists = prev >= 0;

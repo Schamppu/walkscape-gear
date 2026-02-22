@@ -16,9 +16,10 @@ export function useEffectiveAttrs(ctx) {
 
     return [...ownedCollectibles, ...gearSet]
       .map((item) => {
+        const rawItem = toDeepRaw(item);
         return {
           ...item,
-          attrs: toDeepRaw(usedAttrs(item, item.quality)),
+          attrs: usedAttrs(rawItem, rawItem.quality),
         };
       })
       .filter(({ attrs }) => attrs.length);
