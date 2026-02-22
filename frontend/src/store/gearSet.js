@@ -8,7 +8,7 @@ import {
   deleteGearSet,
 } from "@/utils/axios/db_routes";
 import { LoadGearSetCommand } from "./gearCommands";
-import { createEmptyGearSetSelection } from "@/utils/createEmptyGearSet";
+import { createEmptyGearSetSelection } from "@/domain/gear/gearSet";
 
 // Lazy import for history store to avoid circular dependencies
 let useHistoryStore = null;

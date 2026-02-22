@@ -4,7 +4,7 @@ import { useItemsStore } from "@/store/items";
 import ItemEntry from "./ItemEntry.vue";
 import ConsumableEntry from "./ConsumableEntry.vue";
 import PetEntry from "./PetEntry.vue";
-import { itemQualityNameSort, levelReqNameSort } from "@/utils/sorting";
+import { itemQualityNameSort, levelReqNameSort } from "@/domain/gear/sorting";
 import { consumableQualityOptions } from "@/domain/constants/quality";
 import useBaseContext from "@/composables/context/useBaseContext";
 

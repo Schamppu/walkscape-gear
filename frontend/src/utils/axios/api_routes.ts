@@ -1,11 +1,9 @@
 import type { AxiosResponse } from "axios";
 import type {
-  AbilityDetail,
   AbilitySummary,
-  ActivityDetail,
   ActivitySummary,
   ApInfo,
-  ItemDetail,
+  CategorizedItem,
   Faction,
   IconBatchResponse,
   ItemCategoryGroup,
@@ -13,19 +11,17 @@ import type {
   ItemValueMap,
   Keyword,
   LocationSummary,
-  LocationDetail,
   LootTableSummary,
   PetDetail,
   PetSummary,
-  RecipeDetail,
+  RealmDefaultLocation,
   RecipeSummary,
   RouteSummary,
-  ServiceDetail,
   Skill,
   StatDefinition,
   TerrainModifier,
   UrlMap,
-} from "@/domain/types";
+} from "@/domain/types/api";
 import { createProxyInstance, type ProxyRequest } from "./proxy";
 
 const rawProxy = createProxyInstance("/api");
@@ -93,8 +89,8 @@ export function getAbilities(): Promise<AxiosResponse<AbilitySummary[]>> {
 
 export function getMultipleAbilities(
   ids: string[],
-): Promise<AxiosResponse<AbilityDetail[]>> {
-  return proxy<AbilityDetail[]>({
+): Promise<AxiosResponse<AbilitySummary[]>> {
+  return proxy<AbilitySummary[]>({
     method: "POST",
     url: "abilities/multiple",
     options: {
@@ -155,8 +151,8 @@ export function getItem({
   id,
 }: {
   id: string;
-}): Promise<AxiosResponse<ItemDetail>> {
-  return proxy<ItemDetail>({
+}): Promise<AxiosResponse<CategorizedItem>> {
+  return proxy<CategorizedItem>({
     url: `items/${id}`,
   });
 }
@@ -241,8 +237,8 @@ export function searchLocations({
 }: {
   activityList: string;
   serviceList: string;
-}): Promise<AxiosResponse<LocationDetail[]>> {
-  return proxy<LocationDetail[]>({
+}): Promise<AxiosResponse<RealmDefaultLocation[]>> {
+  return proxy<RealmDefaultLocation[]>({
     url: "locations/search",
     options: {
       params: { activityList, serviceList, detailed: true },
@@ -251,9 +247,9 @@ export function searchLocations({
 }
 
 export function getRealmDefaultLocations(): Promise<
-  AxiosResponse<LocationDetail[]>
+  AxiosResponse<RealmDefaultLocation[]>
 > {
-  return proxy<LocationDetail[]>({
+  return proxy<RealmDefaultLocation[]>({
     url: "locations/realm_default_locations",
   });
 }
@@ -272,8 +268,8 @@ export function getActivity({
   id,
 }: {
   id: string;
-}): Promise<AxiosResponse<ActivityDetail>> {
-  return proxy<ActivityDetail>({
+}): Promise<AxiosResponse<ActivitySummary>> {
+  return proxy<ActivitySummary>({
     url: `activities/${id}`,
   });
 }
@@ -292,8 +288,8 @@ export function getRecipe({
   id,
 }: {
   id: string;
-}): Promise<AxiosResponse<RecipeDetail>> {
-  return proxy<RecipeDetail>({
+}): Promise<AxiosResponse<RecipeSummary>> {
+  return proxy<RecipeSummary>({
     url: `recipes/${id}`,
   });
 }
@@ -306,8 +302,8 @@ export function searchServices({
   skill,
 }: {
   skill: string;
-}): Promise<AxiosResponse<ServiceDetail[]>> {
-  return proxy<ServiceDetail[]>({
+}): Promise<AxiosResponse<RealmDefaultLocation[]>> {
+  return proxy<RealmDefaultLocation[]>({
     url: "services/search",
     options: {
       params: { relatedSkills: skill, detailed: true },

@@ -8,7 +8,7 @@ import {
   getActivities,
   getRecipes,
 } from "@/utils/axios/api_routes";
-import { filterServices, sortServicesByTier } from "@/utils/services";
+import { filterServices, sortServicesByTier } from "@/domain/services/services";
 import { activityNone } from "@/domain/constants/activityNone";
 import {
   SetActivityCommand,

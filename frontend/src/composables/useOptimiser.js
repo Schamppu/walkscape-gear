@@ -3,7 +3,7 @@ import { useActivityStore } from "@/store/activity";
 import { useNotificationStore } from "@/store/notifications";
 
 import useBaseContext from "@/composables/context/useBaseContext";
-import { gearSlots } from "@/utils/createEmptyGearSet";
+import { gearSlots } from "@/domain/constants/gear";
 
 import {
   getGearOptions,

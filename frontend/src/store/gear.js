@@ -6,7 +6,7 @@ import {
   UnequipAllCommand,
   EquipMultipleCommand,
 } from "./gearCommands";
-import { createEmptyGearSet } from "@/utils/createEmptyGearSet";
+import { createEmptyGearSet } from "@/domain/gear/gearSet";
 import { getPetIcon } from "@/domain/pets/getPetIcon";
 
 // Lazy import for history store to avoid circular dependencies

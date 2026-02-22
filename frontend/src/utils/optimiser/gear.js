@@ -3,7 +3,7 @@ import useBaseContext from "@/composables/context/useBaseContext";
 import { useShowItemForActivity } from "@/composables/useShowItemForActivity";
 import { useRequirements } from "@/composables/useRequirements";
 import { useDataStore } from "@/store/data";
-import { gearTypes } from "@/utils/createEmptyGearSet";
+import { gearTypes } from "@/domain/constants/gear";
 import { usedAttrs } from "@/domain/quality/qualityAttrs";
 import { intersect } from "@/utils/intersect";
 

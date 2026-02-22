@@ -7,7 +7,7 @@ import useBaseContext from "@/composables/context/useBaseContext";
 import { useRequirements } from "@/composables/useRequirements";
 import { useShowItemForActivity } from "@/composables/useShowItemForActivity";
 import { consumableQualityOptions } from "@/domain/constants/quality";
-import { itemQualityNameSort } from "@/utils/sorting";
+import { itemQualityNameSort } from "@/domain/gear/sorting";
 import { usedAttrs } from "@/domain/quality/qualityAttrs";
 import { intersect } from "@/utils/intersect";
 import WsIcon from "@/components/common/WsIcon.vue";
