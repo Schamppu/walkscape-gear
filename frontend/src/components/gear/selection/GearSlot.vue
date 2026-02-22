@@ -1,7 +1,7 @@
 <script setup>
 import { computed } from "vue";
 import { useGearStore } from "@/store/gear";
-import { getPetIcon } from "@/utils/pets";
+import { getPetIcon } from "@/domain/pets/getPetIcon";
 import WsIcon from "@/components/common/WsIcon.vue";
 
 const emit = defineEmits(["select"]);

@@ -7,7 +7,7 @@ import {
   EquipMultipleCommand,
 } from "./gearCommands";
 import { createEmptyGearSet } from "@/utils/createEmptyGearSet";
-import { getPetIcon } from "@/utils/pets";
+import { getPetIcon } from "@/domain/pets/getPetIcon";
 
 // Lazy import for history store to avoid circular dependencies
 let useHistoryStore = null;

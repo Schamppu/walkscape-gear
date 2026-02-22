@@ -7,7 +7,7 @@ import StatsDisplay from "../common/StatsDisplay.vue";
 import AbilitiesDisplay from "../common/abilities/AbilitiesDisplay.vue";
 import useBaseContext from "@/composables/context/useBaseContext";
 import RequirementDisplay from "../activity/Info/RequirementDisplay.vue";
-import { getPetIcon } from "@/utils/pets";
+import { getPetIcon } from "@/domain/pets/getPetIcon";
 
 const props = defineProps({
   pet: Object,

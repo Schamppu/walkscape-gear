@@ -3,7 +3,7 @@ import { ref, computed } from "vue";
 import WsIcon from "@/components/common/WsIcon.vue";
 import StatsDisplay from "@/components/common/StatsDisplay.vue";
 import SearchItemPreview from "./SearchItemPreview.vue";
-import { getPetIcon } from "@/utils/pets";
+import { getPetIcon } from "@/domain/pets/getPetIcon";
 import { icons } from "@/constants/iconPaths";
 
 const props = defineProps({

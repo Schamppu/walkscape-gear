@@ -19,77 +19,31 @@ import {
   qualityOptions,
   consumableQualityOptions,
 } from "@/domain/constants/quality";
+import type {
+  Attribute,
+  Buff,
+  GearItem,
+  Item,
+  PetItem,
+  QualityAttr,
+  Stat,
+  BuffObj,
+  BuffData,
+  PetLevel,
+} from "@/domain/types/item";
 
-// ---------------------------------------------------------------------------
-// Types
-// ---------------------------------------------------------------------------
-
-export type Stat = {
-  stat: string;
-  name: string;
-  type: string;
-  isPercent: boolean;
-  value: number;
-  isNegative: boolean;
-  isMultiplicative: boolean;
-};
-
-export type Attribute = {
-  id: string;
-  customIcon: string | null;
-  customTextLocalizationKey: string | null;
-  customText: string;
-  textLocalizationKey: string;
-  text: string;
-  statText: string;
-  skillText: string;
-  tables: unknown | null;
-  requirements: unknown[];
-  stats: Stat[];
-};
-
-export type QualityAttr = {
-  quality: string;
-  attributes: Attribute[];
-};
-
-export type BuffObj = {
-  id: string;
-  type: string;
-  runtimeType: string;
-  attributes: Attribute[];
-  fineAttributes: Attribute[];
-};
-
-export type BuffData = {
-  type: string;
-  buffs: BuffObj[];
-};
-
-export type Buff = {
-  id: string;
-  data: BuffData[];
-};
-
-export type PetLevel = {
-  level: number;
-  xp: number;
-  stage: string;
-  attributes: Attribute[];
-};
-
-export type GearItem = {
-  itemAttrs: Attribute[];
-  itemQualityAttrs?: QualityAttr[];
-  buffs?: Buff[] | null;
-};
-
-export type PetItem = {
-  egg: unknown;
-  levels: PetLevel[];
-};
-
-export type Item = GearItem | PetItem;
+export type {
+  Attribute,
+  Buff,
+  BuffData,
+  BuffObj,
+  GearItem,
+  Item,
+  PetItem,
+  PetLevel,
+  QualityAttr,
+  Stat,
+} from "@/domain/types/item";
 
 // ---------------------------------------------------------------------------
 // Helpers
