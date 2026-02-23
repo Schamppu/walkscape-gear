@@ -3,11 +3,32 @@ import { getUrlMap } from "@/utils/axios/api_routes";
 import { useUrlMap } from "@/composables/useUrlMap";
 import { useActivityStore } from "./activity";
 import { useGearStore } from "./gear";
+import type { UrlMap } from "@/domain/types/item";
+
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
+
+/** Forward map: slot name → ordered array of item IDs (index = encoded value). */
+type SlotMapping = UrlMap;
+
+/** Reverse map: slot name → item ID → encoded index. */
+type ReverseMapping = Record<string, Record<string, number>>;
+
+/** Slot-name order used for encoding/decoding the URL `q` parameter. */
+type SlotOrder = Record<string, string>;
+
+/** Decoded gear loadout: slot → item ID or null. */
+type DecodedLoadout = Record<string, string | null>;
+
+// ---------------------------------------------------------------------------
+// Store
+// ---------------------------------------------------------------------------
 
 export const useUrlStore = defineStore("url", {
   state: () => ({
-    mapping: {},
-    reverseMapping: {},
+    mapping: {} as SlotMapping,
+    reverseMapping: {} as ReverseMapping,
     order: {
       activity: "activity",
       recipe: "recipe",
@@ -31,27 +52,28 @@ export const useUrlStore = defineStore("url", {
       tool6: "tool",
       consumable: "consumable",
       pet: "pet",
-    },
+    } as SlotOrder,
     isLoaded: false,
   }),
 
   actions: {
-    async fetchMapping() {
+    async fetchMapping(): Promise<void> {
       if (this.isLoaded) return;
+
       const { data: response } = await getUrlMap();
       this.mapping = response;
 
-      const reverse = {};
+      const reverse: ReverseMapping = {};
       for (const slot in this.mapping) {
         reverse[slot] = Object.fromEntries(
-          this.mapping[slot].map((id, index) => [id, index])
+          this.mapping[slot].map((id, index) => [id, index]),
         );
       }
       this.reverseMapping = reverse;
       this.isLoaded = true;
     },
 
-    encodeAndPushToUrl() {
+    encodeAndPushToUrl(): void {
       const { encodeGearLoadout } = useUrlMap();
       const encoded = encodeGearLoadout();
 
@@ -60,61 +82,57 @@ export const useUrlStore = defineStore("url", {
       window.history.replaceState({}, "", url);
     },
 
-    updateUrlWithGearSet(gearSetId, index) {
+    updateUrlWithGearSet(gearSetId: number | null, index: number): void {
       const url = new URL(window.location.href);
       const key = index ? "gs2" : "gs";
 
       if (gearSetId) {
-        url.searchParams.set(key, gearSetId);
+        url.searchParams.set(key, String(gearSetId));
       } else {
         url.searchParams.delete(key);
       }
       window.history.replaceState({}, "", url);
     },
 
-    async decodeFromUrlAndApply() {
+    async decodeFromUrlAndApply(): Promise<void> {
       const params = new URLSearchParams(window.location.search);
       const encodedGear = params.get("q");
       const gearSetIdParam = params.get("gs");
 
-      // Parse gear set ID to number with validation
       const gearSetId = gearSetIdParam ? parseInt(gearSetIdParam, 10) : null;
-      const isValidGearSetId = gearSetId && !isNaN(gearSetId) && gearSetId > 0;
+      const isValidGearSetId =
+        gearSetId !== null && !isNaN(gearSetId) && gearSetId > 0;
 
       // Prioritize 'q' parameter over 'gs' parameter
       if (encodedGear) {
-        // If we have encoded gear data, use that and ignore gear set
         await this._applyEncodedGearLoadout(encodedGear);
-      } else if (isValidGearSetId) {
-        // Only gear set ID is present and valid, try to load that gear set
+      } else if (isValidGearSetId && gearSetId !== null) {
         await this._applyGearSetFromUrl(gearSetId);
       } else if (gearSetIdParam) {
-        // Invalid gear set ID format, remove it from URL
         console.warn(
-          `Invalid gear set ID format: ${gearSetIdParam}, removing from URL`
+          `Invalid gear set ID format: ${gearSetIdParam}, removing from URL`,
         );
         const url = new URL(window.location.href);
         url.searchParams.delete("gs");
         window.history.replaceState({}, "", url);
       }
 
-      if (isValidGearSetId) {
+      if (isValidGearSetId && gearSetId !== null) {
         const { useGearSetStore } = await import("./gearSet");
         const gearSetStore = useGearSetStore();
         gearSetStore.loadSet(gearSetId);
       }
     },
 
-    async _applyEncodedGearLoadout(encoded) {
+    async _applyEncodedGearLoadout(encoded: string): Promise<void> {
       const { decodeGearLoadout } = useUrlMap();
-      const decodedLoadout = decodeGearLoadout(encoded);
+      const decodedLoadout = decodeGearLoadout(encoded) as DecodedLoadout;
 
       const gearStore = useGearStore();
       const activityStore = useActivityStore();
 
-      // Separate gear items from activity/recipe data
-      const gearData = {};
-      const activityPromises = [];
+      const gearData: Record<string, { id: string; quality: string }> = {};
+      const activityPromises: Promise<void>[] = [];
       const ringId = decodedLoadout["ring1"];
 
       Object.entries(decodedLoadout).forEach(([slot, id]) => {
@@ -126,22 +144,18 @@ export const useUrlStore = defineStore("url", {
         } else if (slot === "recipe") {
           activityPromises.push(activityStore.loadRecipe(id));
         } else {
-          // This is a gear slot
           const useQ2 = slot === "ring2" && ringId === id;
           const quality = gearStore.determineQuality(id, useQ2);
           gearData[slot] = { id, quality };
         }
       });
 
-      // Handle gear and activity data in parallel
-      const promises = [];
+      const promises: Promise<unknown>[] = [];
 
-      // Use the optimized equipMultiple for all gear items at once
       if (Object.keys(gearData).length > 0) {
         promises.push(gearStore.equipMultiple(gearData, true));
       }
 
-      // Handle activity store calls
       if (activityPromises.length > 0) {
         promises.push(Promise.all(activityPromises));
       }
@@ -149,23 +163,19 @@ export const useUrlStore = defineStore("url", {
       await Promise.all(promises);
     },
 
-    async _applyGearSetFromUrl(gearSetId) {
+    async _applyGearSetFromUrl(gearSetId: number): Promise<void> {
       const { useGearSetStore } = await import("./gearSet");
       const gearSetStore = useGearSetStore();
 
-      // Ensure gear sets are loaded
       await gearSetStore.fetchGearSets();
 
-      // Check if the gear set exists (gearSetId is already a number)
       const gearSetExists = gearSetStore.gearSets.some(
-        (set) => set.id === gearSetId
+        (set) => set.id === gearSetId,
       );
 
       if (gearSetExists) {
-        // Load and equip the gear set
         await gearSetStore.selectAndEquipSet(gearSetId);
       } else {
-        // Gear set doesn't exist (maybe shared URL), remove from URL
         console.warn(`Gear set ${gearSetId} not found, removing from URL`);
         const url = new URL(window.location.href);
         url.searchParams.delete("gs");
