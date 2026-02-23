@@ -17,6 +17,7 @@ import type {
   LootTableSummary,
 } from "@/domain/types/lootTable";
 import type { ItemValueMap } from "@/domain/types/item";
+import { useNotificationStore } from "@/store/notifications";
 
 /**
  * Centralized store for static game data like abilities, keywords, stats, and loot tables.
@@ -128,6 +129,10 @@ export const useDataStore = defineStore("dataStore", {
       this.lootTables = lootTables;
       this.itemValues = itemValues;
       this.isLoaded = true;
+      const notificationStore = useNotificationStore();
+      void notificationStore.debug(
+        `Data: loaded ${this.abilities.length} abilities, ${this.keywords.length} keywords, ${this.stats.length} stats (${this.mainStats.length} main), ${this.lootTables.length} loot tables`,
+      );
     },
 
     async fetchDetailedData<T extends { id: string }>(
@@ -142,6 +147,10 @@ export const useDataStore = defineStore("dataStore", {
       );
 
       if (uncachedIds.length > 0) {
+        const notificationStore = useNotificationStore();
+        void notificationStore.debug(
+          `Data: fetching ${uncachedIds.length} uncached item(s) — ${uncachedIds.length < 5 ? uncachedIds.join(", ") : `${uncachedIds.slice(0, 4).join(", ")} +${uncachedIds.length - 4} more`}`,
+        );
         const batchPromise = fetchFn(uncachedIds)
           .then(({ data }) => {
             data.forEach((obj) => {

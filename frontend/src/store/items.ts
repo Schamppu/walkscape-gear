@@ -6,6 +6,7 @@ import {
   getMaterials,
 } from "@/utils/axios/api_routes";
 import debounce from "@/utils/debounce";
+import { useNotificationStore } from "@/store/notifications";
 import type {
   DbOwnedItem,
   ItemCategoryGroup,
@@ -113,6 +114,10 @@ export const useItemsStore = defineStore("itemStore", {
       );
 
       this.isLoaded = true;
+      const notificationStore = useNotificationStore();
+      void notificationStore.debug(
+        `Items: loaded ${Object.keys(this.allGearItems).length} items across ${this.categorizedItems.length} groups, ${Object.keys(this.ownedItems).length} owned, ${Object.keys(this.materials).length} materials`,
+      );
     },
     toggleItem({
       itemId,
@@ -133,10 +138,15 @@ export const useItemsStore = defineStore("itemStore", {
       );
       if (changed.length === 0) return;
 
+      const notificationStore = useNotificationStore();
       try {
         await upsertOwnedItems({ items: changed });
+        void notificationStore.debug(`Items: flushed ${changed.length} owned item change(s) to DB`);
       } catch (error) {
         console.error("error updating owned items", error);
+        void notificationStore.debug(`Items: failed to flush ${changed.length} owned item change(s)`, [
+          error instanceof Error ? error.message : String(error),
+        ]);
       }
 
       this.changedOwnedItems = {};

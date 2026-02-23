@@ -10,6 +10,7 @@ import type {
   TerrainModifier,
   Requirement,
 } from "@/domain/types";
+import { useNotificationStore } from "@/store/notifications";
 
 export type LocationInfo = Omit<LocationSummary, "id"> & { id: string; color: string };
 
@@ -75,6 +76,10 @@ export const useRouteStore = defineStore("routeStore", {
       );
 
       this.isLoaded = true;
+      const notificationStore = useNotificationStore();
+      void notificationStore.debug(
+        `Route: loaded ${this.locations.length} locations, ${this.routes.length} routes, ${this.terrainModifiers.length} terrain modifiers`,
+      );
     },
     findRoute(start: string, end: string): RouteSummary | undefined {
       if (!start || !end) return undefined;
@@ -92,6 +97,8 @@ export const useRouteStore = defineStore("routeStore", {
     },
     setSegments(segments: RouteSegment[]): void {
       this.segments = segments;
+      const notificationStore = useNotificationStore();
+      void notificationStore.debug(`Route: path set with ${segments.length} segment(s)`);
     },
   },
 });

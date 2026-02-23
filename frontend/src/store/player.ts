@@ -5,6 +5,7 @@ import {
   fetchFactionReputations,
 } from "@/utils/axios/db_routes";
 import type { Skill, Faction, StatDefinition } from "@/domain/types";
+import { useNotificationStore } from "@/store/notifications";
 
 export type SkillOption = Skill & { value: string };
 
@@ -79,6 +80,10 @@ export const usePlayerStore = defineStore("playerStore", {
       );
 
       this.isLoaded = true;
+      const notificationStore = useNotificationStore();
+      void notificationStore.debug(
+        `Player: loaded ${this.skills.length} skills, ${this.factions.length} factions (${this.reputationFactions.length} with reputation), level ${this.level}`,
+      );
     },
     setCharacterLevel(value: number): void {
       this.level = Math.min(99, value);
