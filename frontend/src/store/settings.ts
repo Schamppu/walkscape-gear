@@ -9,6 +9,12 @@ import {
   undoRedoOptions,
   shownDropRateOptions,
 } from "@/constants/settings";
+import type { Setting } from "@/constants/settings";
+import type {
+  DbUserSettings,
+  DbUserSetting,
+  UpsertSettingEntry,
+} from "@/domain/types/db";
 
 /**
  * Purpose:
@@ -26,44 +32,66 @@ import {
  * - Store settings that are only relevant for the current session (e.g. temporary UI state)
  */
 
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
+
+export type SettingsGroupName = "gearSettings" | "activitySettings" | "toolSettings";
+export type SettingsRecord = Record<string, Setting>;
+
+/** Snapshot of the original persisted value for a setting, used to detect reverts. */
+type TrackedSetting = DbUserSetting & { group: SettingsGroupName };
+
+// ---------------------------------------------------------------------------
+// Store
+// ---------------------------------------------------------------------------
+
 export const useSettingsStore = defineStore("settingsStore", {
   state: () => ({
-    userSettings: {},
-    gearSettings: {},
-    activitySettings: {},
-    toolSettings: {},
+    userSettings: {} as SettingsRecord,
+    gearSettings: {} as SettingsRecord,
+    activitySettings: {} as SettingsRecord,
+    toolSettings: {} as SettingsRecord,
     isLoaded: false,
-    changedSettings: new Map(),
-    saveTimeout: null,
+    changedSettings: new Map<string, TrackedSetting>(),
+    saveTimeout: null as ReturnType<typeof setTimeout> | null,
   }),
+
   getters: {
-    settingsGroups: () => ["gearSettings", "activitySettings", "toolSettings"],
+    settingsGroups: (): SettingsGroupName[] => [
+      "gearSettings",
+      "activitySettings",
+      "toolSettings",
+    ],
   },
 
   actions: {
-    async fetchSettingsData() {
+    /** Returns the live SettingsRecord for the given group name. */
+    _group(name: SettingsGroupName): SettingsRecord {
+      const map: Record<SettingsGroupName, SettingsRecord> = {
+        gearSettings: this.gearSettings,
+        activitySettings: this.activitySettings,
+        toolSettings: this.toolSettings,
+      };
+      return map[name];
+    },
+
+    async fetchSettingsData(): Promise<void> {
       try {
-        // Start with default settings
         const defaultSettings = this.defaultSettingsData();
         this.settingsGroups.forEach((group) => {
-          this[group] = { ...defaultSettings[group] };
+          this._group(group);
+          Object.assign(this[group], { ...defaultSettings[group] });
         });
 
-        // Fetch settings from backend
         const backendSettings = await getSettings();
-
-        // Override defaults with backend settings
         this.mergeBackendSettings(backendSettings);
-
-        // Clear any pending changes since we just loaded from backend
         this.changedSettings.clear();
-
         this.isLoaded = true;
       } catch (error) {
         const notificationStore = useNotificationStore();
         notificationStore.error("Failed to fetch settings from backend");
         console.error("Failed to fetch settings from backend:", error);
-        // Fall back to default settings
         const defaultSettings = this.defaultSettingsData();
         this.gearSettings = defaultSettings.gearSettings;
         this.activitySettings = defaultSettings.activitySettings;
@@ -72,28 +100,22 @@ export const useSettingsStore = defineStore("settingsStore", {
       }
     },
 
-    mergeBackendSettings(backendSettings) {
-      // Backend format: { setting: { display, value } }
-      // Merge with existing settings structure
+    mergeBackendSettings(backendSettings: DbUserSettings): void {
       Object.entries(backendSettings).forEach(([settingKey, settingData]) => {
         this.settingsGroups.forEach((group) => {
-          if (this[group][settingKey]) {
-            this[group][settingKey].display = settingData.display;
-            this[group][settingKey].value = settingData.value;
+          const record = this._group(group);
+          if (record[settingKey]) {
+            record[settingKey].display = settingData.display;
+            record[settingKey].value = settingData.value;
           }
         });
       });
     },
 
-    async saveSettings() {
+    async saveSettings(): Promise<void> {
       try {
-        // Only save changed settings
-        const changedSettingsArray =
-          this.convertChangedSettingsToBackendFormat();
-
-        if (changedSettingsArray.length === 0) {
-          return;
-        }
+        const changedSettingsArray = this.convertChangedSettingsToBackendFormat();
+        if (changedSettingsArray.length === 0) return;
 
         await upsertSettings(changedSettingsArray);
 
@@ -104,7 +126,6 @@ export const useSettingsStore = defineStore("settingsStore", {
           } saved`,
         );
 
-        // Clear changed settings after successful save
         this.changedSettings.clear();
       } catch (error) {
         const notificationStore = useNotificationStore();
@@ -114,101 +135,92 @@ export const useSettingsStore = defineStore("settingsStore", {
       }
     },
 
-    debouncedSaveSettings() {
-      // Clear existing timeout
-      if (this.saveTimeout) {
-        clearTimeout(this.saveTimeout);
-      }
-
-      // Set new timeout for 2 seconds
+    debouncedSaveSettings(): void {
+      if (this.saveTimeout) clearTimeout(this.saveTimeout);
       this.saveTimeout = setTimeout(async () => {
         try {
           await this.saveSettings();
         } catch {
-          // Error already handled in saveSettings method
+          // Error already handled in saveSettings
         }
       }, 2000);
     },
 
-    markSettingChanged(settingKey, newValue, newDisplay) {
-      // Get current setting values (before the change)
-      let current;
-      let settingGroup;
+    markSettingChanged(
+      settingKey: string,
+      newValue?: boolean,
+      newDisplay?: number,
+    ): void {
+      let current: Setting | undefined;
+      let settingGroup: SettingsGroupName | undefined;
+
       this.settingsGroups.forEach((group) => {
-        if (this[group][settingKey]) {
-          current = this[group][settingKey];
+        const record = this._group(group);
+        if (record[settingKey]) {
+          current = record[settingKey];
           settingGroup = group;
         }
       });
-      if (!current) return;
 
-      // Check if we already have this setting tracked
-      const tracked = this.changedSettings.get(settingKey);
+      if (!current || !settingGroup) return;
 
-      if (!tracked) {
-        // First time changing this setting, track the ORIGINAL value (before any change)
+      if (!this.changedSettings.has(settingKey)) {
         this.changedSettings.set(settingKey, {
           group: settingGroup,
           display: current.display,
-          value: current.value,
+          value: current.value as boolean,
         });
       }
 
+      const record = this._group(settingGroup);
       if (newValue !== undefined) {
-        this[settingGroup][settingKey].value = newValue;
+        record[settingKey].value = newValue;
       } else if (newDisplay !== undefined) {
-        this[settingGroup][settingKey].display = newDisplay;
+        record[settingKey].display = newDisplay;
       }
 
-      // After updating, check if we're back to the original values
-      const trackedAfterUpdate = this.changedSettings.get(settingKey);
-      const currentAfterUpdate = this[settingGroup][settingKey];
-
+      const tracked = this.changedSettings.get(settingKey)!;
+      const updated = record[settingKey];
       if (
-        trackedAfterUpdate &&
-        currentAfterUpdate.display === trackedAfterUpdate.display &&
-        currentAfterUpdate.value === trackedAfterUpdate.value
+        updated.display === tracked.display &&
+        updated.value === tracked.value
       ) {
-        // We're back to the original values, remove from tracking
         this.changedSettings.delete(settingKey);
       }
 
       this.debouncedSaveSettings();
     },
 
-    convertChangedSettingsToBackendFormat() {
-      const settingsArray = [];
-
+    convertChangedSettingsToBackendFormat(): UpsertSettingEntry[] {
+      const settingsArray: UpsertSettingEntry[] = [];
       this.changedSettings.forEach(({ group }, settingKey) => {
-        if (this[group][settingKey]) {
+        const record = this._group(group);
+        if (record[settingKey]) {
           settingsArray.push({
             setting: settingKey,
-            display: this[group][settingKey].display,
-            value: this[group][settingKey].value,
+            display: record[settingKey].display,
+            value: record[settingKey].value as boolean,
           });
         }
       });
-
       return settingsArray;
     },
 
-    convertSettingsToBackendFormat() {
-      const settingsArray = [];
-
+    convertSettingsToBackendFormat(): UpsertSettingEntry[] {
+      const settingsArray: UpsertSettingEntry[] = [];
       this.settingsGroups.forEach((group) => {
-        Object.entries(this[group]).forEach(([key, setting]) => {
+        Object.entries(this._group(group)).forEach(([key, setting]) => {
           settingsArray.push({
             setting: key,
             display: setting.display,
-            value: setting.value,
+            value: setting.value as boolean,
           });
         });
       });
-
       return settingsArray;
     },
 
-    defaultSettingsData() {
+    defaultSettingsData(): Record<SettingsGroupName, SettingsRecord> {
       return {
         gearSettings: {
           showOwned: {
