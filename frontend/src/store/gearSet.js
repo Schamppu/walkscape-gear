@@ -7,7 +7,7 @@ import {
   upsertGearSet,
   deleteGearSet,
 } from "@/utils/axios/db_routes";
-import { LoadGearSetCommand } from "./gearCommands";
+import { LoadGearSetCommand } from "./commands/gearCommands";
 import { createEmptyGearSetSelection } from "@/domain/gear/gearSet";
 
 // Lazy import for history store to avoid circular dependencies

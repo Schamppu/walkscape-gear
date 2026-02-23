@@ -1,30 +1,34 @@
 import { activityNone } from "@/domain/constants/activityNone";
+import type { ActivityDetail } from "@/domain/types/activity";
+import type { RecipeDetail } from "@/domain/types/recipe";
+import type { LocationSummary } from "@/domain/types/location";
+import type { ServiceSummary } from "@/domain/types/service";
+import type { Command, IActivityStore } from "./types";
 
-export class SetActivityCommand {
+// ---------------------------------------------------------------------------
+// SetActivityCommand
+// ---------------------------------------------------------------------------
+
+export class SetActivityCommand implements Command {
+  readonly description: string;
+  timestamp?: number;
+
   constructor(
-    activityStore,
-    newActivity,
-    previousActivity = null,
-    previousRecipe = null,
-    previousLocation = null,
-    previousLocations = null
+    private readonly activityStore: IActivityStore,
+    private readonly newActivity: ActivityDetail | null,
+    private readonly previousActivity: ActivityDetail | null = null,
+    private readonly previousRecipe: RecipeDetail | null = null,
+    private readonly previousLocation: LocationSummary | null = null,
+    private readonly previousLocations: LocationSummary[] | null = null,
   ) {
-    this.activityStore = activityStore;
-    this.newActivity = newActivity;
-    this.previousActivity = previousActivity;
-    this.previousRecipe = previousRecipe;
-    this.previousLocation = previousLocation;
-    this.previousLocations = previousLocations;
     this.description = newActivity
       ? `Select activity: ${newActivity.name}`
-      : `Clear activity`;
+      : "Clear activity";
   }
 
-  async execute() {
-    // Don't record history during execute/undo
+  async execute(): Promise<void> {
     this.activityStore._setActivityDirect(this.newActivity);
 
-    // Load activity locations if we have an activity
     if (
       this.newActivity &&
       this.newActivity.id !== "none" &&
@@ -37,9 +41,7 @@ export class SetActivityCommand {
     }
   }
 
-  async undo() {
-    // Don't record history during execute/undo
-    // Set undo flag and restore state in one batch to minimize reactivity
+  async undo(): Promise<void> {
     if (this.previousActivity) {
       this.activityStore._batchUpdateActivityState({
         _isUndoRedoOperation: true,
@@ -50,52 +52,48 @@ export class SetActivityCommand {
     } else if (this.previousRecipe) {
       this.activityStore._batchUpdateActivityState({
         _isUndoRedoOperation: true,
-        activity: activityNone,
+        activity: activityNone as unknown as ActivityDetail,
         recipe: this.previousRecipe,
         locations: this.previousLocations,
         location: this.previousLocation,
       });
     }
 
-    // Clear the undo flag after a microtask
     setTimeout(() => {
       this.activityStore._isUndoRedoOperation = false;
     }, 0);
   }
 }
 
-export class SetRecipeCommand {
+// ---------------------------------------------------------------------------
+// SetRecipeCommand
+// ---------------------------------------------------------------------------
+
+export class SetRecipeCommand implements Command {
+  readonly description: string;
+  timestamp?: number;
+
   constructor(
-    activityStore,
-    newRecipe,
-    previousActivity = null,
-    previousRecipe = null,
-    previousLocation = null,
-    previousLocations = null,
-    previousService = null,
-    previousServices = null
+    private readonly activityStore: IActivityStore,
+    private readonly newRecipe: RecipeDetail | null,
+    private readonly previousActivity: ActivityDetail | null = null,
+    private readonly previousRecipe: RecipeDetail | null = null,
+    private readonly previousLocation: LocationSummary | null = null,
+    private readonly previousLocations: LocationSummary[] | null = null,
+    private readonly previousService: ServiceSummary | null = null,
+    private readonly previousServices: ServiceSummary[] | null = null,
   ) {
-    this.activityStore = activityStore;
-    this.newRecipe = newRecipe;
-    this.previousActivity = previousActivity;
-    this.previousRecipe = previousRecipe;
-    this.previousLocation = previousLocation;
-    this.previousLocations = previousLocations;
-    this.previousService = previousService;
-    this.previousServices = previousServices;
     this.description = newRecipe
       ? `Select recipe: ${newRecipe.name}`
-      : `Clear recipe`;
+      : "Clear recipe";
   }
 
-  async execute() {
-    // Don't record history during execute/undo
+  async execute(): Promise<void> {
     this.activityStore._setRecipeDirect(this.newRecipe);
 
-    // Load recipe services if we have a recipe
     if (this.newRecipe && this.newRecipe.id !== "none") {
-      const [skill] = this.newRecipe.relatedSkills || [null];
-      const recipeRequirement = this.newRecipe.requirements
+      const [skill = null] = this.newRecipe.relatedSkills ?? [];
+      const recipeRequirement = (this.newRecipe.requirements ?? [])
         .filter(({ type }) => type === "service")
         .map(({ requirement }) => requirement);
       await this.activityStore.loadRecipeServices(skill, recipeRequirement);
@@ -107,10 +105,7 @@ export class SetRecipeCommand {
     }
   }
 
-  async undo() {
-    // Don't record history during execute/undo
-    // Set undo flag and restore state in one batch to minimize reactivity
-
+  async undo(): Promise<void> {
     if (this.previousRecipe) {
       this.activityStore._batchUpdateActivityState({
         _isUndoRedoOperation: true,
@@ -124,72 +119,75 @@ export class SetRecipeCommand {
       this.activityStore._batchUpdateActivityState({
         _isUndoRedoOperation: true,
         activity: this.previousActivity,
-        recipe: activityNone,
+        recipe: activityNone as unknown as RecipeDetail,
         locations: this.previousLocations,
         location: this.previousLocation,
       });
     }
 
-    // Clear the undo flag after a microtask
     setTimeout(() => {
       this.activityStore._isUndoRedoOperation = false;
     }, 0);
   }
 }
 
-export class SetLocationCommand {
-  constructor(activityStore, newLocation, previousLocation = null) {
-    this.activityStore = activityStore;
-    this.newLocation = newLocation;
-    this.previousLocation = previousLocation;
+// ---------------------------------------------------------------------------
+// SetLocationCommand
+// ---------------------------------------------------------------------------
+
+export class SetLocationCommand implements Command {
+  readonly description: string;
+  timestamp?: number;
+
+  constructor(
+    private readonly activityStore: IActivityStore,
+    private readonly newLocation: LocationSummary | null,
+    private readonly previousLocation: LocationSummary | null = null,
+  ) {
     this.description = newLocation
       ? `Select location: ${newLocation.name}`
-      : `Clear location`;
+      : "Clear location";
   }
 
-  async execute() {
-    // Don't record history during execute/undo
+  async execute(): Promise<void> {
     this.activityStore._setLocationDirect(this.newLocation);
   }
 
-  async undo() {
-    // Don't record history during execute/undo
-    // Set undo flag and restore state in one batch
+  async undo(): Promise<void> {
     this.activityStore._batchUpdateActivityState({
       _isUndoRedoOperation: true,
       location: this.previousLocation,
     });
 
-    // Clear the undo flag after a microtask
     setTimeout(() => {
       this.activityStore._isUndoRedoOperation = false;
     }, 0);
   }
 }
 
-export class SetServiceCommand {
+// ---------------------------------------------------------------------------
+// SetServiceCommand
+// ---------------------------------------------------------------------------
+
+export class SetServiceCommand implements Command {
+  readonly description: string;
+  timestamp?: number;
+
   constructor(
-    activityStore,
-    newService,
-    previousService = null,
-    previousLocation = null,
-    previousLocations = null
+    private readonly activityStore: IActivityStore,
+    private readonly newService: ServiceSummary | null,
+    private readonly previousService: ServiceSummary | null = null,
+    private readonly previousLocation: LocationSummary | null = null,
+    private readonly previousLocations: LocationSummary[] | null = null,
   ) {
-    this.activityStore = activityStore;
-    this.newService = newService;
-    this.previousService = previousService;
-    this.previousLocation = previousLocation;
-    this.previousLocations = previousLocations;
     this.description = newService
       ? `Select service: ${newService.name}`
-      : `Clear service`;
+      : "Clear service";
   }
 
-  async execute() {
-    // Don't record history during execute/undo
+  async execute(): Promise<void> {
     this.activityStore._setServiceDirect(this.newService);
 
-    // Load service locations if we have a service
     if (this.newService) {
       await this.activityStore.loadServiceLocations(this.newService.id);
     } else {
@@ -198,9 +196,7 @@ export class SetServiceCommand {
     }
   }
 
-  async undo() {
-    // Don't record history during execute/undo
-    // Set undo flag and restore state in one batch to minimize reactivity
+  async undo(): Promise<void> {
     this.activityStore._batchUpdateActivityState({
       _isUndoRedoOperation: true,
       service: this.previousService,
@@ -208,7 +204,6 @@ export class SetServiceCommand {
       location: this.previousLocation,
     });
 
-    // Clear the undo flag after a microtask
     setTimeout(() => {
       this.activityStore._isUndoRedoOperation = false;
     }, 0);

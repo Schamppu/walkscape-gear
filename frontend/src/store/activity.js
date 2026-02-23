@@ -15,7 +15,7 @@ import {
   SetRecipeCommand,
   SetServiceCommand,
   SetLocationCommand,
-} from "./activityCommands";
+} from "./commands/activityCommands";
 
 // Lazy import for history store to avoid circular dependencies
 let useHistoryStore = null;

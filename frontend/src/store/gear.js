@@ -5,7 +5,7 @@ import {
   EquipItemCommand,
   UnequipAllCommand,
   EquipMultipleCommand,
-} from "./gearCommands";
+} from "./commands/gearCommands";
 import { createEmptyGearSet } from "@/domain/gear/gearSet";
 import { getPetIcon } from "@/domain/pets/getPetIcon";
 
