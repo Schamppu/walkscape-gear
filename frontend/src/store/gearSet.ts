@@ -9,61 +9,103 @@ import {
 } from "@/utils/axios/db_routes";
 import { LoadGearSetCommand } from "./commands/gearCommands";
 import { createEmptyGearSetSelection } from "@/domain/gear/gearSet";
+import type { Command } from "./commands/types";
+import type {
+  DbTag,
+  DbGearSet,
+  DbGearSetDetail,
+  DbGearSetItem,
+  UpsertGearSetPayload,
+} from "@/domain/types/db";
 
-// Lazy import for history store to avoid circular dependencies
-let useHistoryStore = null;
-const getHistoryStore = async () => {
-  if (!useHistoryStore) {
+// ---------------------------------------------------------------------------
+// Lazy history store (avoids circular dependencies)
+// ---------------------------------------------------------------------------
+
+import type { useHistoryStore as UseHistoryStore } from "@/store/history";
+type HistoryStore = ReturnType<typeof UseHistoryStore>;
+
+let _useHistoryStore: (() => HistoryStore) | null = null;
+const getHistoryStore = async (): Promise<HistoryStore | null> => {
+  if (!_useHistoryStore) {
     try {
       const module = await import("@/store/history");
-      useHistoryStore = module.useHistoryStore;
+      _useHistoryStore = module.useHistoryStore as () => HistoryStore;
     } catch {
       console.debug("History store not available");
       return null;
     }
   }
-  return useHistoryStore?.();
+  return _useHistoryStore?.() ?? null;
 };
+
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
+
+/** DbGearSet with tags resolved from string IDs to full DbTag objects. */
+export type MappedGearSet = Omit<DbGearSet, "tags"> & {
+  tags: (DbTag | undefined)[];
+  items?: GearSetItemSlot[];
+};
+
+/** A gear set item payload slot — what the DB returns and what we save. */
+export type GearSetItemSlot = Pick<DbGearSetItem, "slotType" | "slotIndex" | "itemId" | "quality">;
+
+/** The current set selection tracked in the store with resolved tags and items. */
+export type TypedGearSetSelection = {
+  id: number | null;
+  name: string;
+  tags: DbTag[];
+  items: GearSetItemSlot[];
+  isDirty: boolean;
+  isNew: boolean;
+};
+
+/** Raw gear slot mapping used when equipping a set: slotName → { id, quality }. */
+export type GearSlotMapping = Record<string, { id: string; quality: string | null } | null>;
+
+// ---------------------------------------------------------------------------
+// Store
+// ---------------------------------------------------------------------------
 
 export const useGearSetStore = defineStore("gearSetStore", {
   state: () => ({
-    gearSets: [],
-    gearSetTags: [],
+    gearSets: [] as MappedGearSet[],
+    gearSetTags: [] as DbTag[],
     isLoaded: false,
-    sets: [createEmptyGearSetSelection(), createEmptyGearSetSelection()],
+    sets: [
+      createEmptyGearSetSelection() as TypedGearSetSelection,
+      createEmptyGearSetSelection() as TypedGearSetSelection,
+    ],
     gearSetIndex: 0,
   }),
 
   getters: {
-    // Get the current set as a reactive object
-    currentSet(state) {
+    currentSet(state): TypedGearSetSelection {
       return state.sets[this.gearSetIndex];
     },
 
-    // Check if current set has unsaved changes
-    hasUnsavedChanges() {
+    hasUnsavedChanges(): boolean {
       return this.currentSet.isDirty;
     },
 
-    // Check if current set is valid for saving
-    canSave() {
+    canSave(): boolean {
       return this.currentSet.name.trim().length > 0;
     },
 
-    // Check if current set is valid for saving with gear data
-    canSaveWithGear() {
-      return (hasGearEquipped) =>
+    canSaveWithGear(): (hasGearEquipped: boolean) => boolean {
+      return (hasGearEquipped: boolean) =>
         this.currentSet.name.trim().length > 0 && hasGearEquipped;
     },
 
-    // Get selected set ID (for dropdown binding)
-    selectedSetId() {
+    selectedSetId(): number | null {
       return this.currentSet.id;
     },
   },
 
   actions: {
-    async fetchGearSets() {
+    async fetchGearSets(): Promise<void> {
       if (this.isLoaded) return;
 
       const [gearSetTags, gearSets] = await Promise.all([
@@ -73,27 +115,29 @@ export const useGearSetStore = defineStore("gearSetStore", {
 
       this.gearSetTags = gearSetTags;
 
-      const mappedGearSets = gearSets.map((gearSet) => {
-        return {
-          ...gearSet,
-          tags: gearSet.tags.map((tagId) =>
-            this.gearSetTags.find(({ id }) => tagId === id)
-          ),
-        };
-      });
+      const mappedGearSets: MappedGearSet[] = gearSets.map((gearSet) => ({
+        ...gearSet,
+        tags: gearSet.tags.map((tagId) =>
+          this.gearSetTags.find(({ id }) => tagId === id)
+        ),
+      }));
       this.gearSets = mappedGearSets;
 
       this.isLoaded = true;
+      const notificationStore = useNotificationStore();
+      void notificationStore.debug(
+        `GearSet: loaded ${this.gearSets.length} gear sets, ${this.gearSetTags.length} tags`,
+      );
     },
 
     // Direct setter that doesn't record history (used by commands)
-    _setCurrentSetDirect(gearSetData) {
+    _setCurrentSetDirect(gearSetData: Record<string, unknown> | null): void {
       if (gearSetData) {
         this.sets[this.gearSetIndex] = {
-          id: gearSetData.id,
-          name: gearSetData.name,
-          tags: [...(gearSetData.tags || [])],
-          items: [...(gearSetData.items || [])],
+          id: gearSetData.id as number,
+          name: gearSetData.name as string,
+          tags: [...((gearSetData.tags as DbTag[]) || [])],
+          items: [...((gearSetData.items as GearSetItemSlot[]) || [])],
           isDirty: false,
           isNew: false,
         };
@@ -103,50 +147,46 @@ export const useGearSetStore = defineStore("gearSetStore", {
     },
 
     // Direct method to create new set without history (used by commands)
-    _createNewSetDirect() {
-      this.sets[this.gearSetIndex] = createEmptyGearSetSelection();
+    _createNewSetDirect(): void {
+      this.sets[this.gearSetIndex] = createEmptyGearSetSelection() as TypedGearSetSelection;
     },
 
     // Create a new empty set
-    createNewSet() {
-      this.sets[this.gearSetIndex] = createEmptyGearSetSelection();
+    createNewSet(): void {
+      this.sets[this.gearSetIndex] = createEmptyGearSetSelection() as TypedGearSetSelection;
 
       // Clear gear set parameter from URL when creating new set
       this._updateUrlWithGearSet(null);
     },
 
     // Create a new set with command pattern support for undo
-    async createNewSetWithHistory() {
+    async createNewSetWithHistory(): Promise<void> {
       const { useGearStore } = await import("./gear");
       const gearStore = useGearStore();
 
-      // Capture current state for undo
       const previousGearSetId = this.selectedSetId;
       const previousGearSetData = this.selectedSetId
-        ? { ...this.currentSet }
+        ? ({ ...this.currentSet } as Record<string, unknown>)
         : null;
       const previousGearSlots = { ...gearStore.selectedGearset };
 
-      // Create command to clear gear set
       const command = new LoadGearSetCommand(
         gearStore,
         this,
-        null, // setId
-        null, // gearSetData (will create new set)
+        null, // setId — null means create new set
+        null, // gearSetData
         {}, // gearSetMapping (empty)
-        previousGearSetId,
+        previousGearSetId as unknown as string | null,
         previousGearSetData,
-        previousGearSlots
+        previousGearSlots,
       );
 
       await this._executeCommand(command);
-
-      // Clear gear set parameter from URL
       await this._updateUrlWithGearSet(null);
     },
 
     // Helper method to update URL (avoiding circular import issues)
-    async _updateUrlWithGearSet(gearSetId) {
+    async _updateUrlWithGearSet(gearSetId: number | null): Promise<void> {
       try {
         const { useUrlStore } = await import("./url");
         const urlStore = useUrlStore();
@@ -160,7 +200,7 @@ export const useGearSetStore = defineStore("gearSetStore", {
     },
 
     // Load an existing set for editing
-    async loadSet(setId) {
+    async loadSet(setId: number): Promise<boolean> {
       const existingSet = this.gearSets.find((set) => set.id === setId);
       if (!existingSet) {
         this.createNewSet();
@@ -168,10 +208,9 @@ export const useGearSetStore = defineStore("gearSetStore", {
       }
 
       let returnValue = true;
-      // If the existing set doesn't have items (from the lightweight getGearSets call),
-      // fetch the full gear set data including items
       let oldSet = true;
-      let fullGearSet = existingSet;
+      let fullGearSet: MappedGearSet | DbGearSetDetail = existingSet;
+
       if (
         !existingSet.items ||
         !Array.isArray(existingSet.items) ||
@@ -183,25 +222,23 @@ export const useGearSetStore = defineStore("gearSetStore", {
         } catch (error) {
           console.error(error);
           const notificationStore = useNotificationStore();
-          notificationStore.error(
-            `Error loading gear set: ${existingSet.name}`
-          );
+          void notificationStore.error(`Error loading gear set: ${existingSet.name}`);
           fullGearSet = existingSet;
           returnValue = false;
         }
       }
 
+      const resolvedTags: (DbTag | undefined)[] = oldSet
+        ? (fullGearSet as MappedGearSet).tags
+        : (fullGearSet as DbGearSetDetail).tags.map((tagId) =>
+            this.gearSetTags.find(({ id }) => tagId === id)
+          );
+
       this.sets[this.gearSetIndex] = {
         id: fullGearSet.id,
         name: fullGearSet.name,
-        tags: [
-          ...(oldSet
-            ? fullGearSet.tags
-            : fullGearSet.tags.map((tagId) =>
-                this.gearSetTags.find(({ id }) => tagId === id)
-              ) || []),
-        ],
-        items: [...(fullGearSet.items || [])],
+        tags: [...(resolvedTags.filter((t): t is DbTag => t !== undefined))],
+        items: [...((fullGearSet.items as GearSetItemSlot[] | undefined) || [])],
         isDirty: false,
         isNew: false,
       };
@@ -209,73 +246,50 @@ export const useGearSetStore = defineStore("gearSetStore", {
       return returnValue;
     },
 
-    async selectAndEquipSet(setId) {
+    async selectAndEquipSet(setId: number): Promise<boolean> {
       const { useGearStore } = await import("./gear");
       const gearStore = useGearStore();
 
       try {
-        // Capture current state for undo
         const previousGearSetId = this.currentSet.id;
         const previousGearSetData = this.currentSet.id
-          ? { ...this.currentSet }
+          ? ({ ...this.currentSet } as Record<string, unknown>)
           : null;
         const previousGearSlots = { ...gearStore.selectedGearset };
 
-        // Load the gear set data (this part stays the same for fetching)
         await this.loadSet(setId);
 
-        // Process the gear data
-        const gearSet = Object.fromEntries(
-          this.currentSet.items.map(
-            ({ itemId, quality, slotIndex, slotType }) => {
-              const slotName = ["ring", "tool"].includes(slotType)
-                ? `${slotType}${slotIndex + 1}`
-                : slotType;
-              return [
-                slotName,
-                {
-                  id: itemId,
-                  quality: quality || null,
-                },
-              ];
-            }
-          )
+        const gearSet: GearSlotMapping = Object.fromEntries(
+          this.currentSet.items.map(({ itemId, quality, slotIndex, slotType }) => {
+            const slotName = ["ring", "tool"].includes(slotType)
+              ? `${slotType}${slotIndex + 1}`
+              : slotType;
+            return [slotName, { id: itemId, quality: quality || null }];
+          })
         );
 
         Object.keys(gearStore.selectedGearset).forEach((key) => {
-          if (
-            !(
-              ["service", "consumable", "potion"].includes(key) ||
-              key in gearSet
-            )
-          ) {
-            gearSet[key] = null; // Ensure all slots are set, even if empty
+          if (!(["service", "consumable", "potion"].includes(key) || key in gearSet)) {
+            gearSet[key] = null;
           }
         });
 
-        // Create and execute the load gear set command
-        // Pass the raw gear set mapping, the command will process it
         const command = new LoadGearSetCommand(
           gearStore,
           this,
-          setId,
-          { ...this.currentSet }, // Current gear set data (already loaded)
-          gearSet, // Raw gear set mapping (will be processed in command)
-          previousGearSetId,
+          setId as unknown as string,
+          { ...this.currentSet } as Record<string, unknown>,
+          gearSet,
+          previousGearSetId as unknown as string | null,
           previousGearSetData,
-          previousGearSlots
+          previousGearSlots,
         );
 
-        // Execute the command (this will set the gear set state and equip gear)
         await this._executeCommand(command);
-
-        // Update URL with gear set parameter
         await this._updateUrlWithGearSet(setId);
 
         const notificationStore = useNotificationStore();
-        notificationStore.success(
-          `"${this.currentSet.name}" loaded successfully`
-        );
+        void notificationStore.success(`"${this.currentSet.name}" loaded successfully`);
 
         return true;
       } catch (error) {
@@ -284,127 +298,125 @@ export const useGearSetStore = defineStore("gearSetStore", {
       }
     },
 
-    // Update current set name
-    updateCurrentSetName(name) {
+    updateCurrentSetName(name: string): void {
       if (this.currentSet.name !== name) {
         this.currentSet.name = name;
         this.currentSet.isDirty = true;
       }
     },
 
-    // Update current set tags
-    updateCurrentSetTags(tags) {
+    updateCurrentSetTags(tags: DbTag[]): void {
       this.currentSet.tags = [...tags];
       this.currentSet.isDirty = true;
     },
 
-    // Update current set items (from gear store)
-    updateCurrentSetItems(items) {
+    updateCurrentSetItems(items: GearSetItemSlot[]): void {
       this.currentSet.items = [...items];
       this.currentSet.isDirty = true;
     },
 
-    // Save current set to backend and update local store
-    async saveCurrentSet(gearItems = null) {
-      // If gear items are provided, update them first
+    async saveCurrentSet(gearItems: GearSetItemSlot[] | null = null): Promise<number | undefined> {
       if (gearItems) {
         this.updateCurrentSetItems(gearItems);
       }
 
       if (!this.canSave) {
         const notificationStore = useNotificationStore();
-        notificationStore.error("Cannot save: set name is required");
+        void notificationStore.error("Cannot save: set name is required");
         return;
       }
 
       if (!this.currentSet.items || this.currentSet.items.length === 0) {
         const notificationStore = useNotificationStore();
-        notificationStore.error("Cannot save: no gear items to save");
+        void notificationStore.error("Cannot save: no gear items to save");
         return;
       }
 
-      const payload = {
-        id: this.currentSet.id,
+      const payload: UpsertGearSetPayload = {
+        id: this.currentSet.id ?? undefined,
         name: this.currentSet.name,
         tags: this.currentSet.tags.map((tag) => tag.id),
         items: this.currentSet.items,
       };
 
       try {
-        // Save to backend
         const result = await upsertGearSet(payload);
 
-        // Update local state
         if (this.currentSet.isNew) {
           const newId = result.gearSetId;
 
           if (!newId) {
-            throw new Error(
-              "Failed to save gear set: No ID returned from server"
-            );
+            throw new Error("Failed to save gear set: No ID returned from server");
           }
 
-          // Add new set to the list
-          const newSet = { ...payload, id: newId, tags: this.currentSet.tags };
+          const newSet: MappedGearSet = {
+            ...payload,
+            id: newId,
+            userUuid: "",
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            isFavorite: false,
+            sortOrder: null,
+            tags: this.currentSet.tags,
+          };
           this.gearSets.push(newSet);
           this.currentSet.id = newId;
           this.currentSet.isNew = false;
 
           const notificationStore = useNotificationStore();
-          notificationStore.success(`"${newSet.name}" created successfully`);
-
-          // Update URL with new gear set parameter
+          void notificationStore.success(`"${newSet.name}" created successfully`);
           await this._updateUrlWithGearSet(newId);
         } else {
-          // Update existing set in the list
-          const index = this.gearSets.findIndex(
-            (set) => set.id === this.currentSet.id
-          );
+          const index = this.gearSets.findIndex((set) => set.id === this.currentSet.id);
           if (index !== -1) {
-            this.gearSets[index] = { ...payload, tags: this.currentSet.tags };
+            this.gearSets[index] = {
+              ...this.gearSets[index],
+              ...payload,
+              tags: this.currentSet.tags,
+            };
           }
 
           const notificationStore = useNotificationStore();
-          notificationStore.success(
-            `"${this.currentSet.name}" updated successfully`
-          );
-
-          // Update URL with updated gear set parameter
+          void notificationStore.success(`"${this.currentSet.name}" updated successfully`);
           await this._updateUrlWithGearSet(this.currentSet.id);
         }
 
         this.currentSet.isDirty = false;
-        return this.currentSet.id;
+        return this.currentSet.id ?? undefined;
       } catch {
         const notificationStore = useNotificationStore();
-        notificationStore.error("Failed to save gear set");
+        void notificationStore.error("Failed to save gear set");
       }
     },
 
-    // Reset current set to last saved state
-    async resetCurrentSet() {
+    async resetCurrentSet(): Promise<void> {
       if (this.currentSet.isNew) {
         this.createNewSet();
-      } else {
+      } else if (this.currentSet.id !== null) {
         await this.loadSet(this.currentSet.id);
       }
     },
 
-    async addGearSet({ id, name, tags, items }) {
+    async addGearSet({
+      id,
+      name,
+      tags,
+      items,
+    }: {
+      id?: number;
+      name: string;
+      tags: string[];
+      items: GearSetItemSlot[];
+    }): Promise<void> {
       if (!name || !items) {
         throw new Error("Name, and items are required to create a gear set.");
       }
 
-      const payload = {
-        id,
-        name,
-        tags,
-        items,
-      };
+      const payload: UpsertGearSetPayload = { id, name, tags, items };
       await upsertGearSet(payload);
     },
 
-    async deleteGearSet(id) {
+    async deleteGearSet(id: number): Promise<void> {
       if (!id) {
         throw new Error("ID is required to delete a gear set.");
       }
@@ -420,26 +432,22 @@ export const useGearSetStore = defineStore("gearSetStore", {
           this.createNewSet();
         }
 
-        // Show success notification
         const notificationStore = useNotificationStore();
-        notificationStore.success(`"${gearSetName}" deleted successfully`);
+        void notificationStore.success(`"${gearSetName}" deleted successfully`);
       } catch (error) {
-        // Show error notification
         const notificationStore = useNotificationStore();
-        notificationStore.error("Failed to delete gear set");
+        void notificationStore.error("Failed to delete gear set");
         throw error;
       }
     },
 
     // Command execution and history management
-    async _executeCommand(command) {
+    async _executeCommand(command: Command): Promise<void> {
       try {
         const historyStore = await getHistoryStore();
 
-        // Execute the command
         await command.execute();
 
-        // Record in history if available
         if (historyStore) {
           historyStore.recordCommand(command);
         }
@@ -448,7 +456,7 @@ export const useGearSetStore = defineStore("gearSetStore", {
       }
     },
 
-    async initializeHistoryTracking() {
+    async initializeHistoryTracking(): Promise<boolean> {
       try {
         const historyStore = await getHistoryStore();
         if (!historyStore) {
