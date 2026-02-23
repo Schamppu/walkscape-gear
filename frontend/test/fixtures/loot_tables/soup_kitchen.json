@@ -1,0 +1,137 @@
+[
+  {
+    "id": "soup_kitchen_volunteering",
+    "name": "soup kitchen volunteering",
+    "category": "normal",
+    "noDropChance": 0.75,
+    "tableRows": [
+      {
+        "rowItemID": "raw_shrimp",
+        "name": "Raw shrimp",
+        "icon": "assets/icons/items/materials/fish/shrimp.png",
+        "isMoney": false,
+        "linearWeightScaling": true,
+        "rowWeight": 5,
+        "rowMinimumAmount": 1,
+        "rowMaximumAmount": 1,
+        "minWeightScale": 0.05,
+        "requirementsBonuses": []
+      },
+      {
+        "rowItemID": "raw_perch",
+        "name": "Raw perch",
+        "icon": "assets/icons/items/materials/fish/perch.png",
+        "isMoney": false,
+        "linearWeightScaling": true,
+        "rowWeight": 4,
+        "rowMinimumAmount": 1,
+        "rowMaximumAmount": 1,
+        "minWeightScale": 0.05,
+        "requirementsBonuses": []
+      },
+      {
+        "rowItemID": "raw_carp",
+        "name": "Raw carp",
+        "icon": "assets/icons/items/materials/fish/carp.png",
+        "isMoney": false,
+        "linearWeightScaling": true,
+        "rowWeight": 2.5,
+        "rowMinimumAmount": 1,
+        "rowMaximumAmount": 1,
+        "minWeightScale": 0.05,
+        "requirementsBonuses": []
+      },
+      {
+        "rowItemID": "measuring_spoons_trinket",
+        "name": "Measuring spoons trinket",
+        "icon": "assets/icons/items/materials/misc/measuring_spoon_trinket.png",
+        "isMoney": false,
+        "linearWeightScaling": true,
+        "rowWeight": 0.02,
+        "rowMinimumAmount": 1,
+        "rowMaximumAmount": 1,
+        "minWeightScale": 0.05,
+        "requirementsBonuses": []
+      },
+      {
+        "rowItemID": "nettle",
+        "name": "Nettle",
+        "icon": "assets/icons/items/materials/plants/nettle.png",
+        "isMoney": false,
+        "linearWeightScaling": true,
+        "rowWeight": 5,
+        "rowMinimumAmount": 1,
+        "rowMaximumAmount": 1,
+        "minWeightScale": 0.05,
+        "requirementsBonuses": []
+      },
+      {
+        "rowItemID": "wheat",
+        "name": "Wheat",
+        "icon": "assets/icons/items/materials/plants/wheat.png",
+        "isMoney": false,
+        "linearWeightScaling": true,
+        "rowWeight": 4,
+        "rowMinimumAmount": 1,
+        "rowMaximumAmount": 1,
+        "minWeightScale": 0.05,
+        "requirementsBonuses": []
+      },
+      {
+        "rowItemID": "cooked_shrimp",
+        "name": "Cooked shrimp",
+        "icon": "assets/icons/items/materials/cooked_fish/shrimp.png",
+        "isMoney": false,
+        "linearWeightScaling": true,
+        "rowWeight": 2.5,
+        "rowMinimumAmount": 1,
+        "rowMaximumAmount": 1,
+        "minWeightScale": 0.05,
+        "requirementsBonuses": []
+      }
+    ],
+    "subTables": []
+  },
+  {
+    "id": "cooking_activity_chest",
+    "name": "cooking activity chest",
+    "category": "normal",
+    "noDropChance": 0.996,
+    "tableRows": [
+      {
+        "rowItemID": "cooking_chest",
+        "name": "Cooking chest",
+        "icon": "assets/icons/items/openables/chests/cooking_chest.png",
+        "isMoney": false,
+        "linearWeightScaling": true,
+        "rowWeight": 10,
+        "rowMinimumAmount": 1,
+        "rowMaximumAmount": 1,
+        "minWeightScale": 0.05,
+        "requirementsBonuses": []
+      }
+    ],
+    "subTables": []
+  },
+  {
+    "id": "soup_kitchen_badge",
+    "name": "soup kitchen badge",
+    "category": "collectible",
+    "noDropChance": 0.9995,
+    "tableRows": [
+      {
+        "rowItemID": "soup_kitchen_badge",
+        "name": "Soup kitchen badge",
+        "icon": "assets/icons/items/collectibles/soup_kitchen_badge.png",
+        "isMoney": false,
+        "linearWeightScaling": true,
+        "rowWeight": 10,
+        "rowMinimumAmount": 1,
+        "rowMaximumAmount": 1,
+        "minWeightScale": 0.05,
+        "requirementsBonuses": []
+      }
+    ],
+    "subTables": []
+  }
+]

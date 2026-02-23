@@ -1,0 +1,125 @@
+[
+  {
+    "id": "swimming_intermediate",
+    "name": "swimming intermediate",
+    "category": "normal",
+    "noDropChance": 0.82,
+    "tableRows": [
+      {
+        "rowItemID": "raw_salmon",
+        "name": "Raw salmon",
+        "icon": "assets/icons/items/materials/fish/salmon.png",
+        "isMoney": false,
+        "linearWeightScaling": true,
+        "rowWeight": 10,
+        "rowMinimumAmount": 1,
+        "rowMaximumAmount": 4,
+        "minWeightScale": 0.05,
+        "requirementsBonuses": []
+      },
+      {
+        "rowItemID": "raw_jellyfish",
+        "name": "Raw jellyfish",
+        "icon": "assets/icons/items/materials/fish/jellyfish.png",
+        "isMoney": false,
+        "linearWeightScaling": true,
+        "rowWeight": 5,
+        "rowMinimumAmount": 1,
+        "rowMaximumAmount": 3,
+        "minWeightScale": 0.05,
+        "requirementsBonuses": []
+      },
+      {
+        "rowItemID": "raw_squid",
+        "name": "Raw squid",
+        "icon": "assets/icons/items/materials/fish/squid.png",
+        "isMoney": false,
+        "linearWeightScaling": true,
+        "rowWeight": 2.5,
+        "rowMinimumAmount": 1,
+        "rowMaximumAmount": 2,
+        "minWeightScale": 0.05,
+        "requirementsBonuses": []
+      },
+      {
+        "rowItemID": "life_vest",
+        "name": "Life vest",
+        "icon": "assets/icons/items/gear/skill_gear/fishing/life_vest.png",
+        "isMoney": false,
+        "linearWeightScaling": true,
+        "rowWeight": 0.15,
+        "rowMinimumAmount": 1,
+        "rowMaximumAmount": 1,
+        "minWeightScale": 0.05,
+        "requirementsBonuses": []
+      },
+      {
+        "rowItemID": "shark_tooth_trinket",
+        "name": "Shark tooth trinket",
+        "icon": "assets/icons/items/materials/misc/shark_tooth_trinket.png",
+        "isMoney": false,
+        "linearWeightScaling": true,
+        "rowWeight": 0.15,
+        "rowMinimumAmount": 1,
+        "rowMaximumAmount": 1,
+        "minWeightScale": 0.05,
+        "requirementsBonuses": []
+      },
+      {
+        "rowItemID": "eel_trinket",
+        "name": "Eel trinket",
+        "icon": "assets/icons/items/materials/misc/eel_trinket.png",
+        "isMoney": false,
+        "linearWeightScaling": true,
+        "rowWeight": 0.15,
+        "rowMinimumAmount": 1,
+        "rowMaximumAmount": 1,
+        "minWeightScale": 0.05,
+        "requirementsBonuses": []
+      }
+    ],
+    "subTables": []
+  },
+  {
+    "id": "agility_activity_chest",
+    "name": "agility activity chest",
+    "category": "normal",
+    "noDropChance": 0.996,
+    "tableRows": [
+      {
+        "rowItemID": "agility_chest",
+        "name": "Agility chest",
+        "icon": "assets/icons/items/openables/chests/agility_chest.png",
+        "isMoney": false,
+        "linearWeightScaling": true,
+        "rowWeight": 10,
+        "rowMinimumAmount": 1,
+        "rowMaximumAmount": 1,
+        "minWeightScale": 0.05,
+        "requirementsBonuses": []
+      }
+    ],
+    "subTables": []
+  },
+  {
+    "id": "seashell_searching_chest",
+    "name": "seashell searching chest",
+    "category": "normal",
+    "noDropChance": 0.996,
+    "tableRows": [
+      {
+        "rowItemID": "sunken_chest",
+        "name": "Sunken chest",
+        "icon": "assets/icons/items/openables/chests/sunken_treasure_chest.png",
+        "isMoney": false,
+        "linearWeightScaling": true,
+        "rowWeight": 10,
+        "rowMinimumAmount": 1,
+        "rowMaximumAmount": 1,
+        "minWeightScale": 0.05,
+        "requirementsBonuses": []
+      }
+    ],
+    "subTables": []
+  }
+]
