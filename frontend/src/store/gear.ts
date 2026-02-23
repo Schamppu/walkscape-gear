@@ -12,27 +12,7 @@ import type { ItemDetail } from "@/domain/types/item";
 import type { PetDetail } from "@/domain/types/pet";
 import type { GearSlot } from "@/domain/constants/gear";
 import type { Command } from "./commands/types";
-
-// ---------------------------------------------------------------------------
-// Lazy history store (avoids circular dependencies)
-// ---------------------------------------------------------------------------
-
-import type { useHistoryStore as UseHistoryStore } from "@/store/history";
-type HistoryStore = ReturnType<typeof UseHistoryStore>;
-
-let _useHistoryStore: (() => HistoryStore) | null = null;
-const getHistoryStore = async (): Promise<HistoryStore | null> => {
-  if (!_useHistoryStore) {
-    try {
-      const module = await import("@/store/history");
-      _useHistoryStore = module.useHistoryStore as () => HistoryStore;
-    } catch {
-      console.debug("History store not available");
-      return null;
-    }
-  }
-  return _useHistoryStore?.() ?? null;
-};
+import { executeCommand, initializeHistoryTracking } from "@/store/utils/historyUtils";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -425,34 +405,11 @@ export const useGearStore = defineStore("gearStore", {
 
     // Command execution and history management
     async _executeCommand(command: Command): Promise<void> {
-      try {
-        const historyStore = await getHistoryStore();
-
-        // Execute the command
-        await command.execute();
-
-        // Record in history if available
-        if (historyStore) {
-          historyStore.recordCommand(command);
-        }
-      } catch (error) {
-        console.error("Failed to execute command:", error);
-      }
+      await executeCommand(command, "gear");
     },
 
     async initializeHistoryTracking(): Promise<boolean> {
-      try {
-        const historyStore = await getHistoryStore();
-        if (!historyStore) {
-          console.debug("History store not available");
-          return false;
-        }
-
-        return true;
-      } catch (error) {
-        console.debug("Failed to initialize history tracking:", error);
-        return false;
-      }
+      return initializeHistoryTracking("gear");
     },
   },
 });

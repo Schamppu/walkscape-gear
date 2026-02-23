@@ -20,12 +20,14 @@ import {
   SetServiceCommand,
   SetLocationCommand,
 } from "./commands/activityCommands";
-import type { ActivityStateUpdate } from "./commands/types";
+import type { ActivityStateUpdate, Command } from "./commands/types";
 import type { ActivityDetail, ActivitySummary } from "@/domain/types/activity";
 import type { RecipeDetail, RecipeSummary } from "@/domain/types/recipe";
 import type { ServiceDetail } from "@/domain/types/service";
 import type { Requirement } from "@/domain/types/common";
+import type { LocationDetail } from "@/domain/types/location";
 import { useNotificationStore } from "@/store/notifications";
+import { executeCommand, initializeHistoryTracking } from "@/store/utils/historyUtils";
 
 /**
  * Activity Store
@@ -40,28 +42,6 @@ import { useNotificationStore } from "@/store/notifications";
 // ---------------------------------------------------------------------------
 
 export type ActivityMapEntry = Pick<ActivitySummary, "name" | "icon">;
-
-// ---------------------------------------------------------------------------
-// Lazy import for history store (avoids circular dependencies)
-// ---------------------------------------------------------------------------
-
-import type { useHistoryStore as UseHistoryStore } from "@/store/history";
-import { LocationDetail } from "@/domain/types/location";
-type HistoryStore = ReturnType<typeof UseHistoryStore>;
-
-let _useHistoryStore: (() => HistoryStore) | null = null;
-const getHistoryStore = async (): Promise<HistoryStore | null> => {
-  if (!_useHistoryStore) {
-    try {
-      const module = await import("@/store/history");
-      _useHistoryStore = module.useHistoryStore as () => HistoryStore;
-    } catch {
-      console.debug("History store not available");
-      return null;
-    }
-  }
-  return _useHistoryStore?.() ?? null;
-};
 
 // ---------------------------------------------------------------------------
 // Store
@@ -322,34 +302,11 @@ export const useActivityStore = defineStore("activityStore", {
 
     // Command execution and history management
     async _executeCommand(command: { execute(): Promise<void> } & object): Promise<void> {
-      try {
-        const historyStore = await getHistoryStore();
-
-        // Execute the command
-        await command.execute();
-
-        // Record in history if available
-        if (historyStore) {
-          historyStore.recordCommand(command as Parameters<HistoryStore["recordCommand"]>[0]);
-        }
-      } catch (error) {
-        console.error("Failed to execute activity command:", error);
-      }
+      await executeCommand(command as Command, "activity");
     },
 
     async initializeHistoryTracking(): Promise<boolean> {
-      try {
-        const historyStore = await getHistoryStore();
-        if (!historyStore) {
-          console.debug("History store not available for activity");
-          return false;
-        }
-
-        return true;
-      } catch (error) {
-        console.debug("Failed to initialize activity history tracking:", error);
-        return false;
-      }
+      return initializeHistoryTracking("activity");
     },
   },
 });

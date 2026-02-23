@@ -17,27 +17,7 @@ import type {
   DbGearSetItem,
   UpsertGearSetPayload,
 } from "@/domain/types/db";
-
-// ---------------------------------------------------------------------------
-// Lazy history store (avoids circular dependencies)
-// ---------------------------------------------------------------------------
-
-import type { useHistoryStore as UseHistoryStore } from "@/store/history";
-type HistoryStore = ReturnType<typeof UseHistoryStore>;
-
-let _useHistoryStore: (() => HistoryStore) | null = null;
-const getHistoryStore = async (): Promise<HistoryStore | null> => {
-  if (!_useHistoryStore) {
-    try {
-      const module = await import("@/store/history");
-      _useHistoryStore = module.useHistoryStore as () => HistoryStore;
-    } catch {
-      console.debug("History store not available");
-      return null;
-    }
-  }
-  return _useHistoryStore?.() ?? null;
-};
+import { executeCommand, initializeHistoryTracking } from "@/store/utils/historyUtils";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -443,32 +423,11 @@ export const useGearSetStore = defineStore("gearSetStore", {
 
     // Command execution and history management
     async _executeCommand(command: Command): Promise<void> {
-      try {
-        const historyStore = await getHistoryStore();
-
-        await command.execute();
-
-        if (historyStore) {
-          historyStore.recordCommand(command);
-        }
-      } catch (error) {
-        console.error("Failed to execute command:", error);
-      }
+      await executeCommand(command, "gear-set");
     },
 
     async initializeHistoryTracking(): Promise<boolean> {
-      try {
-        const historyStore = await getHistoryStore();
-        if (!historyStore) {
-          console.debug("History store not available");
-          return false;
-        }
-
-        return true;
-      } catch (error) {
-        console.debug("Failed to initialize history tracking:", error);
-        return false;
-      }
+      return initializeHistoryTracking("gear-set");
     },
   },
 });
