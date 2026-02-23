@@ -4,22 +4,7 @@ import { useUrlMap } from "@/composables/useUrlMap";
 import { useActivityStore } from "./activity";
 import { useGearStore } from "./gear";
 import type { UrlMap } from "@/domain/types/item";
-
-// ---------------------------------------------------------------------------
-// Types
-// ---------------------------------------------------------------------------
-
-/** Forward map: slot name → ordered array of item IDs (index = encoded value). */
-type SlotMapping = UrlMap;
-
-/** Reverse map: slot name → item ID → encoded index. */
-type ReverseMapping = Record<string, Record<string, number>>;
-
-/** Slot-name order used for encoding/decoding the URL `q` parameter. */
-type SlotOrder = Record<string, string>;
-
-/** Decoded gear loadout: slot → item ID or null. */
-type DecodedLoadout = Record<string, string | null>;
+import { buildReverseMapping, type ReverseMapping, type SlotOrder, type DecodedLoadout } from "@/utils/urlEncoding";
 
 // ---------------------------------------------------------------------------
 // Store
@@ -27,7 +12,7 @@ type DecodedLoadout = Record<string, string | null>;
 
 export const useUrlStore = defineStore("url", {
   state: () => ({
-    mapping: {} as SlotMapping,
+    mapping: {} as UrlMap,
     reverseMapping: {} as ReverseMapping,
     order: {
       activity: "activity",
@@ -62,14 +47,7 @@ export const useUrlStore = defineStore("url", {
 
       const { data: response } = await getUrlMap();
       this.mapping = response;
-
-      const reverse: ReverseMapping = {};
-      for (const slot in this.mapping) {
-        reverse[slot] = Object.fromEntries(
-          this.mapping[slot].map((id, index) => [id, index]),
-        );
-      }
-      this.reverseMapping = reverse;
+      this.reverseMapping = buildReverseMapping(response);
       this.isLoaded = true;
     },
 

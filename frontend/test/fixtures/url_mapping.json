@@ -1,0 +1,18 @@
+{
+  "activity": [null, "foraging_birchwood", "mining_copper", "fishing_pond"],
+  "recipe": [null, "bread_basic", "copper_sword", "pine_plank"],
+  "cape": [null, "fur_cape", "adventurer_cape", "traveler_cape"],
+  "back": [null, "leather_pack", "satchel", "explorer_bag"],
+  "neck": [null, "copper_amulet", "silver_necklace", "jade_pendant"],
+  "hands": [null, "leather_gloves", "wool_mittens", "iron_gauntlets"],
+  "head": [null, "leather_cap", "wool_hat", "iron_helmet"],
+  "chest": [null, "leather_shirt", "wool_tunic", "iron_chestplate"],
+  "legs": [null, "leather_trousers", "wool_pants", "iron_leggings"],
+  "feet": [null, "leather_boots", "wool_socks", "iron_boots"],
+  "primary": [null, "copper_sword", "iron_axe", "steel_pickaxe"],
+  "secondary": [null, "wooden_shield", "iron_shield", "copper_dagger"],
+  "ring": [null, "copper_ring", "silver_ring", "jade_ring"],
+  "tool": [null, "basic_fishing_rod", "copper_pickaxe", "stone_axe"],
+  "consumable": [null, "minor_health_potion", "bread", "dried_fish"],
+  "pet": [null, "cat", "dog", "parrot"]
+}
