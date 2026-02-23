@@ -1,47 +1,25 @@
-<script setup>
+<script setup lang="ts">
 import { computed, ref, watch } from "vue";
 import { useIconStore } from "@/store/icon";
 import LoadingThrobber from "./LoadingThrobber.vue";
+import { iconSizeMap, type IconSizeKey } from "@/constants/iconSizes";
 
 // Define props
-const props = defineProps({
-  iconPath: {
-    type: String,
-    required: true,
-  },
-  size: {
-    type: String,
-    default: "default",
-    validator: (value) =>
-      [
-        "xxxs",
-        "xxs",
-        "xs",
-        "sm",
-        "md",
-        "mdp",
-        "lg",
-        "xl",
-        "xxl",
-        "default",
-      ].includes(value),
-  },
-  outlineClass: {
-    type: String,
-    default: "",
-  },
-  extraClasses: {
-    type: Array,
-    default: [],
-  },
-});
+const props = defineProps<{
+  iconPath: string;
+  size?: IconSizeKey;
+  outlineClass?: string;
+  extraClasses?: string[];
+}>();
+
+const sizeWithDefault = computed<IconSizeKey>(() => props.size ?? "default");
 
 // State variables
 const iconStore = useIconStore();
-const iconUrl = ref(null);
-const loading = ref(true);
+const iconUrl = ref<string | null>(null);
+const loading = ref<boolean>(true);
 
-const loadIcon = async (icon) => {
+const loadIcon = async (icon: string): Promise<void> => {
   loading.value = true;
   iconUrl.value = await iconStore.loadIcon(icon);
   loading.value = false;
@@ -49,26 +27,12 @@ const loadIcon = async (icon) => {
 
 watch(
   () => props.iconPath,
-  (icon) => loadIcon(icon),
-  { immediate: true }
+  (icon) => void loadIcon(icon),
+  { immediate: true },
 );
 
-// Map size options to pixel values
-const iconSize = computed(() => {
-  const sizeMap = {
-    xxxs: "8px",
-    xxs: "12px",
-    xs: "16px",
-    sm: "24px",
-    md: "32px",
-    default: "32px",
-    mdp: "40px",
-    lg: "48px",
-    xl: "64px",
-    xxl: "96px",
-  };
-  return sizeMap[props.size];
-});
+// Map size key to CSS pixel value
+const iconSize = computed<string>(() => iconSizeMap[sizeWithDefault.value]);
 </script>
 
 <template>
@@ -87,7 +51,7 @@ const iconSize = computed(() => {
       :src="iconUrl"
       :alt="iconPath"
       :style="{ width: '100%', height: '100%', objectFit: 'contain' }"
-      :class="[outlineClass, ...props.extraClasses]"
+      :class="[outlineClass, ...(props.extraClasses ?? [])]"
     />
   </div>
 </template>
