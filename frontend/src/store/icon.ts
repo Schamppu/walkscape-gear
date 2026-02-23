@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { getIcon, getIconsBatch } from "@/utils/axios/api_routes";
+import { useNotificationStore } from "@/store/notifications";
 import debounce from "@/utils/debounce";
 
 /**
@@ -21,12 +22,47 @@ import debounce from "@/utils/debounce";
  * the number of individual network requests and leverages caching effectively.
  */
 
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
+
 type IconResolver = (url: string | null) => void;
 
 /** Minimal interface used to type `this` inside the debounced action, avoiding a circular reference. */
 interface IconStoreContext {
   _fetchIcons: () => Promise<void>;
 }
+
+// ---------------------------------------------------------------------------
+// Pure module-level helpers (no store state required)
+// ---------------------------------------------------------------------------
+
+/** Converts a base64 data URL to a Blob for use with URL.createObjectURL. */
+function dataUrlToBlob(dataUrl: string): Blob {
+  const [header, base64] = dataUrl.split(",");
+  const mimeMatch = header.match(/data:(.*);base64/);
+  const mime = mimeMatch ? mimeMatch[1] : "image/png";
+  const binary = atob(base64);
+  const array = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) {
+    array[i] = binary.charCodeAt(i);
+  }
+  return new Blob([array], { type: mime });
+}
+
+/** Calls all pending resolvers for a path and removes them from the map. */
+function flushResolvers(
+  resolvers: Record<string, IconResolver[]>,
+  path: string,
+  url: string | null,
+): void {
+  (resolvers[path] ?? []).forEach((resolve) => resolve(url));
+  delete resolvers[path];
+}
+
+// ---------------------------------------------------------------------------
+// Store
+// ---------------------------------------------------------------------------
 
 export const useIconStore = defineStore("iconStore", {
   state: () => ({
@@ -37,39 +73,73 @@ export const useIconStore = defineStore("iconStore", {
 
   actions: {
     async loadIcon(path: string): Promise<string | null> {
-      // If already cached, return immediately
       if (path in this.iconCache) return this.iconCache[path];
 
-      // If already pending, return a promise that resolves when loaded
       if (this.pendingResolvers[path]) {
         return new Promise<string | null>((resolve) => {
           this.pendingResolvers[path].push(resolve);
         });
       }
 
-      // Otherwise, add to pending and set up resolver
       this.pendingIcons.add(path);
       this.pendingResolvers[path] = [];
-
-      // Debounced batch fetch
       this._debouncedFetchIcons();
 
-      // Return a promise that resolves when the icon is loaded
       return new Promise<string | null>((resolve) => {
         this.pendingResolvers[path].push(resolve);
       });
     },
 
-    _dataUrlToBlob(dataUrl: string): Blob {
-      const [header, base64] = dataUrl.split(",");
-      const mimeMatch = header.match(/data:(.*);base64/);
-      const mime = mimeMatch ? mimeMatch[1] : "image/png";
-      const binary = atob(base64);
-      const array = new Uint8Array(binary.length);
-      for (let i = 0; i < binary.length; i++) {
-        array[i] = binary.charCodeAt(i);
+    async _fetchSingleIcon(path: string): Promise<void> {
+      const notificationStore = useNotificationStore();
+      try {
+        const response = await getIcon({ iconPath: path });
+        const url = URL.createObjectURL(response.data as Blob);
+        this.iconCache[path] = url;
+        void notificationStore.debug(`Icon: fetched single icon "${path}"`);
+        flushResolvers(this.pendingResolvers, path, url);
+      } catch (e) {
+        console.error("Error fetching icon:", e);
+        void notificationStore.debug(`Icon: failed to fetch single icon "${path}"`, [
+          e instanceof Error ? e.message : String(e),
+        ]);
+        flushResolvers(this.pendingResolvers, path, null);
       }
-      return new Blob([array], { type: mime });
+    },
+
+    async _fetchBatchIcons(paths: string[]): Promise<void> {
+      const notificationStore = useNotificationStore();
+      try {
+        const { data: icons } = await getIconsBatch({ iconPaths: paths });
+        const returned = Object.keys(icons as Record<string, string>);
+        const missing = paths.filter((p) => !returned.includes(p));
+        void notificationStore.debug(
+          `Icon: batch response — ${returned.length}/${paths.length} icons returned` +
+            (missing.length ? ` (${missing.length} missing)` : ""),
+          missing.length ? [`Missing: ${missing.join(", ")}`] : [],
+        );
+
+        Object.entries(icons as Record<string, string>).forEach(([path, data]) => {
+          const url = URL.createObjectURL(dataUrlToBlob(data));
+          this.iconCache[path] = url;
+          flushResolvers(this.pendingResolvers, path, url);
+        });
+
+        // Resolve any paths not present in the response as null
+        for (const path of paths) {
+          if (!(path in this.iconCache)) {
+            flushResolvers(this.pendingResolvers, path, null);
+          }
+        }
+      } catch (e) {
+        console.error("Error fetching icons:", e);
+        void notificationStore.debug(`Icon: batch fetch failed for ${paths.length} icons`, [
+          e instanceof Error ? e.message : String(e),
+        ]);
+        for (const path of paths) {
+          flushResolvers(this.pendingResolvers, path, null);
+        }
+      }
     },
 
     async _fetchIcons(): Promise<void> {
@@ -79,45 +149,9 @@ export const useIconStore = defineStore("iconStore", {
       if (iconsToFetch.length === 0) return;
 
       if (iconsToFetch.length === 1) {
-        // Fetch single icon
-        const path = iconsToFetch[0];
-        try {
-          const response = await getIcon({ iconPath: path });
-          const blob = response.data as Blob;
-          const url = URL.createObjectURL(blob);
-          this.iconCache[path] = url;
-          (this.pendingResolvers[path] ?? []).forEach((resolve) => resolve(url));
-        } catch (e) {
-          console.error("Error fetching icon:", e);
-          (this.pendingResolvers[path] ?? []).forEach((resolve) => resolve(null));
-        }
-        delete this.pendingResolvers[path];
+        await this._fetchSingleIcon(iconsToFetch[0]);
       } else {
-        // Fetch batch
-        try {
-          const { data: icons } = await getIconsBatch({ iconPaths: iconsToFetch });
-          Object.entries(icons as Record<string, string>).forEach(([path, data]) => {
-            const blob = this._dataUrlToBlob(data);
-            const url = URL.createObjectURL(blob);
-            this.iconCache[path] = url;
-            (this.pendingResolvers[path] ?? []).forEach((resolve) => resolve(url));
-            delete this.pendingResolvers[path];
-          });
-          // For any not returned, resolve as null
-          for (const path of iconsToFetch) {
-            if (!(path in this.iconCache)) {
-              (this.pendingResolvers[path] ?? []).forEach((resolve) => resolve(null));
-              delete this.pendingResolvers[path];
-            }
-          }
-        } catch (e) {
-          // On error, resolve all as null
-          console.error("Error fetching icons:", e);
-          for (const path of iconsToFetch) {
-            (this.pendingResolvers[path] ?? []).forEach((resolve) => resolve(null));
-            delete this.pendingResolvers[path];
-          }
-        }
+        await this._fetchBatchIcons(iconsToFetch);
       }
     },
 
