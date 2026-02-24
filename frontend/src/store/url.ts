@@ -5,6 +5,7 @@ import { useActivityStore } from "./activity";
 import { useGearStore } from "./gear";
 import type { UrlMap } from "@/domain/types/item";
 import { buildReverseMapping, type ReverseMapping, type SlotOrder, type DecodedLoadout } from "@/utils/urlEncoding";
+import { parseGearSetId } from "@/store/utils/urlUtils";
 
 // ---------------------------------------------------------------------------
 // Store
@@ -75,27 +76,23 @@ export const useUrlStore = defineStore("url", {
     async decodeFromUrlAndApply(): Promise<void> {
       const params = new URLSearchParams(window.location.search);
       const encodedGear = params.get("q");
-      const gearSetIdParam = params.get("gs");
-
-      const gearSetId = gearSetIdParam ? parseInt(gearSetIdParam, 10) : null;
-      const isValidGearSetId =
-        gearSetId !== null && !isNaN(gearSetId) && gearSetId > 0;
+      const gearSetId = parseGearSetId(params, "gs");
 
       // Prioritize 'q' parameter over 'gs' parameter
       if (encodedGear) {
         await this._applyEncodedGearLoadout(encodedGear);
-      } else if (isValidGearSetId && gearSetId !== null) {
+      } else if (gearSetId !== null) {
         await this._applyGearSetFromUrl(gearSetId);
-      } else if (gearSetIdParam) {
+      } else if (params.get("gs")) {
         console.warn(
-          `Invalid gear set ID format: ${gearSetIdParam}, removing from URL`,
+          `Invalid gear set ID format: ${params.get("gs")}, removing from URL`,
         );
         const url = new URL(window.location.href);
         url.searchParams.delete("gs");
         window.history.replaceState({}, "", url);
       }
 
-      if (isValidGearSetId && gearSetId !== null) {
+      if (gearSetId !== null) {
         const { useGearSetStore } = await import("./gearSet");
         const gearSetStore = useGearSetStore();
         gearSetStore.loadSet(gearSetId);

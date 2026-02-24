@@ -100,10 +100,10 @@ export class LoadGearSetCommand implements Command {
   constructor(
     private readonly gearStore: IGearStore,
     private readonly gearSetStore: IGearSetStore,
-    readonly setId: string | null,
+    readonly setId: number | null,
     gearSetData: Record<string, unknown> | null,
     gearSetMapping: GearSetMapping,
-    readonly previousGearSetId: string | null = null,
+    readonly previousGearSetId: number | null = null,
     previousGearSetData: Record<string, unknown> | null = null,
     previousGearSlots: GearSlots | null = null,
   ) {
