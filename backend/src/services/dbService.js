@@ -27,6 +27,20 @@ const ALLOWED_REPUTATIONS = new Set([
   "syrenthiaReputation",
 ]);
 
+const DEBUG_SETTINGS = new Set([
+  "debugActivity",
+  "debugData",
+  "debugGear",
+  "debugGearSet",
+  "debugHistory",
+  "debugIcon",
+  "debugItems",
+  "debugPlayer",
+  "debugRoute",
+  "debugSettings",
+  "debugURL",
+]);
+
 const ALLOWED_SETTINGS = new Set([
   "showOwned",
   "showUseful",
@@ -39,7 +53,7 @@ const ALLOWED_SETTINGS = new Set([
   "decimalSeparator",
   "activityOptimiserPriority",
   "recipeOptimiserPriority",
-  "enableDebug",
+  ...DEBUG_SETTINGS,
 ]);
 
 async function markUserActiveThrottled(userUuid) {

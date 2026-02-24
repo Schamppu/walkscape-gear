@@ -363,10 +363,70 @@ export const useSettingsStore = defineStore("settingsStore", {
           },
         },
         toolSettings: {
-          enableDebug: {
-            label: "Show Debug Messages",
-            showDisplay: false,
+          debugActivity: {
+            label: "Activity, recipe & location selection",
             display: 0,
+            showDisplay: false,
+            value: false,
+          },
+          debugData: {
+            label: "Abilities, keywords & loot tables",
+            display: 0,
+            showDisplay: false,
+            value: false,
+          },
+          debugGear: {
+            label: "Item loading & gear slot changes",
+            display: 0,
+            showDisplay: false,
+            value: false,
+          },
+          debugGearSet: {
+            label: "Gear set loading & saving",
+            display: 0,
+            showDisplay: false,
+            value: false,
+          },
+          debugHistory: {
+            label: "Undo / redo operations",
+            display: 0,
+            showDisplay: false,
+            value: false,
+          },
+          debugIcon: {
+            label: "Icon loading & caching",
+            display: 0,
+            showDisplay: false,
+            value: false,
+          },
+          debugItems: {
+            label: "Owned items & inventory sync",
+            display: 0,
+            showDisplay: false,
+            value: false,
+          },
+          debugPlayer: {
+            label: "Player stats & faction data",
+            display: 0,
+            showDisplay: false,
+            value: false,
+          },
+          debugRoute: {
+            label: "Route calculation",
+            display: 0,
+            showDisplay: false,
+            value: false,
+          },
+          debugSettings: {
+            label: "Settings state changes",
+            display: 0,
+            showDisplay: false,
+            value: false,
+          },
+          debugURL: {
+            label: "URL encoding & decoding",
+            display: 0,
+            showDisplay: false,
             value: false,
           },
         },

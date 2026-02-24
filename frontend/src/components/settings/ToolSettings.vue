@@ -15,7 +15,7 @@ function updateSettingDisplay(key, display) {
 
 <template>
   <settings-table
-    title="Gear Tool Settings"
+    title="Debug Message Categories"
     :settings="settingsStore.toolSettings"
     @update-setting-value="updateSettingValue"
     @update-setting-display="updateSettingDisplay"
