@@ -89,3 +89,7 @@ export const getSettings = async (): Promise<DbUserSettings> => {
 export const upsertSettings = async (payload: UpsertSettingEntry[]): Promise<void> => {
   await axios.post(`${getHost()}/db/user_settings`, payload);
 };
+
+export const deleteUserData = async (): Promise<void> => {
+  await axios.delete(`${getHost()}/db/user_data`);
+};

@@ -99,7 +99,7 @@ describe("Character Import Functionality", () => {
   });
 
   // -------------------------------------------------------------------------
-  // Owned items — presence
+  // Owned items - presence
   // -------------------------------------------------------------------------
 
   it("should correctly import owned items from a save file", () => {
@@ -133,24 +133,24 @@ describe("Character Import Functionality", () => {
       false,
     );
 
-    // cape_of_achiever — equipped in gear slot "cape"
+    // cape_of_achiever - equipped in gear slot "cape"
     expect(result["cape_of_achiever"]?.owned).toBe(true);
 
-    // cooked_squid — listed in consumables
+    // cooked_squid - listed in consumables
     expect(result["cooked_squid"]?.owned).toBe(true);
 
-    // ring_of_homesickness — listed in inventory
+    // ring_of_homesickness - listed in inventory
     expect(result["ring_of_homesickness"]?.owned).toBe(true);
 
-    // soup_kitchen_badge — present in collectibles array
+    // soup_kitchen_badge - present in collectibles array
     expect(result["soup_kitchen_badge"]?.owned).toBe(true);
 
-    // fishing_guidebook — present in bank
+    // fishing_guidebook - present in bank
     expect(result["fishing_guidebook"]?.owned).toBe(true);
   });
 
   // -------------------------------------------------------------------------
-  // Owned items — quality determination
+  // Owned items - quality determination
   // -------------------------------------------------------------------------
 
   it("should correctly determine quality of certain owned items", () => {

@@ -108,9 +108,9 @@ export function getLevelRequirementsMap(
  * strategies. Requirements whose type has no strategy are kept as-is.
  *
  * Merge rules:
- * - `distinctKeywordItemsEquipped` — keeps the highest required quantity.
- * - `abilityAvailable` — keeps the first entry (both sides are equivalent).
- * - `skillLevel` — keeps the highest required level for each skill.
+ * - `distinctKeywordItemsEquipped` - keeps the highest required quantity.
+ * - `abilityAvailable` - keeps the first entry (both sides are equivalent).
+ * - `skillLevel` - keeps the highest required level for each skill.
  */
 export function mergeRequirements(requirements: Requirement[]): Requirement[] {
   const result: Requirement[] = [];

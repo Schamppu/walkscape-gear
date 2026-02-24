@@ -2,7 +2,7 @@ import type { Requirement } from "./common";
 import type { PetEgg, PetLook, PetLevel } from "./item";
 
 // ---------------------------------------------------------------------------
-// Pets — API response types
+// Pets - API response types
 // ---------------------------------------------------------------------------
 
 export type PetSummary = {

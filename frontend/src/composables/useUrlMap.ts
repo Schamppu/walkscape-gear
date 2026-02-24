@@ -16,8 +16,8 @@ import {
  * URL safety. The mapping of item IDs → indices lives in the url store.
  *
  * Returns:
- *   encodeGearLoadout — produce a base64 string for the current loadout.
- *   decodeGearLoadout — reconstruct a slot→id map from a base64 string.
+ *   encodeGearLoadout - produce a base64 string for the current loadout.
+ *   decodeGearLoadout - reconstruct a slot→id map from a base64 string.
  */
 export function useUrlMap() {
   const gearStore = useGearStore();

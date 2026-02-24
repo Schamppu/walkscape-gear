@@ -18,6 +18,10 @@ import type {
   UpsertGearSetPayload,
 } from "@/domain/types/db";
 import { executeCommand, initializeHistoryTracking } from "@/store/utils/historyUtils";
+import {
+  resolveTagsFromIds,
+  buildGearSlotMapping,
+} from "@/store/utils/gearSetUtils";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -25,11 +29,11 @@ import { executeCommand, initializeHistoryTracking } from "@/store/utils/history
 
 /** DbGearSet with tags resolved from string IDs to full DbTag objects. */
 export type MappedGearSet = Omit<DbGearSet, "tags"> & {
-  tags: (DbTag | undefined)[];
+  tags: DbTag[];
   items?: GearSetItemSlot[];
 };
 
-/** A gear set item payload slot — what the DB returns and what we save. */
+/** A gear set item payload slot - what the DB returns and what we save. */
 export type GearSetItemSlot = Pick<DbGearSetItem, "slotType" | "slotIndex" | "itemId" | "quality">;
 
 /** The current set selection tracked in the store with resolved tags and items. */
@@ -97,9 +101,7 @@ export const useGearSetStore = defineStore("gearSetStore", {
 
       const mappedGearSets: MappedGearSet[] = gearSets.map((gearSet) => ({
         ...gearSet,
-        tags: gearSet.tags.map((tagId) =>
-          this.gearSetTags.find(({ id }) => tagId === id)
-        ),
+        tags: resolveTagsFromIds(gearSet.tags, this.gearSetTags),
       }));
       this.gearSets = mappedGearSets;
 
@@ -153,10 +155,10 @@ export const useGearSetStore = defineStore("gearSetStore", {
       const command = new LoadGearSetCommand(
         gearStore,
         this,
-        null, // setId — null means create new set
+        null, // setId - null means create new set
         null, // gearSetData
         {}, // gearSetMapping (empty)
-        previousGearSetId as unknown as string | null,
+        previousGearSetId,
         previousGearSetData,
         previousGearSlots,
       );
@@ -208,16 +210,14 @@ export const useGearSetStore = defineStore("gearSetStore", {
         }
       }
 
-      const resolvedTags: (DbTag | undefined)[] = oldSet
+      const resolvedTags: DbTag[] = oldSet
         ? (fullGearSet as MappedGearSet).tags
-        : (fullGearSet as DbGearSetDetail).tags.map((tagId) =>
-            this.gearSetTags.find(({ id }) => tagId === id)
-          );
+        : resolveTagsFromIds((fullGearSet as DbGearSetDetail).tags, this.gearSetTags);
 
       this.sets[this.gearSetIndex] = {
         id: fullGearSet.id,
         name: fullGearSet.name,
-        tags: [...(resolvedTags.filter((t): t is DbTag => t !== undefined))],
+        tags: [...resolvedTags],
         items: [...((fullGearSet.items as GearSetItemSlot[] | undefined) || [])],
         isDirty: false,
         isNew: false,
@@ -239,28 +239,19 @@ export const useGearSetStore = defineStore("gearSetStore", {
 
         await this.loadSet(setId);
 
-        const gearSet: GearSlotMapping = Object.fromEntries(
-          this.currentSet.items.map(({ itemId, quality, slotIndex, slotType }) => {
-            const slotName = ["ring", "tool"].includes(slotType)
-              ? `${slotType}${slotIndex + 1}`
-              : slotType;
-            return [slotName, { id: itemId, quality: quality || null }];
-          })
+        const gearSet = buildGearSlotMapping(
+          this.currentSet.items,
+          Object.keys(gearStore.selectedGearset),
+          ["service", "consumable", "potion"],
         );
-
-        Object.keys(gearStore.selectedGearset).forEach((key) => {
-          if (!(["service", "consumable", "potion"].includes(key) || key in gearSet)) {
-            gearSet[key] = null;
-          }
-        });
 
         const command = new LoadGearSetCommand(
           gearStore,
           this,
-          setId as unknown as string,
+          setId,
           { ...this.currentSet } as Record<string, unknown>,
           gearSet,
-          previousGearSetId as unknown as string | null,
+          previousGearSetId,
           previousGearSetData,
           previousGearSlots,
         );

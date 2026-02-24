@@ -9,7 +9,7 @@ import {
   undoRedoOptions,
   shownDropRateOptions,
 } from "@/constants/settings";
-import type { Setting } from "@/constants/settings";
+import type { Setting, SettingOption } from "@/constants/settings";
 import type {
   DbUserSettings,
   DbUserSetting,
@@ -41,6 +41,72 @@ export type SettingsRecord = Record<string, Setting>;
 
 /** Snapshot of the original persisted value for a setting, used to detect reverts. */
 type TrackedSetting = DbUserSetting & { group: SettingsGroupName };
+
+// ---------------------------------------------------------------------------
+// Setting group key lists
+// These are the single source of truth for valid keys per group.
+// Copy them directly into the backend ALLOWED_SETTINGS / DEBUG_SETTINGS sets
+// when adding or renaming entries.
+// ---------------------------------------------------------------------------
+
+export const GEAR_SETTING_KEYS = [
+  "showOwned",
+  "showUseful",
+  "openStatRequirements",
+  "undoRedo",
+  "activityOptimiserPriority",
+  "recipeOptimiserPriority",
+] as const;
+
+export const ACTIVITY_SETTING_KEYS = [
+  "showCombined",
+  "hideOwnedCollectibles",
+  "shownDropRate",
+  "thousandSeparator",
+  "decimalSeparator",
+] as const;
+
+export const DEBUG_SETTING_KEYS = [
+  "debugActivity",
+  "debugData",
+  "debugGear",
+  "debugGearSet",
+  "debugHistory",
+  "debugIcon",
+  "debugItems",
+  "debugPlayer",
+  "debugRoute",
+  "debugSettings",
+  "debugURL",
+  "debugOptimiser",
+] as const;
+
+// ---------------------------------------------------------------------------
+// Default-setting factory helpers
+// ---------------------------------------------------------------------------
+
+/** A plain boolean toggle (checkbox only, no display dropdown). */
+function makeBoolSetting(label: string, value: boolean, display = 0): Setting<boolean> {
+  return { label, display, value };
+}
+
+/**
+ * A display-only dropdown — the enabled checkbox is hidden.
+ * Used for settings whose only meaningful axis is which option is selected.
+ */
+function makeDisplaySetting(
+  label: string,
+  displayOptions: SettingOption[],
+  display = 0,
+  value = false,
+): Setting<boolean> {
+  return { label, display, displayOptions, value, showEnable: false };
+}
+
+/** A debug-category toggle: disabled by default, display column hidden. */
+function makeDebugSetting(label: string): Setting<boolean> {
+  return { label, display: 0, showDisplay: false, value: false };
+}
 
 // ---------------------------------------------------------------------------
 // Store
@@ -290,86 +356,40 @@ export const useSettingsStore = defineStore("settingsStore", {
 
     defaultSettingsData(): Record<SettingsGroupName, SettingsRecord> {
       return {
-        gearSettings: {
-          showOwned: {
-            label: "Show only owned items",
-            display: 1,
-            value: true,
-          },
-          showUseful: {
-            label: "Show items with applicable stats",
-            display: 1,
-            value: true,
-          },
-          openStatRequirements: {
-            label: "Open stat requirements by default",
-            showDisplay: false,
-            display: 0,
-            value: false,
-          },
-          undoRedo: {
-            label: "Show undo/redo buttons",
-            display: 2,
-            displayOptions: undoRedoOptions,
-            value: true,
-            showEnable: false,
-          },
-          activityOptimiserPriority: {
-            label: "Activity optimiser priority",
-            display: 0,
-            displayOptions: activityOptimiserPriorities,
-            value: true,
-            showEnable: false,
-          },
-          recipeOptimiserPriority: {
-            label: "Recipe optimiser priority",
-            display: 0,
-            displayOptions: recipeOptimiserPriorities,
-            value: true,
-            showEnable: false,
-          },
-        },
-        activitySettings: {
-          showCombined: {
-            label: "Show combined drops",
-            display: 1,
-            value: true,
-          },
-          hideOwnedCollectibles: {
-            label: "Hide owned collectibles",
-            display: 1,
-            value: true,
-          },
-          shownDropRate: {
-            label: "Shown Drop Rate",
-            display: 0,
-            displayOptions: shownDropRateOptions,
-            value: false,
-            showEnable: false,
-          },
-          thousandSeparator: {
-            label: "Thousand separator",
-            display: 0,
-            displayOptions: thousandSeparators,
-            value: false,
-            showEnable: false,
-          },
-          decimalSeparator: {
-            label: "Decimal separator",
-            display: 0,
-            displayOptions: decimalSeparators,
-            value: false,
-            showEnable: false,
-          },
-        },
-        toolSettings: {
-          enableDebug: {
-            label: "Show Debug Messages",
-            showDisplay: false,
-            display: 0,
-            value: false,
-          },
-        },
+        gearSettings: Object.fromEntries([
+          ["showOwned",                 makeBoolSetting("Show only owned items",                 true,  1)],
+          ["showUseful",                makeBoolSetting("Show items with applicable stats",      true,  1)],
+          ["openStatRequirements",      makeBoolSetting("Open stat requirements by default",     false, 0)],
+          ["undoRedo",                  makeDisplaySetting("Show undo/redo buttons",             undoRedoOptions,             2, true)],
+          ["activityOptimiserPriority", makeDisplaySetting("Activity optimiser priority",        activityOptimiserPriorities, 0, true)],
+          ["recipeOptimiserPriority",   makeDisplaySetting("Recipe optimiser priority",          recipeOptimiserPriorities,   0, true)],
+        ]),
+
+        activitySettings: Object.fromEntries([
+          ["showCombined",          makeBoolSetting("Show combined drops",      true,  1)],
+          ["hideOwnedCollectibles", makeBoolSetting("Hide owned collectibles",  true,  1)],
+          ["shownDropRate",         makeDisplaySetting("Shown Drop Rate",       shownDropRateOptions)],
+          ["thousandSeparator",     makeDisplaySetting("Thousand separator",    thousandSeparators)],
+          ["decimalSeparator",      makeDisplaySetting("Decimal separator",     decimalSeparators)],
+        ]),
+
+        toolSettings: Object.fromEntries(
+          ([
+            ["debugActivity", "Activity, recipe & location selection"],
+            ["debugData",     "Abilities, keywords & loot tables"],
+            ["debugGear",     "Item loading & gear slot changes"],
+            ["debugGearSet",  "Gear set loading & saving"],
+            ["debugHistory",  "Undo / redo operations"],
+            ["debugIcon",     "Icon loading & caching"],
+            ["debugItems",    "Owned items & inventory sync"],
+            ["debugPlayer",   "Player stats & faction data"],
+            ["debugRoute",    "Route calculation"],
+            ["debugSettings", "Settings state changes"],
+            ["debugURL",      "URL encoding & decoding"],
+            ["debugOptimiser", "Optimiser operations"],
+          ] as [string, string][])
+            .map(([key, label]) => [key, makeDebugSetting(label)])
+        ),
       };
     },
   },

@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import type { Command } from "./commands/types";
+import { useNotificationStore } from "@/store/notifications";
 
 /**
  * History Store for managing undo/redo command history.
@@ -68,6 +69,11 @@ export const useHistoryStore = defineStore("historyStore", {
         this.commandHistory = this.commandHistory.slice(-this.maxHistorySize);
         this.currentIndex = this.commandHistory.length - 1;
       }
+
+      const notificationStore = useNotificationStore();
+      void notificationStore.debug(
+        `History: recorded "${command.description}" (${this.currentIndex + 1}/${this.commandHistory.length})`,
+      );
     },
 
     async undo(): Promise<boolean> {
@@ -75,8 +81,11 @@ export const useHistoryStore = defineStore("historyStore", {
 
       this.isUndoRedoInProgress = true;
       try {
+        const description = this.commandHistory[this.currentIndex].description;
         await this.commandHistory[this.currentIndex].undo();
         this.currentIndex--;
+        const notificationStore = useNotificationStore();
+        void notificationStore.debug(`History: undo — "${description}"`);
         return true;
       } catch (error) {
         console.error("Failed to undo:", error);
@@ -91,8 +100,11 @@ export const useHistoryStore = defineStore("historyStore", {
 
       this.isUndoRedoInProgress = true;
       try {
+        const description = this.commandHistory[this.currentIndex + 1].description;
         await this.commandHistory[this.currentIndex + 1].execute();
         this.currentIndex++;
+        const notificationStore = useNotificationStore();
+        void notificationStore.debug(`History: redo — "${description}"`);
         return true;
       } catch (error) {
         console.error("Failed to redo:", error);
@@ -103,8 +115,13 @@ export const useHistoryStore = defineStore("historyStore", {
     },
 
     clearHistory(): void {
+      const count = this.commandHistory.length;
       this.commandHistory = [];
       this.currentIndex = -1;
+      if (count > 0) {
+        const notificationStore = useNotificationStore();
+        void notificationStore.debug(`History: cleared ${count} command(s)`);
+      }
     },
 
     getHistorySummary(): Array<{

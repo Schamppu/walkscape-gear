@@ -126,3 +126,15 @@ export const deleteGearSet = async (req, res) => {
 
 export const getUserSettings = makeGetHandler(dbService.getUserSettings);
 export const upsertUserSettings = makeUpsertHandler(dbService.upsertUserSettings);
+
+export const deleteUserData = async (req, res) => {
+  const userUuid = getUserUuid(req, res);
+  if (!userUuid) return;
+  try {
+    await dbService.deleteUserData(userUuid);
+    res.json({ message: "All user data deleted" });
+  } catch (e) {
+    console.error("Error deleting user data:", e);
+    res.status(500).json({ error: e.message });
+  }
+};

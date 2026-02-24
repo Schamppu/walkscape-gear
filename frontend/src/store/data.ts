@@ -149,7 +149,7 @@ export const useDataStore = defineStore("dataStore", {
       if (uncachedIds.length > 0) {
         const notificationStore = useNotificationStore();
         void notificationStore.debug(
-          `Data: fetching ${uncachedIds.length} uncached item(s) — ${uncachedIds.length < 5 ? uncachedIds.join(", ") : `${uncachedIds.slice(0, 4).join(", ")} +${uncachedIds.length - 4} more`}`,
+          `Data: fetching ${uncachedIds.length} uncached item(s) - ${uncachedIds.length < 5 ? uncachedIds.join(", ") : `${uncachedIds.slice(0, 4).join(", ")} +${uncachedIds.length - 4} more`}`,
         );
         const batchPromise = fetchFn(uncachedIds)
           .then(({ data }) => {

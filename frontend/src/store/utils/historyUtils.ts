@@ -18,7 +18,7 @@ import type { useHistoryStore as UseHistoryStore } from "@/store/history";
 type HistoryStore = ReturnType<typeof UseHistoryStore>;
 
 // ---------------------------------------------------------------------------
-// Lazy loader — one shared module-level cache across all imports
+// Lazy loader - one shared module-level cache across all imports
 // ---------------------------------------------------------------------------
 
 let _useHistoryStore: (() => HistoryStore) | null = null;

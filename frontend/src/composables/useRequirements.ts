@@ -28,7 +28,7 @@ export type RequirementItem = {
   abilities?: (string | { ability: string })[];
 };
 
-/** A route segment — only the location fields needed for requirement checks. */
+/** A route segment - only the location fields needed for requirement checks. */
 export type RequirementSegment = {
   from: {
     keywords: string[];

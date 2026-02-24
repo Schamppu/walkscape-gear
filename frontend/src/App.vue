@@ -16,6 +16,7 @@ import Activity from "@/components/activity/ActivityTab.vue";
 import Gear from "@/components/gear/GearTab.vue";
 import Footer from "@/components/footer/FooterNav.vue";
 import About from "@/components/about/AboutView.vue";
+import PrivacyPolicy from "@/components/about/PrivacyPolicyView.vue";
 import SiteNotice from "@/components/about/SiteNotice.vue";
 import LoadingThrobber from "@/components/common/LoadingThrobber.vue";
 import WsButton from "@/components/common/WsButton.vue";
@@ -57,7 +58,7 @@ function shouldShowTab(tabName) {
   if (isMobile.value) {
     return activeTab.value === tabName;
   } else {
-    return activeTab.value !== "About";
+    return activeTab.value !== "About" && activeTab.value !== "PrivacyPolicy";
   }
 }
 
@@ -152,7 +153,15 @@ onUnmounted(() => {
         :class="['tab-panel', { active: activeTab === 'About' }]"
         :tabindex="isMobile ? 0 : undefined"
       >
-        <About @back="scrollToTab('Hub')" />
+        <About @back="scrollToTab('Hub')" @privacy-policy="scrollToTab('PrivacyPolicy')" />
+      </div>
+
+      <div
+        v-show="activeTab === 'PrivacyPolicy'"
+        :class="['tab-panel', { active: activeTab === 'PrivacyPolicy' }]"
+        :tabindex="isMobile ? 0 : undefined"
+      >
+        <PrivacyPolicy @back="scrollToTab('About')" />
       </div>
 
       <div

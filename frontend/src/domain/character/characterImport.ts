@@ -42,7 +42,7 @@ export type CharacterImportRaw = {
 /** Minimal item descriptor required for quality resolution. */
 export type ItemCatalogEntry = {
   type: string;
-  gearType?: string;
+  gearType?: string | null;
   quality?: string;
 };
 
@@ -59,7 +59,7 @@ export type OwnedItemEntry = {
  * Maps a game-side faction id (e.g. "jarvonia") to its store reputation key.
  */
 export type FactionMapEntry = {
-  reputation: string;
+  reputation: string | null;
 };
 
 /** The fully parsed output of a character import. */
@@ -151,7 +151,7 @@ export function parseFactionReputations(
     reputationData as Record<string, unknown>,
   )) {
     const faction = factionsMap[factionId];
-    if (faction && typeof value === "number" && value >= 0) {
+    if (faction && faction.reputation !== null && typeof value === "number" && value >= 0) {
       result[faction.reputation] = Math.floor(value);
     }
   }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-defineEmits(["back"]);
+defineEmits(["back", "privacy-policy"]);
 </script>
 
 <template>
@@ -85,6 +85,10 @@ defineEmits(["back"]);
         </p>
       </section>
     </details>
+
+    <div class="footer-links">
+      <button class="privacy-link" @click="$emit('privacy-policy')">Privacy Policy</button>
+    </div>
   </div>
 </template>
 
@@ -108,6 +112,21 @@ defineEmits(["back"]);
       li {
         text-align: left;
       }
+    }
+  }
+}
+
+.footer-links {
+  margin-top: $sm;
+
+  .privacy-link {
+    cursor: pointer;
+    opacity: 0.7;
+    font-size: 0.9em;
+    text-decoration: underline;
+
+    &:hover {
+      opacity: 1;
     }
   }
 }

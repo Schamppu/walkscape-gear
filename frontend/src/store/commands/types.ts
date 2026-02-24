@@ -31,7 +31,7 @@ export interface Command {
 }
 
 // ---------------------------------------------------------------------------
-// Minimal store interfaces (duck-typed — concrete stores are still JS)
+// Minimal store interfaces (duck-typed - concrete stores are still JS)
 // ---------------------------------------------------------------------------
 
 /** Shape of an activity state batch update payload. */

@@ -13,12 +13,13 @@ import type { PetDetail } from "@/domain/types/pet";
 import type { GearSlot } from "@/domain/constants/gear";
 import type { Command } from "./commands/types";
 import { executeCommand, initializeHistoryTracking } from "@/store/utils/historyUtils";
+import { useNotificationStore } from "@/store/notifications";
 
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
 
-/** An item as it lives in a gear slot — enriched with quality and a resolved icon. */
+/** An item as it lives in a gear slot - enriched with quality and a resolved icon. */
 export type EquippedItem = (ItemDetail | PetDetail) & {
   quality: string | null;
   quality2?: string | null;
@@ -103,8 +104,8 @@ export const useGearStore = defineStore("gearStore", {
     },
 
     // Direct setter that doesn't record history (used by commands)
-    _setGearSlotDirect(slot: string, item: unknown): void {
-      (this.selectedGearset as GearSet)[slot as GearSlot] = item;
+    _setGearSlotDirect(slot: GearSlot, item: EquippedItem | null): void {
+      (this.selectedGearset as GearSet)[slot] = item;
     },
     updateStats(slot: GearSlot, data: Pick<ItemDetail, "itemAttrs">): void {
       const { itemAttrs } = data;
@@ -249,6 +250,8 @@ export const useGearStore = defineStore("gearStore", {
         if (data) {
           itemData = { ...data, icon, quality, quality2 } as EquippedItem;
           this._setInCache(id, quality, itemData);
+          const notificationStore = useNotificationStore();
+          void notificationStore.debug(`Gear: fetched "${(data as ItemDetail).name}" (${id}) for slot ${itemSlot}`);
         }
       }
 
@@ -268,11 +271,11 @@ export const useGearStore = defineStore("gearStore", {
     },
 
     // Direct setter for all slots that doesn't record history (used by commands)
-    _setAllGearSlotsDirect(gearSlots: Record<string, unknown>): void {
+    _setAllGearSlotsDirect(gearSlots: Record<string, EquippedItem | null>): void {
       const newGearSlots = Object.fromEntries(
         Object.keys(this.selectedGearset).map((slot) => [
           slot,
-          gearSlots[slot] || null,
+          gearSlots[slot] ?? null,
         ])
       ) as EquippedGearSet;
       this.gearSlots[this.gearSetIndex] = newGearSlots;
@@ -293,7 +296,7 @@ export const useGearStore = defineStore("gearStore", {
     },
 
     // Direct equip multiple that doesn't record history (used by commands)
-    async _equipMultipleDirect(gearSetData: Record<string, unknown>): Promise<void> {
+    async _equipMultipleDirect(gearSetData: Record<string, EquippedItem | null>): Promise<void> {
       // Apply all changes at once to minimize reactive updates
       const completeGearSlots = { ...this.selectedGearset, ...gearSetData } as EquippedGearSet;
       this.gearSlots[this.gearSetIndex] = completeGearSlots;
@@ -301,7 +304,7 @@ export const useGearStore = defineStore("gearStore", {
 
     // Optimized batch update for both gear and cache operations
     async _batchUpdateGearState(
-      gearSetData: Record<string, unknown>,
+      gearSetData: Record<string, EquippedItem | null>,
       cacheOperations: CacheOperation[] | null = null,
     ): Promise<void> {
       // Perform cache operations first if provided (batch them)
@@ -361,6 +364,14 @@ export const useGearStore = defineStore("gearStore", {
         const uniqueRequests = itemsToFetch.filter(
           (item, index, self) =>
             index === self.findIndex((i) => i.id === item.id && i.quality === item.quality)
+        );
+
+        const notificationStore = useNotificationStore();
+        void notificationStore.debug(
+          `Gear: fetching ${uniqueRequests.length} item(s) for batch equip` +
+          (uniqueRequests.length < 5
+            ? ` - ${uniqueRequests.map((r) => r.id).join(", ")}`
+            : ` - ${uniqueRequests.slice(0, 4).map((r) => r.id).join(", ")} +${uniqueRequests.length - 4} more`),
         );
 
         const fetchedItems = await this._fetchMultipleItems(uniqueRequests);

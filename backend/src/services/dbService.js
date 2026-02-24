@@ -27,6 +27,21 @@ const ALLOWED_REPUTATIONS = new Set([
   "syrenthiaReputation",
 ]);
 
+const DEBUG_SETTINGS = new Set([
+  "debugActivity",
+  "debugData",
+  "debugGear",
+  "debugGearSet",
+  "debugHistory",
+  "debugIcon",
+  "debugItems",
+  "debugPlayer",
+  "debugRoute",
+  "debugSettings",
+  "debugURL",
+  "debugOptimiser",
+]);
+
 const ALLOWED_SETTINGS = new Set([
   "showOwned",
   "showUseful",
@@ -39,7 +54,7 @@ const ALLOWED_SETTINGS = new Set([
   "decimalSeparator",
   "activityOptimiserPriority",
   "recipeOptimiserPriority",
-  "enableDebug",
+  ...DEBUG_SETTINGS,
 ]);
 
 async function markUserActiveThrottled(userUuid) {
@@ -285,6 +300,25 @@ export async function deleteGearSet(userUuid, gearSetId) {
     console.error("Error deleting gear set:", error);
     throw new Error(error.message || "Failed to delete gear set");
   }
+}
+
+export async function deleteUserData(userUuid) {
+  // Resolve gear set IDs first (no cascade in schema)
+  const gearSetIds = (await prisma.gearSet.findMany({
+    where: { userUuid },
+    select: { id: true },
+  })).map((g) => g.id);
+
+  await prisma.$transaction([
+    prisma.gearSetItem.deleteMany({ where: { gearSetId: { in: gearSetIds } } }),
+    prisma.gearSetTag.deleteMany({ where: { gearSetId: { in: gearSetIds } } }),
+    prisma.gearSet.deleteMany({ where: { userUuid } }),
+    prisma.playerStat.deleteMany({ where: { userUuid } }),
+    prisma.ownedItem.deleteMany({ where: { userUuid } }),
+    prisma.factionReputation.deleteMany({ where: { userUuid } }),
+    prisma.userSetting.deleteMany({ where: { userUuid } }),
+    prisma.user.deleteMany({ where: { userUuid } }),
+  ]);
 }
 
 export async function getUserSettings(userUuid) {

@@ -107,7 +107,7 @@ export const useActivityStore = defineStore("activityStore", {
       // Create and execute command
       const command = new SetActivityCommand(
         this,
-        { ...activity, value: activity.name } as unknown as ActivityDetail,
+        activity,
         previousActivity,
         previousRecipe,
         previousLocation,
@@ -135,10 +135,14 @@ export const useActivityStore = defineStore("activityStore", {
       const previousServices = this.services;
 
 
+      // ActivityNone is the sentinel for "no recipe selected"; the command treats null the same way.
+      const recipeForCommand: RecipeDetail | null =
+        recipe.id === "none" ? null : (recipe as RecipeDetail);
+
       // Create and execute command
       const command = new SetRecipeCommand(
         this,
-        { ...recipe, value: recipe.name } as unknown as RecipeDetail,
+        recipeForCommand,
         previousActivity,
         previousRecipe,
         previousLocation,

@@ -222,17 +222,17 @@ export function useOptimiser() {
         `Generating gear set with target ${priorityName()}`,
       );
       const options = getGearOptions();
-      await notificationStore.debug("Generated gear options", options);
+      await notificationStore.debug("Optimiser: Generated gear options", options);
 
       const reqSets = requirementsFill(options);
       await notificationStore.debug(
-        "Generated sets fulfilling requirements",
+        "Optimiser: Generated sets fulfilling requirements",
         reqSets,
       );
 
       const primarySets = gearFill(gearSlots, reqSets, options, "primary");
       await notificationStore.debug(
-        "Created gear sets with items helping target",
+        "Optimiser: Created gear sets with items helping target",
         primarySets,
       );
 
@@ -242,13 +242,13 @@ export function useOptimiser() {
       if (usedSet.gearSet.location) {
         await activityStore.setLocation(usedSet.gearSet.location);
         await notificationStore.debug(
-          `Selected location ${usedSet.gearSet.location?.name}`,
+          `Optimiser: Selected location ${usedSet.gearSet.location?.name}`,
           usedSet.gearSet.location,
         );
       }
 
       await gearStore.equipMultiple(usedSet.gearSet, true);
-      await notificationStore.debug("Equipped gear set", usedSet);
+      await notificationStore.debug("Optimiser: Equipped gear set", usedSet);
     } catch (e) {
       notificationStore.error("Error duing gear set creation");
       console.error(e);

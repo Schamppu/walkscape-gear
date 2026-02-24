@@ -101,7 +101,19 @@ export const useNotificationStore = defineStore("notificationStore", {
       duration = 3000,
     ): Promise<number | undefined> {
       const settingsStore = await getSettingsStore();
-      if (settingsStore?.toolSettings.enableDebug.value) {
+      if (!settingsStore) return;
+
+      // Derive the per-category settings key from the "Category: …" message prefix.
+      // e.g. "GearSet: loaded 3 sets" → looks up toolSettings["debugGearSet"]
+      const colonIdx = message.indexOf(":");
+      const prefix = colonIdx > 0 ? message.slice(0, colonIdx) : null;
+      const settingKey = prefix ? `debug${prefix}` : null;
+
+      const isEnabled =
+        settingKey !== null &&
+        settingsStore.toolSettings[settingKey]?.value === true;
+
+      if (isEnabled) {
         console.debug(message, data);
         return this.addNotification(message, "warning", duration);
       }

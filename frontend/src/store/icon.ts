@@ -114,7 +114,7 @@ export const useIconStore = defineStore("iconStore", {
         const returned = Object.keys(icons as Record<string, string>);
         const missing = paths.filter((p) => !returned.includes(p));
         void notificationStore.debug(
-          `Icon: batch response — ${returned.length}/${paths.length} icons returned` +
+          `Icon: batch response - ${returned.length}/${paths.length} icons returned` +
             (missing.length ? ` (${missing.length} missing)` : ""),
           missing.length ? [`Missing: ${missing.join(", ")}`] : [],
         );

@@ -13,6 +13,7 @@ import {
   deleteGearSet,
   getUserSettings,
   upsertUserSettings,
+  deleteUserData,
 } from "../controllers/dbController.js";
 
 const router = Router();
@@ -30,5 +31,6 @@ router.post("/gear_sets", upsertGearSet);
 router.delete("/gear_sets/:id", deleteGearSet);
 router.get("/user_settings", getUserSettings);
 router.post("/user_settings", upsertUserSettings);
+router.delete("/user_data", deleteUserData);
 
 export { router as dbRoutes };

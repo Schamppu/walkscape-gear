@@ -1,4 +1,4 @@
-Domain Layer — Game Logic Engine
+Domain Layer - Game Logic Engine
 
 Contains pure, framework-independent game logic.
 
