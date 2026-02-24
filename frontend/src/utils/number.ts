@@ -28,13 +28,11 @@ export function n(val: number | null | undefined, decimals: number = 3): string 
   if (val == null || isNaN(val)) return "";
 
   const settingsStore = useSettingsStore();
-  const { thousandSeparator, decimalSeparator } = settingsStore.activitySettings as {
-    thousandSeparator: { display: number };
-    decimalSeparator: { display: number };
-  };
+  const thousandSeparatorSetting = settingsStore.activitySettings["thousandSeparator"];
+  const decimalSeparatorSetting = settingsStore.activitySettings["decimalSeparator"];
 
-  const ts = thousandSeparators[thousandSeparator.display || 0].value;
-  const ds = decimalSeparators[decimalSeparator.display || 0].value;
+  const ts = thousandSeparators[thousandSeparatorSetting?.display || 0].value;
+  const ds = decimalSeparators[decimalSeparatorSetting?.display || 0].value;
 
   const rounded = Number(val.toFixed(decimals));
   const formatted = rounded.toLocaleString("en-US", {
