@@ -8,7 +8,8 @@
     "reset-db-dev": "npx prisma migrate reset --force --skip-seed",
     "dev": "nodemon src/index.js",
     "seed": "node prisma/seed.js",
-    "serve": "node scripts/init-db.js && npm run seed && node ./src/index.js"
+    "serve": "node scripts/init-db.js && npm run seed && node ./src/index.js",
+    "test": "vitest run"
   },
   "keywords": [],
   "author": "Juhana Autti",
@@ -26,6 +27,7 @@
     "nodemon": "^3.1.10",
     "prisma": "^6.7.0",
     "vite": "^6.3.3",
-    "vite-node": "^3.1.2"
+    "vite-node": "^3.1.2",
+    "vitest": "^4.0.18"
   }
 }
