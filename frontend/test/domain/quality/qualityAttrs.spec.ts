@@ -30,7 +30,7 @@ function getStat(
 // ---------------------------------------------------------------------------
 
 describe("sumAttrs", () => {
-  describe("gear item — common quality (no quality attrs applied)", () => {
+  describe("gear item - common quality (no quality attrs applied)", () => {
     it("returns only base itemAttrs for farganite pickaxe", () => {
       const result = sumAttrs(
         farganitePickaxe.itemAttrs as Attribute[],
@@ -58,7 +58,7 @@ describe("sumAttrs", () => {
     });
   });
 
-  describe("gear item — uncommon quality", () => {
+  describe("gear item - uncommon quality", () => {
     it("accumulates workEfficiency Mining from farganite base + uncommon tier", () => {
       const result = sumAttrs(
         farganitePickaxe.itemAttrs as Attribute[],
@@ -139,7 +139,7 @@ describe("sumAttrs", () => {
     });
   });
 
-  describe("gear item — rare quality (cumulative: uncommon + rare)", () => {
+  describe("gear item - rare quality (cumulative: uncommon + rare)", () => {
     it("accumulates workEfficiency Mining across base + uncommon + rare tiers", () => {
       const result = sumAttrs(
         farganitePickaxe.itemAttrs as Attribute[],
@@ -153,7 +153,7 @@ describe("sumAttrs", () => {
     });
   });
 
-  describe("consumable item — delegates to sumBuffAttrs", () => {
+  describe("consumable item - delegates to sumBuffAttrs", () => {
     it("returns normal buff attributes for consumableCommon quality", () => {
       const result = sumAttrs(
         cookedSquid.itemAttrs as Attribute[],

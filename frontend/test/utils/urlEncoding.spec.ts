@@ -89,7 +89,7 @@ describe("buildReverseMapping", () => {
 
   it("index 0 is reserved for null / empty slot", () => {
     const reverse = buildReverseMapping(mapping);
-    // null at index 0 should map to "null" key — verify no real item is at 0
+    // null at index 0 should map to "null" key - verify no real item is at 0
     expect(reverse["cape"]["fur_cape"]).toBeGreaterThan(0);
   });
 
