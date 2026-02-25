@@ -1,157 +1,115 @@
-<script setup>
+<script setup lang="ts">
 import { computed } from "vue";
 import { useItemsStore } from "@/store/items";
 import { useDataStore } from "@/store/data";
-import InfoBubble from "@/components/common/InfoBubble.vue";
+import ExpandableValueBubble from "./ExpandableValueBubble.vue";
 import {
   injectBaseContext,
   injectLootTables,
-  injectRequirements,
   injectSkillModifiers,
   injectFineMaterials,
+  type BaseContext,
 } from "@/composables/context/injectShared";
-import { useLootTables } from "@/composables/useLootTables";
-import { useRequirements } from "@/composables/useRequirements";
-import { useSkillModifiers } from "@/composables/useSkillModifiers";
-import { useFineMaterials } from "@/composables/useFineMaterialsCalculations";
+import { useLootTables, type LootTablesContext } from "@/composables/useLootTables";
+import { useSkillModifiers, type SkillModifiersContext } from "@/composables/useSkillModifiers";
+import { useFineMaterials, type FineMaterialsContext } from "@/composables/useFineMaterialsCalculations";
+import type { RecipeDetail } from "@/domain/types/recipe";
 import { getOutcomeOdds } from "@/domain/quality/qualityOutcomeOdds";
+import { getLevelRequirementsMap } from "@/domain/requirements/requirementUtils";
+import {
+  computeGoldTotal,
+  computeTokenTotal,
+  computeRecipeValue,
+  buildGoldBreakdown,
+  buildTokenBreakdown,
+  type RecipeValueParams,
+} from "@/domain/drops/aggregateDropValue";
 import { n } from "@/utils/number";
 import { icons } from "@/constants/iconPaths";
 import { tokenValues } from "@/domain/constants/tokenValues";
 
-const props = defineProps({
-  type: {
-    type: String,
-    validator: (value) => ["money", "token"].includes(value),
-  },
-  context: { type: Object, default: null },
-});
+const props = withDefaults(
+  defineProps<{
+    type?: "money" | "token";
+    context?: BaseContext | null;
+  }>(),
+  { context: null }
+);
 
 // When an explicit context is passed (e.g. from comparison views), create
 // fresh composable instances scoped to that context. Otherwise inject the
 // shared app-level instances for the default base context.
 const ctx = props.context || injectBaseContext();
 const { dropItemInfoMap } = props.context
-  ? useLootTables(props.context)
+  ? useLootTables(props.context as LootTablesContext)
   : injectLootTables();
 
 const dataStore = useDataStore();
 const itemsStore = useItemsStore();
-const { getLevelRequirementsMap } = props.context
-  ? useRequirements(props.context)
-  : injectRequirements();
 const {
   stepsPerRewardRoll,
   stepsPerAction,
   noMaterialsConsumed,
   qualityOutcome,
 } = props.context
-  ? useSkillModifiers(props.context)
+  ? useSkillModifiers(props.context as SkillModifiersContext)
   : injectSkillModifiers();
 const { useFine } = props.context
-  ? useFineMaterials(props.context)
+  ? useFineMaterials(props.context as FineMaterialsContext)
   : injectFineMaterials();
 
-const materialValue = (id, itemInfo, valueSource) => {
-  const { stepsPerNormal, stepsPerFine } = itemInfo;
-  const normalPerStep = stepsPerNormal ? 1000 / stepsPerNormal : 0;
-  if (stepsPerFine) {
-    const finePerStep = 1000 / stepsPerFine;
-    const { common, fine } = valueSource[id];
-    return common * normalPerStep + fine * finePerStep;
-  } else if (id in valueSource) {
-    const { common } = valueSource[id];
-    return common * normalPerStep;
-  }
-};
+// Build recipe params once so both the total and the breakdown reuse them.
+const recipeParams = computed((): RecipeValueParams | undefined => {
+  if (!ctx.recipeSelected.value) return undefined;
 
-const getCraftingOdds = () => {
-  const levelMap = getLevelRequirementsMap(ctx.recipe.value.requirements);
+  const { materials, itemRewards } = ctx.source.value as RecipeDetail;
+  const recipe = ctx.recipe.value as RecipeDetail;
+  const levelMap = getLevelRequirementsMap(recipe.requirements);
   const level = Object.values(levelMap)[0];
+  const craftingOdds = getOutcomeOdds(level, qualityOutcome.value, useFine.value);
 
-  const odds = getOutcomeOdds(level, qualityOutcome.value, useFine.value);
-  return odds.map((item) => {
-    return {
-      ...item,
-      odds1: 1 - (1 - item.value) ** props.crafts,
-      avg: props.crafts * item.value,
-    };
-  });
-};
-
-const recipeValue = computed(() => {
-  if (!ctx.recipeSelected.value) return 0;
-
-  const { materials, itemRewards } = ctx.source.value;
-  const rewardValues = Object.entries(itemRewards).map(([item, amount]) => {
-    if (
-      item in itemsStore.allGearItems &&
-      itemsStore.allGearItems[item].type === "crafted"
-    ) {
-      const odds = getCraftingOdds();
-      const values = odds.reduce(
-        (total, { qualityValue, value }) =>
-          total + value * dataStore.itemValues[item][qualityValue],
-        0,
-      );
-      return values * (1000 / stepsPerRewardRoll.value);
-    } else {
-      const steps = stepsPerRewardRoll.value;
-      const info = {
-        stepsPerNormal: useFine.value ? 0 : steps,
-        stepsPerFine: useFine.value ? steps : 0,
-      };
-      return amount * materialValue(item, info, dataStore.itemValues);
-    }
-  });
-  const rewardValue1k = rewardValues.reduce((a, b) => a + b, 0);
-
-  const allMaterials = materials.flatMap(({ options }) => options[0]);
-  const materialCost = allMaterials.map(({ amount, item }) => {
-    if (item in itemsStore.allGearItems) {
-      return amount * Object.values(dataStore.itemValues[item])[0];
-    } else {
-      const quality = useFine.value ? "fine" : "common";
-      return amount * dataStore.itemValues[item][quality];
-    }
-  });
-  const materialsPer1k =
-    1000 / (stepsPerAction.value / (1 - noMaterialsConsumed.value));
-  const materialCost1k =
-    materialCost.reduce((a, b) => a + b, 0) * materialsPer1k;
-
-  return rewardValue1k - materialCost1k;
+  return {
+    materials,
+    itemRewards,
+    stepsPerRewardRoll: stepsPerRewardRoll.value,
+    stepsPerAction: stepsPerAction.value,
+    noMaterialsConsumed: noMaterialsConsumed.value,
+    useFine: useFine.value,
+    allGearItems: itemsStore.allGearItems,
+    itemValues: dataStore.itemValues,
+    craftingOdds,
+  };
 });
 
-const goldTotal = computed(() => {
-  const data = Object.entries(dropItemInfoMap.value);
+const recipeValue = computed(() =>
+  recipeParams.value ? computeRecipeValue(recipeParams.value) : 0
+);
 
-  const sum = data.reduce((total, [id, info]) => {
-    if (id === "gold") {
-      return total + info.itemsPerStep;
-    } else if (id in itemsStore.allGearItems && id in dataStore.itemValues) {
-      const { quality } = itemsStore.allGearItems[id];
-      const { itemsPerStep } = info;
-      const prices = dataStore.itemValues[id];
+const goldTotal = computed(() =>
+  computeGoldTotal(
+    dropItemInfoMap.value,
+    itemsStore.allGearItems,
+    dataStore.itemValues
+  )
+);
 
-      return total + itemsPerStep * prices[quality];
-    } else if (id in dataStore.itemValues) {
-      return total + materialValue(id, info, dataStore.itemValues);
-    }
-    return total;
-  }, 0);
+const tokenTotal = computed(() =>
+  computeTokenTotal(dropItemInfoMap.value, tokenValues)
+);
 
-  return sum;
-});
+const goldBreakdown = computed(() =>
+  buildGoldBreakdown(
+    dropItemInfoMap.value,
+    itemsStore.allGearItems,
+    itemsStore.materials,
+    dataStore.itemValues,
+    recipeParams.value
+  )
+);
 
-const tokenTotal = computed(() => {
-  const data = Object.entries(dropItemInfoMap.value);
-  const out = data
-    .filter(([id]) => id in tokenValues)
-    .map(([id, info]) => materialValue(id, info, tokenValues))
-    .reduce((a, b) => a + b, 0);
-  return out;
-});
+const tokenBreakdown = computed(() =>
+  buildTokenBreakdown(dropItemInfoMap.value, tokenValues)
+);
 
 const displayValue = computed(() => {
   if (props.type === "money") return n(goldTotal.value + recipeValue.value, 2);
@@ -174,11 +132,12 @@ const tooltip = computed(() => {
 </script>
 
 <template>
-  <info-bubble
+  <expandable-value-bubble
     v-if="displayValue !== '0'"
     :text="displayValue"
     :icon-path="icon"
     :tooltip="tooltip"
+    :breakdown="props.type === 'money' ? goldBreakdown : tokenBreakdown"
   />
 </template>
 

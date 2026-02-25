@@ -1,13 +1,19 @@
 import { qualityOptions } from "./qualityOptions.js";
 import { price } from "./ItemValue.js";
 
+const token_items = [
+  "adventurers_enamel_pin",
+  "name_tag",
+  "unidentified_remains",
+];
+
 export const createItemValueMap = (
   crafted,
   loot,
   consumables,
   materials,
   containers,
-  chestTables
+  chestTables,
 ) => {
   const getLootvalue = (items, qualityValues = null) =>
     items.map(({ id, itemValue, itemValueModifier, quality }) => [
@@ -16,7 +22,7 @@ export const createItemValueMap = (
         (qualityValues || [quality]).map((quality) => [
           quality,
           price(itemValue, itemValueModifier, quality),
-        ])
+        ]),
       ),
     ]);
 
@@ -29,23 +35,25 @@ export const createItemValueMap = (
           options.map((quality) => [
             quality,
             price(itemValue, itemValueModifier, "common", quality === "fine"),
-          ])
+          ]),
         ),
       ];
     });
 
   const craftedValues = Object.fromEntries(
-    getLootvalue(crafted, qualityOptions)
+    getLootvalue(crafted, qualityOptions),
   );
   const lootValues = Object.fromEntries(getLootvalue(loot));
   const consumableValues = Object.fromEntries(getItemValue(consumables));
-  const materialValues = Object.fromEntries(getItemValue(materials));
+  const materialValues = Object.fromEntries(
+    getItemValue(materials).filter(([id]) => !token_items.includes(id)),
+  );
   const chestValues = resolveChestValues(
     containers,
     chestTables,
     lootValues,
     consumableValues,
-    materialValues
+    materialValues,
   );
 
   return {
@@ -62,7 +70,7 @@ const resolveChestValues = (
   chestTables,
   lootValues,
   consumableValues,
-  materialValues
+  materialValues,
 ) => {
   const bird_nest = { common: 80.8 };
   const gem_pouch = { common: 136.6 };
@@ -102,7 +110,7 @@ const resolveChestValues = (
           console.log("???", rowItemID);
           return 0;
         }
-      }
+      },
     );
     return price.reduce((total, value) => total + value, 0);
   };
@@ -118,17 +126,17 @@ const resolveChestValues = (
     .filter(({ table }) => Boolean(table))
     .map(({ id, quality, table }) => {
       const subTables = table.subTables.filter(
-        ({ tableRows }) => tableRows.length
+        ({ tableRows }) => tableRows.length,
       );
       const subTableTotalWeight = subTables
         .map(({ weight }) => weight)
         .reduce((total, weight) => total + weight, 0);
       const tablePrice = getTablePrice(
         table.tableRows,
-        1 - subTableTotalWeight
+        1 - subTableTotalWeight,
       );
       const subTablePrices = subTables.map(({ weight, tableRows }) =>
-        getTablePrice(tableRows, weight)
+        getTablePrice(tableRows, weight),
       );
       const price =
         4 * (tablePrice + subTablePrices.reduce((a, b) => a + b, 0));
