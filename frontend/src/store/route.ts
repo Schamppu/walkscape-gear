@@ -10,23 +10,16 @@ import type {
   TerrainModifier,
   Requirement,
 } from "@/domain/types";
+import type { RouteSegmentStats } from "@/domain/types/route";
 import { useNotificationStore } from "@/store/notifications";
+
+export type { RouteSegmentStats };
 
 export type LocationInfo = Omit<LocationSummary, "id"> & { id: string; color: string };
 
 export type LocationMapEntry = Omit<LocationSummary, "id">;
 
 export type TerrainModifierMapEntry = Omit<TerrainModifier, "id">;
-
-export type RouteSegmentStats = {
-  maxWorkEfficiency: number;
-  workEfficiency: number;
-  uncappedWorkEfficiency: number;
-  effectiveMaxWorkEfficiency: number;
-  doubleAction: number;
-  stepsRequiredPercent: number;
-  stepsRequiredFlat: number;
-};
 
 export type RouteSegment = {
   from: LocationInfo;
