@@ -33,7 +33,7 @@ import type { LevelBonusAttr } from "@/domain/levelBonus";
 export type EffectiveAttrEntry = {
   requirements: Requirement[];
   stats: Stat[];
-  item: { id: string; name: string; icon: string };
+  item: { id: string; name: string; icon: string; quality?: string };
 };
 
 type StatBucket = {
@@ -52,6 +52,7 @@ type ResolvedItem = {
   id: string;
   name: string;
   icon: string;
+  quality?: string;
   attrs: Attribute[];
 };
 
@@ -70,6 +71,7 @@ export function resolveItemAttrs(items: ItemDetail[]): ResolvedItem[] {
       id: item.id,
       name: item.name,
       icon: item.icon,
+      quality: item.quality,
       attrs: usedAttrs(item, item.quality),
     }))
     .filter(({ attrs }) => attrs.length > 0);
