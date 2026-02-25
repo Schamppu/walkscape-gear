@@ -23,10 +23,14 @@ const hasBreakdown = computed(() => visibleBreakdown.value.length > 0);
 function toggle() {
   if (hasBreakdown.value) expanded.value = !expanded.value;
 }
+
+function close() {
+  expanded.value = false;
+}
 </script>
 
 <template>
-  <div class="expandable-value">
+  <div class="expandable-value" v-click-outside="close">
     <div
       :class="['bubble', { clickable: hasBreakdown }]"
       :title="tooltip"
