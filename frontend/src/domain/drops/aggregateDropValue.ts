@@ -18,6 +18,8 @@ import type { ItemValueMap } from "@/domain/types/item";
 import type { TokenValuesMap } from "@/domain/constants/tokenValues";
 import type { QualityOutcomeResult } from "@/domain/quality/qualityOutcomeOdds";
 import type { RecipeMaterial } from "@/domain/types/recipe";
+import { all } from "axios";
+import { MaterialInfo } from "@/store/items";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -107,7 +109,7 @@ export type RecipeValueParams = {
 export function materialValue(
   id: string,
   itemInfo: MaterialValueInfo,
-  valueSource: MaterialValueSource
+  valueSource: MaterialValueSource,
 ): number | undefined {
   const { stepsPerNormal, stepsPerFine } = itemInfo;
   const normalPerStep = stepsPerNormal ? 1000 / stepsPerNormal : 0;
@@ -134,7 +136,7 @@ export function materialValue(
 export function computeGoldTotal(
   dropItemInfoMap: Record<string, DropItemInfo>,
   allGearItems: Record<string, GearItemRef>,
-  itemValues: ItemValueMap
+  itemValues: ItemValueMap,
 ): number {
   return Object.entries(dropItemInfoMap).reduce((total, [id, info]) => {
     if (id === "gold") {
@@ -151,7 +153,7 @@ export function computeGoldTotal(
       const val = materialValue(
         id,
         info,
-        itemValues as unknown as MaterialValueSource
+        itemValues as unknown as MaterialValueSource,
       );
       return total + (val ?? 0);
     }
@@ -168,7 +170,7 @@ export function computeGoldTotal(
  */
 export function computeTokenTotal(
   dropItemInfoMap: Record<string, DropItemInfo>,
-  tokenValues: TokenValuesMap
+  tokenValues: TokenValuesMap,
 ): number {
   return Object.entries(dropItemInfoMap)
     .filter(([id]) => id in tokenValues)
@@ -205,7 +207,7 @@ export function computeRecipeValue(params: RecipeValueParams): number {
         (total, { qualityValue, value }) =>
           total +
           value * (itemValues[item] as Record<string, number>)[qualityValue],
-        0
+        0,
       );
       return weightedValue * (1000 / stepsPerRewardRoll);
     } else {
@@ -219,7 +221,7 @@ export function computeRecipeValue(params: RecipeValueParams): number {
         (materialValue(
           item,
           info,
-          itemValues as unknown as MaterialValueSource
+          itemValues as unknown as MaterialValueSource,
         ) ?? 0)
       );
     }
@@ -234,14 +236,13 @@ export function computeRecipeValue(params: RecipeValueParams): number {
       return amount * Object.values(itemValues[item])[0];
     } else {
       const quality = useFine ? "fine" : "common";
-      return (
-        amount * (itemValues[item] as Record<string, number>)[quality]
-      );
+      return amount * (itemValues[item] as Record<string, number>)[quality];
     }
   });
 
   const materialsPer1k = 1000 / (stepsPerAction / (1 - noMaterialsConsumed));
-  const materialCost1k = materialCosts.reduce((a, b) => a + b, 0) * materialsPer1k;
+  const materialCost1k =
+    materialCosts.reduce((a, b) => a + b, 0) * materialsPer1k;
 
   return rewardValue1k - materialCost1k;
 }
@@ -251,14 +252,22 @@ export function computeRecipeValue(params: RecipeValueParams): number {
 // ---------------------------------------------------------------------------
 
 /**
- * Builds a per-source breakdown of gold/money value per 1k steps.
+ * Builds a categorised breakdown of gold/money value per 1k steps.
  *
- * Each drop item that contributes a positive value produces one line.
- * When `recipeParams` is supplied, item-reward lines and a combined
- * material-cost line are appended.
+ * Drop items are grouped into three categories:
+ * - **Gold** — the raw gold drop (`id === "gold"`).
+ * - **Drops** — all other drop items that are not containers.
+ * - **Chests** — drop items whose gear type is `"container"`.
+ *
+ * Each category produces a single `BreakdownLine` using the first item's
+ * icon and the summed value across all items in that category.
+ *
+ * When `recipeParams` is supplied, individual item-reward lines and a
+ * combined material-cost line are appended (recipe lines are NOT grouped).
  *
  * @param dropItemInfoMap Resolved drop info keyed by item id.
  * @param allGearItems    Gear-item registry (type, quality, optional icon).
+ * @param allMaterialItems     Material-item registry
  * @param itemValues      Full item value map from the data store.
  * @param recipeParams    Optional recipe params — when present, recipe
  *                        reward and material-cost lines are included.
@@ -266,32 +275,64 @@ export function computeRecipeValue(params: RecipeValueParams): number {
 export function buildGoldBreakdown(
   dropItemInfoMap: Record<string, DropItemInfo>,
   allGearItems: Record<string, GearItemRef>,
+  allMaterialItems: Record<string, MaterialInfo>,
   itemValues: ItemValueMap,
-  recipeParams?: RecipeValueParams
+  recipeParams?: RecipeValueParams,
 ): BreakdownLine[] {
   const lines: BreakdownLine[] = [];
+
+  // Accumulators for the three drop categories.
+  let goldValue = 0;
+  let goldIcon: string | undefined;
+
+  let dropsValue = 0;
+  let dropsIcon: string | undefined;
+
+  let chestsValue = 0;
+  let chestsIcon: string | undefined;
 
   for (const [id, info] of Object.entries(dropItemInfoMap)) {
     let value: number;
 
     if (id === "gold") {
       value = info.itemsPerStep;
-    } else if (id in allGearItems && id in itemValues) {
+      goldValue += value;
+      goldIcon ??= info.icon;
+      continue;
+    }
+
+    if (id in allGearItems && id in itemValues) {
       const { quality } = allGearItems[id];
-      value = info.itemsPerStep * (itemValues[id] as Record<string, number>)[quality];
+      value =
+        info.itemsPerStep * (itemValues[id] as Record<string, number>)[quality];
     } else if (id in itemValues) {
-      value = materialValue(id, info, itemValues as unknown as MaterialValueSource) ?? 0;
+      value =
+        materialValue(id, info, itemValues as unknown as MaterialValueSource) ??
+        0;
     } else {
       continue;
     }
 
     if (value === 0) continue;
 
-    lines.push({
-      icon: info.icon,
-      label: id,
-      value,
-    });
+    console.log(id, id in allGearItems, id in allMaterialItems, value);
+    if (id in allGearItems || id in allMaterialItems) {
+      dropsValue += value;
+      dropsIcon ??= info.icon;
+    } else {
+      chestsValue += value;
+      chestsIcon ??= info.icon;
+    }
+  }
+
+  if (goldValue !== 0) {
+    lines.push({ icon: goldIcon, label: "Gold", value: goldValue });
+  }
+  if (dropsValue !== 0) {
+    lines.push({ icon: dropsIcon, label: "Drops", value: dropsValue });
+  }
+  if (chestsValue !== 0) {
+    lines.push({ icon: chestsIcon, label: "Chests", value: chestsValue });
   }
 
   if (recipeParams) {
@@ -307,15 +348,20 @@ export function buildGoldBreakdown(
       craftingOdds,
     } = recipeParams;
 
-    // One line per reward item
+    const resolveIcon = (id: string): string | undefined =>
+      recipeGearItems[id]?.icon ?? allMaterialItems?.[id]?.icon;
+
+    // One line per reward item.
     for (const [item, amount] of Object.entries(itemRewards)) {
       let value: number;
 
       if (item in recipeGearItems && recipeGearItems[item].type === "crafted") {
         const weightedValue = craftingOdds.reduce(
           (total, { qualityValue, value: v }) =>
-            total + v * (recipeItemValues[item] as Record<string, number>)[qualityValue],
-          0
+            total +
+            v *
+              (recipeItemValues[item] as Record<string, number>)[qualityValue],
+          0,
         );
         value = weightedValue * (1000 / stepsPerRewardRoll);
       } else {
@@ -323,26 +369,41 @@ export function buildGoldBreakdown(
           stepsPerNormal: useFine ? 0 : stepsPerRewardRoll,
           stepsPerFine: useFine ? stepsPerRewardRoll : 0,
         };
-        value = amount * (materialValue(item, info, recipeItemValues as unknown as MaterialValueSource) ?? 0);
+        value =
+          amount *
+          (materialValue(
+            item,
+            info,
+            recipeItemValues as unknown as MaterialValueSource,
+          ) ?? 0);
       }
 
       if (value === 0) continue;
 
       lines.push({
-        icon: recipeGearItems[item]?.icon,
+        icon: resolveIcon(item),
         label: item,
         value,
       });
     }
 
-    // Single combined material-cost line
+    // Single combined material-cost line, icon from the first material.
     const allMaterialOptions = materials.flatMap(({ options }) => options[0]);
+    const firstMatId = allMaterialOptions[0]?.item;
+    const materialsCostIcon = firstMatId
+      ? (recipeGearItems[firstMatId]?.icon ??
+        allMaterialItems?.[firstMatId]?.icon)
+      : undefined;
+
     const totalCost = allMaterialOptions.reduce((sum, { amount, item }) => {
       if (item in recipeGearItems) {
         return sum + amount * Object.values(recipeItemValues[item])[0];
       }
       const quality = useFine ? "fine" : "common";
-      return sum + amount * (recipeItemValues[item] as Record<string, number>)[quality];
+      return (
+        sum +
+        amount * (recipeItemValues[item] as Record<string, number>)[quality]
+      );
     }, 0);
 
     const materialsPer1k = 1000 / (stepsPerAction / (1 - noMaterialsConsumed));
@@ -350,8 +411,8 @@ export function buildGoldBreakdown(
 
     if (costPer1k !== 0) {
       lines.push({
-        icon: undefined,
-        label: "materials",
+        icon: materialsCostIcon,
+        label: "Materials",
         value: -costPer1k,
       });
     }
@@ -368,7 +429,7 @@ export function buildGoldBreakdown(
  */
 export function buildTokenBreakdown(
   dropItemInfoMap: Record<string, DropItemInfo>,
-  tokenValuesMap: TokenValuesMap
+  tokenValuesMap: TokenValuesMap,
 ): BreakdownLine[] {
   const lines: BreakdownLine[] = [];
 

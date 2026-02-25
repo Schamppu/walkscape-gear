@@ -101,6 +101,7 @@ const goldBreakdown = computed(() =>
   buildGoldBreakdown(
     dropItemInfoMap.value,
     itemsStore.allGearItems,
+    itemsStore.materials,
     dataStore.itemValues,
     recipeParams.value
   )
