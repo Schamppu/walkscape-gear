@@ -1,0 +1,1215 @@
+[
+  {
+    "id": "western_continent_boat_pass",
+    "name": "Western continent boat pass",
+    "keywords": [],
+    "type": "collectible",
+    "quality": "common",
+    "consumableType": null,
+    "gearType": null,
+    "requirements": [],
+    "itemAttrs": [],
+    "itemQualityAttrs": [],
+    "itemValue": "none",
+    "itemValueModifier": 1,
+    "buffs": [],
+    "tables": [],
+    "canBeFine": true,
+    "icon": "assets/icons/items/collectibles/wester_continent_boat_pass.png"
+  },
+  {
+    "id": "99_year_old_wine",
+    "name": "99-year-old wine",
+    "keywords": [],
+    "type": "collectible",
+    "quality": "common",
+    "consumableType": null,
+    "gearType": null,
+    "requirements": [],
+    "itemAttrs": [],
+    "itemQualityAttrs": [],
+    "itemValue": "none",
+    "itemValueModifier": 1,
+    "buffs": [],
+    "tables": [],
+    "canBeFine": true,
+    "icon": "assets/icons/items/collectibles/99_year_old_wine.png"
+  },
+  {
+    "id": "ancient_ankh",
+    "name": "Ancient ankh",
+    "keywords": [],
+    "type": "collectible",
+    "quality": "common",
+    "consumableType": null,
+    "gearType": null,
+    "requirements": [],
+    "itemAttrs": [
+      {
+        "id": "attribute-copy-item_attr-a59dbd03-5d9e-4caf-95d0-7302c8d6716c",
+        "customIcon": null,
+        "customTextLocalizationKey": null,
+        "customText": "",
+        "textLocalizationKey": "attributes.singulars.skilling.workEfficiency.whileMainSkill.text",
+        "text": "<stat s=\"workEfficiency\"/> while <supp k=\"skill\"/>",
+        "statText": "Work efficiency",
+        "skillText": "Mining",
+        "tables": null,
+        "requirements": [
+          {
+            "type": "mainSkill",
+            "name": null,
+            "opposite": false,
+            "requirement": {
+              "skill": "mining"
+            }
+          }
+        ],
+        "stats": [
+          {
+            "stat": "work_efficiency",
+            "name": "Work efficiency",
+            "type": "workEfficiency",
+            "isPercent": true,
+            "value": 0.01,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      },
+      {
+        "id": "attribute-copy-item_attr-c181b433-f94a-4438-81ec-c3a089b9b50d",
+        "customIcon": null,
+        "customTextLocalizationKey": null,
+        "customText": "",
+        "textLocalizationKey": "attributes.singulars.skilling.workEfficiency.whileMainSkill.text",
+        "text": "<stat s=\"workEfficiency\"/> while <supp k=\"skill\"/>",
+        "statText": "Work efficiency",
+        "skillText": "Agility",
+        "tables": null,
+        "requirements": [
+          {
+            "type": "mainSkill",
+            "name": null,
+            "opposite": false,
+            "requirement": {
+              "skill": "agility"
+            }
+          }
+        ],
+        "stats": [
+          {
+            "stat": "work_efficiency",
+            "name": "Work efficiency",
+            "type": "workEfficiency",
+            "isPercent": true,
+            "value": 0.01,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      }
+    ],
+    "itemQualityAttrs": [],
+    "itemValue": "none",
+    "itemValueModifier": 1,
+    "buffs": [],
+    "tables": [],
+    "canBeFine": true,
+    "icon": "assets/icons/items/collectibles/anicent_ankh.png"
+  },
+  {
+    "id": "ancient_trident",
+    "name": "Ancient trident",
+    "keywords": [],
+    "type": "collectible",
+    "quality": "common",
+    "consumableType": null,
+    "gearType": null,
+    "requirements": [],
+    "itemAttrs": [
+      {
+        "id": "attribute-copy-item_attr-6f749c5c-bf26-49ec-b1bb-63169eab199a",
+        "customIcon": null,
+        "customTextLocalizationKey": null,
+        "customText": "",
+        "textLocalizationKey": "attributes.singulars.skilling.workEfficiency.whileMainSkill.text",
+        "text": "<stat s=\"workEfficiency\"/> while <supp k=\"skill\"/>",
+        "statText": "Work efficiency",
+        "skillText": "Fishing",
+        "tables": null,
+        "requirements": [
+          {
+            "type": "mainSkill",
+            "name": null,
+            "opposite": false,
+            "requirement": {
+              "skill": "fishing"
+            }
+          }
+        ],
+        "stats": [
+          {
+            "stat": "work_efficiency",
+            "name": "Work efficiency",
+            "type": "workEfficiency",
+            "isPercent": true,
+            "value": 0.01,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      }
+    ],
+    "itemQualityAttrs": [],
+    "itemValue": "none",
+    "itemValueModifier": 1,
+    "buffs": [],
+    "tables": [],
+    "canBeFine": true,
+    "icon": "assets/icons/items/syrenthia/ancient_trident.png"
+  },
+  {
+    "id": "anglerfish_mask",
+    "name": "Anglerfish mask",
+    "keywords": [],
+    "type": "collectible",
+    "quality": "common",
+    "consumableType": null,
+    "gearType": null,
+    "requirements": [],
+    "itemAttrs": [
+      {
+        "id": "attribute-copy-item_attr-db37f57d-a12e-41a6-99ea-2b5adbab8b4c",
+        "customIcon": null,
+        "customTextLocalizationKey": null,
+        "customText": "",
+        "textLocalizationKey": "attributes.singulars.skilling.doubleAction.whileMainSkill.text",
+        "text": "<stat s=\"doubleAction\"/> while <supp k=\"skill\"/>",
+        "statText": "Double action",
+        "skillText": "Fishing",
+        "tables": null,
+        "requirements": [
+          {
+            "type": "mainSkill",
+            "name": null,
+            "opposite": false,
+            "requirement": {
+              "skill": "fishing"
+            }
+          }
+        ],
+        "stats": [
+          {
+            "stat": "double_action",
+            "name": "Double action",
+            "type": "doubleAction",
+            "isPercent": true,
+            "value": 0.01,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      }
+    ],
+    "itemQualityAttrs": [],
+    "itemValue": "none",
+    "itemValueModifier": 1,
+    "buffs": [],
+    "tables": [],
+    "canBeFine": true,
+    "icon": "assets/icons/items/syrenthia/anglerfish_mask.png"
+  },
+  {
+    "id": "blue_lotus_butterfly",
+    "name": "Blue lotus butterfly",
+    "keywords": [],
+    "type": "collectible",
+    "quality": "common",
+    "consumableType": null,
+    "gearType": null,
+    "requirements": [],
+    "itemAttrs": [
+      {
+        "id": "reroll-this-id-79d5c448-e035-455b-a7f4-cea5c4112f76",
+        "customIcon": null,
+        "customTextLocalizationKey": null,
+        "customText": "",
+        "textLocalizationKey": "attributes.singulars.skilling.workEfficiency.whileMainSkill.text",
+        "text": "<stat s=\"workEfficiency\"/> while <supp k=\"skill\"/>",
+        "statText": "Work efficiency",
+        "skillText": "Foraging",
+        "tables": null,
+        "requirements": [
+          {
+            "type": "mainSkill",
+            "name": null,
+            "opposite": false,
+            "requirement": {
+              "skill": "foraging"
+            }
+          }
+        ],
+        "stats": [
+          {
+            "stat": "work_efficiency",
+            "name": "Work efficiency",
+            "type": "workEfficiency",
+            "isPercent": true,
+            "value": 0.01,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      },
+      {
+        "id": "attribute-copy-item_attr-4e246bff-3de0-4ed3-a2e7-643fc4117fde",
+        "customIcon": null,
+        "customTextLocalizationKey": null,
+        "customText": "",
+        "textLocalizationKey": "attributes.singulars.skilling.workEfficiency.whileMainSkill.text",
+        "text": "<stat s=\"workEfficiency\"/> while <supp k=\"skill\"/>",
+        "statText": "Work efficiency",
+        "skillText": "Agility",
+        "tables": null,
+        "requirements": [
+          {
+            "type": "mainSkill",
+            "name": null,
+            "opposite": false,
+            "requirement": {
+              "skill": "agility"
+            }
+          }
+        ],
+        "stats": [
+          {
+            "stat": "work_efficiency",
+            "name": "Work efficiency",
+            "type": "workEfficiency",
+            "isPercent": true,
+            "value": 0.01,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      }
+    ],
+    "itemQualityAttrs": [],
+    "itemValue": "none",
+    "itemValueModifier": 1,
+    "buffs": [],
+    "tables": [],
+    "canBeFine": true,
+    "icon": "assets/icons/items/collectibles/blue_lotus_butterfly.png"
+  },
+  {
+    "id": "cold_embrace",
+    "name": "Cold Embrace",
+    "keywords": [],
+    "type": "collectible",
+    "quality": "common",
+    "consumableType": null,
+    "gearType": null,
+    "requirements": [],
+    "itemAttrs": [],
+    "itemQualityAttrs": [],
+    "itemValue": "none",
+    "itemValueModifier": 1,
+    "buffs": [],
+    "tables": [],
+    "canBeFine": true,
+    "icon": "assets/icons/items/collectibles/cold_embrace.png"
+  },
+  {
+    "id": "dinglehopper",
+    "name": "Dinglehopper",
+    "keywords": [],
+    "type": "collectible",
+    "quality": "common",
+    "consumableType": null,
+    "gearType": null,
+    "requirements": [],
+    "itemAttrs": [
+      {
+        "id": "attribute-copy-item_attr-f21752e1-053d-4ce6-ba57-e63ab1bc4d06",
+        "customIcon": null,
+        "customTextLocalizationKey": null,
+        "customText": "",
+        "textLocalizationKey": "attributes.singulars.special.findCollectibles.global.text",
+        "text": "Global <stat s=\"findCollectibles\">chance to find collectibles</stat>",
+        "statText": "Find collectibles",
+        "skillText": "",
+        "tables": null,
+        "requirements": [],
+        "stats": [
+          {
+            "stat": "find_collectibles",
+            "name": "Find collectibles",
+            "type": "findCollectibles",
+            "isPercent": true,
+            "value": 0.02,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      }
+    ],
+    "itemQualityAttrs": [],
+    "itemValue": "none",
+    "itemValueModifier": 1,
+    "buffs": [],
+    "tables": [],
+    "canBeFine": true,
+    "icon": "assets/icons/items/syrenthia/dinglehopper.png"
+  },
+  {
+    "id": "easter_egg",
+    "name": "Easter egg",
+    "keywords": [],
+    "type": "collectible",
+    "quality": "common",
+    "consumableType": null,
+    "gearType": null,
+    "requirements": [],
+    "itemAttrs": [
+      {
+        "id": "attribute-copy-item_attr-6da8a73a-e0e4-4bbf-ae18-c0b0a54ebb34",
+        "customIcon": null,
+        "customTextLocalizationKey": null,
+        "customText": "",
+        "textLocalizationKey": "attributes.singulars.special.findCollectibles.global.text",
+        "text": "Global <stat s=\"findCollectibles\">chance to find collectibles</stat>",
+        "statText": "Find collectibles",
+        "skillText": "",
+        "tables": null,
+        "requirements": [],
+        "stats": [
+          {
+            "stat": "find_collectibles",
+            "name": "Find collectibles",
+            "type": "findCollectibles",
+            "isPercent": true,
+            "value": 0.01,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      }
+    ],
+    "itemQualityAttrs": [],
+    "itemValue": "none",
+    "itemValueModifier": 1,
+    "buffs": [],
+    "tables": [],
+    "canBeFine": true,
+    "icon": "assets/icons/items/collectibles/easter_egg.png"
+  },
+  {
+    "id": "essence_of_the_swamp",
+    "name": "Essence of the swamp",
+    "keywords": [],
+    "type": "collectible",
+    "quality": "common",
+    "consumableType": null,
+    "gearType": null,
+    "requirements": [],
+    "itemAttrs": [],
+    "itemQualityAttrs": [],
+    "itemValue": "none",
+    "itemValueModifier": 1,
+    "buffs": [],
+    "tables": [],
+    "canBeFine": false,
+    "icon": "assets/icons/items/materials/misc/green_vial.png"
+  },
+  {
+    "id": "expedition_journal",
+    "name": "Expedition journal",
+    "keywords": [],
+    "type": "collectible",
+    "quality": "common",
+    "consumableType": null,
+    "gearType": null,
+    "requirements": [],
+    "itemAttrs": [
+      {
+        "id": "reroll-this-id-a6f366ed-d98e-4a59-bcba-122e1ff34107",
+        "customIcon": null,
+        "customTextLocalizationKey": null,
+        "customText": "",
+        "textLocalizationKey": "attributes.singulars.skilling.workEfficiency.whileMainSkill.text",
+        "text": "<stat s=\"workEfficiency\"/> while <supp k=\"skill\"/>",
+        "statText": "Work efficiency",
+        "skillText": "Foraging",
+        "tables": null,
+        "requirements": [
+          {
+            "type": "mainSkill",
+            "name": null,
+            "opposite": false,
+            "requirement": {
+              "skill": "foraging"
+            }
+          }
+        ],
+        "stats": [
+          {
+            "stat": "work_efficiency",
+            "name": "Work efficiency",
+            "type": "workEfficiency",
+            "isPercent": true,
+            "value": 0.01,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      }
+    ],
+    "itemQualityAttrs": [],
+    "itemValue": "none",
+    "itemValueModifier": 1,
+    "buffs": [],
+    "tables": [],
+    "canBeFine": true,
+    "icon": "assets/icons/items/collectibles/expedition_journal.png"
+  },
+  {
+    "id": "flame_of_azura",
+    "name": "Flame of Azura",
+    "keywords": [],
+    "type": "collectible",
+    "quality": "common",
+    "consumableType": null,
+    "gearType": null,
+    "requirements": [],
+    "itemAttrs": [],
+    "itemQualityAttrs": [],
+    "itemValue": "none",
+    "itemValueModifier": 1,
+    "buffs": [],
+    "tables": [],
+    "canBeFine": true,
+    "icon": "assets/icons/items/collectibles/flame_of_azura.png"
+  },
+  {
+    "id": "floating_coral",
+    "name": "Floating coral",
+    "keywords": [],
+    "type": "collectible",
+    "quality": "common",
+    "consumableType": null,
+    "gearType": null,
+    "requirements": [],
+    "itemAttrs": [
+      {
+        "id": "attribute-copy-item_attr-3539d95f-450c-4a40-8493-95ee83b79a73",
+        "customIcon": null,
+        "customTextLocalizationKey": null,
+        "customText": "",
+        "textLocalizationKey": "attributes.singulars.skilling.fineMaterialFind.whileMainSkill.text",
+        "text": "<stat s=\"fineMaterialFind\"/> while <supp k=\"skill\"/>",
+        "statText": "Fine material finding",
+        "skillText": "Fishing",
+        "tables": null,
+        "requirements": [
+          {
+            "type": "mainSkill",
+            "name": null,
+            "opposite": false,
+            "requirement": {
+              "skill": "fishing"
+            }
+          }
+        ],
+        "stats": [
+          {
+            "stat": "fine_material_finding",
+            "name": "Fine material finding",
+            "type": "fineMaterialFind",
+            "isPercent": true,
+            "value": 0.02,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      }
+    ],
+    "itemQualityAttrs": [],
+    "itemValue": "none",
+    "itemValueModifier": 1,
+    "buffs": [],
+    "tables": [],
+    "canBeFine": true,
+    "icon": "assets/icons/items/collectibles/floating_coral.png"
+  },
+  {
+    "id": "jarvonian_crossword_puzzle",
+    "name": "Jarvonian crossword puzzle",
+    "keywords": [],
+    "type": "collectible",
+    "quality": "common",
+    "consumableType": null,
+    "gearType": null,
+    "requirements": [],
+    "itemAttrs": [
+      {
+        "id": "reroll-this-id-3b60dfb9-d2be-4a28-bd66-ee8b410079ca",
+        "customIcon": null,
+        "customTextLocalizationKey": null,
+        "customText": "",
+        "textLocalizationKey": "attributes.singulars.skilling.experience.global.text",
+        "text": "Global <stat s=\"bonusExperience\"/>",
+        "statText": "Bonus experience",
+        "skillText": "",
+        "tables": null,
+        "requirements": [],
+        "stats": [
+          {
+            "stat": "bonus_experience",
+            "name": "Bonus experience",
+            "type": "bonusExperience",
+            "isPercent": true,
+            "value": 0.01,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      }
+    ],
+    "itemQualityAttrs": [],
+    "itemValue": "none",
+    "itemValueModifier": 1,
+    "buffs": [],
+    "tables": [],
+    "canBeFine": true,
+    "icon": "assets/icons/items/collectibles/jarvonian_crossword_puzzle.png"
+  },
+  {
+    "id": "letter_from_a._a.",
+    "name": "Letter from A. A.",
+    "keywords": [],
+    "type": "collectible",
+    "quality": "common",
+    "consumableType": null,
+    "gearType": null,
+    "requirements": [],
+    "itemAttrs": [],
+    "itemQualityAttrs": [],
+    "itemValue": "none",
+    "itemValueModifier": 1,
+    "buffs": [],
+    "tables": [],
+    "canBeFine": true,
+    "icon": "assets/icons/items/syrenthia/letter_from_aa.png"
+  },
+  {
+    "id": "lost_timmys_sand_shovel",
+    "name": "Lost Timmy's sand shovel",
+    "keywords": [],
+    "type": "collectible",
+    "quality": "common",
+    "consumableType": null,
+    "gearType": null,
+    "requirements": [],
+    "itemAttrs": [],
+    "itemQualityAttrs": [],
+    "itemValue": "none",
+    "itemValueModifier": 1,
+    "buffs": [],
+    "tables": [],
+    "canBeFine": false,
+    "icon": "assets/icons/items/collectibles/timmys_sand_shovel.png"
+  },
+  {
+    "id": "meteorite_fragment",
+    "name": "Meteorite fragment",
+    "keywords": [],
+    "type": "collectible",
+    "quality": "common",
+    "consumableType": null,
+    "gearType": null,
+    "requirements": null,
+    "itemAttrs": [
+      {
+        "id": "53e209b3-9978-401c-86be-e270afafb090",
+        "customIcon": null,
+        "customTextLocalizationKey": null,
+        "customText": "",
+        "textLocalizationKey": "attributes.singulars.skilling.workEfficiency.whileMainSkill.text",
+        "text": "<stat s=\"workEfficiency\"/> while <supp k=\"skill\"/>",
+        "statText": "Work efficiency",
+        "skillText": "Trinketry",
+        "tables": null,
+        "requirements": [
+          {
+            "type": "mainSkill",
+            "name": null,
+            "opposite": false,
+            "requirement": {
+              "skill": "trinketry"
+            }
+          }
+        ],
+        "stats": [
+          {
+            "stat": "work_efficiency",
+            "name": "Work efficiency",
+            "type": "workEfficiency",
+            "isPercent": true,
+            "value": 0.02,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      }
+    ],
+    "itemQualityAttrs": null,
+    "itemValue": "none",
+    "itemValueModifier": 1,
+    "buffs": null,
+    "tables": null,
+    "canBeFine": true,
+    "icon": "assets/icons/items/collectibles/meteorite_fragment.png"
+  },
+  {
+    "id": "old_war_sword",
+    "name": "Old war sword",
+    "keywords": [],
+    "type": "collectible",
+    "quality": "common",
+    "consumableType": null,
+    "gearType": null,
+    "requirements": [],
+    "itemAttrs": [],
+    "itemQualityAttrs": [],
+    "itemValue": "none",
+    "itemValueModifier": 1,
+    "buffs": [],
+    "tables": [],
+    "canBeFine": true,
+    "icon": "assets/icons/items/collectibles/old_war_sword.png"
+  },
+  {
+    "id": "petrified_branch",
+    "name": "Petrified branch",
+    "keywords": [],
+    "type": "collectible",
+    "quality": "common",
+    "consumableType": null,
+    "gearType": null,
+    "requirements": [],
+    "itemAttrs": [],
+    "itemQualityAttrs": [],
+    "itemValue": "none",
+    "itemValueModifier": 1,
+    "buffs": [],
+    "tables": [],
+    "canBeFine": true,
+    "icon": "assets/icons/items/collectibles/petrified_branch.png"
+  },
+  {
+    "id": "seahorse_fossil",
+    "name": "Seahorse fossil",
+    "keywords": [],
+    "type": "collectible",
+    "quality": "common",
+    "consumableType": null,
+    "gearType": null,
+    "requirements": [],
+    "itemAttrs": [],
+    "itemQualityAttrs": [],
+    "itemValue": "none",
+    "itemValueModifier": 1,
+    "buffs": [],
+    "tables": [],
+    "canBeFine": true,
+    "icon": "assets/icons/items/syrenthia/seahorse_fossil.png"
+  },
+  {
+    "id": "silver_pocket_watch",
+    "name": "Silver pocket watch",
+    "keywords": [],
+    "type": "collectible",
+    "quality": "common",
+    "consumableType": null,
+    "gearType": null,
+    "requirements": [],
+    "itemAttrs": [],
+    "itemQualityAttrs": [],
+    "itemValue": "none",
+    "itemValueModifier": 1,
+    "buffs": [],
+    "tables": [],
+    "canBeFine": true,
+    "icon": "assets/icons/items/collectibles/silver_pocket_watch.png"
+  },
+  {
+    "id": "soup_kitchen_badge",
+    "name": "Soup kitchen badge",
+    "keywords": [],
+    "type": "collectible",
+    "quality": "common",
+    "consumableType": null,
+    "gearType": null,
+    "requirements": [],
+    "itemAttrs": [
+      {
+        "id": "attribute-copy-item_attr-3831c123-845c-4125-bba1-49be12759c51",
+        "customIcon": null,
+        "customTextLocalizationKey": null,
+        "customText": "",
+        "textLocalizationKey": "attributes.singulars.skilling.experience.whileMainSkill.text",
+        "text": "<stat s=\"bonusExperience\"/> while <supp k=\"skill\"/>",
+        "statText": "Bonus experience",
+        "skillText": "Cooking",
+        "tables": null,
+        "requirements": [
+          {
+            "type": "mainSkill",
+            "name": null,
+            "opposite": false,
+            "requirement": {
+              "skill": "cooking"
+            }
+          }
+        ],
+        "stats": [
+          {
+            "stat": "bonus_experience",
+            "name": "Bonus experience",
+            "type": "bonusExperience",
+            "isPercent": true,
+            "value": 0.01,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      }
+    ],
+    "itemQualityAttrs": [],
+    "itemValue": "none",
+    "itemValueModifier": 1,
+    "buffs": [],
+    "tables": [],
+    "canBeFine": true,
+    "icon": "assets/icons/items/collectibles/soup_kitchen_badge.png"
+  },
+  {
+    "id": "swordfish_sword_fossil",
+    "name": "Swordfish sword fossil",
+    "keywords": [],
+    "type": "collectible",
+    "quality": "common",
+    "consumableType": null,
+    "gearType": null,
+    "requirements": [],
+    "itemAttrs": [],
+    "itemQualityAttrs": [],
+    "itemValue": "none",
+    "itemValueModifier": 1,
+    "buffs": [],
+    "tables": [],
+    "canBeFine": true,
+    "icon": "assets/icons/items/syrenthia/swordfish_fossil.png"
+  },
+  {
+    "id": "tiny_swan_ice_sculpture",
+    "name": "Tiny swan ice sculpture",
+    "keywords": [],
+    "type": "collectible",
+    "quality": "common",
+    "consumableType": null,
+    "gearType": null,
+    "requirements": [],
+    "itemAttrs": [],
+    "itemQualityAttrs": [],
+    "itemValue": "none",
+    "itemValueModifier": 1,
+    "buffs": [],
+    "tables": [],
+    "canBeFine": true,
+    "icon": "assets/icons/items/collectibles/tiny_swan_ice_sculpture.png"
+  },
+  {
+    "id": "very_shiny_stone",
+    "name": "Very shiny stone",
+    "keywords": [],
+    "type": "collectible",
+    "quality": "common",
+    "consumableType": null,
+    "gearType": null,
+    "requirements": [],
+    "itemAttrs": [],
+    "itemQualityAttrs": [],
+    "itemValue": "none",
+    "itemValueModifier": 1,
+    "buffs": [],
+    "tables": [],
+    "canBeFine": true,
+    "icon": "assets/icons/items/syrenthia/very_shiny_rock.png"
+  },
+  {
+    "id": "walrus_tusk",
+    "name": "Walrus tusk",
+    "keywords": [],
+    "type": "collectible",
+    "quality": "common",
+    "consumableType": null,
+    "gearType": null,
+    "requirements": [],
+    "itemAttrs": [],
+    "itemQualityAttrs": [],
+    "itemValue": "none",
+    "itemValueModifier": 1,
+    "buffs": [],
+    "tables": [],
+    "canBeFine": true,
+    "icon": "assets/icons/items/syrenthia/walrus_tusk.png"
+  },
+  {
+    "id": "weeping_willow_tear",
+    "name": "Weeping willow tear",
+    "keywords": [],
+    "type": "collectible",
+    "quality": "common",
+    "consumableType": null,
+    "gearType": null,
+    "requirements": [],
+    "itemAttrs": [
+      {
+        "id": "21a931e6-b6a2-4cbf-acb3-680e53a7ce97",
+        "customIcon": "",
+        "customTextLocalizationKey": "",
+        "customText": "",
+        "textLocalizationKey": "",
+        "text": "",
+        "statText": "Fine material finding",
+        "skillText": "Woodcutting",
+        "tables": null,
+        "requirements": [
+          {
+            "type": "mainSkill",
+            "name": "",
+            "opposite": false,
+            "requirement": {
+              "skill": "woodcutting"
+            }
+          }
+        ],
+        "stats": [
+          {
+            "stat": "fine_material_finding",
+            "name": "Fine material finding",
+            "type": "fineMaterialFind",
+            "isPercent": true,
+            "value": 0.02,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      }
+    ],
+    "itemQualityAttrs": [],
+    "itemValue": "none",
+    "itemValueModifier": 1,
+    "buffs": [],
+    "tables": [],
+    "canBeFine": true,
+    "icon": "assets/icons/items/collectibles/weeping_willow_tear.png"
+  },
+  {
+    "id": "wooden_carved_bear_figurine",
+    "name": "Wooden carved bear figurine",
+    "keywords": [],
+    "type": "collectible",
+    "quality": "common",
+    "consumableType": null,
+    "gearType": null,
+    "requirements": [],
+    "itemAttrs": [],
+    "itemQualityAttrs": [],
+    "itemValue": "none",
+    "itemValueModifier": 1,
+    "buffs": [],
+    "tables": [],
+    "canBeFine": true,
+    "icon": "assets/icons/items/collectibles/wooden_carved_bear_figurine.png"
+  },
+  {
+    "id": "mark_of_the_deep_one",
+    "name": "Mark of the deep one",
+    "keywords": [],
+    "type": "collectible",
+    "quality": "common",
+    "consumableType": null,
+    "gearType": null,
+    "requirements": [],
+    "itemAttrs": [
+      {
+        "id": "attribute-copy-item_attr-f0912ece-b303-4339-b648-b6b0e5eb4220",
+        "customIcon": null,
+        "customTextLocalizationKey": null,
+        "customText": "",
+        "textLocalizationKey": "attributes.singulars.skilling.doubleRewards.whileLocationKeyword.text",
+        "text": "Global <stat s=\"doubleRewards\"/> while in <supp k=\"keyword\"/> location.",
+        "statText": "Double rewards",
+        "skillText": "",
+        "tables": null,
+        "requirements": [
+          {
+            "type": "locationHasKeywords",
+            "name": null,
+            "opposite": false,
+            "requirement": {
+              "keywords": ["underwater"]
+            }
+          }
+        ],
+        "stats": [
+          {
+            "stat": "double_rewards",
+            "name": "Double rewards",
+            "type": "doubleRewards",
+            "isPercent": true,
+            "value": 0.02,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      }
+    ],
+    "itemQualityAttrs": [],
+    "itemValue": "none",
+    "itemValueModifier": 1,
+    "buffs": [],
+    "tables": [],
+    "canBeFine": true,
+    "icon": "assets/icons/items/syrenthia/mark_of_the_deepone.png"
+  },
+  {
+    "id": "mark_of_the_serpent",
+    "name": "Mark of the serpent",
+    "keywords": [],
+    "type": "collectible",
+    "quality": "common",
+    "consumableType": null,
+    "gearType": null,
+    "requirements": [],
+    "itemAttrs": [
+      {
+        "id": "attribute-copy-item_attr-bb0700b4-0ac7-45bb-91dc-24e6ec87d276",
+        "customIcon": null,
+        "customTextLocalizationKey": null,
+        "customText": "",
+        "textLocalizationKey": "attributes.singulars.skilling.doubleRewards.whileMainSkill.text",
+        "text": "<stat s=\"doubleRewards\"/> while <supp k=\"skill\"/>",
+        "statText": "Double rewards",
+        "skillText": "Fishing",
+        "tables": null,
+        "requirements": [
+          {
+            "type": "mainSkill",
+            "name": null,
+            "opposite": false,
+            "requirement": {
+              "skill": "fishing"
+            }
+          }
+        ],
+        "stats": [
+          {
+            "stat": "double_rewards",
+            "name": "Double rewards",
+            "type": "doubleRewards",
+            "isPercent": true,
+            "value": 0.01,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      }
+    ],
+    "itemQualityAttrs": [],
+    "itemValue": "none",
+    "itemValueModifier": 1,
+    "buffs": [],
+    "tables": [],
+    "canBeFine": true,
+    "icon": "assets/icons/items/syrenthia/mark_of_the_serpent.png"
+  },
+  {
+    "id": "mark_of_the_trident",
+    "name": "Mark of the trident",
+    "keywords": [],
+    "type": "collectible",
+    "quality": "common",
+    "consumableType": null,
+    "gearType": null,
+    "requirements": [],
+    "itemAttrs": [
+      {
+        "id": "attribute-copy-item_attr-effe0133-7daa-42a4-8d02-d63e0b34cfae",
+        "customIcon": null,
+        "customTextLocalizationKey": null,
+        "customText": "",
+        "textLocalizationKey": "attributes.singulars.skilling.fineMaterialFind.whileMainSkill.text",
+        "text": "<stat s=\"fineMaterialFind\"/> while <supp k=\"skill\"/>",
+        "statText": "Fine material finding",
+        "skillText": "Fishing",
+        "tables": null,
+        "requirements": [
+          {
+            "type": "mainSkill",
+            "name": null,
+            "opposite": false,
+            "requirement": {
+              "skill": "fishing"
+            }
+          }
+        ],
+        "stats": [
+          {
+            "stat": "fine_material_finding",
+            "name": "Fine material finding",
+            "type": "fineMaterialFind",
+            "isPercent": true,
+            "value": 0.03,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      }
+    ],
+    "itemQualityAttrs": [],
+    "itemValue": "none",
+    "itemValueModifier": 1,
+    "buffs": [],
+    "tables": [],
+    "canBeFine": true,
+    "icon": "assets/icons/items/syrenthia/mark_of_the_trident.png"
+  },
+  {
+    "id": "sigil_of_the_ordained",
+    "name": "Sigil of the Ordained",
+    "keywords": [],
+    "type": "collectible",
+    "quality": "common",
+    "consumableType": null,
+    "gearType": null,
+    "requirements": [],
+    "itemAttrs": [
+      {
+        "id": "f998ca2b-a86b-41a4-9072-7f305da58e51",
+        "customIcon": "",
+        "customTextLocalizationKey": "",
+        "customText": "",
+        "textLocalizationKey": "",
+        "text": "",
+        "statText": "Double action",
+        "skillText": "Mining",
+        "tables": null,
+        "requirements": [
+          {
+            "type": "mainSkill",
+            "name": "",
+            "opposite": false,
+            "requirement": {
+              "skill": "mining"
+            }
+          }
+        ],
+        "stats": [
+          {
+            "stat": "double_action",
+            "name": "Double action",
+            "type": "doubleAction",
+            "isPercent": true,
+            "value": 0.01,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      }
+    ],
+    "itemQualityAttrs": [],
+    "itemValue": "none",
+    "itemValueModifier": 1,
+    "buffs": [],
+    "tables": [],
+    "canBeFine": true,
+    "icon": "assets/icons/items/collectibles/sigil_of_the_ordained.png"
+  },
+  {
+    "id": "black_eye_peak_wilderness_permit",
+    "name": "Black eye peak wilderness permit",
+    "keywords": [],
+    "type": "collectible",
+    "quality": "common",
+    "consumableType": null,
+    "gearType": null,
+    "requirements": [],
+    "itemAttrs": [],
+    "itemQualityAttrs": [],
+    "itemValue": "none",
+    "itemValueModifier": 1,
+    "buffs": [],
+    "tables": [],
+    "canBeFine": true,
+    "icon": "assets/icons/items/collectibles/black_eye_peak_wilderness_permit.png"
+  },
+  {
+    "id": "jarvonian_letter_of_passage",
+    "name": "Jarvonian letter of passage",
+    "keywords": [],
+    "type": "collectible",
+    "quality": "common",
+    "consumableType": null,
+    "gearType": null,
+    "requirements": [],
+    "itemAttrs": [],
+    "itemQualityAttrs": [],
+    "itemValue": "none",
+    "itemValueModifier": 1,
+    "buffs": [],
+    "tables": [],
+    "canBeFine": true,
+    "icon": "assets/icons/items/collectibles/toll_gdte_pass.png"
+  },
+  {
+    "id": "mysterious_northern_map",
+    "name": "Mysterious northern map",
+    "keywords": [],
+    "type": "collectible",
+    "quality": "common",
+    "consumableType": null,
+    "gearType": null,
+    "requirements": [],
+    "itemAttrs": [],
+    "itemQualityAttrs": [],
+    "itemValue": "none",
+    "itemValueModifier": 1,
+    "buffs": [],
+    "tables": [],
+    "canBeFine": true,
+    "icon": "assets/icons/items/materials/misc/glacier_map.png"
+  },
+  {
+    "id": "underwater_map",
+    "name": "Underwater map",
+    "keywords": [],
+    "type": "collectible",
+    "quality": "common",
+    "consumableType": null,
+    "gearType": null,
+    "requirements": [],
+    "itemAttrs": [],
+    "itemQualityAttrs": [],
+    "itemValue": "none",
+    "itemValueModifier": 1,
+    "buffs": [],
+    "tables": [],
+    "canBeFine": true,
+    "icon": "assets/icons/items/syrenthia/underwater_map_i.png"
+  }
+]

@@ -1,17 +1,19 @@
 <script setup>
 import { storeToRefs } from "pinia";
 import { useSettingsStore } from "@/store/settings";
-import useBaseContext from "@/composables/context/useBaseContext";
-import { useLootTables } from "@/composables/useLootTables";
+import {
+  injectBaseContext,
+  injectLootTables,
+} from "@/composables/context/injectShared";
 import DropItemDisplay from "./DropItemDisplay.vue";
 import LootTableDisplay from "./LootTableDisplay.vue";
 import AggregateDrops from "./AggregateDrops.vue";
 
-const ctx = useBaseContext();
+const ctx = injectBaseContext();
 
 const settingsStore = useSettingsStore();
 const { activitySettings } = storeToRefs(settingsStore);
-const { groupedLootTables, dropItemInfoMap } = useLootTables(ctx);
+const { groupedLootTables, dropItemInfoMap } = injectLootTables();
 </script>
 
 <template>

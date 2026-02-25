@@ -3,10 +3,11 @@ import {
   activityOptimiserPriorities,
   recipeOptimiserPriorities,
 } from "@/constants/settings";
+import type { SettingOption } from "@/constants/settings";
 import { useSettingsStore } from "@/store/settings";
 import useBaseContext from "@/composables/context/useBaseContext";
 
-export const selectedPriority = () => {
+export const selectedPriority = (): SettingOption => {
   const baseCtx = useBaseContext();
   const settingsStore = useSettingsStore();
   const { gearSettings } = storeToRefs(settingsStore);
@@ -20,10 +21,6 @@ export const selectedPriority = () => {
       ];
 };
 
-export const priorityValue = () => {
-  return selectedPriority().value;
-};
+export const priorityValue = (): string => selectedPriority().value;
 
-export const priorityName = () => {
-  return selectedPriority().name;
-};
+export const priorityName = (): string => selectedPriority().name;

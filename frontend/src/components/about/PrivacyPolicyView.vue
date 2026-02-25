@@ -13,7 +13,7 @@ const contactEmail = computed(() => "falarikae.dev" + "@" + "gmail.com");
     </div>
 
     <h2>Privacy Policy</h2>
-    <p class="last-updated">Last updated: 24.2.2026</p>
+    <p class="last-updated">Last updated: 25.2.2026</p>
     <p>
       This tool is an independent community-created calculator for WalkScape. It
       is not operated by Not a Cult Oy.
@@ -77,8 +77,9 @@ const contactEmail = computed(() => "falarikae.dev" + "@" + "gmail.com");
     <section class="policy-section">
       <h3>5. Hosting</h3>
       <p>
-        This tool is hosted on infrastructure provided by Not a Cult Oy. Server
-        infrastructure may generate standard technical logs (e.g., IP addresses)
+        This tool is hosted on a server provided by Hetzner and paid for by Not
+        a Cult Oy, who kindly allow it to share their infrastructure. The hosting
+        environment may generate standard technical logs (e.g., IP addresses)
         for security and operational purposes.
       </p>
     </section>

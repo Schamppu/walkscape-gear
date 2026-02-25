@@ -3,8 +3,7 @@ import { computed } from "vue";
 import { storeToRefs } from "pinia";
 import { useSettingsStore } from "@/store/settings";
 import WsIcon from "@/components/common/WsIcon.vue";
-import useBaseContext from "@/composables/context/useBaseContext";
-import { useLootTables } from "@/composables/useLootTables";
+import { injectLootTables } from "@/composables/context/injectShared";
 import { icons } from "@/constants/iconPaths";
 import { n } from "@/utils/number";
 import { snakeToTitle } from "@/utils/string";
@@ -13,12 +12,10 @@ const props = defineProps({
   itemId: String,
 });
 
-const ctx = useBaseContext();
-
 const settingsStore = useSettingsStore();
 const { activitySettings } = storeToRefs(settingsStore);
 
-const { dropItemInfoMap } = useLootTables(ctx);
+const { dropItemInfoMap } = injectLootTables();
 const item = computed(() => dropItemInfoMap.value[props.itemId]);
 </script>
 

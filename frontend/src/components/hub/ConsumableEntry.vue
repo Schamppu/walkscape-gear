@@ -4,7 +4,7 @@ import { consumableQualityOptions } from "@/domain/constants/quality";
 import { useItemsStore } from "@/store/items";
 import WsIcon from "@/components/common/WsIcon.vue";
 import StatsDisplay from "../common/StatsDisplay.vue";
-import useBaseContext from "@/composables/context/useBaseContext";
+import { injectBaseContext } from "@/composables/context/injectShared";
 
 const props = defineProps({
   item: Object,
@@ -13,7 +13,7 @@ const props = defineProps({
 
 const emit = defineEmits(["change"]);
 const [normal, fine] = consumableQualityOptions.map((q) => q.value);
-const ctx = useBaseContext();
+const ctx = injectBaseContext();
 
 const itemsStore = useItemsStore();
 const normalOwned = ref(false);

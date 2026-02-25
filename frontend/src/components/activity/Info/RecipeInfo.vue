@@ -11,9 +11,11 @@ import WikiButton from "@/components/common/WikiButton.vue";
 import QualityOutcomeTable from "./QualityOutcomeTable.vue";
 import { useActivityStore } from "@/store/activity";
 import { useItemsStore } from "@/store/items";
-import useBaseContext from "@/composables/context/useBaseContext";
-import { useSkillModifiers } from "@/composables/useSkillModifiers";
-import { useFineMaterials } from "@/composables/useFineMaterialsCalculations";
+import {
+  injectBaseContext,
+  injectSkillModifiers,
+  injectFineMaterials,
+} from "@/composables/context/injectShared";
 import { isEmpty } from "@/utils/isEmpty";
 import { n } from "@/utils/number";
 
@@ -21,40 +23,28 @@ const activityStore = useActivityStore();
 const itemsStore = useItemsStore();
 
 const { recipe } = storeToRefs(activityStore);
-const ctx = useBaseContext();
+const ctx = injectBaseContext();
 const { xpRewardsMultiplier, canUseFineMaterials, useFine } =
-  useFineMaterials(ctx);
+  injectFineMaterials();
+
+const sharedModifiers = injectSkillModifiers();
 
 const stats = computed(() => {
-  const {
-    maxWorkEfficiency,
-    workEfficiency,
-    uncappedWorkEfficiency,
-    effectiveMaxWorkEfficiency,
-    qualityOutcome,
-    uncappedStepsPerCompletion,
-    stepsPerCompletion,
-    stepsPerRewardRoll,
-    craftsPerMaterial,
-    xpRewards,
-    xpPerStep,
-  } = useSkillModifiers(ctx);
-
   return {
-    maxWorkEfficiency: maxWorkEfficiency.value,
-    workEfficiency: workEfficiency.value,
-    uncappedWorkEfficiency: uncappedWorkEfficiency.value,
-    effectiveMaxWorkEfficiency: effectiveMaxWorkEfficiency.value,
-    qualityOutcome: qualityOutcome.value,
-    uncappedStepsPerCompletion: uncappedStepsPerCompletion.value,
-    stepsPerCompletion: stepsPerCompletion.value,
-    stepsPerRewardRoll: stepsPerRewardRoll.value,
-    craftsPerMaterial: craftsPerMaterial.value,
-    xpRewards: xpRewards.value.map((reward) => ({
+    maxWorkEfficiency: sharedModifiers.maxWorkEfficiency.value,
+    workEfficiency: sharedModifiers.workEfficiency.value,
+    uncappedWorkEfficiency: sharedModifiers.uncappedWorkEfficiency.value,
+    effectiveMaxWorkEfficiency: sharedModifiers.effectiveMaxWorkEfficiency.value,
+    qualityOutcome: sharedModifiers.qualityOutcome.value,
+    uncappedStepsPerCompletion: sharedModifiers.uncappedStepsPerCompletion.value,
+    stepsPerCompletion: sharedModifiers.stepsPerCompletion.value,
+    stepsPerRewardRoll: sharedModifiers.stepsPerRewardRoll.value,
+    craftsPerMaterial: sharedModifiers.craftsPerMaterial.value,
+    xpRewards: sharedModifiers.xpRewards.value.map((reward) => ({
       ...reward,
       value: reward.value * xpRewardsMultiplier.value,
     })),
-    xpPerStep: xpPerStep.value.map((reward) => ({
+    xpPerStep: sharedModifiers.xpPerStep.value.map((reward) => ({
       ...reward,
       value: reward.value * xpRewardsMultiplier.value,
     })),

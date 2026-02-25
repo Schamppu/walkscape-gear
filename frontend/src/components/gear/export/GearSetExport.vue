@@ -1,13 +1,13 @@
 <script setup>
 import { ref } from "vue";
-import useBaseContext from "@/composables/context/useBaseContext";
+import { injectBaseContext } from "@/composables/context/injectShared";
 import { useGearSetExport } from "@/composables/useGearSetExport";
 import { icons } from "@/constants/iconPaths";
 import { useNotificationStore } from "@/store/notifications";
 import WsButton from "@/components/common/WsButton.vue";
 import ExportCodeModal from "./ExportCodeModal.vue";
 
-const ctx = useBaseContext();
+const ctx = injectBaseContext();
 const { exportCode } = useGearSetExport(ctx);
 const notificationStore = useNotificationStore();
 

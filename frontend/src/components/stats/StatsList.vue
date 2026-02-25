@@ -2,11 +2,9 @@
 import { computed } from "vue";
 import StatDisplay from "./StatDisplay.vue";
 import { useDataStore } from "@/store/data";
-import useBaseContext from "@/composables/context/useBaseContext";
-import { useEffectiveAttrs } from "@/composables/useEffectiveAttrs";
+import { injectEffectiveAttrs } from "@/composables/context/injectShared";
 
-const ctx = useBaseContext();
-const { allAttrs } = useEffectiveAttrs(ctx);
+const { allAttrs } = injectEffectiveAttrs();
 const dataStore = useDataStore();
 
 const includedStats = computed(() => {

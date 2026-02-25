@@ -10,12 +10,7 @@
 // Requirements
 // ---------------------------------------------------------------------------
 
-export type Requirement = {
-  type: string;
-  name: string | null;
-  opposite: boolean;
-  requirement: Record<string, unknown>;
-};
+export type { Requirement } from "@/domain/types/requirement";
 
 // ---------------------------------------------------------------------------
 // Loot table references (used by activities, recipes, etc.)

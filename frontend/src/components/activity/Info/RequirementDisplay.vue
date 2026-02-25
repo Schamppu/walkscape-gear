@@ -1,15 +1,17 @@
 <script setup>
-import useBaseContext from "@/composables/context/useBaseContext";
+import {
+  injectBaseContext,
+  injectRequirements,
+} from "@/composables/context/injectShared";
 import WsIcon from "@/components/common/WsIcon.vue";
-import { useRequirements } from "@/composables/useRequirements";
 import { computed } from "vue";
 
 const props = defineProps({
   requirement: Object,
 });
 
-const ctx = useBaseContext();
-const { checkRequirements, mapRequirementsText } = useRequirements(ctx);
+const ctx = injectBaseContext();
+const { checkRequirements, mapRequirementsText } = injectRequirements();
 const fulfilled = computed(() => checkRequirements([props.requirement], ctx));
 const reqText = computed(() =>
   mapRequirementsText([props.requirement], [fulfilled])

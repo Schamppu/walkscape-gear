@@ -5,23 +5,23 @@ import { useActivityStore } from "@/store/activity";
 import { usePlayerStore } from "@/store/player";
 import { useItemsStore } from "@/store/items";
 import IconInputBubble from "@/components/common/IconInputBubble.vue";
-import useBaseContext from "@/composables/context/useBaseContext";
-import { useSkillModifiers } from "@/composables/useSkillModifiers";
-import { useFineMaterials } from "@/composables/useFineMaterialsCalculations";
+import {
+  injectSkillModifiers,
+  injectFineMaterials,
+} from "@/composables/context/injectShared";
 import WsIcon from "@/components/common/WsIcon.vue";
 import WsLabel from "@/components/common/WsLabel.vue";
 import CalculatorQualityOutcomeTable from "./CalculatorQualityOutcomeTable.vue";
 import { skillLevelFromXp, xpToSkillLevel } from "@/domain/character";
 
-const ctx = useBaseContext();
 const {
   stepsPerAction,
   xpPerStep,
   xpRewards,
   noMaterialsConsumed,
   doubleRewards,
-} = useSkillModifiers(ctx);
-const { xpRewardsMultiplier } = useFineMaterials(ctx);
+} = injectSkillModifiers();
+const { xpRewardsMultiplier } = injectFineMaterials();
 const playerStore = usePlayerStore();
 const itemsStore = useItemsStore();
 

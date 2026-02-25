@@ -6,7 +6,7 @@ import ConsumableEntry from "./ConsumableEntry.vue";
 import PetEntry from "./PetEntry.vue";
 import { itemQualityNameSort, levelReqNameSort } from "@/domain/gear/sorting";
 import { consumableQualityOptions } from "@/domain/constants/quality";
-import useBaseContext from "@/composables/context/useBaseContext";
+import { injectBaseContext } from "@/composables/context/injectShared";
 
 const props = defineProps({
   group: String,
@@ -18,7 +18,7 @@ const props = defineProps({
 
 defineEmits(["toggle"]);
 const hasLoaded = ref(false);
-const ctx = useBaseContext();
+const ctx = injectBaseContext();
 
 const getSortFn = (group) => {
   const key = group.toLowerCase();

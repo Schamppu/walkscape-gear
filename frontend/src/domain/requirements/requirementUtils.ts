@@ -9,6 +9,11 @@
  */
 
 import type { Requirement } from "@/domain/types/common";
+import type {
+  AbilityAvailableRequirement,
+  DistinctKeywordItemsEquippedRequirement,
+  SkillLevelRequirement,
+} from "@/domain/types/requirement";
 
 // ---------------------------------------------------------------------------
 // Merge strategies
@@ -19,35 +24,32 @@ type MergeStrategy = {
   merge(a: Requirement, b: Requirement): Requirement;
 };
 
-const mergeStrategies: Partial<Record<string, MergeStrategy>> = {
+const mergeStrategies: Partial<Record<Requirement["type"], MergeStrategy>> = {
   distinctKeywordItemsEquipped: {
     canMerge(a, b) {
+      const ra = (a as DistinctKeywordItemsEquippedRequirement).requirement;
+      const rb = (b as DistinctKeywordItemsEquippedRequirement).requirement;
       return (
         a.opposite === b.opposite &&
-        JSON.stringify(a.requirement["keywords"]) ===
-          JSON.stringify(b.requirement["keywords"])
+        JSON.stringify(ra.keywords) === JSON.stringify(rb.keywords)
       );
     },
     merge(a, b) {
+      const aTyped = a as DistinctKeywordItemsEquippedRequirement;
+      const ra = aTyped.requirement;
+      const rb = (b as DistinctKeywordItemsEquippedRequirement).requirement;
       return {
-        ...a,
-        requirement: {
-          ...a.requirement,
-          quantity: Math.max(
-            a.requirement["quantity"] as number,
-            b.requirement["quantity"] as number,
-          ),
-        },
+        ...aTyped,
+        requirement: { ...ra, quantity: Math.max(ra.quantity, rb.quantity) },
       };
     },
   },
 
   abilityAvailable: {
     canMerge(a, b) {
-      return (
-        a.opposite === b.opposite &&
-        a.requirement["ability"] === b.requirement["ability"]
-      );
+      const ra = (a as AbilityAvailableRequirement).requirement;
+      const rb = (b as AbilityAvailableRequirement).requirement;
+      return a.opposite === b.opposite && ra.ability === rb.ability;
     },
     merge(a) {
       return a;
@@ -56,21 +58,17 @@ const mergeStrategies: Partial<Record<string, MergeStrategy>> = {
 
   skillLevel: {
     canMerge(a, b) {
-      return (
-        a.opposite === b.opposite &&
-        a.requirement["skill"] === b.requirement["skill"]
-      );
+      const ra = (a as SkillLevelRequirement).requirement;
+      const rb = (b as SkillLevelRequirement).requirement;
+      return a.opposite === b.opposite && ra.skill === rb.skill;
     },
     merge(a, b) {
+      const aTyped = a as SkillLevelRequirement;
+      const ra = aTyped.requirement;
+      const rb = (b as SkillLevelRequirement).requirement;
       return {
-        ...a,
-        requirement: {
-          ...a.requirement,
-          level: Math.max(
-            a.requirement["level"] as number,
-            b.requirement["level"] as number,
-          ),
-        },
+        ...aTyped,
+        requirement: { ...ra, level: Math.max(ra.level, rb.level) },
       };
     },
   },
@@ -94,10 +92,9 @@ export function getLevelRequirementsMap(
   if (!requirements) return {};
 
   const map: Record<string, number> = {};
-  for (const { type, requirement } of requirements) {
-    if (type !== "skillLevel") continue;
-    const skill = requirement["skill"] as string;
-    const level = requirement["level"] as number;
+  for (const req of requirements) {
+    if (req.type !== "skillLevel") continue;
+    const { skill, level } = req.requirement;
     map[skill] = level;
   }
   return map;

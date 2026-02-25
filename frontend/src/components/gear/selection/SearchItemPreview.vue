@@ -1,5 +1,8 @@
 <script setup>
-import useBaseContext from "@/composables/context/useBaseContext";
+import {
+  injectBaseContext,
+  injectSkillModifiers,
+} from "@/composables/context/injectShared";
 import { computed } from "vue";
 import { useSkillModifiers } from "@/composables/useSkillModifiers";
 import { n } from "@/utils/number";
@@ -10,7 +13,7 @@ import { icons } from "@/constants/iconPaths";
 
 const props = defineProps({ item: Object, slotName: String });
 
-const ctx = useBaseContext();
+const ctx = injectBaseContext();
 
 // Find item that was previously in this slot, and remove
 const itemInSlot = ctx.gearSlots.value[props.slotName];
@@ -35,7 +38,7 @@ const {
   stepsPerAction: baseStepsPerAction,
   workEfficiency: baseWorkEfficiency,
   stepsPerRewardRoll: baseStepsPerRewardRoll,
-} = useSkillModifiers(ctx);
+} = injectSkillModifiers();
 const {
   xpPerStep: newXpPerStep,
   stepsPerAction: newStepsPerAction,

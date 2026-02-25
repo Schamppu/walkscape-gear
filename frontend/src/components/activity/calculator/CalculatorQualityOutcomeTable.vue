@@ -2,10 +2,11 @@
 import { computed } from "vue";
 import { storeToRefs } from "pinia";
 import { useActivityStore } from "@/store/activity";
-import useBaseContext from "@/composables/context/useBaseContext";
-import { useRequirements } from "@/composables/useRequirements";
-import { useSkillModifiers } from "@/composables/useSkillModifiers";
-import { useFineMaterials } from "@/composables/useFineMaterialsCalculations";
+import {
+  injectRequirements,
+  injectSkillModifiers,
+  injectFineMaterials,
+} from "@/composables/context/injectShared";
 import WsLabel from "@/components/common/WsLabel.vue";
 import { getOutcomeOdds } from "@/domain/quality/qualityOutcomeOdds";
 import { n } from "@/utils/number";
@@ -16,10 +17,9 @@ const props = defineProps({
 
 const activityStore = useActivityStore();
 const { recipe } = storeToRefs(activityStore);
-const ctx = useBaseContext();
-const { getLevelRequirementsMap } = useRequirements(ctx);
-const { qualityOutcome } = useSkillModifiers(ctx);
-const { canUseFineMaterials } = useFineMaterials(ctx);
+const { getLevelRequirementsMap } = injectRequirements();
+const { qualityOutcome } = injectSkillModifiers();
+const { canUseFineMaterials } = injectFineMaterials();
 
 const craftingOdds = computed(() => {
   const levelMap = getLevelRequirementsMap(recipe.value.requirements);

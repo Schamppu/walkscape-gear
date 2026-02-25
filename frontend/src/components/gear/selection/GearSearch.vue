@@ -3,8 +3,10 @@ import { ref, computed } from "vue";
 import { storeToRefs } from "pinia";
 import { useDataStore } from "@/store/data";
 import { useSettingsStore } from "@/store/settings";
-import useBaseContext from "@/composables/context/useBaseContext";
-import { useRequirements } from "@/composables/useRequirements";
+import {
+  injectBaseContext,
+  injectRequirements,
+} from "@/composables/context/injectShared";
 import { useShowItemForActivity } from "@/composables/useShowItemForActivity";
 import { consumableQualityOptions } from "@/domain/constants/quality";
 import { itemQualityNameSort } from "@/domain/gear/sorting";
@@ -30,8 +32,8 @@ const dataStore = useDataStore();
 const settingsStore = useSettingsStore();
 const { gearSettings } = storeToRefs(settingsStore);
 
-const ctx = useBaseContext();
-const { checkRequirements } = useRequirements(ctx);
+const ctx = injectBaseContext();
+const { checkRequirements } = injectRequirements();
 const { showItemForActivity } = useShowItemForActivity(ctx);
 
 const searchTerm = ref("");

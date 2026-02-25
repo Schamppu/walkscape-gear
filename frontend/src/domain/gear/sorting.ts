@@ -10,7 +10,7 @@
 
 import { qualityOptions } from "@/domain/constants/quality";
 import type { ItemDetail } from "@/domain/types/item";
-import type { Requirement } from "@/domain/types/common";
+import type { SkillLevelRequirement } from "@/domain/types/requirement";
 
 const qualityRank = Object.fromEntries(
   qualityOptions.map(({ value }, index) => [value, index]),
@@ -36,21 +36,22 @@ export function levelReqNameSort(
   b: ItemDetail,
   reverse = false,
 ): number {
-  function getMaxSkillLevel(reqs: Requirement[]): number {
+  function getMaxSkillLevel(reqs: SkillLevelRequirement[]): number {
     if (!Array.isArray(reqs) || reqs.length === 0) return 0;
-    const skillLevels = reqs
-      .filter(
-        (r) =>
-          r.type === "skillLevel" &&
-          r.requirement &&
-          typeof (r.requirement as { level?: unknown }).level === "number",
-      )
-      .map((r) => (r.requirement as { level: number }).level);
-    return skillLevels.length ? Math.max(...skillLevels) : 0;
+    const levels = reqs.map((r) => r.requirement.level);
+    return levels.length ? Math.max(...levels) : 0;
   }
 
-  const aLevel = getMaxSkillLevel(a.requirements);
-  const bLevel = getMaxSkillLevel(b.requirements);
+  const aLevel = getMaxSkillLevel(
+    (a.requirements ?? []).filter(
+      (r): r is SkillLevelRequirement => r.type === "skillLevel",
+    ),
+  );
+  const bLevel = getMaxSkillLevel(
+    (b.requirements ?? []).filter(
+      (r): r is SkillLevelRequirement => r.type === "skillLevel",
+    ),
+  );
 
   if (aLevel !== bLevel) {
     return reverse ? bLevel - aLevel : aLevel - bLevel;

@@ -9,6 +9,7 @@ import { useItemsStore } from "@/store/items";
 import { useGearSetStore } from "@/store/gearSet";
 import { useRouteStore } from "@/store/route";
 import { useSettingsStore } from "@/store/settings";
+import { provideSharedComposables } from "@/composables/context/provideSharedComposables";
 import { getOrCreateUserUuid } from "@/utils/user";
 import { icons } from "@/constants/iconPaths";
 import Hub from "@/components/hub/HubTab.vue";
@@ -27,6 +28,11 @@ import UndoRedoButtons from "@/components/common/UndoRedoButtons.vue";
 const urlStore = useUrlStore();
 const settingsStore = useSettingsStore();
 const { gearSettings } = storeToRefs(settingsStore);
+
+// Create and provide shared composable instances once for the entire app.
+// All descendant components can inject these instead of creating duplicates.
+provideSharedComposables();
+
 const isLoaded = ref(false);
 const showSettings = ref(false);
 const activeTab = ref("Hub");

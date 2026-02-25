@@ -94,7 +94,7 @@ export function useRequirements(ctx: RequirementContext) {
     req: Requirement,
     context: RequirementContext = ctx,
   ): boolean => {
-    const { type, opposite, requirement } = req;
+    const { opposite } = req;
 
     const equippedKeywordCounts: Record<string, number> = context.equippedGear
       .value
@@ -111,9 +111,9 @@ export function useRequirements(ctx: RequirementContext) {
 
     let value = false;
 
-    switch (type) {
+    switch (req.type) {
       case "mainSkill": {
-        const skill = requirement["skill"] as string;
+        const { skill } = req.requirement;
         const activity = context.activity.value as ActivityDetail | null;
         const recipe = context.recipe.value as RecipeDetail | null;
         if (activity?.relatedSkillsList)
@@ -123,7 +123,7 @@ export function useRequirements(ctx: RequirementContext) {
       }
 
       case "mainSkillType": {
-        const reqType = requirement["type"] as string;
+        const { type: reqType } = req.requirement;
         const activity = context.activity.value as ActivityDetail | null;
         const recipe = context.recipe.value as RecipeDetail | null;
         if (activity?.relatedSkillsList)
@@ -137,7 +137,7 @@ export function useRequirements(ctx: RequirementContext) {
       }
 
       case "locationHasKeywords": {
-        const keywords = requirement["keywords"] as string[];
+        const { keywords } = req.requirement;
         if (context.location.value) {
           value =
             intersect(context.location.value.keywords, keywords).length ===
@@ -154,14 +154,11 @@ export function useRequirements(ctx: RequirementContext) {
       }
 
       case "achievementPoint":
-        value =
-          context.achievementPoints.value >=
-          (requirement["value"] as number);
+        value = context.achievementPoints.value >= req.requirement.value;
         break;
 
       case "distinctKeywordItemsEquipped": {
-        const keywords = requirement["keywords"] as string[];
-        const quantity = requirement["quantity"] as number;
+        const { keywords, quantity } = req.requirement;
         value = keywords.every((kw) => equippedKeywordCounts[kw] >= quantity);
         break;
       }
@@ -171,7 +168,7 @@ export function useRequirements(ctx: RequirementContext) {
         break;
 
       case "realm": {
-        const realm = requirement["realm"] as string;
+        const { realm } = req.requirement;
         if (context.location.value) {
           value =
             context.location.value.faction === realm ||
@@ -198,8 +195,7 @@ export function useRequirements(ctx: RequirementContext) {
       case "gameData": {
         const factionReputation = context.factionReputation.value;
         if (factionReputation) {
-          const data = requirement["data"] as string;
-          const gameDataId = requirement["gameDataId"] as string;
+          const { data, gameDataId } = req.requirement;
           const rep = (JSON.parse(data) as { double?: number }).double ?? 0;
           value = factionReputation[gameDataId] >= rep;
         }
@@ -207,8 +203,7 @@ export function useRequirements(ctx: RequirementContext) {
       }
 
       case "skillLevel": {
-        const skill = requirement["skill"] as string;
-        const level = requirement["level"] as number;
+        const { skill, level } = req.requirement;
         value = playerStore.skillLevels[skill] >= level;
         break;
       }
@@ -216,12 +211,11 @@ export function useRequirements(ctx: RequirementContext) {
       case "activityType": {
         const source = context.source.value;
         if (source) {
-          const reqActivity = requirement["activity"] as string | undefined;
-          const reqKeywords = requirement["keywords"] as string[] | undefined;
+          const { activity: reqActivity, keywords: reqKeywords } = req.requirement;
           value =
-            ((!reqActivity || source.id === reqActivity) &&
-              (!reqKeywords ||
-                reqKeywords.every((kw) => source.keywords.includes(kw))));
+            (!reqActivity || source.id === reqActivity) &&
+            (!reqKeywords?.length ||
+              reqKeywords.every((kw) => source.keywords.includes(kw)));
         }
         break;
       }
@@ -229,7 +223,7 @@ export function useRequirements(ctx: RequirementContext) {
       case "totalSkillLevel":
         value =
           Object.values(playerStore.skillLevels).reduce((a, b) => a + b, 0) >=
-          (requirement["levels"] as number);
+          req.requirement.levels;
         break;
 
       case "totalSkillLevelUps":
@@ -237,27 +231,22 @@ export function useRequirements(ctx: RequirementContext) {
           Object.values(playerStore.skillLevels).reduce(
             (a, b) => a + b - 1,
             0,
-          ) >= (requirement["levels"] as number);
+          ) >= req.requirement.levels;
         break;
 
       case "itemAnywhereWithYou":
       case "itemAnywhere":
-        value = (requirement["item"] as string) in itemsStore.ownedItems;
+        value = req.requirement.item in itemsStore.ownedItems;
         break;
 
-      case "keywordEquipped": {
-        const keyword = requirement["keyword"] as string;
-        value =
-          ctx.equippedGear.value.some((gear) =>
-            gear.keywords?.includes(keyword),
-          );
+      case "keywordEquipped":
+        value = ctx.equippedGear.value.some((gear) =>
+          gear.keywords?.includes(req.requirement.keyword),
+        );
         break;
-      }
 
       case "keywordWithLevelEquipped": {
-        const keyword = requirement["keyword"] as string;
-        const skill = requirement["skill"] as string;
-        const level = requirement["level"] as number;
+        const { keyword, skill, level } = req.requirement;
         value = ctx.equippedGear.value.some((gear) => {
           const kwCheck = gear.keywords?.includes(keyword);
           const levelReqs = getLevelRequirementsMap(gear.requirements);
@@ -267,14 +256,12 @@ export function useRequirements(ctx: RequirementContext) {
         break;
       }
 
-      case "itemEquipped": {
-        const item = requirement["item"] as string;
-        value = ctx.equippedGear.value.some(({ id }) => id === item);
+      case "itemEquipped":
+        value = ctx.equippedGear.value.some(({ id }) => id === req.requirement.item);
         break;
-      }
 
       case "abilityAvailable": {
-        const ability = requirement["ability"] as string;
+        const { ability } = req.requirement;
         value = ctx.equippedGear.value.some(({ abilities }) =>
           abilities
             ?.flatMap((a) => (typeof a === "object" ? a.ability : a))
@@ -284,7 +271,7 @@ export function useRequirements(ctx: RequirementContext) {
       }
 
       default:
-        console.error("unhandled requirement", type, requirement);
+        console.error("unhandled requirement", req);
     }
 
     return opposite ? !value : value;
@@ -299,189 +286,221 @@ export function useRequirements(ctx: RequirementContext) {
     requirementsActive: boolean[],
   ): RequirementDisplay[] => {
     return requirements.map((req, idx) => {
-      const { type, opposite, requirement } = req;
+      const { opposite } = req;
       const active = requirementsActive[idx];
+      const whilePrefix = `While${opposite ? " NOT" : ""}`;
 
       let out: Omit<RequirementDisplay, "active"> | undefined;
 
-      if (type === "mainSkill") {
-        const skill = playerStore.skillsMap[requirement["skill"] as string];
-        out = {
-          prefix: `While${opposite ? " NOT" : ""}`,
-          text: skill.name,
-          icon: skill.icon,
-        };
-      } else if (type === "mainSkillType") {
-        out = {
-          prefix: `While${opposite ? " NOT" : ""} doing`,
-          text: `${requirement["type"] as string} skills`,
-          icon: "",
-        };
-      } else if (type === "traveling") {
-        out = {
-          prefix: `While${opposite ? " NOT" : ""}`,
-          text: "Traveling",
-          icon: "",
-        };
-      } else if (type === "locationHasKeywords") {
-        const keywords = requirement["keywords"] as string[];
-        const resolvedKws = keywords
-          .map(dataStore.getKeywordById)
-          .filter((kw): kw is Keyword => kw !== null);
-        out = resolvedKws.map(({ name, icon }) => ({
-            prefix: `While${opposite ? " NOT" : ""} in`,
-            text: `${name} location`,
-            icon,
-          }))[0];
-      } else if (type === "realm") {
-        const realm = playerStore.factionsMap[requirement["realm"] as string];
-        out = {
-          prefix: `While${opposite ? " NOT" : ""} in`,
-          text: `${realm.name} area`,
-          icon: realm.icon,
-        };
-      } else if (type === "distinctKeywordItemsEquipped") {
-        const keywords = requirement["keywords"] as string[];
-        const quantity = requirement["quantity"] as number;
-        const resolvedKws = keywords
-          .map(dataStore.getKeywordById)
-          .filter((kw): kw is Keyword => kw !== null);
-        out = resolvedKws.map(({ name, icon }) => ({
-            prefix: `While${opposite ? " NOT" : ""} wearing ${quantity}`,
-            text: name,
-            icon,
-          }))[0];
-      } else if (type === "keywordEquipped") {
-        const kw = dataStore.getKeywordById(requirement["keyword"] as string);
-        if (kw) {
-          out = { prefix: "Requires", text: kw.name, icon: kw.icon };
+      switch (req.type) {
+        case "mainSkill": {
+          const skill = playerStore.skillsMap[req.requirement.skill];
+          out = { prefix: whilePrefix, text: skill.name, icon: skill.icon };
+          break;
         }
-      } else if (type === "keywordWithLevelEquipped") {
-        const kw = dataStore.getKeywordById(requirement["keyword"] as string);
-        const level = requirement["level"] as number;
-        const skill = requirement["skill"] as string;
-        if (kw) {
-          out = {
-            prefix: "Have",
-            text: `${kw.name} that requires at least ${level} ${skill}`,
-            icon: kw.icon,
-          };
-        }
-      } else if (type === "achievementPoint") {
-        out = {
-          prefix: "Have",
-          text: `${requirement["value"] as number} achievement points`,
-          icon: "assets/icons/text/general_icons/achievement_point.png",
-        };
-      } else if (type === "historyData") {
-        const category = requirement["category"] as string;
-        const data = requirement["data"] as string;
-        const value = requirement["value"] as number;
-        const act = activityStore.activitiesMap[data];
-        if (category === "stepsWalkedActivity" && act) {
-          out = {
-            prefix: `Have taken ${value} steps on the`,
-            text: `${act.name} activity`,
-            icon: act.icon,
-          };
-        } else if (category === "actionCompleted" && act) {
-          out = {
-            prefix: `${opposite ? "NOT " : ""}Have completed`,
-            text: `${act.name} activity ${value} times`,
-            icon: act.icon,
-          };
-        }
-      } else if (type === "skillLevel") {
-        const skill = playerStore.skillsMap[requirement["skill"] as string];
-        out = {
-          prefix: `While at least ${requirement["level"] as number}`,
-          text: skill.name,
-          icon: skill.icon,
-        };
-      } else if (type === "totalSkillLevel") {
-        const levels = requirement["levels"] as number;
-        const current = Object.values(playerStore.skillLevels).reduce(
-          (a, b) => a + b,
-          0,
-        );
-        out = {
-          text: `Have ${Math.min(current, levels)}/${levels} total level`,
-        };
-      } else if (type === "totalSkillLevelUps") {
-        const levels = requirement["levels"] as number;
-        const current = Object.values(playerStore.skillLevels).reduce(
-          (a, b) => a + b - 1,
-          0,
-        );
-        out = {
-          text: `Level up your skills ${Math.min(current, levels)}/${levels} times`,
-        };
-      } else if (type === "activityType") {
-        const reqActivity = requirement["activity"] as string | undefined;
-        const reqKeywords = requirement["keywords"] as string[] | undefined;
-        const act = reqActivity
-          ? activityStore.activitiesMap[reqActivity]
-          : undefined;
 
-        if (reqKeywords?.length) {
-          const kws = reqKeywords.map((kw) => dataStore.keywordsMap[kw]);
-          if (kws[0]) {
+        case "mainSkillType":
+          out = {
+            prefix: `${whilePrefix} doing`,
+            text: `${req.requirement.type} skills`,
+            icon: "",
+          };
+          break;
+
+        case "traveling":
+          out = { prefix: whilePrefix, text: "Traveling", icon: "" };
+          break;
+
+        case "locationHasKeywords": {
+          const resolvedKw = req.requirement.keywords
+            .map(dataStore.getKeywordById)
+            .filter((kw): kw is Keyword => kw !== null)[0];
+          if (resolvedKw) {
             out = {
-              prefix: `While${opposite ? " NOT" : ""} doing`,
-              text: `${kws[0].name} activity`,
-              icon: kws[0].icon,
+              prefix: `${whilePrefix} in`,
+              text: `${resolvedKw.name} location`,
+              icon: resolvedKw.icon,
             };
           }
-        } else if (act) {
+          break;
+        }
+
+        case "realm": {
+          const realm = playerStore.factionsMap[req.requirement.realm];
           out = {
-            prefix: `While${opposite ? " NOT" : ""} doing`,
-            text: `${act.name} activity`,
-            icon: act.icon,
+            prefix: `${whilePrefix} in`,
+            text: `${realm.name} area`,
+            icon: realm.icon,
           };
+          break;
         }
-      } else if (type === "itemAnywhere" || type === "itemAnywhereWithYou") {
-        const item = ctx.allGearItems.value[requirement["item"] as string];
-        if (item) {
-          out = { prefix: "Own a", text: item.name, icon: item.icon };
+
+        case "distinctKeywordItemsEquipped": {
+          const { keywords, quantity } = req.requirement;
+          const resolvedKw = keywords
+            .map(dataStore.getKeywordById)
+            .filter((kw): kw is Keyword => kw !== null)[0];
+          if (resolvedKw) {
+            out = {
+              prefix: `${whilePrefix} wearing ${quantity}`,
+              text: resolvedKw.name,
+              icon: resolvedKw.icon,
+            };
+          }
+          break;
         }
-      } else if (type === "gameData") {
-        const gameDataId = requirement["gameDataId"] as string;
-        const data = requirement["data"] as string;
-        const rep = (JSON.parse(data) as { double?: number }).double ?? 0;
-        const reputationFaction = Object.values(playerStore.factions).find(
-          ({ reputation }) => reputation === gameDataId,
-        );
-        if (reputationFaction) {
-          out = {
-            prefix: `Requires ${rep}`,
-            text: `${reputationFaction.name} reputation`,
-            icon: reputationFaction.icon,
-          };
+
+        case "keywordEquipped": {
+          const kw = dataStore.getKeywordById(req.requirement.keyword);
+          if (kw) out = { prefix: "Requires", text: kw.name, icon: kw.icon };
+          break;
         }
-      } else if (type === "itemEquipped") {
-        const item = ctx.allGearItems.value[requirement["item"] as string];
-        if (item) {
+
+        case "keywordWithLevelEquipped": {
+          const { keyword, level, skill } = req.requirement;
+          const kw = dataStore.getKeywordById(keyword);
+          if (kw) {
+            out = {
+              prefix: "Have",
+              text: `${kw.name} that requires at least ${level} ${skill}`,
+              icon: kw.icon,
+            };
+          }
+          break;
+        }
+
+        case "achievementPoint":
           out = {
             prefix: "Have",
-            text: `${item.name} equipped`,
-            icon: item.icon,
+            text: `${req.requirement.value} achievement points`,
+            icon: "assets/icons/text/general_icons/achievement_point.png",
           };
+          break;
+
+        case "historyData": {
+          const { category, data, value } = req.requirement;
+          const act = activityStore.activitiesMap[data];
+          if (category === "stepsWalkedActivity" && act) {
+            out = {
+              prefix: `Have taken ${value} steps on the`,
+              text: `${act.name} activity`,
+              icon: act.icon,
+            };
+          } else if (category === "actionCompleted" && act) {
+            out = {
+              prefix: `${opposite ? "NOT " : ""}Have completed`,
+              text: `${act.name} activity ${value} times`,
+              icon: act.icon,
+            };
+          }
+          break;
         }
-      } else if (type === "abilityAvailable") {
-        const ability = dataStore.abilitiesMap[requirement["ability"] as string];
-        if (ability) {
+
+        case "skillLevel": {
+          const { skill, level } = req.requirement;
+          const skillData = playerStore.skillsMap[skill];
           out = {
-            prefix: "While having",
-            text: `${ability.name} ability available`,
-            icon: ability.icon,
+            prefix: `While at least ${level}`,
+            text: skillData.name,
+            icon: skillData.icon,
           };
+          break;
+        }
+
+        case "totalSkillLevel": {
+          const { levels } = req.requirement;
+          const current = Object.values(playerStore.skillLevels).reduce(
+            (a, b) => a + b,
+            0,
+          );
+          out = { text: `Have ${Math.min(current, levels)}/${levels} total level` };
+          break;
+        }
+
+        case "totalSkillLevelUps": {
+          const { levels } = req.requirement;
+          const current = Object.values(playerStore.skillLevels).reduce(
+            (a, b) => a + b - 1,
+            0,
+          );
+          out = {
+            text: `Level up your skills ${Math.min(current, levels)}/${levels} times`,
+          };
+          break;
+        }
+
+        case "activityType": {
+          const { activity: reqActivity, keywords: reqKeywords } = req.requirement;
+          const act = reqActivity
+            ? activityStore.activitiesMap[reqActivity]
+            : undefined;
+          if (reqKeywords?.length) {
+            const kw = dataStore.keywordsMap[reqKeywords[0]];
+            if (kw) {
+              out = {
+                prefix: `${whilePrefix} doing`,
+                text: `${kw.name} activity`,
+                icon: kw.icon,
+              };
+            }
+          } else if (act) {
+            out = {
+              prefix: `${whilePrefix} doing`,
+              text: `${act.name} activity`,
+              icon: act.icon,
+            };
+          }
+          break;
+        }
+
+        case "itemAnywhere":
+        case "itemAnywhereWithYou": {
+          const item = ctx.allGearItems.value[req.requirement.item];
+          if (item) out = { prefix: "Own a", text: item.name, icon: item.icon };
+          break;
+        }
+
+        case "gameData": {
+          const { gameDataId, data } = req.requirement;
+          const rep = (JSON.parse(data) as { double?: number }).double ?? 0;
+          const reputationFaction = Object.values(playerStore.factions).find(
+            ({ reputation }) => reputation === gameDataId,
+          );
+          if (reputationFaction) {
+            out = {
+              prefix: `Requires ${rep}`,
+              text: `${reputationFaction.name} reputation`,
+              icon: reputationFaction.icon,
+            };
+          }
+          break;
+        }
+
+        case "itemEquipped": {
+          const item = ctx.allGearItems.value[req.requirement.item];
+          if (item) {
+            out = { prefix: "Have", text: `${item.name} equipped`, icon: item.icon };
+          }
+          break;
+        }
+
+        case "abilityAvailable": {
+          const ability = dataStore.abilitiesMap[req.requirement.ability];
+          if (ability) {
+            out = {
+              prefix: "While having",
+              text: `${ability.name} ability available`,
+              icon: ability.icon,
+            };
+          }
+          break;
         }
       }
 
       if (out) return { ...out, active };
 
       // Fallback for unhandled / unknown requirement types
-      return { text: type, icon: "", active };
+      return { text: req.type, icon: "", active };
     });
   };
 

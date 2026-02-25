@@ -1,0 +1,4235 @@
+[
+  {
+    "id": "candlehat",
+    "name": "Candlehat",
+    "keywords": [
+      "light_source",
+      "crafting",
+      "global"
+    ],
+    "type": "loot",
+    "quality": "legendary",
+    "consumableType": null,
+    "gearType": "head",
+    "requirements": [
+      {
+        "type": "skillLevel",
+        "name": "",
+        "opposite": false,
+        "requirement": {
+          "level": 50,
+          "skill": "crafting"
+        }
+      }
+    ],
+    "itemAttrs": [
+      {
+        "id": "attribute-copy-item_attr-ba7e047e-ebe2-4eb2-8085-c92ee2c57283",
+        "customIcon": "",
+        "customTextLocalizationKey": "",
+        "customText": "",
+        "textLocalizationKey": "attributes.singulars.skilling.craftingOutcome.global.text",
+        "text": "Global <stat s=\"craftingOutcome\"/>",
+        "statText": "Quality outcome",
+        "skillText": "",
+        "tables": null,
+        "requirements": [],
+        "stats": [
+          {
+            "stat": "quality_outcome",
+            "name": "Quality outcome",
+            "type": "qualityOutcome",
+            "isPercent": false,
+            "value": 30,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      },
+      {
+        "id": "944d592b-7cf2-4b9f-8c8b-a725ade017f4",
+        "customIcon": "",
+        "customTextLocalizationKey": "",
+        "customText": "",
+        "textLocalizationKey": "",
+        "text": "",
+        "statText": "No materials consumed",
+        "skillText": "Crafting",
+        "tables": null,
+        "requirements": [
+          {
+            "type": "mainSkill",
+            "name": "",
+            "opposite": false,
+            "requirement": {
+              "skill": "crafting"
+            }
+          }
+        ],
+        "stats": [
+          {
+            "stat": "no_materials_consumed",
+            "name": "No materials consumed",
+            "type": "noMaterialsConsumed",
+            "isPercent": true,
+            "value": 0.02,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      }
+    ],
+    "itemQualityAttrs": [],
+    "itemValue": "expensive",
+    "itemValueModifier": 1,
+    "buffs": [],
+    "tables": [],
+    "canBeFine": true,
+    "icon": "assets/icons/items/gear/skill_gear/candlehat.png",
+    "quality2": "legendary"
+  },
+  {
+    "id": "cape_of_achiever",
+    "name": "Cape of Achiever",
+    "keywords": [
+      "achievement_reward",
+      "global"
+    ],
+    "type": "loot",
+    "quality": "ethereal",
+    "consumableType": null,
+    "gearType": "cape",
+    "requirements": [
+      {
+        "type": "achievementPoint",
+        "name": "",
+        "opposite": false,
+        "requirement": {
+          "isPercentage": true,
+          "value": 1
+        }
+      }
+    ],
+    "itemAttrs": [
+      {
+        "id": "reroll-this-id-b32b5366-f74d-4333-81fd-c005fd954bbc",
+        "customIcon": "",
+        "customTextLocalizationKey": "",
+        "customText": "",
+        "textLocalizationKey": "attributes.singulars.skilling.inventorySpace.global.text",
+        "text": "<stat s=\"inventorySpace\"/>",
+        "statText": "Inventory space",
+        "skillText": "",
+        "tables": null,
+        "requirements": [],
+        "stats": [
+          {
+            "stat": "inventory_space",
+            "name": "Inventory space",
+            "type": "inventorySpace",
+            "isPercent": false,
+            "value": 2,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      },
+      {
+        "id": "reroll-this-id-45432126-76b9-493e-a1ff-284bf80d8aa3",
+        "customIcon": "",
+        "customTextLocalizationKey": "",
+        "customText": "",
+        "textLocalizationKey": "attributes.singulars.skilling.stepsRequired.global.text",
+        "text": "Global <stat s=\"stepsRequired\"/>",
+        "statText": "Steps required",
+        "skillText": "",
+        "tables": null,
+        "requirements": [],
+        "stats": [
+          {
+            "stat": "steps_required",
+            "name": "Steps required",
+            "type": "stepsRequired",
+            "isPercent": false,
+            "value": -5,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      },
+      {
+        "id": "reroll-this-id-4d6f65c4-1cb4-43ff-8c69-80621e948342",
+        "customIcon": "",
+        "customTextLocalizationKey": "",
+        "customText": "",
+        "textLocalizationKey": "attributes.singulars.skilling.workEfficiency.global.text",
+        "text": "Global <stat s=\"workEfficiency\"/>",
+        "statText": "Work efficiency",
+        "skillText": "",
+        "tables": null,
+        "requirements": [],
+        "stats": [
+          {
+            "stat": "work_efficiency",
+            "name": "Work efficiency",
+            "type": "workEfficiency",
+            "isPercent": true,
+            "value": 0.2,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      },
+      {
+        "id": "reroll-this-id-f1055f0e-a904-4399-9db1-7212d284b190",
+        "customIcon": "",
+        "customTextLocalizationKey": "",
+        "customText": "",
+        "textLocalizationKey": "attributes.singulars.skilling.craftingOutcome.global.text",
+        "text": "Global <stat s=\"craftingOutcome\"/>",
+        "statText": "Quality outcome",
+        "skillText": "",
+        "tables": null,
+        "requirements": [],
+        "stats": [
+          {
+            "stat": "quality_outcome",
+            "name": "Quality outcome",
+            "type": "qualityOutcome",
+            "isPercent": false,
+            "value": 20,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      },
+      {
+        "id": "reroll-this-id-b9d6fe8b-a755-41c8-ad6c-2906821ffbf7",
+        "customIcon": "",
+        "customTextLocalizationKey": "",
+        "customText": "",
+        "textLocalizationKey": "attributes.singulars.skilling.experience.global.text",
+        "text": "Global <stat s=\"bonusExperience\"/>",
+        "statText": "Bonus experience",
+        "skillText": "",
+        "tables": null,
+        "requirements": [],
+        "stats": [
+          {
+            "stat": "bonus_experience",
+            "name": "Bonus experience",
+            "type": "bonusExperience",
+            "isPercent": false,
+            "value": 2,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      },
+      {
+        "id": "reroll-this-id-c70fa3b5-776b-4c96-ad03-c49c69db38e4",
+        "customIcon": "",
+        "customTextLocalizationKey": "",
+        "customText": "",
+        "textLocalizationKey": "attributes.singulars.skilling.fineMaterialFind.global.text",
+        "text": "Global <stat s=\"fineMaterialFind\"/>",
+        "statText": "Fine material finding",
+        "skillText": "",
+        "tables": null,
+        "requirements": [],
+        "stats": [
+          {
+            "stat": "fine_material_finding",
+            "name": "Fine material finding",
+            "type": "fineMaterialFind",
+            "isPercent": true,
+            "value": 0.35,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      }
+    ],
+    "itemQualityAttrs": [],
+    "itemValue": "none",
+    "itemValueModifier": 0,
+    "buffs": [],
+    "tables": [],
+    "canBeFine": true,
+    "icon": "assets/icons/items/gear/capes/cape_of_achiever.png"
+  },
+  {
+    "id": "crafting_shirt",
+    "name": "Crafting shirt",
+    "keywords": [
+      "crafting"
+    ],
+    "type": "loot",
+    "quality": "uncommon",
+    "consumableType": null,
+    "gearType": "chest",
+    "requirements": [
+      {
+        "type": "skillLevel",
+        "name": null,
+        "opposite": false,
+        "requirement": {
+          "level": 12,
+          "skill": "crafting"
+        }
+      }
+    ],
+    "itemAttrs": [
+      {
+        "id": "reroll-this-id-d325766d-adc9-4ce6-a987-be52bd8b3d46",
+        "customIcon": null,
+        "customTextLocalizationKey": null,
+        "customText": "",
+        "textLocalizationKey": "attributes.singulars.skilling.workEfficiency.whileMainSkill.text",
+        "text": "<stat s=\"workEfficiency\"/> while <supp k=\"skill\"/>",
+        "statText": "Work efficiency",
+        "skillText": "Crafting",
+        "tables": null,
+        "requirements": [
+          {
+            "type": "mainSkill",
+            "name": null,
+            "opposite": false,
+            "requirement": {
+              "skill": "crafting"
+            }
+          }
+        ],
+        "stats": [
+          {
+            "stat": "work_efficiency",
+            "name": "Work efficiency",
+            "type": "workEfficiency",
+            "isPercent": true,
+            "value": 0.07,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      },
+      {
+        "id": "reroll-this-id-09eac025-b223-440c-a38b-f658e911c087",
+        "customIcon": null,
+        "customTextLocalizationKey": null,
+        "customText": "",
+        "textLocalizationKey": "attributes.singulars.skilling.craftingOutcome.whileMainSkill.text",
+        "text": "<stat s=\"craftingOutcome\"/> while <supp k=\"skill\"/>",
+        "statText": "Quality outcome",
+        "skillText": "Crafting",
+        "tables": null,
+        "requirements": [
+          {
+            "type": "mainSkill",
+            "name": null,
+            "opposite": false,
+            "requirement": {
+              "skill": "crafting"
+            }
+          }
+        ],
+        "stats": [
+          {
+            "stat": "quality_outcome",
+            "name": "Quality outcome",
+            "type": "qualityOutcome",
+            "isPercent": false,
+            "value": 9,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      },
+      {
+        "id": "attribute-copy-item_attr-4e274c05-a037-466b-ac16-6d5f0a7cfb86",
+        "customIcon": null,
+        "customTextLocalizationKey": null,
+        "customText": "",
+        "textLocalizationKey": "attributes.singulars.skilling.noMaterialsConsumed.whileMainSkill.text",
+        "text": "<stat s=\"noMaterialsConsumed\"/> while <supp k=\"skill\"/>",
+        "statText": "No materials consumed",
+        "skillText": "Crafting",
+        "tables": null,
+        "requirements": [
+          {
+            "type": "mainSkill",
+            "name": null,
+            "opposite": false,
+            "requirement": {
+              "skill": "crafting"
+            }
+          }
+        ],
+        "stats": [
+          {
+            "stat": "no_materials_consumed",
+            "name": "No materials consumed",
+            "type": "noMaterialsConsumed",
+            "isPercent": true,
+            "value": 0.02,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      },
+      {
+        "id": "attribute-copy-item_attr-968d8480-a433-4bdc-9d57-0f3a81e3270e",
+        "customIcon": null,
+        "customTextLocalizationKey": null,
+        "customText": "",
+        "textLocalizationKey": "attributes.singulars.skilling.experience.whileMainSkill.text",
+        "text": "<stat s=\"bonusExperience\"/> while <supp k=\"skill\"/>",
+        "statText": "Bonus experience",
+        "skillText": "Crafting",
+        "tables": null,
+        "requirements": [
+          {
+            "type": "mainSkill",
+            "name": null,
+            "opposite": false,
+            "requirement": {
+              "skill": "crafting"
+            }
+          }
+        ],
+        "stats": [
+          {
+            "stat": "bonus_experience",
+            "name": "Bonus experience",
+            "type": "bonusExperience",
+            "isPercent": false,
+            "value": 1,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      }
+    ],
+    "itemQualityAttrs": [],
+    "itemValue": "lowMedium",
+    "itemValueModifier": 1.4,
+    "buffs": [],
+    "tables": [],
+    "canBeFine": true,
+    "icon": "assets/icons/items/gear/skill_gear/crafting/crafting_shirt.png",
+    "quality2": "uncommon"
+  },
+  {
+    "id": "grippy_gloves",
+    "name": "Grippy gloves",
+    "keywords": [
+      "crafting"
+    ],
+    "type": "loot",
+    "quality": "rare",
+    "consumableType": null,
+    "gearType": "hands",
+    "requirements": [
+      {
+        "type": "skillLevel",
+        "name": null,
+        "opposite": false,
+        "requirement": {
+          "level": 31,
+          "skill": "crafting"
+        }
+      }
+    ],
+    "itemAttrs": [
+      {
+        "id": "attribute-copy-item_attr-f10c1301-01be-40f4-9627-38555b1daae9",
+        "customIcon": null,
+        "customTextLocalizationKey": null,
+        "customText": "",
+        "textLocalizationKey": "attributes.singulars.skilling.doubleRewards.whileMainSkill.text",
+        "text": "<stat s=\"doubleRewards\"/> while <supp k=\"skill\"/>",
+        "statText": "Double rewards",
+        "skillText": "Crafting",
+        "tables": null,
+        "requirements": [
+          {
+            "type": "mainSkill",
+            "name": null,
+            "opposite": false,
+            "requirement": {
+              "skill": "crafting"
+            }
+          }
+        ],
+        "stats": [
+          {
+            "stat": "double_rewards",
+            "name": "Double rewards",
+            "type": "doubleRewards",
+            "isPercent": true,
+            "value": 0.09,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      }
+    ],
+    "itemQualityAttrs": [],
+    "itemValue": "high",
+    "itemValueModifier": 1.2,
+    "buffs": [],
+    "tables": [],
+    "canBeFine": true,
+    "icon": "assets/icons/items/gear/skill_gear/grippy_gloves.png",
+    "quality2": "rare"
+  },
+  {
+    "id": "sticky_finger_shorts",
+    "name": "Sticky finger shorts",
+    "keywords": [
+      "global"
+    ],
+    "type": "loot",
+    "quality": "uncommon",
+    "consumableType": null,
+    "gearType": "legs",
+    "requirements": [],
+    "itemAttrs": [
+      {
+        "id": "81bff905-9808-4d32-ac36-90bb38f1c0c5",
+        "customIcon": "",
+        "customTextLocalizationKey": "",
+        "customText": "",
+        "textLocalizationKey": "",
+        "text": "",
+        "statText": "Chest finding",
+        "skillText": "",
+        "tables": null,
+        "requirements": [],
+        "stats": [
+          {
+            "stat": "chest_finding",
+            "name": "Chest finding",
+            "type": "chestFind",
+            "isPercent": true,
+            "value": 0.05,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      },
+      {
+        "id": "76aeeafe-b074-4079-ba4c-56a85143e75e",
+        "customIcon": "assets/icons/keywords/find_trash.png",
+        "customTextLocalizationKey": "attributes.singulars.custom.trashTable.text",
+        "customText": "Chance to find <hl>1</hl> random piece of junk",
+        "textLocalizationKey": "attributes.singulars.custom.trashTable.text",
+        "text": "Chance to find <hl>1</hl> random piece of junk",
+        "statText": "Roll special table",
+        "skillText": "",
+        "tables": [
+          {
+            "isPrimary": false,
+            "type": [],
+            "rollAmount": 1,
+            "tables": [
+              "find_trash_junk_items"
+            ]
+          }
+        ],
+        "requirements": null,
+        "stats": [
+          {
+            "stat": "roll_special_table",
+            "name": "Roll special table",
+            "type": "rollSpecialTable",
+            "isPercent": true,
+            "value": 0.02,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      }
+    ],
+    "itemQualityAttrs": [],
+    "itemValue": "lowMedium",
+    "itemValueModifier": 1.3,
+    "buffs": [],
+    "tables": [],
+    "canBeFine": true,
+    "icon": "assets/icons/items/gear/rikus_pockets.png",
+    "quality2": "uncommon"
+  },
+  {
+    "id": "amulet_of_the_animal_kingdom",
+    "name": "Amulet of the animal kingdom",
+    "keywords": [
+      "amulet",
+      "global"
+    ],
+    "type": "crafted",
+    "quality": "epic",
+    "consumableType": null,
+    "gearType": "neck",
+    "requirements": [
+      {
+        "type": "totalSkillLevel",
+        "name": "",
+        "opposite": false,
+        "requirement": {
+          "levels": 500
+        }
+      }
+    ],
+    "itemAttrs": [
+      {
+        "id": "6b4d86dc-4791-4f7d-b8e1-778d46e7f8e3",
+        "customIcon": "",
+        "customTextLocalizationKey": "",
+        "customText": "",
+        "textLocalizationKey": "attributes.singulars.skilling.stepsRequired.global.text",
+        "text": "Global <stat s=\"stepsRequired\"/>",
+        "statText": "Steps required",
+        "skillText": "",
+        "tables": null,
+        "requirements": null,
+        "stats": [
+          {
+            "stat": "steps_required",
+            "name": "Steps required",
+            "type": "stepsRequired",
+            "isPercent": false,
+            "value": -1,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      },
+      {
+        "id": "1ec28ba2-ae2f-4e6a-b83c-efd6251c0835",
+        "customIcon": "",
+        "customTextLocalizationKey": "",
+        "customText": "",
+        "textLocalizationKey": "attributes.singulars.skilling.noMaterialsConsumed.global.text",
+        "text": "Global <stat s=\"noMaterialsConsumed\"/>",
+        "statText": "No materials consumed",
+        "skillText": "",
+        "tables": null,
+        "requirements": [],
+        "stats": [
+          {
+            "stat": "no_materials_consumed",
+            "name": "No materials consumed",
+            "type": "noMaterialsConsumed",
+            "isPercent": true,
+            "value": 0.015,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      },
+      {
+        "id": "6111fb3d-0d30-4b38-8961-3d187bdd09d5",
+        "customIcon": "",
+        "customTextLocalizationKey": "",
+        "customText": "",
+        "textLocalizationKey": "attributes.singulars.skilling.chestFind.global.text",
+        "text": "Global <stat s=\"chestFind\"/>",
+        "statText": "Chest finding",
+        "skillText": "",
+        "tables": null,
+        "requirements": [],
+        "stats": [
+          {
+            "stat": "chest_finding",
+            "name": "Chest finding",
+            "type": "chestFind",
+            "isPercent": true,
+            "value": 0.1,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      },
+      {
+        "id": "01d884e0-6f4b-4303-98fb-2510d815b6c3",
+        "customIcon": "",
+        "customTextLocalizationKey": "",
+        "customText": "",
+        "textLocalizationKey": "attributes.singulars.skilling.fineMaterialFind.global.text",
+        "text": "Global <stat s=\"fineMaterialFind\"/>",
+        "statText": "Fine material finding",
+        "skillText": "",
+        "tables": null,
+        "requirements": [],
+        "stats": [
+          {
+            "stat": "fine_material_finding",
+            "name": "Fine material finding",
+            "type": "fineMaterialFind",
+            "isPercent": true,
+            "value": 0.15,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      },
+      {
+        "id": "01d9749b-1148-446e-8a40-9356a216ae61",
+        "customIcon": "",
+        "customTextLocalizationKey": "",
+        "customText": "",
+        "textLocalizationKey": "actions.singulars.sliderTexts.grantExperience.text",
+        "text": "Grants {experience} <skill skill=\"{skill}\"/> experience.",
+        "statText": "Bonus experience",
+        "skillText": "",
+        "tables": null,
+        "requirements": [],
+        "stats": [
+          {
+            "stat": "bonus_experience",
+            "name": "Bonus experience",
+            "type": "bonusExperience",
+            "isPercent": true,
+            "value": 0.04,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      },
+      {
+        "id": "7273da0e-5ac3-42c3-8ea6-c8e2c6e51938",
+        "customIcon": "",
+        "customTextLocalizationKey": "",
+        "customText": "",
+        "textLocalizationKey": "",
+        "text": "",
+        "statText": "Double rewards",
+        "skillText": "",
+        "tables": null,
+        "requirements": null,
+        "stats": [
+          {
+            "stat": "double_rewards",
+            "name": "Double rewards",
+            "type": "doubleRewards",
+            "isPercent": true,
+            "value": 0.015,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      }
+    ],
+    "itemQualityAttrs": [
+      {
+        "quality": "uncommon",
+        "attributes": [
+          {
+            "id": "9ff5dcb0-7e4e-4ac4-9605-7811aaea930c",
+            "customIcon": "",
+            "customTextLocalizationKey": "",
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.noMaterialsConsumed.whileMainSkill.text",
+            "text": "<stat s=\"noMaterialsConsumed\"/> while <supp k=\"skill\"/>",
+            "statText": "No materials consumed",
+            "skillText": "",
+            "tables": null,
+            "requirements": [],
+            "stats": [
+              {
+                "stat": "no_materials_consumed",
+                "name": "No materials consumed",
+                "type": "noMaterialsConsumed",
+                "isPercent": true,
+                "value": 0.0025,
+                "isNegative": false,
+                "isMultiplicative": false
+              }
+            ]
+          },
+          {
+            "id": "fd0a65cf-743a-495e-840a-c597f0f68f98",
+            "customIcon": "",
+            "customTextLocalizationKey": "",
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.chestFind.global.text",
+            "text": "Global <stat s=\"chestFind\"/>",
+            "statText": "Chest finding",
+            "skillText": "",
+            "tables": null,
+            "requirements": [],
+            "stats": [
+              {
+                "stat": "chest_finding",
+                "name": "Chest finding",
+                "type": "chestFind",
+                "isPercent": true,
+                "value": 0.01,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          },
+          {
+            "id": "989e95b5-d4f7-4754-8863-9e8def2ed981",
+            "customIcon": "",
+            "customTextLocalizationKey": "",
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.fineMaterialFind.global.text",
+            "text": "Global <stat s=\"fineMaterialFind\"/>",
+            "statText": "Fine material finding",
+            "skillText": "",
+            "tables": null,
+            "requirements": [],
+            "stats": [
+              {
+                "stat": "fine_material_finding",
+                "name": "Fine material finding",
+                "type": "fineMaterialFind",
+                "isPercent": true,
+                "value": 0.02,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          },
+          {
+            "id": "147c06ed-7e50-4ffe-98df-20bcc0ac5d79",
+            "customIcon": "",
+            "customTextLocalizationKey": "",
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.experience.global.text",
+            "text": "Global <stat s=\"bonusExperience\"/>",
+            "statText": "Bonus experience",
+            "skillText": "",
+            "tables": null,
+            "requirements": [],
+            "stats": [
+              {
+                "stat": "bonus_experience",
+                "name": "Bonus experience",
+                "type": "bonusExperience",
+                "isPercent": true,
+                "value": 0.01,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          },
+          {
+            "id": "b57340e7-56f3-41a9-830a-a286a139870f",
+            "customIcon": "",
+            "customTextLocalizationKey": "",
+            "customText": "",
+            "textLocalizationKey": "",
+            "text": "",
+            "statText": "Double rewards",
+            "skillText": "",
+            "tables": null,
+            "requirements": null,
+            "stats": [
+              {
+                "stat": "double_rewards",
+                "name": "Double rewards",
+                "type": "doubleRewards",
+                "isPercent": true,
+                "value": 0.0025,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "quality": "rare",
+        "attributes": [
+          {
+            "id": "0da1b6ff-a34e-42e9-afd4-52114e7045d6",
+            "customIcon": "",
+            "customTextLocalizationKey": "",
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.noMaterialsConsumed.whileMainSkill.text",
+            "text": "<stat s=\"noMaterialsConsumed\"/> while <supp k=\"skill\"/>",
+            "statText": "No materials consumed",
+            "skillText": "",
+            "tables": null,
+            "requirements": [],
+            "stats": [
+              {
+                "stat": "no_materials_consumed",
+                "name": "No materials consumed",
+                "type": "noMaterialsConsumed",
+                "isPercent": true,
+                "value": 0.0025,
+                "isNegative": false,
+                "isMultiplicative": false
+              }
+            ]
+          },
+          {
+            "id": "786608e7-067d-4042-88ec-d940e0c7129e",
+            "customIcon": "",
+            "customTextLocalizationKey": "",
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.chestFind.global.text",
+            "text": "Global <stat s=\"chestFind\"/>",
+            "statText": "Chest finding",
+            "skillText": "",
+            "tables": null,
+            "requirements": [],
+            "stats": [
+              {
+                "stat": "chest_finding",
+                "name": "Chest finding",
+                "type": "chestFind",
+                "isPercent": true,
+                "value": 0.01,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          },
+          {
+            "id": "030dc631-6296-46a8-97e6-759c1dd2cf8b",
+            "customIcon": "",
+            "customTextLocalizationKey": "",
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.fineMaterialFind.global.text",
+            "text": "Global <stat s=\"fineMaterialFind\"/>",
+            "statText": "Fine material finding",
+            "skillText": "",
+            "tables": null,
+            "requirements": [],
+            "stats": [
+              {
+                "stat": "fine_material_finding",
+                "name": "Fine material finding",
+                "type": "fineMaterialFind",
+                "isPercent": true,
+                "value": 0.02,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          },
+          {
+            "id": "1b84918d-f4eb-415a-850d-44dee5f9b404",
+            "customIcon": "",
+            "customTextLocalizationKey": "",
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.experience.global.text",
+            "text": "Global <stat s=\"bonusExperience\"/>",
+            "statText": "Bonus experience",
+            "skillText": "",
+            "tables": null,
+            "requirements": [],
+            "stats": [
+              {
+                "stat": "bonus_experience",
+                "name": "Bonus experience",
+                "type": "bonusExperience",
+                "isPercent": true,
+                "value": 0.01,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          },
+          {
+            "id": "05135338-8199-4e52-a824-138c76972781",
+            "customIcon": "",
+            "customTextLocalizationKey": "",
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.stepsRequired.global.text",
+            "text": "Global <stat s=\"stepsRequired\"/>",
+            "statText": "Steps required",
+            "skillText": "",
+            "tables": null,
+            "requirements": [],
+            "stats": [
+              {
+                "stat": "steps_required",
+                "name": "Steps required",
+                "type": "stepsRequired",
+                "isPercent": false,
+                "value": -1,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          },
+          {
+            "id": "666c5680-f361-4761-b8d2-9ea087b23832",
+            "customIcon": "",
+            "customTextLocalizationKey": "",
+            "customText": "",
+            "textLocalizationKey": "",
+            "text": "",
+            "statText": "Double rewards",
+            "skillText": "",
+            "tables": null,
+            "requirements": null,
+            "stats": [
+              {
+                "stat": "double_rewards",
+                "name": "Double rewards",
+                "type": "doubleRewards",
+                "isPercent": true,
+                "value": 0.0025,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "quality": "epic",
+        "attributes": [
+          {
+            "id": "84614d97-dc90-4700-b520-5f50b5f01f2e",
+            "customIcon": "",
+            "customTextLocalizationKey": "",
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.noMaterialsConsumed.whileMainSkill.text",
+            "text": "<stat s=\"noMaterialsConsumed\"/> while <supp k=\"skill\"/>",
+            "statText": "No materials consumed",
+            "skillText": "",
+            "tables": null,
+            "requirements": [],
+            "stats": [
+              {
+                "stat": "no_materials_consumed",
+                "name": "No materials consumed",
+                "type": "noMaterialsConsumed",
+                "isPercent": true,
+                "value": 0.0025,
+                "isNegative": false,
+                "isMultiplicative": false
+              }
+            ]
+          },
+          {
+            "id": "50df8ec4-af09-4bd7-8b6e-d0fc9f53cb49",
+            "customIcon": "",
+            "customTextLocalizationKey": "",
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.chestFind.global.text",
+            "text": "Global <stat s=\"chestFind\"/>",
+            "statText": "Chest finding",
+            "skillText": "",
+            "tables": null,
+            "requirements": [],
+            "stats": [
+              {
+                "stat": "chest_finding",
+                "name": "Chest finding",
+                "type": "chestFind",
+                "isPercent": true,
+                "value": 0.01,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          },
+          {
+            "id": "11284ea3-4afe-44cb-b629-48770d6bcca6",
+            "customIcon": "",
+            "customTextLocalizationKey": "",
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.fineMaterialFind.global.text",
+            "text": "Global <stat s=\"fineMaterialFind\"/>",
+            "statText": "Fine material finding",
+            "skillText": "",
+            "tables": null,
+            "requirements": [],
+            "stats": [
+              {
+                "stat": "fine_material_finding",
+                "name": "Fine material finding",
+                "type": "fineMaterialFind",
+                "isPercent": true,
+                "value": 0.02,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          },
+          {
+            "id": "4a28fdda-e062-4d82-a82f-417c46306fc7",
+            "customIcon": "",
+            "customTextLocalizationKey": "",
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.experience.global.text",
+            "text": "Global <stat s=\"bonusExperience\"/>",
+            "statText": "Bonus experience",
+            "skillText": "",
+            "tables": null,
+            "requirements": [],
+            "stats": [
+              {
+                "stat": "bonus_experience",
+                "name": "Bonus experience",
+                "type": "bonusExperience",
+                "isPercent": true,
+                "value": 0.01,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          },
+          {
+            "id": "e6f2cfac-67a0-47cb-9c51-99ba04546999",
+            "customIcon": "",
+            "customTextLocalizationKey": "",
+            "customText": "",
+            "textLocalizationKey": "",
+            "text": "",
+            "statText": "Double rewards",
+            "skillText": "",
+            "tables": null,
+            "requirements": null,
+            "stats": [
+              {
+                "stat": "double_rewards",
+                "name": "Double rewards",
+                "type": "doubleRewards",
+                "isPercent": true,
+                "value": 0.0025,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "quality": "legendary",
+        "attributes": [
+          {
+            "id": "b32f455d-474b-459a-9353-5a555e359c7a",
+            "customIcon": "",
+            "customTextLocalizationKey": "",
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.noMaterialsConsumed.whileMainSkill.text",
+            "text": "<stat s=\"noMaterialsConsumed\"/> while <supp k=\"skill\"/>",
+            "statText": "No materials consumed",
+            "skillText": "",
+            "tables": null,
+            "requirements": [],
+            "stats": [
+              {
+                "stat": "no_materials_consumed",
+                "name": "No materials consumed",
+                "type": "noMaterialsConsumed",
+                "isPercent": true,
+                "value": 0.0025,
+                "isNegative": false,
+                "isMultiplicative": false
+              }
+            ]
+          },
+          {
+            "id": "de260cf5-9aa7-4835-a8c5-227c728cb901",
+            "customIcon": "",
+            "customTextLocalizationKey": "",
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.chestFind.global.text",
+            "text": "Global <stat s=\"chestFind\"/>",
+            "statText": "Chest finding",
+            "skillText": "",
+            "tables": null,
+            "requirements": [],
+            "stats": [
+              {
+                "stat": "chest_finding",
+                "name": "Chest finding",
+                "type": "chestFind",
+                "isPercent": true,
+                "value": 0.01,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          },
+          {
+            "id": "b87c2f36-5f06-471d-a247-cfa32f567065",
+            "customIcon": "",
+            "customTextLocalizationKey": "",
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.fineMaterialFind.global.text",
+            "text": "Global <stat s=\"fineMaterialFind\"/>",
+            "statText": "Fine material finding",
+            "skillText": "",
+            "tables": null,
+            "requirements": [],
+            "stats": [
+              {
+                "stat": "fine_material_finding",
+                "name": "Fine material finding",
+                "type": "fineMaterialFind",
+                "isPercent": true,
+                "value": 0.02,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          },
+          {
+            "id": "aab6f341-6f4f-4e6e-ba8f-4f8cb4f1dcf9",
+            "customIcon": "",
+            "customTextLocalizationKey": "",
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.experience.global.text",
+            "text": "Global <stat s=\"bonusExperience\"/>",
+            "statText": "Bonus experience",
+            "skillText": "",
+            "tables": null,
+            "requirements": [],
+            "stats": [
+              {
+                "stat": "bonus_experience",
+                "name": "Bonus experience",
+                "type": "bonusExperience",
+                "isPercent": true,
+                "value": 0.01,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          },
+          {
+            "id": "ed04868e-7dcd-40f8-89d2-46da5a5447e5",
+            "customIcon": "",
+            "customTextLocalizationKey": "",
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.stepsRequired.global.text",
+            "text": "Global <stat s=\"stepsRequired\"/>",
+            "statText": "Steps required",
+            "skillText": "",
+            "tables": null,
+            "requirements": [],
+            "stats": [
+              {
+                "stat": "steps_required",
+                "name": "Steps required",
+                "type": "stepsRequired",
+                "isPercent": false,
+                "value": -1,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          },
+          {
+            "id": "87a8d9c2-0e6f-4500-9444-bb8313e8bb6b",
+            "customIcon": "",
+            "customTextLocalizationKey": "",
+            "customText": "",
+            "textLocalizationKey": "",
+            "text": "",
+            "statText": "Double rewards",
+            "skillText": "",
+            "tables": null,
+            "requirements": null,
+            "stats": [
+              {
+                "stat": "double_rewards",
+                "name": "Double rewards",
+                "type": "doubleRewards",
+                "isPercent": true,
+                "value": 0.0025,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "quality": "ethereal",
+        "attributes": [
+          {
+            "id": "9c07d53b-9b1f-4dbc-b11a-6cdac35f92cb",
+            "customIcon": "",
+            "customTextLocalizationKey": "",
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.noMaterialsConsumed.whileMainSkill.text",
+            "text": "<stat s=\"noMaterialsConsumed\"/> while <supp k=\"skill\"/>",
+            "statText": "No materials consumed",
+            "skillText": "",
+            "tables": null,
+            "requirements": [],
+            "stats": [
+              {
+                "stat": "no_materials_consumed",
+                "name": "No materials consumed",
+                "type": "noMaterialsConsumed",
+                "isPercent": true,
+                "value": 0.0025,
+                "isNegative": false,
+                "isMultiplicative": false
+              }
+            ]
+          },
+          {
+            "id": "2ec12438-fd10-4a2b-96bc-3fe220c99882",
+            "customIcon": "",
+            "customTextLocalizationKey": "",
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.chestFind.global.text",
+            "text": "Global <stat s=\"chestFind\"/>",
+            "statText": "Chest finding",
+            "skillText": "",
+            "tables": null,
+            "requirements": [],
+            "stats": [
+              {
+                "stat": "chest_finding",
+                "name": "Chest finding",
+                "type": "chestFind",
+                "isPercent": true,
+                "value": 0.01,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          },
+          {
+            "id": "cb5ce709-6749-468b-b100-10c8bad44af6",
+            "customIcon": "",
+            "customTextLocalizationKey": "",
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.fineMaterialFind.global.text",
+            "text": "Global <stat s=\"fineMaterialFind\"/>",
+            "statText": "Fine material finding",
+            "skillText": "",
+            "tables": null,
+            "requirements": [],
+            "stats": [
+              {
+                "stat": "fine_material_finding",
+                "name": "Fine material finding",
+                "type": "fineMaterialFind",
+                "isPercent": true,
+                "value": 0.02,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          },
+          {
+            "id": "65da6ba9-53e5-4f43-8ada-15eee01ede24",
+            "customIcon": "",
+            "customTextLocalizationKey": "",
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.experience.global.text",
+            "text": "Global <stat s=\"bonusExperience\"/>",
+            "statText": "Bonus experience",
+            "skillText": "",
+            "tables": null,
+            "requirements": [],
+            "stats": [
+              {
+                "stat": "bonus_experience",
+                "name": "Bonus experience",
+                "type": "bonusExperience",
+                "isPercent": true,
+                "value": 0.01,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          },
+          {
+            "id": "be97cabe-6bda-4600-9026-c07065b4adbc",
+            "customIcon": "",
+            "customTextLocalizationKey": "",
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.stepsRequired.global.text",
+            "text": "Global <stat s=\"stepsRequired\"/>",
+            "statText": "Steps required",
+            "skillText": "",
+            "tables": null,
+            "requirements": [],
+            "stats": [
+              {
+                "stat": "steps_required",
+                "name": "Steps required",
+                "type": "stepsRequired",
+                "isPercent": false,
+                "value": -1,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          },
+          {
+            "id": "4072d206-b2a8-4e35-989d-666fc67aec17",
+            "customIcon": "",
+            "customTextLocalizationKey": "",
+            "customText": "",
+            "textLocalizationKey": "",
+            "text": "",
+            "statText": "Double rewards",
+            "skillText": "",
+            "tables": null,
+            "requirements": null,
+            "stats": [
+              {
+                "stat": "double_rewards",
+                "name": "Double rewards",
+                "type": "doubleRewards",
+                "isPercent": true,
+                "value": 0.0025,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "itemValue": "veryExpensive",
+    "itemValueModifier": 1,
+    "buffs": null,
+    "tables": null,
+    "canBeFine": true,
+    "icon": "assets/icons/items/gear/neck/amulet_of_the_animal_kingdom.png",
+    "quality2": "epic"
+  },
+  {
+    "id": "berts_super_skis",
+    "name": "Bert's super-skis",
+    "keywords": [
+      "skis",
+      "regional",
+      "agility",
+      "jarvonia"
+    ],
+    "type": "loot",
+    "quality": "epic",
+    "consumableType": null,
+    "gearType": "feet",
+    "requirements": [
+      {
+        "type": "skillLevel",
+        "name": "",
+        "opposite": false,
+        "requirement": {
+          "level": 45,
+          "skill": "agility"
+        }
+      },
+      {
+        "type": "historyData",
+        "name": "requirements.singulars.uniques.beginnerCrossCountry",
+        "opposite": false,
+        "requirement": {
+          "category": "actionCompleted",
+          "data": "classic_skiing",
+          "value": 50,
+          "distinct": false
+        }
+      },
+      {
+        "type": "historyData",
+        "name": "requirements.singulars.uniques.intermediateCrossCountry",
+        "opposite": false,
+        "requirement": {
+          "category": "actionCompleted",
+          "data": "skate_skiing",
+          "value": 50,
+          "distinct": false
+        }
+      }
+    ],
+    "itemAttrs": [
+      {
+        "id": "9d4de297-8f92-4d81-b0a8-8458130e9484",
+        "customIcon": "",
+        "customTextLocalizationKey": "",
+        "customText": "",
+        "textLocalizationKey": "attributes.singulars.skilling.workEfficiency.whileRealm.text",
+        "text": "Global <stat s=\"workEfficiency\"/> while in <supp k=\"realm\"/>",
+        "statText": "Work efficiency",
+        "skillText": "",
+        "tables": null,
+        "requirements": [
+          {
+            "type": "realm",
+            "name": "",
+            "opposite": false,
+            "requirement": {
+              "realm": "jarvonia"
+            }
+          }
+        ],
+        "stats": [
+          {
+            "stat": "work_efficiency",
+            "name": "Work efficiency",
+            "type": "workEfficiency",
+            "isPercent": true,
+            "value": 0.12,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      },
+      {
+        "id": "8cc77ba9-7e99-414e-aced-0185b38c2e2c",
+        "customIcon": "",
+        "customTextLocalizationKey": "",
+        "customText": "",
+        "textLocalizationKey": "attributes.singulars.skilling.stepsRequired.whileRealm.text",
+        "text": "Global <stat s=\"stepsRequired\"/> while in <supp k=\"realm\"/>",
+        "statText": "Steps required",
+        "skillText": "",
+        "tables": null,
+        "requirements": [
+          {
+            "type": "realm",
+            "name": "",
+            "opposite": false,
+            "requirement": {
+              "realm": "jarvonia"
+            }
+          }
+        ],
+        "stats": [
+          {
+            "stat": "steps_required",
+            "name": "Steps required",
+            "type": "stepsRequired",
+            "isPercent": false,
+            "value": -1,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      },
+      {
+        "id": "ed759a15-0dac-412b-8251-a1c9890d47a3",
+        "customIcon": "",
+        "customTextLocalizationKey": "",
+        "customText": "",
+        "textLocalizationKey": "attributes.singulars.skilling.doubleRewards.whileRealm.text",
+        "text": "Global <stat s=\"doubleRewards\"/> while in <supp k=\"realm\"/>",
+        "statText": "Double rewards",
+        "skillText": "",
+        "tables": null,
+        "requirements": [
+          {
+            "type": "realm",
+            "name": "",
+            "opposite": false,
+            "requirement": {
+              "realm": "jarvonia"
+            }
+          }
+        ],
+        "stats": [
+          {
+            "stat": "double_rewards",
+            "name": "Double rewards",
+            "type": "doubleRewards",
+            "isPercent": true,
+            "value": 0.06,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      },
+      {
+        "id": "aad1ba72-d1b3-4dcb-a7d8-8a32ac755dc2",
+        "customIcon": "",
+        "customTextLocalizationKey": "",
+        "customText": "",
+        "textLocalizationKey": "attributes.singulars.skilling.workEfficiency.whileRealmAndMainSkill.text",
+        "text": "<stat s=\"workEfficiency\"/> while <supp k=\"skill\"/> in <supp k=\"realm\"/>",
+        "statText": "Work efficiency",
+        "skillText": "Agility",
+        "tables": null,
+        "requirements": [
+          {
+            "type": "mainSkill",
+            "name": "",
+            "opposite": false,
+            "requirement": {
+              "skill": "agility"
+            }
+          },
+          {
+            "type": "realm",
+            "name": "",
+            "opposite": false,
+            "requirement": {
+              "realm": "jarvonia"
+            }
+          }
+        ],
+        "stats": [
+          {
+            "stat": "work_efficiency",
+            "name": "Work efficiency",
+            "type": "workEfficiency",
+            "isPercent": true,
+            "value": 0.35,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      }
+    ],
+    "itemQualityAttrs": null,
+    "itemValue": "none",
+    "itemValueModifier": null,
+    "buffs": null,
+    "tables": null,
+    "canBeFine": true,
+    "icon": "assets/icons/items/gear/super_skis.png",
+    "quality2": "epic"
+  },
+  {
+    "id": "gold_wrentmarine_ring",
+    "name": "Gold wrentmarine ring",
+    "keywords": [
+      "ring",
+      "global"
+    ],
+    "type": "crafted",
+    "quality": "legendary",
+    "consumableType": null,
+    "gearType": "ring",
+    "requirements": [],
+    "itemAttrs": [
+      {
+        "id": "da3c5981-38a9-4c2b-a278-96b3e57562fe",
+        "customIcon": null,
+        "customTextLocalizationKey": null,
+        "customText": "",
+        "textLocalizationKey": "attributes.singulars.skilling.chestFind.global.text",
+        "text": "Global <stat s=\"chestFind\"/>",
+        "statText": "Chest finding",
+        "skillText": "",
+        "tables": null,
+        "requirements": null,
+        "stats": [
+          {
+            "stat": "chest_finding",
+            "name": "Chest finding",
+            "type": "chestFind",
+            "isPercent": true,
+            "value": 0.01,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      },
+      {
+        "id": "c459621b-9512-445d-9f1b-a1044cf52819",
+        "customIcon": null,
+        "customTextLocalizationKey": null,
+        "customText": "",
+        "textLocalizationKey": "attributes.singulars.skilling.inventorySpace.global.text",
+        "text": "<stat s=\"inventorySpace\"/>",
+        "statText": "Inventory space",
+        "skillText": "",
+        "tables": null,
+        "requirements": [],
+        "stats": [
+          {
+            "stat": "inventory_space",
+            "name": "Inventory space",
+            "type": "inventorySpace",
+            "isPercent": false,
+            "value": 1,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      }
+    ],
+    "itemQualityAttrs": [
+      {
+        "quality": "uncommon",
+        "attributes": [
+          {
+            "id": "546331e6-c4c7-43b9-b5a9-702aa4f46648",
+            "customIcon": null,
+            "customTextLocalizationKey": null,
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.chestFind.global.text",
+            "text": "Global <stat s=\"chestFind\"/>",
+            "statText": "Chest finding",
+            "skillText": "",
+            "tables": null,
+            "requirements": [],
+            "stats": [
+              {
+                "stat": "chest_finding",
+                "name": "Chest finding",
+                "type": "chestFind",
+                "isPercent": true,
+                "value": 0.01,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          },
+          {
+            "id": "957c22e6-259b-4045-bca7-7f189da535ae",
+            "customIcon": null,
+            "customTextLocalizationKey": null,
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.inventorySpace.global.text",
+            "text": "<stat s=\"inventorySpace\"/>",
+            "statText": "Inventory space",
+            "skillText": "",
+            "tables": null,
+            "requirements": [],
+            "stats": [
+              {
+                "stat": "inventory_space",
+                "name": "Inventory space",
+                "type": "inventorySpace",
+                "isPercent": false,
+                "value": 1,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "quality": "rare",
+        "attributes": [
+          {
+            "id": "95067f41-b28f-4f0e-8523-cdf9899735dc",
+            "customIcon": null,
+            "customTextLocalizationKey": null,
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.chestFind.global.text",
+            "text": "Global <stat s=\"chestFind\"/>",
+            "statText": "Chest finding",
+            "skillText": "",
+            "tables": null,
+            "requirements": [],
+            "stats": [
+              {
+                "stat": "chest_finding",
+                "name": "Chest finding",
+                "type": "chestFind",
+                "isPercent": true,
+                "value": 0.01,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "quality": "epic",
+        "attributes": [
+          {
+            "id": "68402a5b-b61a-40de-babd-c98630e1d541",
+            "customIcon": null,
+            "customTextLocalizationKey": null,
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.chestFind.global.text",
+            "text": "Global <stat s=\"chestFind\"/>",
+            "statText": "Chest finding",
+            "skillText": "",
+            "tables": null,
+            "requirements": [],
+            "stats": [
+              {
+                "stat": "chest_finding",
+                "name": "Chest finding",
+                "type": "chestFind",
+                "isPercent": true,
+                "value": 0.01,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          },
+          {
+            "id": "5b896b0c-c0c3-4cc9-9d99-8d558174494c",
+            "customIcon": null,
+            "customTextLocalizationKey": null,
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.inventorySpace.global.text",
+            "text": "<stat s=\"inventorySpace\"/>",
+            "statText": "Inventory space",
+            "skillText": "",
+            "tables": null,
+            "requirements": [],
+            "stats": [
+              {
+                "stat": "inventory_space",
+                "name": "Inventory space",
+                "type": "inventorySpace",
+                "isPercent": false,
+                "value": 1,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "quality": "legendary",
+        "attributes": [
+          {
+            "id": "75a01b23-f0cf-4b0b-a7c6-9a01a13672ef",
+            "customIcon": null,
+            "customTextLocalizationKey": null,
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.chestFind.global.text",
+            "text": "Global <stat s=\"chestFind\"/>",
+            "statText": "Chest finding",
+            "skillText": "",
+            "tables": null,
+            "requirements": [],
+            "stats": [
+              {
+                "stat": "chest_finding",
+                "name": "Chest finding",
+                "type": "chestFind",
+                "isPercent": true,
+                "value": 0.01,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "quality": "ethereal",
+        "attributes": [
+          {
+            "id": "75bd9f91-175c-4e75-8964-67f27197ef96",
+            "customIcon": null,
+            "customTextLocalizationKey": null,
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.chestFind.global.text",
+            "text": "Global <stat s=\"chestFind\"/>",
+            "statText": "Chest finding",
+            "skillText": "",
+            "tables": null,
+            "requirements": [],
+            "stats": [
+              {
+                "stat": "chest_finding",
+                "name": "Chest finding",
+                "type": "chestFind",
+                "isPercent": true,
+                "value": 0.01,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          },
+          {
+            "id": "2596b2ca-50aa-4b52-9c85-53512aaab92c",
+            "customIcon": null,
+            "customTextLocalizationKey": null,
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.inventorySpace.global.text",
+            "text": "<stat s=\"inventorySpace\"/>",
+            "statText": "Inventory space",
+            "skillText": "",
+            "tables": null,
+            "requirements": [],
+            "stats": [
+              {
+                "stat": "inventory_space",
+                "name": "Inventory space",
+                "type": "inventorySpace",
+                "isPercent": false,
+                "value": 1,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "itemValue": "lowHigh",
+    "itemValueModifier": 1.5,
+    "buffs": null,
+    "tables": null,
+    "canBeFine": false,
+    "icon": "assets/icons/items/gear/rings/gold_wrentmarine_ring.png",
+    "quality2": "legendary"
+  },
+  {
+    "id": "gold_wrentmarine_ring",
+    "name": "Gold wrentmarine ring",
+    "keywords": [
+      "ring",
+      "global"
+    ],
+    "type": "crafted",
+    "quality": "ethereal",
+    "consumableType": null,
+    "gearType": "ring",
+    "requirements": [],
+    "itemAttrs": [
+      {
+        "id": "da3c5981-38a9-4c2b-a278-96b3e57562fe",
+        "customIcon": null,
+        "customTextLocalizationKey": null,
+        "customText": "",
+        "textLocalizationKey": "attributes.singulars.skilling.chestFind.global.text",
+        "text": "Global <stat s=\"chestFind\"/>",
+        "statText": "Chest finding",
+        "skillText": "",
+        "tables": null,
+        "requirements": null,
+        "stats": [
+          {
+            "stat": "chest_finding",
+            "name": "Chest finding",
+            "type": "chestFind",
+            "isPercent": true,
+            "value": 0.01,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      },
+      {
+        "id": "c459621b-9512-445d-9f1b-a1044cf52819",
+        "customIcon": null,
+        "customTextLocalizationKey": null,
+        "customText": "",
+        "textLocalizationKey": "attributes.singulars.skilling.inventorySpace.global.text",
+        "text": "<stat s=\"inventorySpace\"/>",
+        "statText": "Inventory space",
+        "skillText": "",
+        "tables": null,
+        "requirements": [],
+        "stats": [
+          {
+            "stat": "inventory_space",
+            "name": "Inventory space",
+            "type": "inventorySpace",
+            "isPercent": false,
+            "value": 1,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      }
+    ],
+    "itemQualityAttrs": [
+      {
+        "quality": "uncommon",
+        "attributes": [
+          {
+            "id": "546331e6-c4c7-43b9-b5a9-702aa4f46648",
+            "customIcon": null,
+            "customTextLocalizationKey": null,
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.chestFind.global.text",
+            "text": "Global <stat s=\"chestFind\"/>",
+            "statText": "Chest finding",
+            "skillText": "",
+            "tables": null,
+            "requirements": [],
+            "stats": [
+              {
+                "stat": "chest_finding",
+                "name": "Chest finding",
+                "type": "chestFind",
+                "isPercent": true,
+                "value": 0.01,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          },
+          {
+            "id": "957c22e6-259b-4045-bca7-7f189da535ae",
+            "customIcon": null,
+            "customTextLocalizationKey": null,
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.inventorySpace.global.text",
+            "text": "<stat s=\"inventorySpace\"/>",
+            "statText": "Inventory space",
+            "skillText": "",
+            "tables": null,
+            "requirements": [],
+            "stats": [
+              {
+                "stat": "inventory_space",
+                "name": "Inventory space",
+                "type": "inventorySpace",
+                "isPercent": false,
+                "value": 1,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "quality": "rare",
+        "attributes": [
+          {
+            "id": "95067f41-b28f-4f0e-8523-cdf9899735dc",
+            "customIcon": null,
+            "customTextLocalizationKey": null,
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.chestFind.global.text",
+            "text": "Global <stat s=\"chestFind\"/>",
+            "statText": "Chest finding",
+            "skillText": "",
+            "tables": null,
+            "requirements": [],
+            "stats": [
+              {
+                "stat": "chest_finding",
+                "name": "Chest finding",
+                "type": "chestFind",
+                "isPercent": true,
+                "value": 0.01,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "quality": "epic",
+        "attributes": [
+          {
+            "id": "68402a5b-b61a-40de-babd-c98630e1d541",
+            "customIcon": null,
+            "customTextLocalizationKey": null,
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.chestFind.global.text",
+            "text": "Global <stat s=\"chestFind\"/>",
+            "statText": "Chest finding",
+            "skillText": "",
+            "tables": null,
+            "requirements": [],
+            "stats": [
+              {
+                "stat": "chest_finding",
+                "name": "Chest finding",
+                "type": "chestFind",
+                "isPercent": true,
+                "value": 0.01,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          },
+          {
+            "id": "5b896b0c-c0c3-4cc9-9d99-8d558174494c",
+            "customIcon": null,
+            "customTextLocalizationKey": null,
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.inventorySpace.global.text",
+            "text": "<stat s=\"inventorySpace\"/>",
+            "statText": "Inventory space",
+            "skillText": "",
+            "tables": null,
+            "requirements": [],
+            "stats": [
+              {
+                "stat": "inventory_space",
+                "name": "Inventory space",
+                "type": "inventorySpace",
+                "isPercent": false,
+                "value": 1,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "quality": "legendary",
+        "attributes": [
+          {
+            "id": "75a01b23-f0cf-4b0b-a7c6-9a01a13672ef",
+            "customIcon": null,
+            "customTextLocalizationKey": null,
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.chestFind.global.text",
+            "text": "Global <stat s=\"chestFind\"/>",
+            "statText": "Chest finding",
+            "skillText": "",
+            "tables": null,
+            "requirements": [],
+            "stats": [
+              {
+                "stat": "chest_finding",
+                "name": "Chest finding",
+                "type": "chestFind",
+                "isPercent": true,
+                "value": 0.01,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "quality": "ethereal",
+        "attributes": [
+          {
+            "id": "75bd9f91-175c-4e75-8964-67f27197ef96",
+            "customIcon": null,
+            "customTextLocalizationKey": null,
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.chestFind.global.text",
+            "text": "Global <stat s=\"chestFind\"/>",
+            "statText": "Chest finding",
+            "skillText": "",
+            "tables": null,
+            "requirements": [],
+            "stats": [
+              {
+                "stat": "chest_finding",
+                "name": "Chest finding",
+                "type": "chestFind",
+                "isPercent": true,
+                "value": 0.01,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          },
+          {
+            "id": "2596b2ca-50aa-4b52-9c85-53512aaab92c",
+            "customIcon": null,
+            "customTextLocalizationKey": null,
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.inventorySpace.global.text",
+            "text": "<stat s=\"inventorySpace\"/>",
+            "statText": "Inventory space",
+            "skillText": "",
+            "tables": null,
+            "requirements": [],
+            "stats": [
+              {
+                "stat": "inventory_space",
+                "name": "Inventory space",
+                "type": "inventorySpace",
+                "isPercent": false,
+                "value": 1,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "itemValue": "lowHigh",
+    "itemValueModifier": 1.5,
+    "buffs": null,
+    "tables": null,
+    "canBeFine": false,
+    "icon": "assets/icons/items/gear/rings/gold_wrentmarine_ring.png",
+    "quality2": "legendary"
+  },
+  {
+    "id": "treasure_grabber",
+    "name": "Treasure grabber",
+    "keywords": [
+      "tool",
+      "achievement_reward",
+      "global"
+    ],
+    "type": "loot",
+    "quality": "legendary",
+    "consumableType": null,
+    "gearType": "tool",
+    "requirements": [],
+    "itemAttrs": [
+      {
+        "id": "ebe5d46f-b0b7-491b-81aa-31472cba6061",
+        "customIcon": "",
+        "customTextLocalizationKey": "",
+        "customText": "",
+        "textLocalizationKey": "attributes.singulars.skilling.fineMaterialFind.global.text",
+        "text": "Global <stat s=\"fineMaterialFind\"/>",
+        "statText": "Fine material finding",
+        "skillText": "",
+        "tables": null,
+        "requirements": [],
+        "stats": [
+          {
+            "stat": "fine_material_finding",
+            "name": "Fine material finding",
+            "type": "fineMaterialFind",
+            "isPercent": true,
+            "value": 0.1,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      },
+      {
+        "id": "afe06814-c545-484a-bf8c-5fc909d7be92",
+        "customIcon": "assets/icons/text/stats/skilling/find_treasure.png",
+        "customTextLocalizationKey": "attributes.singulars.custom.findTreasureChest.text",
+        "customText": "Chance to find <hl>1</hl> random skill chest",
+        "textLocalizationKey": "attributes.singulars.custom.findTreasureChest.text",
+        "text": "Chance to find <hl>1</hl> random skill chest",
+        "statText": "Roll special table",
+        "skillText": "",
+        "tables": [
+          {
+            "isPrimary": false,
+            "type": [],
+            "rollAmount": 1,
+            "tables": [
+              "find_basic_chests"
+            ]
+          }
+        ],
+        "requirements": null,
+        "stats": [
+          {
+            "stat": "roll_special_table",
+            "name": "Roll special table",
+            "type": "rollSpecialTable",
+            "isPercent": true,
+            "value": 0.0025,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      }
+    ],
+    "itemQualityAttrs": [],
+    "itemValue": "none",
+    "itemValueModifier": null,
+    "buffs": [],
+    "tables": [],
+    "canBeFine": true,
+    "icon": "assets/icons/items/gear/treasure_graber.png"
+  },
+  {
+    "id": "spectral_wrench",
+    "name": "Spectral wrench",
+    "keywords": [
+      "tool",
+      "crafting_tool",
+      "wrench",
+      "spectral",
+      "crafting"
+    ],
+    "type": "crafted",
+    "quality": "legendary",
+    "consumableType": null,
+    "gearType": "tool",
+    "requirements": [
+      {
+        "type": "skillLevel",
+        "name": "",
+        "opposite": false,
+        "requirement": {
+          "level": 58,
+          "skill": "crafting"
+        }
+      }
+    ],
+    "itemAttrs": [
+      {
+        "id": "95b7a077-4538-46ea-bcb9-3cae6fedd40e",
+        "customIcon": null,
+        "customTextLocalizationKey": "",
+        "customText": "",
+        "textLocalizationKey": "attributes.singulars.skilling.workEfficiency.whileMainSkill.text",
+        "text": "<stat s=\"workEfficiency\"/> while <supp k=\"skill\"/>",
+        "statText": "Work efficiency",
+        "skillText": "Crafting",
+        "tables": null,
+        "requirements": [
+          {
+            "type": "mainSkill",
+            "name": "",
+            "opposite": false,
+            "requirement": {
+              "skill": "crafting"
+            }
+          }
+        ],
+        "stats": [
+          {
+            "stat": "work_efficiency",
+            "name": "Work efficiency",
+            "type": "workEfficiency",
+            "isPercent": true,
+            "value": -0.7,
+            "isNegative": true,
+            "isMultiplicative": true
+          }
+        ]
+      },
+      {
+        "id": "78b2a798-6682-49d2-9890-4e16213ec983",
+        "customIcon": null,
+        "customTextLocalizationKey": "",
+        "customText": "",
+        "textLocalizationKey": "",
+        "text": "",
+        "statText": "Double rewards",
+        "skillText": "Crafting",
+        "tables": null,
+        "requirements": [
+          {
+            "type": "mainSkill",
+            "name": "",
+            "opposite": false,
+            "requirement": {
+              "skill": "crafting"
+            }
+          }
+        ],
+        "stats": [
+          {
+            "stat": "double_rewards",
+            "name": "Double rewards",
+            "type": "doubleRewards",
+            "isPercent": true,
+            "value": 0.01,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      },
+      {
+        "id": "0d3fc561-be46-416b-a232-dd4a4528c818",
+        "customIcon": null,
+        "customTextLocalizationKey": "",
+        "customText": "",
+        "textLocalizationKey": "",
+        "text": "",
+        "statText": "No materials consumed",
+        "skillText": "Crafting",
+        "tables": null,
+        "requirements": [
+          {
+            "type": "mainSkill",
+            "name": "",
+            "opposite": false,
+            "requirement": {
+              "skill": "crafting"
+            }
+          }
+        ],
+        "stats": [
+          {
+            "stat": "no_materials_consumed",
+            "name": "No materials consumed",
+            "type": "noMaterialsConsumed",
+            "isPercent": true,
+            "value": 0.01,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      },
+      {
+        "id": "4038a865-caea-4798-8097-efa5695bdf26",
+        "customIcon": null,
+        "customTextLocalizationKey": "",
+        "customText": "",
+        "textLocalizationKey": "",
+        "text": "",
+        "statText": "Quality outcome",
+        "skillText": "Crafting",
+        "tables": null,
+        "requirements": [
+          {
+            "type": "mainSkill",
+            "name": "",
+            "opposite": false,
+            "requirement": {
+              "skill": "crafting"
+            }
+          }
+        ],
+        "stats": [
+          {
+            "stat": "quality_outcome",
+            "name": "Quality outcome",
+            "type": "qualityOutcome",
+            "isPercent": false,
+            "value": 4,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      },
+      {
+        "id": "95b25fd2-e05f-4996-868e-f7d16750c298",
+        "customIcon": "assets/icons/text/stats/skilling/find_ecto.png",
+        "customTextLocalizationKey": "attributes.singulars.custom.findEcto.text",
+        "customText": "Chance to find <hl>1</hl> ectoplasm",
+        "textLocalizationKey": "attributes.singulars.custom.findEcto.text",
+        "text": "Chance to find <hl>1</hl> ectoplasm",
+        "statText": "Roll special table",
+        "skillText": "Crafting",
+        "tables": [
+          {
+            "isPrimary": false,
+            "type": [],
+            "rollAmount": 1,
+            "tables": [
+              "find_ectoplasm_drop"
+            ]
+          }
+        ],
+        "requirements": [
+          {
+            "type": "mainSkill",
+            "name": "",
+            "opposite": false,
+            "requirement": {
+              "skill": "crafting"
+            }
+          },
+          {
+            "type": "locationHasKeywords",
+            "name": "",
+            "opposite": false,
+            "requirement": {
+              "keywords": [
+                "spectral"
+              ]
+            }
+          }
+        ],
+        "stats": [
+          {
+            "stat": "roll_special_table",
+            "name": "Roll special table",
+            "type": "rollSpecialTable",
+            "isPercent": true,
+            "value": 0.01,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      },
+      {
+        "id": "4daf2dc2-1dc8-4c6a-a337-44974a2d7580",
+        "customIcon": null,
+        "customTextLocalizationKey": "",
+        "customText": "",
+        "textLocalizationKey": "",
+        "text": "",
+        "statText": "Double action",
+        "skillText": "Crafting",
+        "tables": null,
+        "requirements": [
+          {
+            "type": "mainSkill",
+            "name": "",
+            "opposite": false,
+            "requirement": {
+              "skill": "crafting"
+            }
+          }
+        ],
+        "stats": [
+          {
+            "stat": "double_action",
+            "name": "Double action",
+            "type": "doubleAction",
+            "isPercent": true,
+            "value": 0.01,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      },
+      {
+        "id": "df7801c5-eb6a-405a-83c9-5311161d26d6",
+        "customIcon": null,
+        "customTextLocalizationKey": "",
+        "customText": "",
+        "textLocalizationKey": "",
+        "text": "",
+        "statText": "Double rewards",
+        "skillText": "Crafting",
+        "tables": null,
+        "requirements": [
+          {
+            "type": "mainSkill",
+            "name": "",
+            "opposite": false,
+            "requirement": {
+              "skill": "crafting"
+            }
+          },
+          {
+            "type": "locationHasKeywords",
+            "name": "",
+            "opposite": false,
+            "requirement": {
+              "keywords": [
+                "spectral"
+              ]
+            }
+          }
+        ],
+        "stats": [
+          {
+            "stat": "double_rewards",
+            "name": "Double rewards",
+            "type": "doubleRewards",
+            "isPercent": true,
+            "value": 0.025,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      }
+    ],
+    "itemQualityAttrs": [
+      {
+        "quality": "uncommon",
+        "attributes": [
+          {
+            "id": "712b86ad-3b20-4c4b-af18-a8b1e08674c5",
+            "customIcon": null,
+            "customTextLocalizationKey": "",
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.workEfficiency.whileMainSkill.text",
+            "text": "<stat s=\"workEfficiency\"/> while <supp k=\"skill\"/>",
+            "statText": "Work efficiency",
+            "skillText": "Crafting",
+            "tables": null,
+            "requirements": [
+              {
+                "type": "mainSkill",
+                "name": "",
+                "opposite": false,
+                "requirement": {
+                  "skill": "crafting"
+                }
+              }
+            ],
+            "stats": [
+              {
+                "stat": "work_efficiency",
+                "name": "Work efficiency",
+                "type": "workEfficiency",
+                "isPercent": true,
+                "value": 0.15,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          },
+          {
+            "id": "34f91cd5-0111-42da-8a26-d85181664cb2",
+            "customIcon": "assets/icons/text/stats/skilling/find_ecto.png",
+            "customTextLocalizationKey": "attributes.singulars.custom.findEcto.text",
+            "customText": "Chance to find <hl>1</hl> ectoplasm",
+            "textLocalizationKey": "attributes.singulars.custom.findEcto.text",
+            "text": "Chance to find <hl>1</hl> ectoplasm",
+            "statText": "Roll special table",
+            "skillText": "Crafting",
+            "tables": [
+              {
+                "isPrimary": false,
+                "type": [],
+                "rollAmount": 1,
+                "tables": [
+                  "find_ectoplasm_drop"
+                ]
+              }
+            ],
+            "requirements": [
+              {
+                "type": "mainSkill",
+                "name": "",
+                "opposite": false,
+                "requirement": {
+                  "skill": "crafting"
+                }
+              },
+              {
+                "type": "locationHasKeywords",
+                "name": "",
+                "opposite": false,
+                "requirement": {
+                  "keywords": [
+                    "spectral"
+                  ]
+                }
+              }
+            ],
+            "stats": [
+              {
+                "stat": "roll_special_table",
+                "name": "Roll special table",
+                "type": "rollSpecialTable",
+                "isPercent": true,
+                "value": 0.02,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          },
+          {
+            "id": "90a3bcae-0a2f-41e4-ac69-24ac514febfa",
+            "customIcon": null,
+            "customTextLocalizationKey": "",
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.chestFind.whileMainSkill.text",
+            "text": "<stat s=\"chestFind\"/> while <supp k=\"skill\"/>",
+            "statText": "No materials consumed",
+            "skillText": "Crafting",
+            "tables": null,
+            "requirements": [
+              {
+                "type": "mainSkill",
+                "name": "",
+                "opposite": false,
+                "requirement": {
+                  "skill": "crafting"
+                }
+              }
+            ],
+            "stats": [
+              {
+                "stat": "no_materials_consumed",
+                "name": "No materials consumed",
+                "type": "noMaterialsConsumed",
+                "isPercent": true,
+                "value": 0.01,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          },
+          {
+            "id": "a49c2270-84b9-4dbd-a24c-b8de89113355",
+            "customIcon": null,
+            "customTextLocalizationKey": "",
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.fineMaterialFind.whileMainSkill.text",
+            "text": "<stat s=\"fineMaterialFind\"/> while <supp k=\"skill\"/>",
+            "statText": "Quality outcome",
+            "skillText": "Crafting",
+            "tables": null,
+            "requirements": [
+              {
+                "type": "mainSkill",
+                "name": "",
+                "opposite": false,
+                "requirement": {
+                  "skill": "crafting"
+                }
+              }
+            ],
+            "stats": [
+              {
+                "stat": "quality_outcome",
+                "name": "Quality outcome",
+                "type": "qualityOutcome",
+                "isPercent": false,
+                "value": 6,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          },
+          {
+            "id": "6359db70-1c90-4e8d-8f6b-ec3bf9f99a14",
+            "customIcon": null,
+            "customTextLocalizationKey": "",
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.doubleRewards.whileMainSkill.text",
+            "text": "<stat s=\"doubleRewards\"/> while <supp k=\"skill\"/>",
+            "statText": "Double rewards",
+            "skillText": "Crafting",
+            "tables": null,
+            "requirements": [
+              {
+                "type": "mainSkill",
+                "name": "",
+                "opposite": false,
+                "requirement": {
+                  "skill": "crafting"
+                }
+              }
+            ],
+            "stats": [
+              {
+                "stat": "double_rewards",
+                "name": "Double rewards",
+                "type": "doubleRewards",
+                "isPercent": true,
+                "value": 0.01,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          },
+          {
+            "id": "3185368f-2935-46f6-b31a-55ff9cbd04ce",
+            "customIcon": null,
+            "customTextLocalizationKey": "",
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.fineMaterialFind.whileMainSkill.text",
+            "text": "<stat s=\"fineMaterialFind\"/> while <supp k=\"skill\"/>",
+            "statText": "Double action",
+            "skillText": "Crafting",
+            "tables": null,
+            "requirements": [
+              {
+                "type": "mainSkill",
+                "name": "",
+                "opposite": false,
+                "requirement": {
+                  "skill": "crafting"
+                }
+              }
+            ],
+            "stats": [
+              {
+                "stat": "double_action",
+                "name": "Double action",
+                "type": "doubleAction",
+                "isPercent": true,
+                "value": 0.01,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "quality": "rare",
+        "attributes": [
+          {
+            "id": "517399c2-1ba0-4b42-beee-4ea302bbba32",
+            "customIcon": null,
+            "customTextLocalizationKey": "",
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.workEfficiency.whileMainSkill.text",
+            "text": "<stat s=\"workEfficiency\"/> while <supp k=\"skill\"/>",
+            "statText": "Work efficiency",
+            "skillText": "Crafting",
+            "tables": null,
+            "requirements": [
+              {
+                "type": "mainSkill",
+                "name": "",
+                "opposite": false,
+                "requirement": {
+                  "skill": "crafting"
+                }
+              }
+            ],
+            "stats": [
+              {
+                "stat": "work_efficiency",
+                "name": "Work efficiency",
+                "type": "workEfficiency",
+                "isPercent": true,
+                "value": 0.15,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          },
+          {
+            "id": "643282c7-de36-4edb-bd92-d817f1f3022e",
+            "customIcon": "assets/icons/text/stats/skilling/find_ecto.png",
+            "customTextLocalizationKey": "attributes.singulars.custom.findEcto.text",
+            "customText": "Chance to find <hl>1</hl> ectoplasm",
+            "textLocalizationKey": "attributes.singulars.custom.findEcto.text",
+            "text": "Chance to find <hl>1</hl> ectoplasm",
+            "statText": "Roll special table",
+            "skillText": "Crafting",
+            "tables": [
+              {
+                "isPrimary": false,
+                "type": [],
+                "rollAmount": 1,
+                "tables": [
+                  "find_ectoplasm_drop"
+                ]
+              }
+            ],
+            "requirements": [
+              {
+                "type": "mainSkill",
+                "name": "",
+                "opposite": false,
+                "requirement": {
+                  "skill": "crafting"
+                }
+              },
+              {
+                "type": "locationHasKeywords",
+                "name": "",
+                "opposite": false,
+                "requirement": {
+                  "keywords": [
+                    "spectral"
+                  ]
+                }
+              }
+            ],
+            "stats": [
+              {
+                "stat": "roll_special_table",
+                "name": "Roll special table",
+                "type": "rollSpecialTable",
+                "isPercent": true,
+                "value": 0.03,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          },
+          {
+            "id": "4333fe2e-3051-40a2-be65-f0b5cf4d99f3",
+            "customIcon": null,
+            "customTextLocalizationKey": "",
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.chestFind.whileMainSkill.text",
+            "text": "<stat s=\"chestFind\"/> while <supp k=\"skill\"/>",
+            "statText": "No materials consumed",
+            "skillText": "Crafting",
+            "tables": null,
+            "requirements": [
+              {
+                "type": "mainSkill",
+                "name": "",
+                "opposite": false,
+                "requirement": {
+                  "skill": "crafting"
+                }
+              }
+            ],
+            "stats": [
+              {
+                "stat": "no_materials_consumed",
+                "name": "No materials consumed",
+                "type": "noMaterialsConsumed",
+                "isPercent": true,
+                "value": 0.01,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          },
+          {
+            "id": "1b85a8e7-2ee1-4ee2-8a04-e326e2cd7a5e",
+            "customIcon": null,
+            "customTextLocalizationKey": "",
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.fineMaterialFind.whileMainSkill.text",
+            "text": "<stat s=\"fineMaterialFind\"/> while <supp k=\"skill\"/>",
+            "statText": "Quality outcome",
+            "skillText": "Crafting",
+            "tables": null,
+            "requirements": [
+              {
+                "type": "mainSkill",
+                "name": "",
+                "opposite": false,
+                "requirement": {
+                  "skill": "crafting"
+                }
+              }
+            ],
+            "stats": [
+              {
+                "stat": "quality_outcome",
+                "name": "Quality outcome",
+                "type": "qualityOutcome",
+                "isPercent": false,
+                "value": 6,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          },
+          {
+            "id": "46be438f-0966-4c17-9444-a81bf36eb31d",
+            "customIcon": null,
+            "customTextLocalizationKey": "",
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.doubleRewards.whileMainSkill.text",
+            "text": "<stat s=\"doubleRewards\"/> while <supp k=\"skill\"/>",
+            "statText": "Double rewards",
+            "skillText": "Crafting",
+            "tables": null,
+            "requirements": [
+              {
+                "type": "mainSkill",
+                "name": "",
+                "opposite": false,
+                "requirement": {
+                  "skill": "crafting"
+                }
+              }
+            ],
+            "stats": [
+              {
+                "stat": "double_rewards",
+                "name": "Double rewards",
+                "type": "doubleRewards",
+                "isPercent": true,
+                "value": 0.01,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          },
+          {
+            "id": "824c381c-e8e7-4171-8d74-ca94b7f31cf5",
+            "customIcon": null,
+            "customTextLocalizationKey": "",
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.fineMaterialFind.whileMainSkill.text",
+            "text": "<stat s=\"fineMaterialFind\"/> while <supp k=\"skill\"/>",
+            "statText": "Double action",
+            "skillText": "Crafting",
+            "tables": null,
+            "requirements": [
+              {
+                "type": "mainSkill",
+                "name": "",
+                "opposite": false,
+                "requirement": {
+                  "skill": "crafting"
+                }
+              }
+            ],
+            "stats": [
+              {
+                "stat": "double_action",
+                "name": "Double action",
+                "type": "doubleAction",
+                "isPercent": true,
+                "value": 0.01,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "quality": "epic",
+        "attributes": [
+          {
+            "id": "db193735-a3a5-4dd2-8519-949cd94251c9",
+            "customIcon": null,
+            "customTextLocalizationKey": "",
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.workEfficiency.whileMainSkill.text",
+            "text": "<stat s=\"workEfficiency\"/> while <supp k=\"skill\"/>",
+            "statText": "Work efficiency",
+            "skillText": "Crafting",
+            "tables": null,
+            "requirements": [
+              {
+                "type": "mainSkill",
+                "name": "",
+                "opposite": false,
+                "requirement": {
+                  "skill": "crafting"
+                }
+              }
+            ],
+            "stats": [
+              {
+                "stat": "work_efficiency",
+                "name": "Work efficiency",
+                "type": "workEfficiency",
+                "isPercent": true,
+                "value": 0.15,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          },
+          {
+            "id": "13805541-f687-401e-9f9b-43d15591cf85",
+            "customIcon": "assets/icons/text/stats/skilling/find_ecto.png",
+            "customTextLocalizationKey": "attributes.singulars.custom.findEcto.text",
+            "customText": "Chance to find <hl>1</hl> ectoplasm",
+            "textLocalizationKey": "attributes.singulars.custom.findEcto.text",
+            "text": "Chance to find <hl>1</hl> ectoplasm",
+            "statText": "Roll special table",
+            "skillText": "Crafting",
+            "tables": [
+              {
+                "isPrimary": false,
+                "type": [],
+                "rollAmount": 1,
+                "tables": [
+                  "find_ectoplasm_drop"
+                ]
+              }
+            ],
+            "requirements": [
+              {
+                "type": "mainSkill",
+                "name": "",
+                "opposite": false,
+                "requirement": {
+                  "skill": "crafting"
+                }
+              },
+              {
+                "type": "locationHasKeywords",
+                "name": "",
+                "opposite": false,
+                "requirement": {
+                  "keywords": [
+                    "spectral"
+                  ]
+                }
+              }
+            ],
+            "stats": [
+              {
+                "stat": "roll_special_table",
+                "name": "Roll special table",
+                "type": "rollSpecialTable",
+                "isPercent": true,
+                "value": 0.04,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          },
+          {
+            "id": "67f55f3c-45f8-4833-beca-e314c089255f",
+            "customIcon": null,
+            "customTextLocalizationKey": "",
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.chestFind.whileMainSkill.text",
+            "text": "<stat s=\"chestFind\"/> while <supp k=\"skill\"/>",
+            "statText": "No materials consumed",
+            "skillText": "Crafting",
+            "tables": null,
+            "requirements": [
+              {
+                "type": "mainSkill",
+                "name": "",
+                "opposite": false,
+                "requirement": {
+                  "skill": "crafting"
+                }
+              }
+            ],
+            "stats": [
+              {
+                "stat": "no_materials_consumed",
+                "name": "No materials consumed",
+                "type": "noMaterialsConsumed",
+                "isPercent": true,
+                "value": 0.01,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          },
+          {
+            "id": "92e23a08-9df4-4f76-aee1-4e5426ec2254",
+            "customIcon": null,
+            "customTextLocalizationKey": "",
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.fineMaterialFind.whileMainSkill.text",
+            "text": "<stat s=\"fineMaterialFind\"/> while <supp k=\"skill\"/>",
+            "statText": "Quality outcome",
+            "skillText": "Crafting",
+            "tables": null,
+            "requirements": [
+              {
+                "type": "mainSkill",
+                "name": "",
+                "opposite": false,
+                "requirement": {
+                  "skill": "crafting"
+                }
+              }
+            ],
+            "stats": [
+              {
+                "stat": "quality_outcome",
+                "name": "Quality outcome",
+                "type": "qualityOutcome",
+                "isPercent": false,
+                "value": 6,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          },
+          {
+            "id": "448b8edb-fc8e-4111-adea-e4fd76fbd21a",
+            "customIcon": null,
+            "customTextLocalizationKey": "",
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.doubleRewards.whileMainSkill.text",
+            "text": "<stat s=\"doubleRewards\"/> while <supp k=\"skill\"/>",
+            "statText": "Double rewards",
+            "skillText": "Crafting",
+            "tables": null,
+            "requirements": [
+              {
+                "type": "mainSkill",
+                "name": "",
+                "opposite": false,
+                "requirement": {
+                  "skill": "crafting"
+                }
+              }
+            ],
+            "stats": [
+              {
+                "stat": "double_rewards",
+                "name": "Double rewards",
+                "type": "doubleRewards",
+                "isPercent": true,
+                "value": 0.01,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          },
+          {
+            "id": "7e1700b4-1112-4259-a871-a3b02fc21672",
+            "customIcon": null,
+            "customTextLocalizationKey": "",
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.fineMaterialFind.whileMainSkill.text",
+            "text": "<stat s=\"fineMaterialFind\"/> while <supp k=\"skill\"/>",
+            "statText": "Double action",
+            "skillText": "Crafting",
+            "tables": null,
+            "requirements": [
+              {
+                "type": "mainSkill",
+                "name": "",
+                "opposite": false,
+                "requirement": {
+                  "skill": "crafting"
+                }
+              }
+            ],
+            "stats": [
+              {
+                "stat": "double_action",
+                "name": "Double action",
+                "type": "doubleAction",
+                "isPercent": true,
+                "value": 0.01,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "quality": "legendary",
+        "attributes": [
+          {
+            "id": "b6f39445-0e1a-4773-aace-45528cee3475",
+            "customIcon": null,
+            "customTextLocalizationKey": "",
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.workEfficiency.whileMainSkill.text",
+            "text": "<stat s=\"workEfficiency\"/> while <supp k=\"skill\"/>",
+            "statText": "Work efficiency",
+            "skillText": "Crafting",
+            "tables": null,
+            "requirements": [
+              {
+                "type": "mainSkill",
+                "name": "",
+                "opposite": false,
+                "requirement": {
+                  "skill": "crafting"
+                }
+              }
+            ],
+            "stats": [
+              {
+                "stat": "work_efficiency",
+                "name": "Work efficiency",
+                "type": "workEfficiency",
+                "isPercent": true,
+                "value": 0.15,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          },
+          {
+            "id": "decfdfb3-1882-4197-aa3c-d9ca7803e805",
+            "customIcon": "assets/icons/text/stats/skilling/find_ecto.png",
+            "customTextLocalizationKey": "attributes.singulars.custom.findEcto.text",
+            "customText": "Chance to find <hl>1</hl> ectoplasm",
+            "textLocalizationKey": "attributes.singulars.custom.findEcto.text",
+            "text": "Chance to find <hl>1</hl> ectoplasm",
+            "statText": "Roll special table",
+            "skillText": "Crafting",
+            "tables": [
+              {
+                "isPrimary": false,
+                "type": [],
+                "rollAmount": 1,
+                "tables": [
+                  "find_ectoplasm_drop"
+                ]
+              }
+            ],
+            "requirements": [
+              {
+                "type": "mainSkill",
+                "name": "",
+                "opposite": false,
+                "requirement": {
+                  "skill": "crafting"
+                }
+              },
+              {
+                "type": "locationHasKeywords",
+                "name": "",
+                "opposite": false,
+                "requirement": {
+                  "keywords": [
+                    "spectral"
+                  ]
+                }
+              }
+            ],
+            "stats": [
+              {
+                "stat": "roll_special_table",
+                "name": "Roll special table",
+                "type": "rollSpecialTable",
+                "isPercent": true,
+                "value": 0.05,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          },
+          {
+            "id": "bae07d31-3f78-47fa-90b6-8e55aa0e8a8a",
+            "customIcon": null,
+            "customTextLocalizationKey": "",
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.chestFind.whileMainSkill.text",
+            "text": "<stat s=\"chestFind\"/> while <supp k=\"skill\"/>",
+            "statText": "No materials consumed",
+            "skillText": "Crafting",
+            "tables": null,
+            "requirements": [
+              {
+                "type": "mainSkill",
+                "name": "",
+                "opposite": false,
+                "requirement": {
+                  "skill": "crafting"
+                }
+              }
+            ],
+            "stats": [
+              {
+                "stat": "no_materials_consumed",
+                "name": "No materials consumed",
+                "type": "noMaterialsConsumed",
+                "isPercent": true,
+                "value": 0.01,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          },
+          {
+            "id": "060f0a51-2dcc-49af-a6bf-c3e7113592ad",
+            "customIcon": null,
+            "customTextLocalizationKey": "",
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.fineMaterialFind.whileMainSkill.text",
+            "text": "<stat s=\"fineMaterialFind\"/> while <supp k=\"skill\"/>",
+            "statText": "Quality outcome",
+            "skillText": "Crafting",
+            "tables": null,
+            "requirements": [
+              {
+                "type": "mainSkill",
+                "name": "",
+                "opposite": false,
+                "requirement": {
+                  "skill": "crafting"
+                }
+              }
+            ],
+            "stats": [
+              {
+                "stat": "quality_outcome",
+                "name": "Quality outcome",
+                "type": "qualityOutcome",
+                "isPercent": false,
+                "value": 6,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          },
+          {
+            "id": "3c6b1de3-2fbb-4f13-a584-f43f607b6878",
+            "customIcon": null,
+            "customTextLocalizationKey": "",
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.doubleRewards.whileMainSkill.text",
+            "text": "<stat s=\"doubleRewards\"/> while <supp k=\"skill\"/>",
+            "statText": "Double rewards",
+            "skillText": "Crafting",
+            "tables": null,
+            "requirements": [
+              {
+                "type": "mainSkill",
+                "name": "",
+                "opposite": false,
+                "requirement": {
+                  "skill": "crafting"
+                }
+              }
+            ],
+            "stats": [
+              {
+                "stat": "double_rewards",
+                "name": "Double rewards",
+                "type": "doubleRewards",
+                "isPercent": true,
+                "value": 0.01,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          },
+          {
+            "id": "1be8cea8-c9bc-4c7f-87a1-b3c14ba51d29",
+            "customIcon": null,
+            "customTextLocalizationKey": "",
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.fineMaterialFind.whileMainSkill.text",
+            "text": "<stat s=\"fineMaterialFind\"/> while <supp k=\"skill\"/>",
+            "statText": "Double action",
+            "skillText": "Crafting",
+            "tables": null,
+            "requirements": [
+              {
+                "type": "mainSkill",
+                "name": "",
+                "opposite": false,
+                "requirement": {
+                  "skill": "crafting"
+                }
+              }
+            ],
+            "stats": [
+              {
+                "stat": "double_action",
+                "name": "Double action",
+                "type": "doubleAction",
+                "isPercent": true,
+                "value": 0.01,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "quality": "ethereal",
+        "attributes": [
+          {
+            "id": "5051dfaa-768a-4da1-920e-852061451342",
+            "customIcon": null,
+            "customTextLocalizationKey": "",
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.workEfficiency.whileMainSkill.text",
+            "text": "<stat s=\"workEfficiency\"/> while <supp k=\"skill\"/>",
+            "statText": "Work efficiency",
+            "skillText": "Crafting",
+            "tables": null,
+            "requirements": [
+              {
+                "type": "mainSkill",
+                "name": "",
+                "opposite": false,
+                "requirement": {
+                  "skill": "crafting"
+                }
+              }
+            ],
+            "stats": [
+              {
+                "stat": "work_efficiency",
+                "name": "Work efficiency",
+                "type": "workEfficiency",
+                "isPercent": true,
+                "value": 0.15,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          },
+          {
+            "id": "12d7caec-872c-4a60-b49a-0caea41490a4",
+            "customIcon": "assets/icons/text/stats/skilling/find_ecto.png",
+            "customTextLocalizationKey": "attributes.singulars.custom.findEcto.text",
+            "customText": "Chance to find <hl>1</hl> ectoplasm",
+            "textLocalizationKey": "attributes.singulars.custom.findEcto.text",
+            "text": "Chance to find <hl>1</hl> ectoplasm",
+            "statText": "Roll special table",
+            "skillText": "Crafting",
+            "tables": [
+              {
+                "isPrimary": false,
+                "type": [],
+                "rollAmount": 1,
+                "tables": [
+                  "find_ectoplasm_drop"
+                ]
+              }
+            ],
+            "requirements": [
+              {
+                "type": "mainSkill",
+                "name": "",
+                "opposite": false,
+                "requirement": {
+                  "skill": "crafting"
+                }
+              },
+              {
+                "type": "locationHasKeywords",
+                "name": "",
+                "opposite": false,
+                "requirement": {
+                  "keywords": [
+                    "spectral"
+                  ]
+                }
+              }
+            ],
+            "stats": [
+              {
+                "stat": "roll_special_table",
+                "name": "Roll special table",
+                "type": "rollSpecialTable",
+                "isPercent": true,
+                "value": 0.06,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          },
+          {
+            "id": "92a99c6d-9f9f-4834-b254-86e59257dd8b",
+            "customIcon": null,
+            "customTextLocalizationKey": "",
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.chestFind.whileMainSkill.text",
+            "text": "<stat s=\"chestFind\"/> while <supp k=\"skill\"/>",
+            "statText": "No materials consumed",
+            "skillText": "Crafting",
+            "tables": null,
+            "requirements": [
+              {
+                "type": "mainSkill",
+                "name": "",
+                "opposite": false,
+                "requirement": {
+                  "skill": "crafting"
+                }
+              }
+            ],
+            "stats": [
+              {
+                "stat": "no_materials_consumed",
+                "name": "No materials consumed",
+                "type": "noMaterialsConsumed",
+                "isPercent": true,
+                "value": 0.02,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          },
+          {
+            "id": "13c36c18-569c-46b6-b150-ec2357d2b309",
+            "customIcon": null,
+            "customTextLocalizationKey": "",
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.fineMaterialFind.whileMainSkill.text",
+            "text": "<stat s=\"fineMaterialFind\"/> while <supp k=\"skill\"/>",
+            "statText": "Quality outcome",
+            "skillText": "Crafting",
+            "tables": null,
+            "requirements": [
+              {
+                "type": "mainSkill",
+                "name": "",
+                "opposite": false,
+                "requirement": {
+                  "skill": "crafting"
+                }
+              }
+            ],
+            "stats": [
+              {
+                "stat": "quality_outcome",
+                "name": "Quality outcome",
+                "type": "qualityOutcome",
+                "isPercent": false,
+                "value": 6,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          },
+          {
+            "id": "ffdf5533-d359-4936-ab5d-1db6f03ddc9b",
+            "customIcon": null,
+            "customTextLocalizationKey": "",
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.doubleRewards.whileMainSkill.text",
+            "text": "<stat s=\"doubleRewards\"/> while <supp k=\"skill\"/>",
+            "statText": "Double rewards",
+            "skillText": "Crafting",
+            "tables": null,
+            "requirements": [
+              {
+                "type": "mainSkill",
+                "name": "",
+                "opposite": false,
+                "requirement": {
+                  "skill": "crafting"
+                }
+              }
+            ],
+            "stats": [
+              {
+                "stat": "double_rewards",
+                "name": "Double rewards",
+                "type": "doubleRewards",
+                "isPercent": true,
+                "value": 0.01,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          },
+          {
+            "id": "b0207638-4b7a-4ed1-a606-a35ef0c6895b",
+            "customIcon": null,
+            "customTextLocalizationKey": "",
+            "customText": "",
+            "textLocalizationKey": "attributes.singulars.skilling.fineMaterialFind.whileMainSkill.text",
+            "text": "<stat s=\"fineMaterialFind\"/> while <supp k=\"skill\"/>",
+            "statText": "Double action",
+            "skillText": "Crafting",
+            "tables": null,
+            "requirements": [
+              {
+                "type": "mainSkill",
+                "name": "",
+                "opposite": false,
+                "requirement": {
+                  "skill": "crafting"
+                }
+              }
+            ],
+            "stats": [
+              {
+                "stat": "double_action",
+                "name": "Double action",
+                "type": "doubleAction",
+                "isPercent": true,
+                "value": 0.01,
+                "isNegative": false,
+                "isMultiplicative": true
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "itemValue": "mediumHigh",
+    "itemValueModifier": 1.7,
+    "buffs": [],
+    "tables": [],
+    "canBeFine": true,
+    "icon": "assets/icons/items/gear/bone_wrench.png",
+    "quality2": "legendary"
+  },
+  {
+    "id": "zip_pouch",
+    "name": "Zip pouch",
+    "keywords": [
+      "tool",
+      "trinketry",
+      "global"
+    ],
+    "type": "loot",
+    "quality": "uncommon",
+    "consumableType": null,
+    "gearType": "tool",
+    "requirements": [
+      {
+        "type": "skillLevel",
+        "name": null,
+        "opposite": false,
+        "requirement": {
+          "level": 26,
+          "skill": "trinketry"
+        }
+      }
+    ],
+    "itemAttrs": [
+      {
+        "id": "f2e29290-9232-4bf1-800b-58b823581b70",
+        "customIcon": null,
+        "customTextLocalizationKey": null,
+        "customText": "",
+        "textLocalizationKey": "attributes.singulars.skilling.inventorySpace.global.text",
+        "text": "<stat s=\"inventorySpace\"/>",
+        "statText": "Inventory space",
+        "skillText": "",
+        "tables": null,
+        "requirements": [],
+        "stats": [
+          {
+            "stat": "inventory_space",
+            "name": "Inventory space",
+            "type": "inventorySpace",
+            "isPercent": false,
+            "value": 3,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      },
+      {
+        "id": "ce702be6-0f35-4b96-bc4c-13e9fae2cfdb",
+        "customIcon": "assets/icons/text/stats/skilling/chance_gems.png",
+        "customTextLocalizationKey": "attributes.singulars.custom.rollGemPouchTable.text",
+        "customText": "Chance to find <hl>1</hl> random gem",
+        "textLocalizationKey": "attributes.singulars.custom.rollGemPouchTable.text",
+        "text": "Chance to find <hl>1</hl> random gem",
+        "statText": "Roll special table",
+        "skillText": "",
+        "tables": [
+          {
+            "isPrimary": false,
+            "type": [],
+            "rollAmount": 1,
+            "tables": [
+              "gem_pouch_table"
+            ]
+          }
+        ],
+        "requirements": [],
+        "stats": [
+          {
+            "stat": "roll_special_table",
+            "name": "Roll special table",
+            "type": "rollSpecialTable",
+            "isPercent": true,
+            "value": 0.005,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      }
+    ],
+    "itemQualityAttrs": null,
+    "itemValue": "medium",
+    "itemValueModifier": 1,
+    "buffs": null,
+    "tables": null,
+    "canBeFine": true,
+    "icon": "assets/icons/items/gear/zip_pouch.png",
+    "quality2": "uncommon"
+  },
+  {
+    "id": "crafting_guidebook",
+    "name": "Crafting guidebook",
+    "keywords": [
+      "tool",
+      "skill_book",
+      "crafting"
+    ],
+    "type": "loot",
+    "quality": "epic",
+    "consumableType": null,
+    "gearType": "tool",
+    "requirements": [
+      {
+        "type": "skillLevel",
+        "name": null,
+        "opposite": false,
+        "requirement": {
+          "level": 30,
+          "skill": "crafting"
+        }
+      }
+    ],
+    "itemAttrs": [
+      {
+        "id": "attribute-copy-item_attr-55918b32-349f-4a56-9c24-501d9d49598c",
+        "customIcon": null,
+        "customTextLocalizationKey": null,
+        "customText": "",
+        "textLocalizationKey": "attributes.singulars.skilling.workEfficiency.whileMainSkill.text",
+        "text": "<stat s=\"workEfficiency\"/> while <supp k=\"skill\"/>",
+        "statText": "Work efficiency",
+        "skillText": "Crafting",
+        "tables": null,
+        "requirements": [
+          {
+            "type": "mainSkill",
+            "name": null,
+            "opposite": false,
+            "requirement": {
+              "skill": "crafting"
+            }
+          }
+        ],
+        "stats": [
+          {
+            "stat": "work_efficiency",
+            "name": "Work efficiency",
+            "type": "workEfficiency",
+            "isPercent": true,
+            "value": -0.15,
+            "isNegative": true,
+            "isMultiplicative": true
+          }
+        ]
+      },
+      {
+        "id": "attribute-copy-item_attr-cab6370a-877b-4326-b179-832bb6b31d1f",
+        "customIcon": null,
+        "customTextLocalizationKey": null,
+        "customText": "",
+        "textLocalizationKey": "attributes.singulars.skilling.chestFind.whileMainSkill.text",
+        "text": "<stat s=\"chestFind\"/> while <supp k=\"skill\"/>",
+        "statText": "Chest finding",
+        "skillText": "Crafting",
+        "tables": null,
+        "requirements": [
+          {
+            "type": "mainSkill",
+            "name": null,
+            "opposite": false,
+            "requirement": {
+              "skill": "crafting"
+            }
+          }
+        ],
+        "stats": [
+          {
+            "stat": "chest_finding",
+            "name": "Chest finding",
+            "type": "chestFind",
+            "isPercent": true,
+            "value": 0.1,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      },
+      {
+        "id": "attribute-copy-item_attr-0287178d-e58a-4d16-8b15-8ba0afde9046",
+        "customIcon": null,
+        "customTextLocalizationKey": null,
+        "customText": "",
+        "textLocalizationKey": "attributes.singulars.skilling.doubleRewards.whileMainSkill.text",
+        "text": "<stat s=\"doubleRewards\"/> while <supp k=\"skill\"/>",
+        "statText": "Double rewards",
+        "skillText": "Crafting",
+        "tables": null,
+        "requirements": [
+          {
+            "type": "mainSkill",
+            "name": null,
+            "opposite": false,
+            "requirement": {
+              "skill": "crafting"
+            }
+          }
+        ],
+        "stats": [
+          {
+            "stat": "double_rewards",
+            "name": "Double rewards",
+            "type": "doubleRewards",
+            "isPercent": true,
+            "value": 0.1,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      },
+      {
+        "id": "attribute-copy-item_attr-c26361dc-d2d4-4852-b1ba-c21efed7b112",
+        "customIcon": null,
+        "customTextLocalizationKey": null,
+        "customText": "",
+        "textLocalizationKey": "attributes.singulars.skilling.craftingOutcome.whileMainSkill.text",
+        "text": "<stat s=\"craftingOutcome\"/> while <supp k=\"skill\"/>",
+        "statText": "Quality outcome",
+        "skillText": "Crafting",
+        "tables": null,
+        "requirements": [
+          {
+            "type": "mainSkill",
+            "name": null,
+            "opposite": false,
+            "requirement": {
+              "skill": "crafting"
+            }
+          }
+        ],
+        "stats": [
+          {
+            "stat": "quality_outcome",
+            "name": "Quality outcome",
+            "type": "qualityOutcome",
+            "isPercent": false,
+            "value": 20,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      }
+    ],
+    "itemQualityAttrs": [],
+    "itemValue": "veryHigh",
+    "itemValueModifier": 1.3,
+    "buffs": [],
+    "tables": [],
+    "canBeFine": true,
+    "icon": "assets/icons/items/gear/skill_gear/crafting_guidebook.png",
+    "quality2": "epic"
+  },
+  {
+    "id": "wire_saw",
+    "name": "Wire saw",
+    "keywords": [
+      "tool",
+      "crafting_tool",
+      "saw",
+      "crafting",
+      "trinketry",
+      "global"
+    ],
+    "type": "loot",
+    "quality": "rare",
+    "consumableType": null,
+    "gearType": "tool",
+    "requirements": [
+      {
+        "type": "skillLevel",
+        "name": null,
+        "opposite": false,
+        "requirement": {
+          "level": 25,
+          "skill": "crafting"
+        }
+      },
+      {
+        "type": "skillLevel",
+        "name": null,
+        "opposite": false,
+        "requirement": {
+          "level": 12,
+          "skill": "trinketry"
+        }
+      }
+    ],
+    "itemAttrs": [
+      {
+        "id": "reroll-this-id-a46575ff-170a-4f37-91a8-f8de25f387ca",
+        "customIcon": null,
+        "customTextLocalizationKey": null,
+        "customText": "",
+        "textLocalizationKey": "attributes.singulars.skilling.workEfficiency.whileMainSkill.text",
+        "text": "<stat s=\"workEfficiency\"/> while <supp k=\"skill\"/>",
+        "statText": "Work efficiency",
+        "skillText": "Crafting",
+        "tables": null,
+        "requirements": [
+          {
+            "type": "mainSkill",
+            "name": null,
+            "opposite": false,
+            "requirement": {
+              "skill": "crafting"
+            }
+          }
+        ],
+        "stats": [
+          {
+            "stat": "work_efficiency",
+            "name": "Work efficiency",
+            "type": "workEfficiency",
+            "isPercent": true,
+            "value": 0.16,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      },
+      {
+        "id": "reroll-this-id-112b646e-d3a0-47c0-8bb8-78b583676797",
+        "customIcon": null,
+        "customTextLocalizationKey": null,
+        "customText": "",
+        "textLocalizationKey": "attributes.singulars.skilling.chestFind.whileMainSkill.text",
+        "text": "<stat s=\"chestFind\"/> while <supp k=\"skill\"/>",
+        "statText": "Chest finding",
+        "skillText": "Crafting",
+        "tables": null,
+        "requirements": [
+          {
+            "type": "mainSkill",
+            "name": null,
+            "opposite": false,
+            "requirement": {
+              "skill": "crafting"
+            }
+          }
+        ],
+        "stats": [
+          {
+            "stat": "chest_finding",
+            "name": "Chest finding",
+            "type": "chestFind",
+            "isPercent": true,
+            "value": 0.16,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      },
+      {
+        "id": "ee48cbb6-515d-4a7e-997d-d7060feaa404",
+        "customIcon": null,
+        "customTextLocalizationKey": null,
+        "customText": "",
+        "textLocalizationKey": "attributes.singulars.skilling.workEfficiency.whileMainSkill.text",
+        "text": "<stat s=\"workEfficiency\"/> while <supp k=\"skill\"/>",
+        "statText": "Work efficiency",
+        "skillText": "Trinketry",
+        "tables": null,
+        "requirements": [
+          {
+            "type": "mainSkill",
+            "name": null,
+            "opposite": false,
+            "requirement": {
+              "skill": "trinketry"
+            }
+          }
+        ],
+        "stats": [
+          {
+            "stat": "work_efficiency",
+            "name": "Work efficiency",
+            "type": "workEfficiency",
+            "isPercent": true,
+            "value": 0.08,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      },
+      {
+        "id": "9072b329-8dca-4648-92b3-b7908c1f4a2c",
+        "customIcon": null,
+        "customTextLocalizationKey": null,
+        "customText": "",
+        "textLocalizationKey": "attributes.singulars.skilling.chestFind.whileMainSkill.text",
+        "text": "<stat s=\"chestFind\"/> while <supp k=\"skill\"/>",
+        "statText": "Chest finding",
+        "skillText": "Trinketry",
+        "tables": null,
+        "requirements": [
+          {
+            "type": "mainSkill",
+            "name": null,
+            "opposite": false,
+            "requirement": {
+              "skill": "trinketry"
+            }
+          }
+        ],
+        "stats": [
+          {
+            "stat": "chest_finding",
+            "name": "Chest finding",
+            "type": "chestFind",
+            "isPercent": true,
+            "value": 0.08,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      },
+      {
+        "id": "196970bd-7c04-481b-a49b-fce913247f0b",
+        "customIcon": null,
+        "customTextLocalizationKey": null,
+        "customText": "",
+        "textLocalizationKey": "attributes.singulars.skilling.craftingOutcome.global.text",
+        "text": "Global <stat s=\"craftingOutcome\"/>",
+        "statText": "Quality outcome",
+        "skillText": "",
+        "tables": null,
+        "requirements": [],
+        "stats": [
+          {
+            "stat": "quality_outcome",
+            "name": "Quality outcome",
+            "type": "qualityOutcome",
+            "isPercent": false,
+            "value": 6,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      }
+    ],
+    "itemQualityAttrs": [],
+    "itemValue": "lowHigh",
+    "itemValueModifier": 1.2,
+    "buffs": [],
+    "tables": [],
+    "canBeFine": true,
+    "icon": "assets/icons/items/gear/skill_gear/crafting/wire_saw.png",
+    "quality2": "rare"
+  },
+  {
+    "id": "trash_grabber",
+    "name": "Trash grabber",
+    "keywords": [
+      "tool",
+      "achievement_reward",
+      "global"
+    ],
+    "type": "loot",
+    "quality": "rare",
+    "consumableType": null,
+    "gearType": "tool",
+    "requirements": [],
+    "itemAttrs": [
+      {
+        "id": "attribute-copy-item_attr-4bbfd50e-9cf3-4cd4-b9e3-b4c70677fca5",
+        "customIcon": "",
+        "customTextLocalizationKey": "",
+        "customText": "",
+        "textLocalizationKey": "attributes.singulars.skilling.fineMaterialFind.global.text",
+        "text": "Global <stat s=\"fineMaterialFind\"/>",
+        "statText": "Fine material finding",
+        "skillText": "",
+        "tables": null,
+        "requirements": [],
+        "stats": [
+          {
+            "stat": "fine_material_finding",
+            "name": "Fine material finding",
+            "type": "fineMaterialFind",
+            "isPercent": true,
+            "value": 0.1,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      },
+      {
+        "id": "b6c79a15-6b44-473d-9e6a-cea15e700727",
+        "customIcon": "assets/icons/keywords/find_trash.png",
+        "customTextLocalizationKey": "attributes.singulars.custom.trashTable.text",
+        "customText": "Chance to find <hl>1</hl> random piece of junk",
+        "textLocalizationKey": "attributes.singulars.custom.trashTable.text",
+        "text": "Chance to find <hl>1</hl> random piece of junk",
+        "statText": "Roll special table",
+        "skillText": "",
+        "tables": [
+          {
+            "isPrimary": false,
+            "type": [],
+            "rollAmount": 1,
+            "tables": [
+              "find_trash_junk_items"
+            ]
+          }
+        ],
+        "requirements": null,
+        "stats": [
+          {
+            "stat": "roll_special_table",
+            "name": "Roll special table",
+            "type": "rollSpecialTable",
+            "isPercent": true,
+            "value": 0.05,
+            "isNegative": false,
+            "isMultiplicative": true
+          }
+        ]
+      }
+    ],
+    "itemQualityAttrs": [],
+    "itemValue": "mediumHigh",
+    "itemValueModifier": 1,
+    "buffs": [],
+    "tables": [],
+    "canBeFine": true,
+    "icon": "assets/icons/items/gear/skill_gear/global/trash_grabber.png",
+    "quality2": "rare"
+  },
+  {
+    "id": "pickles",
+    "name": "Pickles",
+    "keywords": [
+      "food",
+      "food",
+      "crafting"
+    ],
+    "type": "consumable",
+    "quality": "consumableCommon",
+    "consumableType": "food",
+    "gearType": null,
+    "requirements": [],
+    "itemAttrs": [],
+    "itemQualityAttrs": [],
+    "itemValue": "low",
+    "itemValueModifier": 1,
+    "buffs": [
+      {
+        "id": "buff-copy-item_buff-905c9020-3e19-4cbd-85b4-96e8930d947f",
+        "data": [
+          {
+            "type": "normal",
+            "buffs": [
+              {
+                "id": "buffobj-copy-buff_obj-90007958-8619-46fe-95bb-0e576451dcca",
+                "type": "attributes",
+                "runtimeType": "attributes",
+                "attributes": [
+                  {
+                    "id": "attribute-copy-buff_attr-6ead7480-4296-4325-90bd-d23c56040ae9",
+                    "customIcon": null,
+                    "customTextLocalizationKey": null,
+                    "customText": "",
+                    "textLocalizationKey": "attributes.singulars.skilling.noMaterialsConsumed.whileMainSkill.text",
+                    "text": "<stat s=\"noMaterialsConsumed\"/> while <supp k=\"skill\"/>",
+                    "statText": "No materials consumed",
+                    "skillText": "Crafting",
+                    "tables": null,
+                    "requirements": [
+                      {
+                        "type": "mainSkill",
+                        "name": null,
+                        "opposite": false,
+                        "requirement": {
+                          "skill": "crafting"
+                        }
+                      }
+                    ],
+                    "stats": [
+                      {
+                        "stat": "no_materials_consumed",
+                        "name": "No materials consumed",
+                        "type": "noMaterialsConsumed",
+                        "isPercent": true,
+                        "value": 0.03,
+                        "isNegative": false,
+                        "isMultiplicative": true
+                      }
+                    ]
+                  }
+                ],
+                "fineAttributes": [
+                  {
+                    "id": "attribute-copy-buff_attr-3595f90c-2c8d-45c7-b988-8f2d356083bc",
+                    "customIcon": null,
+                    "customTextLocalizationKey": null,
+                    "customText": "",
+                    "textLocalizationKey": "attributes.singulars.skilling.noMaterialsConsumed.whileMainSkill.text",
+                    "text": "<stat s=\"noMaterialsConsumed\"/> while <supp k=\"skill\"/>",
+                    "statText": "No materials consumed",
+                    "skillText": "Crafting",
+                    "tables": null,
+                    "requirements": [
+                      {
+                        "type": "mainSkill",
+                        "name": null,
+                        "opposite": false,
+                        "requirement": {
+                          "skill": "crafting"
+                        }
+                      }
+                    ],
+                    "stats": [
+                      {
+                        "stat": "no_materials_consumed",
+                        "name": "No materials consumed",
+                        "type": "noMaterialsConsumed",
+                        "isPercent": true,
+                        "value": 0.05,
+                        "isNegative": false,
+                        "isMultiplicative": true
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "tables": [],
+    "canBeFine": true,
+    "icon": "assets/icons/items/materials/food/pickles.png",
+    "quality2": "consumableCommon"
+  }
+]

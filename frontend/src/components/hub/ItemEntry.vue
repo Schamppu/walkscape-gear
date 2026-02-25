@@ -4,7 +4,7 @@ import { craftingQualityOptions, qualityOptions } from "@/domain/constants/quali
 import { useItemsStore } from "@/store/items";
 import WsIcon from "@/components/common/WsIcon.vue";
 import StatsDisplay from "../common/StatsDisplay.vue";
-import useBaseContext from "@/composables/context/useBaseContext";
+import { injectBaseContext } from "@/composables/context/injectShared";
 import AbilitiesDisplay from "../common/abilities/AbilitiesDisplay.vue";
 
 const props = defineProps({
@@ -15,7 +15,7 @@ const props = defineProps({
 
 const emit = defineEmits(["change"]);
 
-const ctx = useBaseContext();
+const ctx = injectBaseContext();
 const defaultQuality = qualityOptions[0].value;
 const itemsStore = useItemsStore();
 const isOwned = ref(false);

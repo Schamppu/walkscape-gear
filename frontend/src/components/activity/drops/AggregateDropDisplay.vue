@@ -3,7 +3,13 @@ import { computed } from "vue";
 import { useItemsStore } from "@/store/items";
 import { useDataStore } from "@/store/data";
 import InfoBubble from "@/components/common/InfoBubble.vue";
-import useBaseContext from "@/composables/context/useBaseContext";
+import {
+  injectBaseContext,
+  injectLootTables,
+  injectRequirements,
+  injectSkillModifiers,
+  injectFineMaterials,
+} from "@/composables/context/injectShared";
 import { useLootTables } from "@/composables/useLootTables";
 import { useRequirements } from "@/composables/useRequirements";
 import { useSkillModifiers } from "@/composables/useSkillModifiers";
@@ -21,19 +27,30 @@ const props = defineProps({
   context: { type: Object, default: null },
 });
 
-const ctx = props.context || useBaseContext();
-const { dropItemInfoMap } = useLootTables(ctx);
+// When an explicit context is passed (e.g. from comparison views), create
+// fresh composable instances scoped to that context. Otherwise inject the
+// shared app-level instances for the default base context.
+const ctx = props.context || injectBaseContext();
+const { dropItemInfoMap } = props.context
+  ? useLootTables(props.context)
+  : injectLootTables();
 
 const dataStore = useDataStore();
 const itemsStore = useItemsStore();
-const { getLevelRequirementsMap } = useRequirements(ctx);
+const { getLevelRequirementsMap } = props.context
+  ? useRequirements(props.context)
+  : injectRequirements();
 const {
   stepsPerRewardRoll,
   stepsPerAction,
   noMaterialsConsumed,
   qualityOutcome,
-} = useSkillModifiers(ctx);
-const { useFine } = useFineMaterials(ctx);
+} = props.context
+  ? useSkillModifiers(props.context)
+  : injectSkillModifiers();
+const { useFine } = props.context
+  ? useFineMaterials(props.context)
+  : injectFineMaterials();
 
 const materialValue = (id, itemInfo, valueSource) => {
   const { stepsPerNormal, stepsPerFine } = itemInfo;

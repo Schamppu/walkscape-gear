@@ -9,10 +9,12 @@ import WikiButton from "@/components/common/WikiButton.vue";
 import { useActivityStore } from "@/store/activity";
 import { usePlayerStore } from "@/store/player";
 import { useDataStore } from "@/store/data";
-import { useSkillModifiers } from "@/composables/useSkillModifiers";
+import {
+  injectBaseContext,
+  injectSkillModifiers,
+  injectRequirements,
+} from "@/composables/context/injectShared";
 
-import useBaseContext from "@/composables/context/useBaseContext";
-import { useRequirements } from "@/composables/useRequirements";
 import { isEmpty } from "@/utils/isEmpty";
 import { n } from "@/utils/number";
 import AbilitiesDisplay from "../../common/abilities/AbilitiesDisplay.vue";
@@ -22,7 +24,7 @@ const activityStore = useActivityStore();
 const playerStore = usePlayerStore();
 const dataStore = useDataStore();
 
-const ctx = useBaseContext();
+const ctx = injectBaseContext();
 const {
   maxWorkEfficiency,
   workEfficiency,
@@ -34,9 +36,9 @@ const {
   stepsPerCompletion,
   xpRewards,
   xpPerStep,
-} = useSkillModifiers(ctx);
+} = injectSkillModifiers();
 
-const { getLevelRequirementsMap } = useRequirements(ctx);
+const { getLevelRequirementsMap } = injectRequirements();
 
 const borderClass = computed(
   () => `border-${ctx.activity.value?.relatedSkillsList[0]}`,

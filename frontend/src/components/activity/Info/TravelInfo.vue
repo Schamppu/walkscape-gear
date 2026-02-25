@@ -8,17 +8,19 @@ import TravelRequirementsList from "./TravelRequirementsList.vue";
 import { usePlayerStore } from "@/store/player";
 import { useRouteStore } from "@/store/route";
 import { useRoutes } from "@/composables/useRoutes";
-import useBaseContext from "@/composables/context/useBaseContext";
-import { useRequirements } from "@/composables/useRequirements";
+import {
+  injectBaseContext,
+  injectRequirements,
+} from "@/composables/context/injectShared";
 import { icons } from "@/constants/iconPaths";
 import { n } from "@/utils/number";
 
 const playerStore = usePlayerStore();
 const routeStore = useRouteStore();
-const ctx = useBaseContext();
+const ctx = injectBaseContext();
 const { getRoute, averageStepsPerRoute, stepsPerNode } = useRoutes(ctx);
 const { checkRequirements, mapRequirementsText, mergeRequirements } =
-  useRequirements(ctx);
+  injectRequirements();
 
 const route = ref(null);
 
