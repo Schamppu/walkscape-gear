@@ -2,7 +2,7 @@
 import { computed } from "vue";
 import { useItemsStore } from "@/store/items";
 import { useDataStore } from "@/store/data";
-import InfoBubble from "@/components/common/InfoBubble.vue";
+import ExpandableValueBubble from "./ExpandableValueBubble.vue";
 import {
   injectBaseContext,
   injectLootTables,
@@ -20,6 +20,9 @@ import {
   computeGoldTotal,
   computeTokenTotal,
   computeRecipeValue,
+  buildGoldBreakdown,
+  buildTokenBreakdown,
+  type RecipeValueParams,
 } from "@/domain/drops/aggregateDropValue";
 import { n } from "@/utils/number";
 import { icons } from "@/constants/iconPaths";
@@ -55,8 +58,9 @@ const { useFine } = props.context
   ? useFineMaterials(props.context as FineMaterialsContext)
   : injectFineMaterials();
 
-const recipeValue = computed(() => {
-  if (!ctx.recipeSelected.value) return 0;
+// Build recipe params once so both the total and the breakdown reuse them.
+const recipeParams = computed((): RecipeValueParams | undefined => {
+  if (!ctx.recipeSelected.value) return undefined;
 
   const { materials, itemRewards } = ctx.source.value as RecipeDetail;
   const recipe = ctx.recipe.value as RecipeDetail;
@@ -64,7 +68,7 @@ const recipeValue = computed(() => {
   const level = Object.values(levelMap)[0];
   const craftingOdds = getOutcomeOdds(level, qualityOutcome.value, useFine.value);
 
-  return computeRecipeValue({
+  return {
     materials,
     itemRewards,
     stepsPerRewardRoll: stepsPerRewardRoll.value,
@@ -74,8 +78,12 @@ const recipeValue = computed(() => {
     allGearItems: itemsStore.allGearItems,
     itemValues: dataStore.itemValues,
     craftingOdds,
-  });
+  };
 });
+
+const recipeValue = computed(() =>
+  recipeParams.value ? computeRecipeValue(recipeParams.value) : 0
+);
 
 const goldTotal = computed(() =>
   computeGoldTotal(
@@ -87,6 +95,19 @@ const goldTotal = computed(() =>
 
 const tokenTotal = computed(() =>
   computeTokenTotal(dropItemInfoMap.value, tokenValues)
+);
+
+const goldBreakdown = computed(() =>
+  buildGoldBreakdown(
+    dropItemInfoMap.value,
+    itemsStore.allGearItems,
+    dataStore.itemValues,
+    recipeParams.value
+  )
+);
+
+const tokenBreakdown = computed(() =>
+  buildTokenBreakdown(dropItemInfoMap.value, tokenValues)
 );
 
 const displayValue = computed(() => {
@@ -110,11 +131,12 @@ const tooltip = computed(() => {
 </script>
 
 <template>
-  <info-bubble
+  <expandable-value-bubble
     v-if="displayValue !== '0'"
     :text="displayValue"
     :icon-path="icon"
     :tooltip="tooltip"
+    :breakdown="props.type === 'money' ? goldBreakdown : tokenBreakdown"
   />
 </template>
 
