@@ -1,13 +1,13 @@
-import { computed, watch } from "vue";
+import { computed, watch, type ComputedRef, type Ref } from "vue";
 import { storeToRefs } from "pinia";
 import { useDataStore } from "@/store/data";
 import { useSettingsStore } from "@/store/settings";
 import { useItemsStore } from "@/store/items";
 import { usePlayerStore } from "@/store/player";
-import { useSkillModifiers } from "@/composables/useSkillModifiers";
+import { useSkillModifiers, type SkillModifiersContext } from "@/composables/useSkillModifiers";
 import { usedAttrs } from "@/domain/quality/qualityAttrs";
 import { stripHtmlTags } from "@/utils/stripHtmlTags";
-import { useRequirements } from "@/composables/useRequirements";
+import { useRequirements, type RequirementContext } from "@/composables/useRequirements";
 import {
   resolveLootTableWeights,
   mapTableToItems,
@@ -16,22 +16,74 @@ import {
   getStepsPerItem,
   getDropCounts,
 } from "@/domain/lootTables/lootTables";
+import type {
+  ContextLootTable,
+  DetailedContextLootTable,
+  DetailedLootTable,
+  MappedTableRow,
+} from "@/domain/types/lootTable";
+import type { LootTableRef } from "@/domain/types/common";
+import type { Attribute } from "@/domain/types/item";
+import type { EquippedItem } from "@/store/gear";
+import type { Setting } from "@/constants/settings";
+import type { SkillModifiersSource } from "@/domain/skillModifiers";
 
-const getGearLootTables = (ctx) => {
-  const { checkRequirements } = useRequirements(ctx);
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
+
+/**
+ * Extends `SkillModifiersSource` with the loot-table fields accessed
+ * directly by this composable (`name`, `tables`).
+ */
+export type LootTablesSource = SkillModifiersSource & {
+  name: string;
+  tables?: LootTableRef[];
+};
+
+export type LootTablesContext = Omit<SkillModifiersContext, "source"> & {
+  source: Ref<LootTablesSource | null>;
+  filledGearSlots: Ref<[string, EquippedItem][]>;
+};
+
+type VariableRequirement = {
+  levelRequirement: number;
+  icon: string;
+};
+
+export type DropItemInfo = {
+  id: string;
+  icon: string | undefined;
+  sources: MappedTableRow[];
+  totalDropChance: number;
+  stepsPerItem: number;
+  itemsPerStep: number;
+  stepsPerNormal: number;
+  stepsPerFine: number;
+  stepsPerRare: number;
+  dropCounts: string;
+  variableRequirement: VariableRequirement | null;
+};
+
+// ---------------------------------------------------------------------------
+// Module-level helpers (no reactive deps — can be pure functions)
+// ---------------------------------------------------------------------------
+
+const getGearLootTables = (ctx: LootTablesContext): ContextLootTable[] => {
+  const { checkRequirements } = useRequirements(ctx as unknown as RequirementContext);
   return ctx.filledGearSlots.value.flatMap(([slot, item]) =>
-    usedAttrs(item, item.quality)
+    usedAttrs(item, item.quality ?? "common")
       .filter(
-        (attr) =>
+        (attr: Attribute) =>
           Array.isArray(attr.tables) &&
-          attr.tables.length > 0 &&
+          (attr.tables as LootTableRef[]).length > 0 &&
           checkRequirements(attr.requirements),
       )
-      .flatMap((attr) => {
+      .flatMap((attr: Attribute) => {
         const { stats, customText } = attr;
-        return attr.tables.map((table) => ({
+        return (attr.tables as LootTableRef[]).map((table) => ({
           ...table,
-          tableSource: stripHtmlTags(attr.customText) || attr.name || attr.text,
+          tableSource: stripHtmlTags(attr.customText) || (attr as Attribute & { name?: string }).name || attr.text,
           slot,
           stat: customText,
           rollChance: stats?.[0]?.value || 1,
@@ -40,7 +92,7 @@ const getGearLootTables = (ctx) => {
   );
 };
 
-const getSourceLootTables = (ctx) => {
+const getSourceLootTables = (ctx: LootTablesContext): ContextLootTable[] => {
   const source = ctx.source.value;
   if (!source) return [];
   const { tables: activityTables, name } = source;
@@ -53,12 +105,26 @@ const getSourceLootTables = (ctx) => {
   );
 };
 
-const getCtxLootTables = (ctx) => [
+const getCtxLootTables = (ctx: LootTablesContext): ContextLootTable[] => [
   ...getSourceLootTables(ctx),
   ...getGearLootTables(ctx),
 ];
 
-export function useLootTables(ctx) {
+// ---------------------------------------------------------------------------
+// Composable
+// ---------------------------------------------------------------------------
+
+export function useLootTables(ctx: LootTablesContext): {
+  lootTables: ComputedRef<ContextLootTable[]>;
+  detailedLootTables: ComputedRef<DetailedContextLootTable[]>;
+  filteredLootTables: ComputedRef<DetailedContextLootTable[]>;
+  combinedItemDrops: ComputedRef<MappedTableRow[][]>;
+  groupedLootTables: ComputedRef<DetailedContextLootTable[]>;
+  dropItemInfoMap: ComputedRef<Record<string, DropItemInfo>>;
+  groupSourcesByStat: (sources: MappedTableRow[]) => Record<string, MappedTableRow[]>;
+  hasCollectibleDrops: ComputedRef<boolean>;
+  hasFineDrops: ComputedRef<boolean>;
+} {
   const dataStore = useDataStore();
   const itemsStore = useItemsStore();
   const playerStore = usePlayerStore();
@@ -72,35 +138,36 @@ export function useLootTables(ctx) {
     findCollectibles,
     findGems,
     findBirdNests,
-  } = useSkillModifiers(ctx);
+  } = useSkillModifiers(ctx as unknown as SkillModifiersContext);
 
-  const lootTables = computed(() => getCtxLootTables(ctx));
-  const lootTableIds = computed(() =>
+  const lootTables = computed<ContextLootTable[]>(() => getCtxLootTables(ctx));
+  const lootTableIds = computed<string[]>(() =>
     lootTables.value.flatMap(({ tables }) => tables),
   );
 
   watch(
     lootTableIds,
-    (ids) => {
+    (ids: string[]) => {
       dataStore.fetchDetailedLootTables(ids);
     },
     { immediate: true },
   );
 
-  const detailedLootTables = computed(() => {
+  const detailedLootTables = computed<DetailedContextLootTable[]>(() => {
     return lootTables.value.flatMap((table) => ({
       ...table,
       rollChance: table.rollChance || 1,
       tables: resolveLootTableWeights(
-        table.tables.map(dataStore.getDetailedLootTable).filter(Boolean),
-        (skill) => playerStore.skillLevels[skill] ?? 1,
+        table.tables.map(dataStore.getDetailedLootTable).filter((t): t is NonNullable<typeof t> => t !== null) as DetailedLootTable[],
+        (skill: string) => playerStore.skillLevels[skill] ?? 1,
       ),
     }));
   });
 
-  const filteredLootTables = computed(() => {
-    const hideOwnedCollectibles =
-      activitySettings.value.hideOwnedCollectibles.value;
+  const filteredLootTables = computed<DetailedContextLootTable[]>(() => {
+    const hideOwnedCollectibles = (
+      activitySettings.value.hideOwnedCollectibles as Setting<boolean>
+    ).value;
 
     if (!hideOwnedCollectibles) {
       return detailedLootTables.value;
@@ -112,18 +179,18 @@ export function useLootTables(ctx) {
     return detailedLootTables.value.filter((table) => {
       if (hideOwnedCollectibles && table.type.includes("collectible")) {
         const id = table.tables?.[0]?.tableRows?.[0]?.rowItemID || null;
-        return !ownedCollectibles.includes(id);
+        return id === null || !ownedCollectibles.includes(id);
       }
       return table.tables.some((t) => t.tableRows.length > 0);
     });
   });
 
-  const combinedItemDrops = computed(() => {
+  const combinedItemDrops = computed<MappedTableRow[][]>(() => {
     const allItems = filteredLootTables.value.flatMap((table) => {
       return mapTableToItems(table) || [];
     });
 
-    const seen = new Set();
+    const seen = new Set<string>();
     const uniqueItems = allItems.filter((item) => {
       const itemId = item.isMoney ? "gold" : item.rowItemID;
       const key = `${itemId}::${item.tableSource}::${item.slot}`;
@@ -132,7 +199,7 @@ export function useLootTables(ctx) {
       return true;
     });
 
-    const grouped = {};
+    const grouped: Record<string, MappedTableRow[]> = {};
     for (const item of uniqueItems) {
       const key = item.isMoney ? "gold" : item.rowItemID;
       if (!key) continue;
@@ -145,8 +212,8 @@ export function useLootTables(ctx) {
     return Object.values(grouped);
   });
 
-  const groupedLootTables = computed(() => {
-    const grouped = {};
+  const groupedLootTables = computed<DetailedContextLootTable[]>(() => {
+    const grouped: Record<string, DetailedContextLootTable> = {};
     for (const table of filteredLootTables.value) {
       const key = `${table.type}-${table.rollAmount}-${table.tableSource}`;
       if (!grouped[key]) {
@@ -180,7 +247,7 @@ export function useLootTables(ctx) {
     return Object.values(grouped);
   });
 
-  const dropChanceMultipliers = (tableTypes) => {
+  const dropChanceMultipliers = (tableTypes: string[]): number => {
     let multiplier = 1;
     if (tableTypes.includes("chestTable")) {
       multiplier *= chestFind.value;
@@ -198,7 +265,9 @@ export function useLootTables(ctx) {
     return multiplier;
   };
 
-  const getVariableRequirement = (item) => {
+  const getVariableRequirement = (
+    item: MappedTableRow,
+  ): VariableRequirement | null => {
     if (!item || !item.requirementsBonuses) return null;
 
     const { requirementsBonuses } = item;
@@ -209,19 +278,24 @@ export function useLootTables(ctx) {
     return { levelRequirement, icon };
   };
 
-  const dropItemInfoMap = computed(() => {
-    const getId = (sources) => sources[0].rowItemID || "gold";
-    const canDropFine = (item) =>
-      !item.isMoney && item.rowItemID in itemsStore.fineMaterials;
+  const dropItemInfoMap = computed<Record<string, DropItemInfo>>(() => {
+    const getId = (sources: MappedTableRow[]): string =>
+      sources[0].rowItemID || "gold";
+    const canDropFine = (item: MappedTableRow): boolean =>
+      !item.isMoney && !!item.rowItemID && item.rowItemID in itemsStore.fineMaterials;
 
-    const canDropRare = (item) => item.type.includes("petEgg");
+    const canDropRare = (item: MappedTableRow): boolean =>
+      item.type.includes("petEgg");
 
     const data = combinedItemDrops.value.map((sources) => {
       const id = getId(sources);
       const icon = sources[0].icon;
       const statGroupedSources = groupSourcesByStat(sources);
-      const stepsPerItem = getStepsPerItem(statGroupedSources, stepsPerRewardRoll.value, dropChanceMultipliers);
-      // todo add info for rare pets
+      const stepsPerItem = getStepsPerItem(
+        statGroupedSources,
+        stepsPerRewardRoll.value,
+        dropChanceMultipliers,
+      );
 
       const stepsPerFine = canDropFine(sources[0])
         ? stepsPerItem / fineMaterialFind.value
@@ -235,11 +309,14 @@ export function useLootTables(ctx) {
       else if (canDropRare(sources[0]))
         stepsPerNormal = stepsPerItem / (9 / 10);
 
-      const info = {
+      const info: DropItemInfo = {
         id,
         icon,
         sources,
-        totalDropChance: getTotalDropChance(statGroupedSources, dropChanceMultipliers),
+        totalDropChance: getTotalDropChance(
+          statGroupedSources,
+          dropChanceMultipliers,
+        ),
         stepsPerItem,
         itemsPerStep: 1000 / stepsPerItem,
         stepsPerNormal,
@@ -248,18 +325,18 @@ export function useLootTables(ctx) {
         dropCounts: getDropCounts(statGroupedSources),
         variableRequirement: getVariableRequirement(sources[0]),
       };
-      return [id, info];
+      return [id, info] as [string, DropItemInfo];
     });
     return Object.fromEntries(data);
   });
 
-  const hasCollectibleDrops = computed(() => {
+  const hasCollectibleDrops = computed<boolean>(() => {
     return filteredLootTables.value.some(({ type }) =>
       type.includes("collectible"),
     );
   });
 
-  const hasFineDrops = computed(() => {
+  const hasFineDrops = computed<boolean>(() => {
     return Object.values(dropItemInfoMap.value).some(
       ({ stepsPerFine }) => stepsPerFine > 0,
     );
