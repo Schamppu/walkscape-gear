@@ -344,8 +344,27 @@ function beamSearch(
   const BEAM_WIDTH = 3;
   let candidates: WorkerCandidate[] = [baseCandidate];
 
-  for (const slotName of slots) {
-    if (baseCandidate.gearSet[slotName]) continue;
+  const orderedSlots = slots
+    .map((slotName, originalIndex) => {
+      if (baseCandidate.gearSet[slotName]) return null;
+
+      const slotKey = slotName.replace(/\d+$/, "");
+      const options = (gearOptions[slotKey] ?? []) as WorkerItem[];
+
+      return {
+        slotName,
+        originalIndex,
+        optionsCount: options.length,
+      };
+    })
+    .filter(
+      (entry): entry is { slotName: string; originalIndex: number; optionsCount: number } =>
+        entry !== null,
+    )
+    .sort((a, b) => a.optionsCount - b.optionsCount || a.originalIndex - b.originalIndex)
+    .map(({ slotName }) => slotName);
+
+  for (const slotName of orderedSlots) {
 
     const slotKey = slotName.replace(/\d+$/, "");
     const options = (gearOptions[slotKey] ?? []) as WorkerItem[];
