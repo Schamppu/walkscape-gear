@@ -16,6 +16,8 @@ const ALLOWED_STATS = new Set([
   "smithing",
   "trinketry",
   "woodcutting",
+  "tailoring",
+  "artisan",
 ]);
 
 const ALLOWED_REPUTATIONS = new Set([

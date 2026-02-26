@@ -21,9 +21,10 @@ export const LOW_STATS = [
   "stepsPerRewardRoll",
   "stepsPerFineRoll",
   "stepsPerCollectibleRoll",
+  "balanced",
 ] as const;
 
-export const HIGH_STATS = ["xpPerStep", "craftsPerMaterial"] as const;
+export const HIGH_STATS = ["xpPerStep", "craftsPerMaterial", "balancedRecipe"] as const;
 
 const BASE_STATS = ["work_efficiency", "double_action", "steps_required"];
 
@@ -33,6 +34,9 @@ const USEFUL_STATS_BY_TARGET: Record<string, string[]> = {
   stepsPerFineRoll: [...BASE_STATS, "double_rewards", "fine_material_finding"],
   stepsPerCollectibleRoll: [...BASE_STATS, "double_rewards", "find_collectibles"],
   craftsPerMaterial: [...BASE_STATS, "double_rewards", "no_materials_consumed"],
+  // Balanced: union of all stats from each set of priorities.
+  balanced: [...BASE_STATS, "double_rewards", "bonus_experience", "fine_material_finding", "find_collectibles"],
+  balancedRecipe: [...BASE_STATS, "double_rewards", "no_materials_consumed", "bonus_experience"],
 };
 
 // ---------------------------------------------------------------------------

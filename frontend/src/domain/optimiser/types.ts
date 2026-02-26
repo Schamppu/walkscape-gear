@@ -60,6 +60,12 @@ export type SlotOptions = {
   required: OptimiserItem[];
   /** Location slot uses `LocationSummary`; all other slots use `OptimiserItem`. */
   primary: (OptimiserItem | LocationSummary)[];
+  /**
+   * Items that have at least one stat (pass `filterDirectUpgrades`) but are not
+   * necessarily relevant to the current target priority. Used as a last-resort
+   * fill for slots that remain empty after the primary gear-fill phase.
+   */
+  fallback: OptimiserItem[];
 };
 
 export type GearOptions = Record<string, SlotOptions>;

@@ -9,11 +9,13 @@ import type { GearSlot } from "@/domain/constants/gear";
 import type { LocationSummary } from "@/domain/types/location";
 
 import {
-  getGearOptions,
+  getRequiredGearOptions,
+  getPrimaryGearOptions,
+  getFallbackGearOptions,
   getItemOptions,
-  filterMultislot,
 } from "@/composables/optimiser/gear";
-import { getGearSetStats } from "@/composables/optimiser/stats";
+import { getGearSetStats, installScorer, buildWorkerJob } from "@/composables/optimiser/stats";
+import type { OptimiserJobResult } from "@/workers/optimiserWorkerTypes";
 import { startScore, compareScore } from "@/composables/optimiser/score";
 import { priorityName } from "@/composables/optimiser/priority";
 import { getRequirementCandidates } from "@/composables/optimiser/requirements";
@@ -32,6 +34,15 @@ import type {
   OptimiserItem,
 } from "@/domain/optimiser/types";
 
+/**
+ * Create a gear set for a specifc activity or recipe
+ * tries to optimise for a specific target (e.g. xp/step, rewards)
+ *
+ * Processes requirements first, so generated set is valid for the activity/recipe
+ * Fills as many slots as possible with items that contribute to the target.
+ * Finally fills remaining slots with items deemed generally good, even if they don't directly contribute.
+ */
+
 export function useOptimiser() {
   const baseCtx = injectBaseContext();
   const gearStore = useGearStore();
@@ -39,8 +50,30 @@ export function useOptimiser() {
   const notificationStore = useNotificationStore();
   const playerStore = usePlayerStore();
 
+  /**
+   * Returns the set of slot *keys* (e.g. `"ring"`, `"tool"`, `"weapon"`) that
+   * are empty in ANY of the provided candidates.  Used to decide which slots
+   * still need options generated in the next phase.
+   */
+  function getEmptySlotKeys(
+    candidates: Candidate[],
+    slots: readonly GearSlot[],
+  ): Set<string> {
+    const empty = new Set<string>();
+    for (const { gearSet } of candidates) {
+      for (const slotName of slots) {
+        if (!gearSet[slotName]) {
+          empty.add(slotName.replace(/\d+$/, ""));
+        }
+      }
+    }
+    return empty;
+  }
+
   function requirementsFill(gearOptions: GearOptions): Candidate[] {
-    const source = baseCtx.source.value as { requirements: Parameters<typeof isHandledRequirement>[0][] } | null;
+    const source = baseCtx.source.value as {
+      requirements: Parameters<typeof isHandledRequirement>[0][];
+    } | null;
     const reqs = (source?.requirements ?? []).filter(isHandledRequirement);
 
     let candidates: Candidate[] = [
@@ -131,92 +164,46 @@ export function useOptimiser() {
     return candidates.filter((c) => c.fulfilled >= req.quantity);
   }
 
-  function beamSearch(
-    baseCandidate: Candidate,
-    slots: readonly GearSlot[],
-    gearOptions: Record<string, (OptimiserItem | LocationSummary)[]>,
-  ): Candidate[] {
-    const BEAM_WIDTH = 3;
-    let candidates: Candidate[] = [baseCandidate];
-
-    for (const slotName of slots) {
-      if (baseCandidate.gearSet[slotName]) continue;
-
-      const slotKey = slotName.replace(/\d+$/, "");
-      const options = gearOptions[slotKey]?.length
-        ? (gearOptions[slotKey] as OptimiserItem[])
-        : [];
-
-      const next: Candidate[] = [];
-
-      for (const { gearSet, slotCounts } of candidates) {
-        const filteredOptions = ["ring", "tool"].includes(slotKey)
-          ? filterMultislot(gearSet, options, slotKey, slotName)
-          : options;
-
-        for (const item of filteredOptions) {
-          const newSet: GearSet = { ...gearSet, [slotName]: item };
-          const score = getGearSetStats(newSet);
-          const prevCount = slotKey in slotCounts ? slotCounts[slotKey] : 0;
-          const newSlotCount = { ...slotCounts, [slotName]: prevCount + 1 };
-
-          next.push({ gearSet: newSet, score, slotCounts: newSlotCount });
-        }
+  /**
+   * Serialises the optimiser job and runs gearFill + fallbackFill in a
+   * dedicated Web Worker, keeping the main thread (and UI) responsive.
+   */
+  async function runWorkerJob(
+    reqSets: Candidate[],
+    primaryOptions: GearOptions,
+    fallbackOptions: GearOptions,
+    activeSlots: readonly GearSlot[],
+  ): Promise<OptimiserJobResult> {
+    return new Promise((resolve, reject) => {
+      const worker = new Worker(
+        new URL("../workers/optimiser.worker.ts", import.meta.url),
+        { type: "module" },
+      );
+      let jobData: ReturnType<typeof buildWorkerJob>;
+      try {
+        jobData = structuredClone(
+          buildWorkerJob(reqSets, primaryOptions, fallbackOptions, activeSlots),
+        );
+      } catch (err) {
+        worker.terminate();
+        reject(new Error(`Optimiser worker payload serialization failed: ${String(err)}`));
+        return;
       }
-
-      const newCandidates = next
-        .sort((a, b) => compareScore(b.score, a.score))
-        .slice(0, BEAM_WIDTH);
-      candidates = newCandidates.length ? newCandidates : candidates;
-    }
-
-    return candidates;
-  }
-
-  function gearFill(
-    slots: readonly GearSlot[],
-    baseCandidates: Candidate[],
-    gearOptions: GearOptions,
-    gearKey: "primary",
-  ): Candidate[] {
-    let candidates: Candidate[] = baseCandidates.length
-      ? baseCandidates
-      : [{ gearSet: {}, score: startScore(), slotCounts: {} }];
-
-    const locationPrimary = gearOptions.location?.primary as (LocationSummary | null)[];
-    const locationOptions: (LocationSummary | null)[] = locationPrimary?.length
-      ? locationPrimary
-      : [null];
-
-    locationOptions.forEach((location) => {
-      candidates.forEach((candidate) => {
-        const primaryOptions = getItemOptions(gearOptions, gearKey);
-        const remainingGearOptions = Object.fromEntries(
-          Object.entries(primaryOptions).filter(
-            ([slot]) =>
-              !(
-                slot in candidate.slotCounts &&
-                candidate.slotCounts[slot] >= slotMax(slot, playerStore.level)
-              ),
-          ),
-        ) as Record<string, (OptimiserItem | LocationSummary)[]>;
-
-        const usedCandidate: Candidate = {
-          ...candidate,
-          gearSet: {
-            ...candidate.gearSet,
-            location: location ?? baseCtx.location.value,
-          },
-        };
-
-        const searchResult = beamSearch(usedCandidate, slots, remainingGearOptions);
-        candidates = candidates.concat(searchResult);
-      });
+      worker.onmessage = (e: MessageEvent<OptimiserJobResult>) => {
+        resolve(e.data);
+        worker.terminate();
+      };
+      worker.onerror = (err) => {
+        reject(new Error(`Optimiser worker error: ${err.message}`));
+        worker.terminate();
+      };
+      try {
+        worker.postMessage(jobData);
+      } catch (err) {
+        reject(new Error(`Optimiser worker postMessage failed: ${String(err)}`));
+        worker.terminate();
+      }
     });
-
-    return candidates
-      .sort((a, b) => compareScore(b.score, a.score))
-      .slice(0, 3);
   }
 
   const optimise = async (): Promise<void> => {
@@ -225,17 +212,10 @@ export function useOptimiser() {
       return;
     }
 
+    const uninstallScorer = installScorer();
     try {
       await notificationStore.success(
         `Generating gear set with target ${priorityName()}`,
-      );
-      const options = getGearOptions();
-      await notificationStore.debug("Optimiser: Generated gear options", [options]);
-
-      const reqSets = requirementsFill(options);
-      await notificationStore.debug(
-        "Optimiser: Generated sets fulfilling requirements",
-        [reqSets],
       );
 
       const toolbeltSize = slotMax("tool", playerStore.level);
@@ -243,15 +223,49 @@ export function useOptimiser() {
         const toolMatch = slot.match(/^tool(\d+)$/);
         return toolMatch ? Number(toolMatch[1]) <= toolbeltSize : true;
       }) as readonly GearSlot[];
-      const primarySets = gearFill(activeSlots, reqSets, options, "primary");
+
+      const t0 = performance.now();
+      const ts = (since: number) => `${(performance.now() - since).toFixed(1)}ms`;
+
+      // Phase 1: build required options for all slots, then fill requirements.
+      let t = performance.now();
+      const reqOptions = getRequiredGearOptions();
+      await notificationStore.debug(`Optimiser: [${ts(t)}] Generated required gear options`, [reqOptions]);
+
+      t = performance.now();
+      const reqSets = requirementsFill(reqOptions);
       await notificationStore.debug(
-        "Optimiser: Created gear sets with items helping target",
-        [primarySets],
+        `Optimiser: [${ts(t)}] Generated sets fulfilling requirements`,
+        [reqSets],
       );
 
-      const [usedSet] = primarySets;
+      // Phase 2: build primary options for still-empty slots.
+      t = performance.now();
+      const emptyAfterReq = getEmptySlotKeys(reqSets, activeSlots);
+      const primaryOptions = getPrimaryGearOptions(emptyAfterReq);
+      await notificationStore.debug(`Optimiser: [${ts(t)}] Generated primary gear options`, [primaryOptions]);
 
-      await gearStore.unequipAll();
+      // Phase 3: build fallback options for the same slot set — emptyAfterPrimary
+      // is unknown until the worker runs. Build fallback only for slots that
+      // have no primary options at all.
+      t = performance.now();
+      const fallbackSlotKeys = new Set(
+        [...emptyAfterReq].filter(
+          (slot) =>
+            slot !== "location" &&
+            ((primaryOptions[slot]?.primary as unknown[] | undefined)?.length ?? 0) === 0,
+        ),
+      );
+      const fallbackOptions = getFallbackGearOptions(fallbackSlotKeys);
+      await notificationStore.debug(`Optimiser: [${ts(t)}] Generated fallback gear options`, [fallbackOptions]);
+
+      // Worker phase: primary beam-search + fallback fill off the main thread.
+      t = performance.now();
+      const usedSet = await runWorkerJob(reqSets, primaryOptions, fallbackOptions, activeSlots);
+      await notificationStore.debug(`Optimiser: [${ts(t)}] Worker completed beam search + fallback`, [usedSet]);
+
+      await notificationStore.debug(`Optimiser: [total: ${ts(t0)}] Done`);
+
       if (usedSet.gearSet.location) {
         const location = usedSet.gearSet.location as LocationSummary;
         await activityStore.setLocation(location as unknown as import("@/domain/types/location").LocationDetail);
@@ -261,14 +275,26 @@ export function useOptimiser() {
         );
       }
 
+      const equipPayload = Object.fromEntries(
+        activeSlots.map((slot) => {
+          const item = usedSet.gearSet[slot] as
+            | { id?: string; quality?: string | null }
+            | null
+            | undefined;
+          return [slot, item && item.id ? { id: item.id, quality: item.quality ?? null } : null];
+        }),
+      ) as Record<string, { id?: string; quality?: string | null } | null>;
+
       await gearStore.equipMultiple(
-        usedSet.gearSet as Record<string, { id?: string; quality?: string | null } | null>,
+        equipPayload,
         true,
       );
       await notificationStore.debug("Optimiser: Equipped gear set", [usedSet]);
     } catch (e) {
       notificationStore.error("Error duing gear set creation");
       console.error(e);
+    } finally {
+      uninstallScorer();
     }
   };
 

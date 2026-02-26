@@ -101,10 +101,16 @@ export function contributesToReq(
 
   if ("keyword" in req) {
     if (!item.keywords?.includes(req.keyword)) return 0;
-    if (req.level && (item.level ?? 0) < req.level) return 0;
+    if (req.level && (item.level ?? 1) < req.level) return 0;
     return 1;
   } else if ("ability" in req) {
-    return 1;
+    if (!item.abilities) return 0;
+    const hasAbility = item.abilities.some((a) => {
+      if (typeof a === "string") return a === req.ability;
+      const { ability, unlockLevel } = a;
+      return ability === req.ability && (item.quality ?? "common") >= unlockLevel;
+    });
+    return hasAbility ? 1 : 0;
   }
 
   return 0;
@@ -117,7 +123,7 @@ export const filterItemsForReq = (req: Req, items: OptimiserItem[]): OptimiserIt
       return (
         item.keywords?.includes(req.keyword) &&
         (req.level > 1
-          ? Object.values(getLevelRequirementsMap(item.requirements))[0] > req.level
+          ? Object.values(getLevelRequirementsMap(item.requirements))[0] >= req.level
           : true)
       );
     } else if ("ability" in req && item.abilities) {

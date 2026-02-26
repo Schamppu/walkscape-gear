@@ -164,6 +164,9 @@ export const useActivityStore = defineStore("activityStore", {
     },
 
     setLocation(location: LocationDetail | null): void {
+      const current = this.location;
+      if ((current?.id ?? null) === (location?.id ?? null)) return;
+
       const previousLocation = this.location;
 
       // Create and execute command

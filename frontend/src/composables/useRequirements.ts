@@ -9,7 +9,9 @@ import type { ActivityDetail } from "@/domain/types/activity";
 import type { ActivityNone } from "@/domain/constants/activityNone";
 import type { RecipeDetail } from "@/domain/types/recipe";
 import type { LocationDetail } from "@/domain/types/location";
+import type { ServiceDetail } from "@/domain/types/service";
 import type { Keyword } from "@/domain/types/keyword";
+import { serviceTiers } from "@/domain/constants/services";
 import { getLevelRequirementsMap, mergeRequirements } from "@/domain/requirements/requirementUtils";
 
 // Re-export pure functions so callers only need one import.
@@ -52,6 +54,7 @@ export type RequirementContext = {
   equippedGear: Ref<RequirementItem[]>;
   activity: Ref<ActivityDetail | ActivityNone | null>;
   recipe: Ref<RecipeDetail | ActivityNone | null>;
+  service?: Ref<ServiceDetail | null>;
   location: Ref<LocationDetail | null>;
   segments: Ref<RequirementSegment[]>;
   achievementPoints: Ref<number>;
@@ -192,6 +195,36 @@ export function useRequirements(ctx: RequirementContext) {
         break;
       }
 
+      case "service": {
+        const selectedService = context.service?.value ?? activityStore.service;
+        if (!selectedService) {
+          value = false;
+          break;
+        }
+
+        const { keywords, serviceKeyword, tier } = req.requirement;
+        const reqKeywords = keywords && keywords.length ? [...keywords] : [];
+        if (serviceKeyword) reqKeywords.push(serviceKeyword);
+
+        const selectedTierIndex = serviceTiers.indexOf(
+          selectedService.tier as (typeof serviceTiers)[number],
+        );
+        const reqTierIndex = serviceTiers.indexOf(
+          tier as (typeof serviceTiers)[number],
+        );
+
+        const tierOk =
+          selectedTierIndex >= 0 && reqTierIndex >= 0
+            ? selectedTierIndex >= reqTierIndex
+            : selectedService.tier === tier;
+        const keywordsOk = reqKeywords.every((kw) =>
+          selectedService.keywords.includes(kw),
+        );
+
+        value = tierOk && keywordsOk;
+        break;
+      }
+
       case "gameData": {
         const factionReputation = context.factionReputation.value;
         if (factionReputation) {
@@ -310,6 +343,21 @@ export function useRequirements(ctx: RequirementContext) {
         case "traveling":
           out = { prefix: whilePrefix, text: "Traveling", icon: "" };
           break;
+
+        case "service": {
+          const { keywords, serviceKeyword, tier } = req.requirement;
+          const reqKeywords = keywords && keywords.length ? [...keywords] : [];
+          if (serviceKeyword) reqKeywords.push(serviceKeyword);
+
+          out = {
+            prefix: "Requires",
+            text: reqKeywords.length
+              ? `${tier}+ ${reqKeywords.join(", ")} service`
+              : `${tier}+ service`,
+            icon: "",
+          };
+          break;
+        }
 
         case "locationHasKeywords": {
           const resolvedKw = req.requirement.keywords

@@ -17,3 +17,8 @@ export const fetchCraftingRecipes = () => recipeService.fetchCraftingRecipes();
 
 export const fetchTrinketryRecipes = () =>
   recipeService.fetchTrinketryRecipes();
+
+export const fetchSmithingRecipes = () => recipeService.fetchSmithingRecipes();
+
+export const fetchTailoringRecipes = () =>
+  recipeService.fetchTailoringRecipes();

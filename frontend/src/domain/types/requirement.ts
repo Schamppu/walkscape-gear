@@ -67,6 +67,11 @@ export type TravelingRequirement = RequirementBase & {
   requirement: Record<string, never>;
 };
 
+export type ServiceRequirement = RequirementBase & {
+  type: "service";
+  requirement: { keywords?: string[]; serviceKeyword?: string; tier: string };
+};
+
 export type GameDataRequirement = RequirementBase & {
   type: "gameData";
   requirement: { gameDataId: string; data: string };
@@ -135,6 +140,7 @@ export type Requirement =
   | HistoryDataRequirement
   | RealmRequirement
   | TravelingRequirement
+  | ServiceRequirement
   | GameDataRequirement
   | SkillLevelRequirement
   | ActivityTypeRequirement

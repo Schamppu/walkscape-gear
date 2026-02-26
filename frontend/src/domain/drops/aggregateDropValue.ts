@@ -350,6 +350,36 @@ export function buildGoldBreakdown(
     const resolveIcon = (id: string): string | undefined =>
       recipeGearItems[id]?.icon ?? allMaterialItems?.[id]?.icon;
 
+    // Single combined material-cost line, icon from the first material.
+    const allMaterialOptions = materials.flatMap(({ options }) => options[0]);
+    const firstMatId = allMaterialOptions[0]?.item;
+    const materialsCostIcon = firstMatId
+      ? (recipeGearItems[firstMatId]?.icon ??
+        allMaterialItems?.[firstMatId]?.icon)
+      : undefined;
+
+    const totalCost = allMaterialOptions.reduce((sum, { amount, item }) => {
+      if (item in recipeGearItems) {
+        return sum + amount * Object.values(recipeItemValues[item])[0];
+      }
+      const quality = useFine ? "fine" : "common";
+      return (
+        sum +
+        amount * (recipeItemValues[item] as Record<string, number>)[quality]
+      );
+    }, 0);
+
+    const materialsPer1k = 1000 / (stepsPerAction / (1 - noMaterialsConsumed));
+    const costPer1k = totalCost * materialsPer1k;
+
+    if (costPer1k !== 0) {
+      lines.unshift({
+        icon: materialsCostIcon,
+        label: "Materials",
+        value: -costPer1k,
+      });
+    }
+
     // One line per reward item.
     for (const [item, amount] of Object.entries(itemRewards)) {
       let value: number;
@@ -379,40 +409,10 @@ export function buildGoldBreakdown(
 
       if (value === 0) continue;
 
-      lines.push({
+      lines.unshift({
         icon: resolveIcon(item),
         label: item,
         value,
-      });
-    }
-
-    // Single combined material-cost line, icon from the first material.
-    const allMaterialOptions = materials.flatMap(({ options }) => options[0]);
-    const firstMatId = allMaterialOptions[0]?.item;
-    const materialsCostIcon = firstMatId
-      ? (recipeGearItems[firstMatId]?.icon ??
-        allMaterialItems?.[firstMatId]?.icon)
-      : undefined;
-
-    const totalCost = allMaterialOptions.reduce((sum, { amount, item }) => {
-      if (item in recipeGearItems) {
-        return sum + amount * Object.values(recipeItemValues[item])[0];
-      }
-      const quality = useFine ? "fine" : "common";
-      return (
-        sum +
-        amount * (recipeItemValues[item] as Record<string, number>)[quality]
-      );
-    }, 0);
-
-    const materialsPer1k = 1000 / (stepsPerAction / (1 - noMaterialsConsumed));
-    const costPer1k = totalCost * materialsPer1k;
-
-    if (costPer1k !== 0) {
-      lines.push({
-        icon: materialsCostIcon,
-        label: "Materials",
-        value: -costPer1k,
       });
     }
   }

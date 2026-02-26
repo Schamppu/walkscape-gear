@@ -7,7 +7,8 @@ import { type LootTablesContext } from "@/composables/useLootTables";
 import { type RequirementContext } from "@/composables/useRequirements";
 import { usedAttrs } from "@/domain/quality/qualityAttrs";
 import { gearTypes } from "@/domain/constants/gear";
-import { filterLocations, filterDirectUpgrades, type FilterSource } from "@/domain/optimiser/gear";
+import { filterLocations, filterDirectUpgrades } from "@/domain/optimiser/gear";
+import { getLevelRequirementsMap } from "@/domain/requirements/requirementUtils";
 import type { Stat } from "@/domain/types/item";
 import type { ItemDetail } from "@/domain/types/item";
 import type { Requirement } from "@/domain/types/common";
@@ -59,7 +60,11 @@ const mapItemToStats = (
     };
   };
 
-  const base: MappedItem = { ...item, ...getAttrs(item, item.quality) };
+  const levelMap = getLevelRequirementsMap(item.requirements);
+  const levelValues = Object.values(levelMap);
+  const level = levelValues.length > 0 ? Math.max(...levelValues) : 1;
+
+  const base: MappedItem = { ...item, ...getAttrs(item, item.quality), level };
 
   if (item.gearType === "ring") {
     const owned = ctx.ownedItems.value[item.id];
@@ -69,6 +74,7 @@ const mapItemToStats = (
       {
         ...item,
         ...getAttrs(item, q2 ? q2 : item.quality),
+        level,
       } as MappedItem,
     ];
   }
@@ -118,11 +124,35 @@ export const filterMultislot = (
   });
 };
 
-export const getGearOptions = (): GearOptions => {
+// ---------------------------------------------------------------------------
+// Module-level types
+// ---------------------------------------------------------------------------
+
+/**
+ * The activity value's `ActivityNone` variant has `requirements: unknown`,
+ * which doesn't satisfy the composable's `SourceLike`. Cast through a
+ * compatible structural type that holds all the fields we actually need.
+ */
+type ActivitySourceCompat = {
+  name: string;
+  keywords: string[];
+  requirements: Requirement[];
+  relatedSkillsList?: string[];
+};
+
+// ---------------------------------------------------------------------------
+// Internal shared context
+// ---------------------------------------------------------------------------
+
+/** Shared setup called once per public gear-options function. */
+const makeGearCtx = () => {
   const activityStore = useActivityStore();
   const baseCtx = useBaseContext();
   const { showItemForActivity, usefulKeywords, usefulAbilities } =
     useShowItemForActivity(baseCtx as unknown as LootTablesContext);
+
+  const baseScore = getGearSetStats({});
+  const activitySource = baseCtx.activity.value as unknown as ActivitySourceCompat | null;
 
   const filterOwned = (item: ItemDetail): boolean =>
     item.id in baseCtx.ownedItems.value;
@@ -132,91 +162,221 @@ export const getGearOptions = (): GearOptions => {
       (item) => filterOwned(item) && showItemForActivity(item as unknown as DisplayableItem),
     );
 
-  const baseScore = getGearSetStats({});
+  /** Items the player owns but that don't match the current activity. */
+  const filterOwnedOnly = (items: QualityItem[]): QualityItem[] =>
+    items.filter(
+      (item) =>
+        filterOwned(item) && !showItemForActivity(item as unknown as DisplayableItem),
+    );
 
-  /**
-   * The activity value's `ActivityNone` variant has `requirements: unknown`,
-   * which doesn't satisfy the composable's `SourceLike`. Cast through a
-   * compatible structural type that holds all the fields we actually need.
-   */
-  type ActivitySourceCompat = {
-    name: string;
-    keywords: string[];
-    requirements: Requirement[];
-    relatedSkillsList?: string[];
+  return {
+    activityStore,
+    baseCtx,
+    usefulKeywords,
+    usefulAbilities,
+    baseScore,
+    activitySource,
+    filterItems,
+    filterOwnedOnly,
   };
-  const activitySource = baseCtx.activity.value as unknown as ActivitySourceCompat | null;
+};
 
-  const itemsBySlot = Object.fromEntries(
-    gearTypes.map((slot) => {
-      if (slot === "location" && activityStore.locations) {
-        return [
-          slot,
-          {
-            required: [] as OptimiserItem[],
-            primary: filterLocations(activityStore.locations),
-          } satisfies SlotOptions,
-        ];
+type GearCtx = ReturnType<typeof makeGearCtx>;
+
+// ---------------------------------------------------------------------------
+// Internal per-slot item building
+// ---------------------------------------------------------------------------
+
+/**
+ * Builds the quality-adjusted item list and scored items for a single slot.
+ * Returns both so that callers can use `qualityItems` for the owned-only
+ * fallback pipeline without repeating the quality-mapping step.
+ */
+const getScoredItemsForSlot = (
+  slot: string,
+  ctx: GearCtx,
+): { qualityItems: QualityItem[]; scoredItems: OptimiserItem[] } => {
+  const { baseCtx, filterItems, baseScore } = ctx;
+
+  const items = Object.values(baseCtx.allGearItems.value).filter((item) => {
+    const it = item as ItemDetail & { egg?: unknown };
+    return it.gearType === slot || it.type === slot || (slot === "pet" && it.egg);
+  });
+
+  const qualityItems: QualityItem[] = items.map((item) => {
+    if (
+      (!["crafted", "consumable"].includes(item.type) && slot !== "pet") ||
+      !(item.id in baseCtx.ownedItems.value)
+    ) {
+      return item;
+    }
+    const owned = baseCtx.ownedItems.value[item.id];
+    return { ...item, quality: owned.quality ?? item.quality, quality2: owned.quality2 };
+  });
+
+  const filteredItems = filterItems(qualityItems);
+  const mappedItems: MappedItem[] = filteredItems.flatMap((item) =>
+    mapItemToStats(item, baseCtx),
+  );
+  const scoredItems: OptimiserItem[] = getItemScores(slot, mappedItems, baseScore);
+
+  return { qualityItems, scoredItems };
+};
+
+/**
+ * Returns true when tool items `a` and `b` are mutually exclusive — i.e. at
+ * least one of them carries a keyword whose `bannedKeywords` list includes a
+ * keyword the other item has.  Only mutually exclusive tools compete for the
+ * same effective slot, so only they should be compared for stat dominance.
+ */
+const areMutuallyExclusiveTools = (
+  a: OptimiserItem,
+  b: OptimiserItem,
+  keywordsMap: Record<string, { bannedKeywords: string[] }>,
+): boolean => {
+  if (!a.keywords || !b.keywords) return false;
+  for (const kw of a.keywords) {
+    const banned = keywordsMap[kw]?.bannedKeywords ?? [];
+    if (b.keywords.some((k) => banned.includes(k))) return true;
+  }
+  for (const kw of b.keywords) {
+    const banned = keywordsMap[kw]?.bannedKeywords ?? [];
+    if (a.keywords.some((k) => banned.includes(k))) return true;
+  }
+  return false;
+};
+
+const upgradeFilteredForSlot = (
+  slot: string,
+  scoredItems: OptimiserItem[],
+): OptimiserItem[] => {
+  if (slot === "ring") return scoredItems;
+  if (slot === "tool") {
+    const { keywordsMap } = useDataStore();
+    return filterDirectUpgrades(
+      scoredItems,
+      (a, b) => areMutuallyExclusiveTools(a, b, keywordsMap),
+    );
+  }
+  return filterDirectUpgrades(scoredItems);
+};
+
+// ---------------------------------------------------------------------------
+// Public gear-option generators (called lazily, one phase at a time)
+// ---------------------------------------------------------------------------
+
+/**
+ * Phase 1 — Required options.
+ * Generates items that match the activity via keywords or abilities for all
+ * slots. Run this first, before requirements-fill, so the slot set is complete.
+ */
+export const getRequiredGearOptions = (): GearOptions => {
+  const ctx = makeGearCtx();
+  const { activitySource, usefulKeywords, usefulAbilities } = ctx;
+
+  return Object.fromEntries(
+    gearTypes.map((slot): [string, SlotOptions] => {
+      if (slot === "location") {
+        return [slot, { required: [], primary: [], fallback: [] }];
       }
 
-      const items = Object.values(baseCtx.allGearItems.value).filter((item) => {
-        const it = item as ItemDetail & { egg?: unknown };
-        return it.gearType === slot || it.type === slot || (slot === "pet" && it.egg);
-      });
-
-      const qualityItems: QualityItem[] = items.map((item) => {
-        if (
-          (!["crafted", "consumable"].includes(item.type) && slot !== "pet") ||
-          !(item.id in baseCtx.ownedItems.value)
-        ) {
-          return item;
-        }
-        const owned = baseCtx.ownedItems.value[item.id];
-        return { ...item, quality: owned.quality ?? item.quality, quality2: owned.quality2 };
-      });
-
-      const filteredItems = filterItems(qualityItems);
-      const mappedItems: MappedItem[] = filteredItems.flatMap((item) =>
-        mapItemToStats(item, baseCtx),
-      );
-      const scoredItems: OptimiserItem[] = getItemScores(slot, mappedItems, baseScore);
+      const { scoredItems } = getScoredItemsForSlot(slot, ctx);
 
       const keywordItems = scoredItems.filter(
         (item) =>
-          usefulKeywords(
-            item as unknown as DisplayableItem,
-            activitySource!,
-            null,
-          ).length > 0,
+          usefulKeywords(item as unknown as DisplayableItem, activitySource!, null).length > 0,
       );
       const abilityItems = scoredItems.filter((item) => {
-        const abilities = usefulAbilities(
-          item as unknown as DisplayableItem,
-          activitySource,
-        );
+        const abilities = usefulAbilities(item as unknown as DisplayableItem, activitySource);
         return Array.isArray(abilities) && abilities.length > 0;
       });
-
-      const upgradeFiltered = ["ring"].includes(slot)
-        ? scoredItems
-        : filterDirectUpgrades(scoredItems);
-      const statFiltered = filterUsefulStats(upgradeFiltered, priorityValue());
 
       return [
         slot,
         {
           required:
-            filterDirectUpgrades(
-              keywordItems,
-              baseCtx.source.value as FilterSource,
-            ).concat(abilityItems) ?? [],
-          primary: statFiltered ?? [],
-        } satisfies SlotOptions,
+            filterDirectUpgrades(keywordItems).concat(abilityItems),
+          primary: [],
+          fallback: [],
+        },
       ];
     }),
   ) as GearOptions;
+};
 
-  return itemsBySlot;
+/**
+ * Phase 2 — Primary options.
+ * Generates items that improve the selected target priority, but only for
+ * `emptySlotKeys` — slots not already filled by the requirements phase.
+ * Location is always included so `gearFill` can cycle through location options.
+ */
+export const getPrimaryGearOptions = (emptySlotKeys: Set<string>): GearOptions => {
+  const ctx = makeGearCtx();
+  const { activityStore } = ctx;
+
+  return Object.fromEntries(
+    gearTypes
+      .filter((slot) => slot === "location" || emptySlotKeys.has(slot))
+      .map((slot): [string, SlotOptions] => {
+        if (slot === "location") {
+          return [
+            slot,
+            {
+              required: [],
+              primary: activityStore.locations
+                ? filterLocations(activityStore.locations)
+                : [],
+              fallback: [],
+            },
+          ];
+        }
+
+        const { scoredItems } = getScoredItemsForSlot(slot, ctx);
+        const upgradeFiltered = upgradeFilteredForSlot(slot, scoredItems);
+        const statFiltered = filterUsefulStats(upgradeFiltered, priorityValue());
+
+        return [slot, { required: [], primary: statFiltered, fallback: [] }];
+      }),
+  ) as GearOptions;
+};
+
+/**
+ * Phase 3 — Fallback options.
+ * Only called for `emptySlotKeys` — slots still empty after the primary phase.
+ * Tier 1: items that passed `showItemForActivity` + `filterDirectUpgrades` but
+ *         were cut by `filterUsefulStats` (not relevant to the current target).
+ * Tier 2: owned items that `showItemForActivity` excluded entirely but still
+ *         have some stats after `filterDirectUpgrades`.
+ */
+export const getFallbackGearOptions = (emptySlotKeys: Set<string>): GearOptions => {
+  const ctx = makeGearCtx();
+  const { baseCtx, filterOwnedOnly, baseScore } = ctx;
+
+  return Object.fromEntries(
+    gearTypes
+      .filter((slot) => slot !== "location" && emptySlotKeys.has(slot))
+      .map((slot): [string, SlotOptions] => {
+        const { qualityItems, scoredItems } = getScoredItemsForSlot(slot, ctx);
+        const upgradeFiltered = upgradeFilteredForSlot(slot, scoredItems);
+
+        // Tier 2: items excluded by showItemForActivity.
+        const ownedOnlyItems = filterOwnedOnly(qualityItems);
+        const ownedOnlyMapped: MappedItem[] = ownedOnlyItems.flatMap((item) =>
+          mapItemToStats(item, baseCtx),
+        );
+        const ownedOnlyScored: OptimiserItem[] = getItemScores(slot, ownedOnlyMapped, baseScore);
+        const ownedOnlyUpgradeFiltered = upgradeFilteredForSlot(slot, ownedOnlyScored);
+
+        return [
+          slot,
+          {
+            required: [],
+            primary: [],
+            fallback: upgradeFiltered.concat(ownedOnlyUpgradeFiltered),
+          },
+        ];
+      }),
+  ) as GearOptions;
 };
 
 export function getItemOptions(

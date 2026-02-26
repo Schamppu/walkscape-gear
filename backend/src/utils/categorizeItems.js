@@ -8,16 +8,21 @@ export function categorizeItems(data) {
     containers,
     consumables,
     chestItems,
-    craftingRecipes,
-    trinketryRecipes,
+    allRecipes,
     pets,
     ...sourceInfo
   } = data;
 
+  const {
+    craftingRecipes,
+    trinketryRecipes,
+    smithingRecipes,
+    tailoringRecipes,
+  } = allRecipes;
   const { chestCategories } = resolveChestCategories(
     loot,
     chestItems,
-    containers
+    containers,
   );
 
   const categoryGroups = [
@@ -28,12 +33,7 @@ export function categorizeItems(data) {
   categoryGroups.push({ title: "Chests", categories: chestCategories });
   categoryGroups.push({
     title: "Crafted",
-    categories: resolveCraftedCategories(
-      crafted,
-      craftingRecipes,
-      trinketryRecipes,
-      loot
-    ),
+    categories: resolveCraftedCategories(crafted, allRecipes, loot),
   });
   categoryGroups.splice(1, 0, {
     title: "Consumables",
@@ -61,7 +61,7 @@ const resolveCategories = (category, data) => {
   const rewardCategories = resolveRewardsCategories(category, itemRewards);
   const achivementRewardCategory = resolveAchievementRewardCategory(
     category,
-    achievementRewardItems
+    achievementRewardItems,
   );
   const shopsCategory = resolveShopsCategory(category, shopItems);
   const categories = [
@@ -117,12 +117,12 @@ const resolveRewardsCategories = (category, rewards) => {
   const achievement_rewards = new Set(
     rewards
       .filter(({ type }) => type === "achievementPoints")
-      .flatMap(({ rewardItems }) => rewardItems)
+      .flatMap(({ rewardItems }) => rewardItems),
   );
   const reputation_rewards = new Set(
     rewards
       .filter(({ type }) => type === "factionReputation")
-      .flatMap(({ rewardItems }) => rewardItems)
+      .flatMap(({ rewardItems }) => rewardItems),
   );
   return [
     {
@@ -154,8 +154,8 @@ const resolveChestCategories = (loot, chestTables, containers) => {
 
   const nameLookup = Object.fromEntries(
     containers.flatMap(({ tables, name }) =>
-      tables.flatMap(({ tables: ts }) => ts.map((id) => [id, name]))
-    )
+      tables.flatMap(({ tables: ts }) => ts.map((id) => [id, name])),
+    ),
   );
 
   for (const table of chestTables) {
@@ -188,13 +188,26 @@ const resolvePetCategories = (pets) => {
   ];
 };
 
-const resolveCraftedCategories = (
-  crafted,
-  craftingRecipes,
-  trinketryRecipes,
-  loot
-) => {
-  const categories = [
+const resolveCraftedCategories = (crafted, allRecipes, loot) => {
+  // Pre-group items by keyword and gearType to avoid O(categories × items) iteration.
+  const byKeyword = new Map();
+  const byGearType = new Map();
+
+  for (const item of crafted) {
+    if (item.gearType) {
+      if (!byGearType.has(item.gearType)) byGearType.set(item.gearType, []);
+      byGearType.get(item.gearType).push(item);
+    }
+    if (Array.isArray(item.keywords)) {
+      for (const kw of item.keywords) {
+        if (!kw) continue;
+        if (!byKeyword.has(kw)) byKeyword.set(kw, []);
+        byKeyword.get(kw).push(item);
+      }
+    }
+  }
+
+  const categoryDefs = [
     { suffix: "hatchets", keyword: "hatchet" },
     { suffix: "pickaxes", keyword: "pickaxe" },
     { suffix: "sickles", keyword: "sickle" },
@@ -202,6 +215,7 @@ const resolveCraftedCategories = (
     { suffix: "diving gear", keyword: "diving_gear" },
     { suffix: "amulets", keyword: "amulet", type: "neck" },
     { suffix: "rings", keyword: "ring", qualities: 2 },
+    { suffix: "hunting bows", keyword: "hunting_bow" },
     { suffix: "weapons", keyword: "weapon" },
     { suffix: "shields", keyword: "shield" },
     { suffix: "pans", keyword: "cooking_pan" },
@@ -209,19 +223,37 @@ const resolveCraftedCategories = (
     { suffix: "hammers", keyword: "smithing_hammer" },
     { suffix: "wrenches", keyword: "wrench" },
     { suffix: "saws", keyword: "saw" },
-  ].map(({ suffix, keyword, type, qualities }) => {
+    { suffix: "toolboxes", keyword: "toolbox" },
+    { suffix: "pants", type: "legs" },
+    { suffix: "gloves", type: "hands" },
+    { suffix: "chests", type: "chest" },
+  ];
+
+  const categories = categoryDefs.map(({ suffix, keyword, type, qualities }) => {
+    let items;
+    if (keyword && type) {
+      // Union (OR): items with keyword OR matching gearType, deduplicated by id.
+      const seen = new Map();
+      for (const item of (byKeyword.get(keyword) ?? [])) seen.set(item.id, item);
+      for (const item of (byGearType.get(type) ?? [])) seen.set(item.id, item);
+      items = [...seen.values()];
+    } else if (keyword) {
+      items = byKeyword.get(keyword) ?? [];
+    } else if (type) {
+      items = byGearType.get(type) ?? [];
+    } else {
+      items = [];
+    }
+
     return {
       title: `Crafted ${capitalize(suffix)}`,
-      key: `crafted_${keyword}`,
+      key: `crafted_${keyword ?? type}`,
       qualities: qualities || 1,
-      items: crafted.filter(
-        ({ keywords, gearType }) =>
-          keywords.includes(keyword) || gearType === type
-      ),
+      items,
     };
   });
 
-  const upgraded = resolveUpgradedItems(crafted, craftingRecipes, loot);
+  const upgraded = resolveUpgradedItems(crafted, allRecipes, loot);
   if (upgraded.length)
     categories.push({
       title: "Upgraded Items",
@@ -240,14 +272,12 @@ const resolveCraftedCategories = (
     });
 
   const recipeLevels = Object.fromEntries(
-    craftingRecipes
-      .concat(trinketryRecipes)
-      .flatMap(({ itemRewards, requirements }) => {
-        const id = Object.keys(itemRewards)[0];
-        const skills = requirements.filter(({ type }) => type == "skillLevel");
-        const level = skills.length ? skills[0].requirement["level"] : 1;
-        return [[id, level]];
-      })
+    allRecipes.flatMap(({ itemRewards, requirements }) => {
+      const id = Object.keys(itemRewards)[0];
+      const skills = requirements.filter(({ type }) => type == "skillLevel");
+      const level = skills.length ? skills[0].requirement["level"] : 1;
+      return [[id, level]];
+    }),
   );
 
   const sortedCategories = categories.map((category) => ({
@@ -262,7 +292,7 @@ const resolveCraftedCategories = (
 
 const resolveConsumables = (consumables) => {
   const filteredConsumables = consumables.filter(
-    ({ consumableType }) => consumableType == "food"
+    ({ consumableType }) => consumableType == "food",
   );
 
   const grouped = {};
@@ -298,22 +328,22 @@ const resolveConsumables = (consumables) => {
 
 const resolveMiscItems = (source, categories) => {
   const resolvedItemIds = new Set(
-    categories.flatMap(({ items }) => items.map(({ id }) => id))
+    categories.flatMap(({ items }) => items.map(({ id }) => id)),
   );
   return source.filter(({ id }) => !resolvedItemIds.has(id));
 };
 
-const resolveUpgradedItems = (source, craftingRecipes, loot) => {
+const resolveUpgradedItems = (source, allRecipes, loot) => {
   const lootIdMap = Object.fromEntries(loot.map(({ id }) => [id, true]));
 
   const upgradedItems = new Set(
-    craftingRecipes
+    allRecipes
       .map(({ itemRewards, materials }) => [
         Object.keys(itemRewards)[0],
         materials.flatMap(({ options }) => options.flatMap(({ item }) => item)),
       ])
       .filter(([_, materials]) => materials.some((item) => item in lootIdMap))
-      .map(([id, _]) => id)
+      .map(([id, _]) => id),
   );
   return source.filter(({ id }) => upgradedItems.has(id));
 };

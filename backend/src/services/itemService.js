@@ -12,6 +12,8 @@ import { fetchSoldShopItems } from "../controllers/shopController.js";
 import {
   fetchCraftingRecipes,
   fetchTrinketryRecipes,
+  fetchSmithingRecipes,
+  fetchTailoringRecipes,
 } from "../controllers/recipeController.js";
 import { fetchAllPets } from "../controllers/petController.js";
 import {
@@ -58,8 +60,6 @@ class ItemService extends BaseService {
       activityItems,
       chestItems,
       shopItems,
-      craftingRecipes,
-      trinketryRecipes,
       pets,
     ] = await Promise.all([
       this.fetchCollectibles(),
@@ -72,10 +72,27 @@ class ItemService extends BaseService {
       fetchActivityItems(),
       fetchChestItems(),
       fetchSoldShopItems(),
-      fetchCraftingRecipes(),
-      fetchTrinketryRecipes(),
       fetchAllPets(),
     ]);
+
+    const [
+      craftingRecipes,
+      trinketryRecipes,
+      smithingRecipes,
+      tailoringRecipes,
+    ] = await Promise.all([
+      fetchCraftingRecipes(),
+      fetchTrinketryRecipes(),
+      fetchSmithingRecipes(),
+      fetchTailoringRecipes(),
+    ]);
+
+    const allRecipes = [
+      ...craftingRecipes,
+      ...trinketryRecipes,
+      ...smithingRecipes,
+      ...tailoringRecipes,
+    ];
 
     return categorizeItems({
       collectibles,
@@ -88,8 +105,7 @@ class ItemService extends BaseService {
       activityItems,
       chestItems,
       shopItems,
-      craftingRecipes,
-      trinketryRecipes,
+      allRecipes,
       pets,
     });
   }
@@ -111,7 +127,7 @@ class ItemService extends BaseService {
       activities,
       recipes,
       locations,
-      pets
+      pets,
     );
   }
 
@@ -132,7 +148,7 @@ class ItemService extends BaseService {
       consumables,
       materials,
       containers,
-      chestTables
+      chestTables,
     );
   }
 
