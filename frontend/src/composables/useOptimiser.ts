@@ -15,7 +15,7 @@ import {
   getItemOptions,
   filterMultislot,
 } from "@/composables/optimiser/gear";
-import { getGearSetStats } from "@/composables/optimiser/stats";
+import { getGearSetStats, installScorer } from "@/composables/optimiser/stats";
 import { startScore, compareScore } from "@/composables/optimiser/score";
 import { priorityName } from "@/composables/optimiser/priority";
 import { getRequirementCandidates } from "@/composables/optimiser/requirements";
@@ -169,7 +169,7 @@ export function useOptimiser() {
     slots: readonly GearSlot[],
     gearOptions: Record<string, (OptimiserItem | LocationSummary)[]>,
   ): Candidate[] {
-    const BEAM_WIDTH = 6;
+    const BEAM_WIDTH = 3;
     let candidates: Candidate[] = [baseCandidate];
 
     for (const slotName of slots) {
@@ -325,6 +325,7 @@ export function useOptimiser() {
       return;
     }
 
+    const uninstallScorer = installScorer();
     try {
       await notificationStore.success(
         `Generating gear set with target ${priorityName()}`,
@@ -336,37 +337,48 @@ export function useOptimiser() {
         return toolMatch ? Number(toolMatch[1]) <= toolbeltSize : true;
       }) as readonly GearSlot[];
 
-      // Phase 1: build required options for all slots, then fill requirements.
-      const reqOptions = getRequiredGearOptions();
-      await notificationStore.debug("Optimiser: Generated required gear options", [reqOptions]);
+      const t0 = performance.now();
+      const ts = (since: number) => `${(performance.now() - since).toFixed(1)}ms`;
 
+      // Phase 1: build required options for all slots, then fill requirements.
+      let t = performance.now();
+      const reqOptions = getRequiredGearOptions();
+      await notificationStore.debug(`Optimiser: [${ts(t)}] Generated required gear options`, [reqOptions]);
+
+      t = performance.now();
       const reqSets = requirementsFill(reqOptions);
       await notificationStore.debug(
-        "Optimiser: Generated sets fulfilling requirements",
+        `Optimiser: [${ts(t)}] Generated sets fulfilling requirements`,
         [reqSets],
       );
 
       // Phase 2: build primary options only for slots still empty, then fill.
+      t = performance.now();
       const emptyAfterReq = getEmptySlotKeys(reqSets, activeSlots);
       const primaryOptions = getPrimaryGearOptions(emptyAfterReq);
-      await notificationStore.debug("Optimiser: Generated primary gear options", [primaryOptions]);
+      await notificationStore.debug(`Optimiser: [${ts(t)}] Generated primary gear options`, [primaryOptions]);
 
+      t = performance.now();
       const primarySets = gearFill(activeSlots, reqSets, primaryOptions, "primary");
       await notificationStore.debug(
-        "Optimiser: Created gear sets with items helping target",
+        `Optimiser: [${ts(t)}]   Created gear sets with items helping target`,
         [primarySets],
       );
 
       // Phase 3: build fallback options only for slots still empty, then fill.
+      t = performance.now();
       const emptyAfterPrimary = getEmptySlotKeys(primarySets, activeSlots);
       const fallbackOptions = getFallbackGearOptions(emptyAfterPrimary);
-      await notificationStore.debug("Optimiser: Generated fallback gear options", [fallbackOptions]);
+      await notificationStore.debug(`Optimiser: [${ts(t)}] Generated fallback gear options`, [fallbackOptions]);
 
+      t = performance.now();
       const fallbackSets = fallbackFill(activeSlots, primarySets, fallbackOptions);
       await notificationStore.debug(
-        "Optimiser: Filled remaining empty slots with fallback items",
+        `Optimiser: [${ts(t)}] Filled remaining empty slots with fallback items`,
         [fallbackSets],
       );
+
+      await notificationStore.debug(`Optimiser: [total: ${ts(t0)}] Done`);
 
       const [usedSet] = fallbackSets.sort((a, b) => compareScore(b.score, a.score));
 
@@ -393,6 +405,8 @@ export function useOptimiser() {
     } catch (e) {
       notificationStore.error("Error duing gear set creation");
       console.error(e);
+    } finally {
+      uninstallScorer();
     }
   };
 
