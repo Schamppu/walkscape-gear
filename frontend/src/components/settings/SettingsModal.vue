@@ -70,6 +70,7 @@ function handleUpdateUuid(uuid) {
 .tab-navigation {
   display: flex;
   border-bottom: 1px solid $boxDarkOutline;
+  overflow-x: auto;
   gap: 0;
 }
 
