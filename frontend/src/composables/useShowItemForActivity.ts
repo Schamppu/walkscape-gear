@@ -94,7 +94,7 @@ export function useShowItemForActivity(ctx: LootTablesContext): {
         : [];
 
     const allRequirements = [
-      ...source.requirements,
+      ...source?.requirements ?? [],
       ...(service?.requirements ?? []),
       ...travelReqs,
     ];

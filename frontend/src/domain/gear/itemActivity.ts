@@ -32,7 +32,7 @@ export type ItemForActivity = {
 
 /** Minimal source (activity or recipe) shape needed for ability/keyword/attr filtering. */
 export type SourceForItem = {
-  requirements: Requirement[];
+  requirements?: Requirement[];
   /** Present on recipes only; used to determine Quality outcome relevance. */
   itemRewards?: Record<string, number>;
 };
@@ -77,7 +77,7 @@ export function filterUsefulAbilities(
 ): string[] {
   if (!item.abilities?.length) return [];
 
-  const abilityReqs = source.requirements
+  const abilityReqs = (source?.requirements ?? [])
     .filter(
       (req): req is typeof req & { type: "abilityAvailable" } =>
         req.type === "abilityAvailable",
