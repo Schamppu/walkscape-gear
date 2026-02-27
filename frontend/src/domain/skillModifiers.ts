@@ -149,7 +149,7 @@ export function calculateSkillModifiers(
   const stepsPerAction = stepsPerCompletion / (1 + doubleAction);
   const stepsPerRewardRoll = stepsPerAction / (1 + doubleRewards);
   const stepsPerFineRoll = stepsPerRewardRoll / fineMaterialFind;
-  const stepsPerCollectibleRoll = stepsPerRewardRoll / (1 + findCollectibles);
+  const stepsPerCollectibleRoll = stepsPerRewardRoll / findCollectibles;
   const craftsPerMaterial = (1 + doubleRewards) / (1 - noMaterialsConsumed);
 
   // --- XP --------------------------------------------------------------------
