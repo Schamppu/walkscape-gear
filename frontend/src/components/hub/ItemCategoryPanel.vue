@@ -179,7 +179,7 @@ watch(
           @change="toggleItemSelection"
         />
       </div>
-      <div v-if="group === 'Pets'">
+      <div v-else-if="group === 'Pets'">
         <pet-entry
           v-for="item in items"
           :key="item.id"

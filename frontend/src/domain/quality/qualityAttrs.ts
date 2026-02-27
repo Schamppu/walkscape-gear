@@ -73,7 +73,7 @@ const qualityRank = Object.fromEntries(
  * delegating to `sumBuffAttrs`.
  */
 export function sumAttrs(
-  itemAttrs: Attribute[],
+  itemAttrs: Attribute[] | undefined,
   qualityAttrs: QualityAttr[] | undefined | null,
   buffs: Buff[] | null | undefined,
   quality: string,
@@ -82,7 +82,7 @@ export function sumAttrs(
     return sumBuffAttrs(buffs ?? [], quality);
   }
 
-  const attrs: Attribute[] = itemAttrs
+  const attrs: Attribute[] = (itemAttrs ?? [])
     .map((a) => deepClone(a))
     .map((attribute) => ({
       ...attribute,

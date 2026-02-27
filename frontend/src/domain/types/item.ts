@@ -69,7 +69,7 @@ export type Buff = {
 // ---------------------------------------------------------------------------
 
 export type GearItem = {
-  itemAttrs: Attribute[];
+  itemAttrs?: Attribute[];
   itemQualityAttrs?: QualityAttr[];
   buffs?: Buff[] | null;
 };

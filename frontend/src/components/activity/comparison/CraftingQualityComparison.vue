@@ -30,24 +30,18 @@ const craftingOdds = computed(() => {
     props.gs2Ctx,
   );
 
-  const odds = getOutcomeOdds(levelReq, qo1.value, props.useFineMaterials);
-  const odds2 = getOutcomeOdds(levelReq, qo2.value, props.useFineMaterials);
-
-  const stats1 = odds.map((item) => {
-    return {
-      ...item,
-      odds: `${n(item.value * 100, 2)}%`,
-      materialsNeeded: item.crafts / cpm1.value,
-    };
-  });
-
-  const stats2 = odds2.map((item) => {
-    return {
-      ...item,
-      odds: `${n(item.value * 100, 2)}%`,
-      materialsNeeded: item.crafts / cpm2.value,
-    };
-  });
+  const stats1 = getOutcomeOdds(
+    levelReq,
+    qo1.value,
+    props.useFineMaterials,
+    cpm1.value,
+  );
+  const stats2 = getOutcomeOdds(
+    levelReq,
+    qo2.value,
+    props.useFineMaterials,
+    cpm2.value,
+  );
 
   const out = stats1.map((value, index) => ({
     gs1: value,
@@ -106,8 +100,8 @@ const craftingOdds = computed(() => {
         v-if="selectedComparison === 1"
         :title="gs1.name"
         :title-class="`color-${gs1.qualityValue}`"
-        :left="gs1.odds"
-        :right="gs2.odds"
+        :left="`${n(gs1.odds, 2)}%`"
+        :right="`${n(gs2.odds, 2)}%`"
         :comp="oddsComp"
       />
     </template>

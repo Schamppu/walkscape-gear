@@ -11,6 +11,7 @@
 
 import { calculateStatTotals } from "@/domain/effectiveAttrs";
 import { calculateSkillModifiers } from "@/domain/skillModifiers";
+import { getOutcomeOdds } from "@/domain/quality/qualityOutcomeOdds";
 import {
   compareScore as _compareScore,
   startScore as _startScore,
@@ -216,7 +217,11 @@ function buildDynCtx(
 // Scoring
 // ---------------------------------------------------------------------------
 
-function extractScore(result: SkillModifiersResult, prio: string): number {
+function extractScore(
+  result: SkillModifiersResult,
+  prio: string,
+  recipeQualityContext: OptimiserJobData["recipeQualityContext"],
+): number {
   if (prio === "stepsPerRewardRoll") return result.stepsPerRewardRoll;
   if (prio === "balanced") {
     const xpValue = result.xpPerStep[result.xpPerStep.length - 1]?.value ?? 1;
@@ -224,6 +229,16 @@ function extractScore(result: SkillModifiersResult, prio: string): number {
   }
   if (prio === "xpPerStep") return result.xpPerStep[result.xpPerStep.length - 1]?.value ?? 0;
   if (prio === "craftsPerMaterial") return result.craftsPerMaterial;
+  if (prio === "averageEternalCrafts") {
+    if (!recipeQualityContext) return Infinity;
+    const odds = getOutcomeOdds(
+      recipeQualityContext.levelReq,
+      result.qualityOutcome,
+      recipeQualityContext.useFineMaterials,
+      result.craftsPerMaterial,
+    );
+    return odds[odds.length - 1]?.materialsNeeded ?? Infinity;
+  }
   if (prio === "balancedRecipe") {
     const xpValue = result.xpPerStep[result.xpPerStep.length - 1]?.value ?? 1;
     return result.craftsPerMaterial * (xpValue > 0 ? xpValue : 1);
@@ -260,7 +275,7 @@ function scoreGearSet(
 
   const totals = calculateStatTotals([...preFilteredStatic, ...gearEntries]);
   const result = calculateSkillModifiers(totals, data.source, data.activitySelected);
-  return extractScore(result, data.prio);
+  return extractScore(result, data.prio, data.recipeQualityContext);
 }
 
 /**

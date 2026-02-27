@@ -91,6 +91,10 @@ export type OptimiserJobData = {
   staticEntries: EffectiveAttrEntry[];
   source: SkillModifiersSource | null;
   activitySelected: boolean;
+  recipeQualityContext: {
+    levelReq: number;
+    useFineMaterials: boolean;
+  } | null;
   prio: string;
   /** Default location for gear sets that don't have an explicit location set. */
   defaultLocation: LocationSummary | null;

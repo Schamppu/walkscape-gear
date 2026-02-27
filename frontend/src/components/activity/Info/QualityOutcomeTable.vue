@@ -13,19 +13,12 @@ const props = defineProps({
 
 const craftingOdds = computed(() => {
   const { level: levelReq } = props.levelRequirement;
-  const odds = getOutcomeOdds(
+  return getOutcomeOdds(
     levelReq,
     props.qualityOutcome,
-    props.useFineMaterials
+    props.useFineMaterials,
+    props.craftsPerMaterial
   );
-
-  return odds.map((item) => {
-    return {
-      ...item,
-      odds: `${n(item.value * 100, 2)}%`,
-      materialsNeeded: item.crafts / props.craftsPerMaterial,
-    };
-  });
 });
 </script>
 
@@ -43,7 +36,7 @@ const craftingOdds = computed(() => {
     <tbody>
       <tr v-for="(item, index) in craftingOdds" :key="`${item.name}-${index}`">
         <td :class="`color-${item.qualityValue}`">{{ item.name }}</td>
-        <td>{{ item.odds }}</td>
+        <td>{{ `${n(item.odds, 2)}%` }}</td>
         <td>{{ n(item.crafts, 1) }}</td>
         <td>{{ n(item.materialsNeeded, 1) }}</td>
       </tr>

@@ -20,11 +20,14 @@ import {
   type SkillModifiersResult,
   type SkillModifiersSource,
 } from "@/domain/skillModifiers";
+import { getOutcomeOdds } from "@/domain/quality/qualityOutcomeOdds";
+import { getLevelRequirementsMap } from "@/domain/requirements/requirementUtils";
 import type { GearSet, OptimiserItem, GearOptions, Candidate } from "@/domain/optimiser/types";
 import type { ItemDetail } from "@/domain/types/item";
 import type { XpPerStep } from "@/domain/skillModifiers";
 import type { ActivityDetail } from "@/domain/types/activity";
 import type { RecipeDetail } from "@/domain/types/recipe";
+import { useFineMaterials, type FineMaterialsContext } from "@/composables/useFineMaterialsCalculations";
 import type {
   WorkerItem,
   WorkerGearOptions,
@@ -33,11 +36,20 @@ import type {
   WorkerCandidate,
 } from "@/workers/optimiserWorkerTypes";
 
+type RecipeQualityContext = {
+  levelReq: number;
+  useFineMaterials: boolean;
+};
+
 // ---------------------------------------------------------------------------
 // Score extraction
 // ---------------------------------------------------------------------------
 
-const extractScore = (result: SkillModifiersResult, prio: string): number => {
+const extractScore = (
+  result: SkillModifiersResult,
+  prio: string,
+  recipeQualityContext: RecipeQualityContext | null = null,
+): number => {
   if (prio === "stepsPerRewardRoll") return result.stepsPerRewardRoll;
   if (prio === "balanced") {
     const xpValue = result.xpPerStep[result.xpPerStep.length - 1]?.value ?? 1;
@@ -45,6 +57,16 @@ const extractScore = (result: SkillModifiersResult, prio: string): number => {
   }
   if (prio === "xpPerStep") return result.xpPerStep[result.xpPerStep.length - 1]?.value ?? 0;
   if (prio === "craftsPerMaterial") return result.craftsPerMaterial;
+  if (prio === "averageEternalCrafts") {
+    if (!recipeQualityContext) return Infinity;
+    const odds = getOutcomeOdds(
+      recipeQualityContext.levelReq,
+      result.qualityOutcome,
+      recipeQualityContext.useFineMaterials,
+      result.craftsPerMaterial,
+    );
+    return odds[odds.length - 1]?.materialsNeeded ?? Infinity;
+  }
   if (prio === "balancedRecipe") {
     const xpValue = result.xpPerStep[result.xpPerStep.length - 1]?.value ?? 1;
     return result.craftsPerMaterial * (xpValue > 0 ? xpValue : 1);
@@ -82,6 +104,19 @@ const makeScorer = (): ((set: GearSet) => number) => {
   const service = baseCtx.service.value;
   const source = baseCtx.source.value as SkillModifiersSource | null;
   const activitySelected = baseCtx.activitySelected.value;
+  const recipeDetail = baseCtx.recipe.value as RecipeDetail | null;
+  const { useFine } = useFineMaterials(baseCtx as unknown as FineMaterialsContext);
+  const recipeLevelReq = (() => {
+    if (activitySelected || !recipeDetail) return 0;
+    const levelMap = getLevelRequirementsMap(recipeDetail.requirements);
+    return Object.values(levelMap)[0] ?? 0;
+  })();
+  const recipeQualityContext: RecipeQualityContext | null = activitySelected
+    ? null
+    : {
+        levelReq: recipeLevelReq,
+        useFineMaterials: useFine.value,
+      };
 
   // Resolve collectibles once — they don't change during a run.
   const collectibles = toDeepRaw(
@@ -118,7 +153,7 @@ const makeScorer = (): ((set: GearSet) => number) => {
 
     const totals = calculateStatTotals(effectiveEntries);
     const result = calculateSkillModifiers(totals, source, activitySelected);
-    return extractScore(result, prio);
+    return extractScore(result, prio, recipeQualityContext);
   };
 };
 
@@ -194,6 +229,7 @@ export const buildWorkerJob = (
 
   const source = baseCtx.source.value as SkillModifiersSource | null;
   const activitySelected = baseCtx.activitySelected.value;
+  const { useFine } = useFineMaterials(baseCtx as unknown as FineMaterialsContext);
   const prio = priorityValue();
 
   // Static entries: collectibles + level bonuses + service (same as makeScorer).
@@ -211,6 +247,15 @@ export const buildWorkerJob = (
   const activitySource = baseCtx.source.value;
   const activityDetail = baseCtx.activity.value as ActivityDetail | null;
   const recipeDetail = baseCtx.recipe.value as RecipeDetail | null;
+  const recipeLevelReq = recipeDetail
+    ? Object.values(getLevelRequirementsMap(recipeDetail.requirements))[0] ?? 1
+    : 1;
+  const recipeQualityContext: RecipeQualityContext | null = activitySelected
+    ? null
+    : {
+        levelReq: recipeLevelReq,
+        useFineMaterials: useFine.value,
+      };
   const location = baseCtx.location.value;
 
   const reqCtx: StaticReqCtx = {
@@ -267,6 +312,7 @@ export const buildWorkerJob = (
     staticEntries,
     source,
     activitySelected,
+    recipeQualityContext,
     prio,
     defaultLocation: location,
     reqCtx,
@@ -305,6 +351,17 @@ export const getGearSetStats = (set: GearSet): number => {
 
   const stats = useSkillModifiers(gearCtx);
   const prio = priorityValue();
+  const { useFine } = useFineMaterials(baseCtx as unknown as FineMaterialsContext);
+  const recipeDetail = baseCtx.recipe.value as RecipeDetail | null;
+  const recipeLevelReq = recipeDetail
+    ? Object.values(getLevelRequirementsMap(recipeDetail.requirements))[0] ?? 1
+    : 1;
+  const recipeQualityContext: RecipeQualityContext | null = baseCtx.activitySelected.value
+    ? null
+    : {
+        levelReq: recipeLevelReq,
+        useFineMaterials: useFine.value,
+      };
 
   if (prio === "stepsPerRewardRoll") return stats.stepsPerRewardRoll.value;
   if (prio === "balanced") {
@@ -317,6 +374,16 @@ export const getGearSetStats = (set: GearSet): number => {
     return xp[xp.length - 1].value;
   }
   if (prio === "craftsPerMaterial") return stats.craftsPerMaterial.value;
+  if (prio === "averageEternalCrafts") {
+    if (!recipeQualityContext) return Infinity;
+    const odds = getOutcomeOdds(
+      recipeQualityContext.levelReq,
+      stats.qualityOutcome.value,
+      recipeQualityContext.useFineMaterials,
+      stats.craftsPerMaterial.value,
+    );
+    return odds[odds.length - 1]?.materialsNeeded ?? Infinity;
+  }
   if (prio === "balancedRecipe") {
     const xp = stats.xpPerStep.value as XpPerStep[];
     const xpValue = xp[xp.length - 1]?.value ?? 1;

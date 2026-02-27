@@ -18,6 +18,8 @@ export type QualityOutcomeResult = {
   name: string;
   value: number;
   crafts: number;
+  odds: number;
+  materialsNeeded: number;
 };
 
 /**
@@ -32,7 +34,8 @@ export type QualityOutcomeResult = {
 export function getOutcomeOdds(
   levelReq: number,
   qualityOutcome: number,
-  useFineMaterials: boolean
+  useFineMaterials: boolean,
+  craftsPerMaterial = 1
 ): QualityOutcomeResult[] {
   const weights: [number, number][] = [
     [1000, 4],
@@ -107,5 +110,7 @@ export function getOutcomeOdds(
     name,
     value: weight / totalWeight,
     crafts: totalWeight / weight,
+    odds: (weight / totalWeight) * 100,
+    materialsNeeded: (totalWeight / weight) / craftsPerMaterial,
   }));
 }
