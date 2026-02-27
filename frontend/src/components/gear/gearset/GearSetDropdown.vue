@@ -1,12 +1,18 @@
 <script setup>
 import { ref, computed } from "vue";
 import { useGearSetStore } from "@/store/gearSet";
+import { useNotificationStore } from "@/store/notifications";
+import { injectBaseContext } from "@/composables/context/injectShared";
+import { useGearSetExport } from "@/composables/useGearSetExport";
 import { icons } from "@/constants/iconPaths";
 import WsIcon from "@/components/common/WsIcon.vue";
 import WsButton from "@/components/common/WsButton.vue";
 import TagSelection from "./TagSelection.vue";
 
 const gearSetStore = useGearSetStore();
+const notificationStore = useNotificationStore();
+const ctx = injectBaseContext();
+const { exportStoredGearSets } = useGearSetExport(ctx);
 const isOpen = ref(false);
 const inputRef = ref(null);
 const confirmDeleteId = ref(null); // Track which set is in delete confirmation state
@@ -22,7 +28,7 @@ const filterCount = computed(() => internalFilterTags.value.length);
 const selectedSet = computed(() =>
   gearSetStore.currentSet.id
     ? gearSetStore.gearSets.find((set) => set.id === gearSetStore.currentSet.id)
-    : null
+    : null,
 );
 
 const displayName = computed({
@@ -51,7 +57,7 @@ const filteredGearSets = computed(() => {
     sets = sets.filter((set) => {
       if (!set.tags || set.tags.length === 0) return false;
       return internalFilterTags.value.every((filterTag) =>
-        set.tags.some((setTag) => setTag.id === filterTag.id)
+        set.tags.some((setTag) => setTag.id === filterTag.id),
       );
     });
   }
@@ -123,6 +129,29 @@ async function handleDeleteClick(setId) {
 function isConfirmingDelete(setId) {
   return confirmDeleteId.value === setId;
 }
+
+async function exportAllStoredGearSets() {
+  try {
+    const encodedGearSets = await exportStoredGearSets();
+    const payload = JSON.stringify(encodedGearSets, null, 2);
+    const blob = new Blob([payload], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+
+    const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+    const fileName = `walkscape-gear-sets-export-${timestamp}.json`;
+
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = fileName;
+    anchor.click();
+
+    URL.revokeObjectURL(url);
+    notificationStore.success("Stored gear sets exported as file.");
+  } catch (error) {
+    console.error("Mass export failed:", error);
+    notificationStore.error("Failed to export stored gear sets");
+  }
+}
 </script>
 
 <template>
@@ -169,6 +198,14 @@ function isConfirmingDelete(setId) {
           </button>
         </div>
       </div>
+
+      <button
+        class="dropdown-item export-set-item"
+        @click="exportAllStoredGearSets"
+      >
+        <ws-icon text="Export" :icon-path="icons.deposit" size="sm" />
+        <span class="export-set-text">Export All Stored Gear Sets</span>
+      </button>
 
       <button class="dropdown-item new-set-item" @click="selectNewSet">
         <span class="new-set-text">+ New Gear Set</span>
@@ -221,6 +258,7 @@ function isConfirmingDelete(setId) {
         <span v-else> No gear sets available </span>
       </div>
     </div>
+
   </div>
 </template>
 
@@ -425,6 +463,18 @@ function isConfirmingDelete(setId) {
 
   .new-set-text {
     color: $txPositive;
+    font-weight: 500;
+  }
+}
+
+.export-set-item {
+  border-bottom: 2px solid $boxDarkOutline;
+  display: flex;
+  justify-content: flex-start;
+  gap: $sm;
+
+  .export-set-text {
+    color: $txPrimary;
     font-weight: 500;
   }
 }
