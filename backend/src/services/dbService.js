@@ -200,6 +200,36 @@ export async function getGearSets(userUuid, includeItems = false) {
   }));
 }
 
+export async function getGearSetsForExport(userUuid) {
+  const gearSets = await prisma.gearSet.findMany({
+    where: { userUuid },
+    select: {
+      name: true,
+      items: {
+        select: {
+          slotType: true,
+          slotIndex: true,
+          itemId: true,
+          quality: true,
+        },
+        orderBy: [{ slotType: "asc" }, { slotIndex: "asc" }],
+      },
+      tags: {
+        include: { tag: true },
+      },
+    },
+    orderBy: {
+      updatedAt: "desc",
+    },
+  });
+
+  return gearSets.map((set) => ({
+    name: set.name,
+    items: set.items,
+    tags: set.tags.map((entry) => entry.tag.id),
+  }));
+}
+
 export async function getGearSet(userUuid, gearSetId) {
   const gearSet = await prisma.gearSet.findFirst({
     where: {

@@ -84,6 +84,18 @@ export const getGearSets = async (req, res) => {
   }
 };
 
+export const exportGearSets = async (req, res) => {
+  const userUuid = getUserUuid(req, res);
+  if (!userUuid) return;
+
+  try {
+    const result = await dbService.getGearSetsForExport(userUuid);
+    res.json(result || []);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+};
+
 export const getGearSet = async (req, res) => {
   const userUuid = getUserUuid(req, res);
   if (!userUuid) return;
