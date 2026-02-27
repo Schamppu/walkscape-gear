@@ -3,6 +3,7 @@ import { ref } from "vue";
 import BaseModal from "../common/BaseModal.vue";
 import UserSettings from "./UserSettings.vue";
 import GearSettings from "./GearSettings.vue";
+import DataSettings from "./DataSettings.vue";
 import ActivitySettings from "./ActivitySettings.vue";
 import ToolSettings from "./ToolSettings.vue";
 
@@ -16,6 +17,7 @@ const tabs = [
   { id: "user", label: "User", component: UserSettings },
   { id: "gear", label: "Gear", component: GearSettings },
   { id: "activity", label: "Activity", component: ActivitySettings },
+  { id: "data", label: "Data", component: DataSettings },
   { id: "tool", label: "Tool", component: ToolSettings },
 ];
 
