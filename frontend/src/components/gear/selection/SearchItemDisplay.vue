@@ -3,6 +3,7 @@ import { ref, computed } from "vue";
 import WsIcon from "@/components/common/WsIcon.vue";
 import StatsDisplay from "@/components/common/StatsDisplay.vue";
 import SearchItemPreview from "./SearchItemPreview.vue";
+import RequirementDisplay from "@/components/activity/Info/RequirementDisplay.vue";
 import { getPetIcon } from "@/domain/pets/getPetIcon";
 import { icons } from "@/constants/iconPaths";
 
@@ -70,6 +71,17 @@ const icon = computed(() => {
       showActiveColors
       hide-keywords
     />
+    <section
+      v-if="isOpen && props.item.requirements?.length"
+      class="requirements"
+    >
+      <requirement-display
+        v-for="(requirement, idx) in props.item.requirements"
+        :key="`requirement-${idx}`"
+        :requirement="requirement"
+        display-type="item"
+      />
+    </section>
     <search-item-preview
       v-if="previewOpen && props.slotName"
       :item="item"
@@ -142,5 +154,10 @@ const icon = computed(() => {
       background-color: $boxTransparentDarkOutline;
     }
   }
+}
+
+.requirements {
+  width: 100%;
+  padding: $xxs;
 }
 </style>

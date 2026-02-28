@@ -4,6 +4,7 @@ import { useGearStore } from "@/store/gear";
 import WsIcon from "@/components/common/WsIcon.vue";
 import StatsDisplay from "@/components/common/StatsDisplay.vue";
 import QualitySelection from "./QualitySelection.vue";
+import RequirementDisplay from "@/components/activity/Info/RequirementDisplay.vue";
 import { getPetIcon } from "@/domain/pets/getPetIcon";
 
 const props = defineProps({
@@ -68,6 +69,14 @@ const petLevelOptions = computed(() =>
       @select-quality="changeQuality"
     />
     <stats-display :item="item" :quality="item.quality" showActiveColors />
+    <section v-if="item.requirements?.length" class="requirements">
+      <requirement-display
+        v-for="(requirement, idx) in item.requirements"
+        :key="`requirement-${idx}`"
+        :requirement="requirement"
+        display-type="item"
+      />
+    </section>
   </div>
   <div v-else>
     <p>Select an item on the search tab</p>
@@ -136,5 +145,10 @@ const petLevelOptions = computed(() =>
   .label {
     margin-left: $xxs;
   }
+}
+
+.requirements {
+  width: 100%;
+  padding: $xxs;
 }
 </style>

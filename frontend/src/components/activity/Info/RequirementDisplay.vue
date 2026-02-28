@@ -8,13 +8,17 @@ import { computed } from "vue";
 
 const props = defineProps({
   requirement: Object,
+  displayType: {
+    type: String,
+    default: "stat",
+  },
 });
 
 const ctx = injectBaseContext();
 const { checkRequirements, mapRequirementsText } = injectRequirements();
 const fulfilled = computed(() => checkRequirements([props.requirement], ctx));
 const reqText = computed(() =>
-  mapRequirementsText([props.requirement], [fulfilled])
+  mapRequirementsText([props.requirement], [fulfilled.value], props.displayType)
 );
 
 const borderClass = computed(() => {

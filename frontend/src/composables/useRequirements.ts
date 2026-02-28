@@ -71,6 +71,8 @@ export type RequirementDisplay = {
   active: boolean;
 };
 
+export type RequirementDisplayType = "stat" | "item";
+
 // ---------------------------------------------------------------------------
 // Composable
 // ---------------------------------------------------------------------------
@@ -317,31 +319,35 @@ export function useRequirements(ctx: RequirementContext) {
   const mapRequirementsText = (
     requirements: Requirement[],
     requirementsActive: boolean[],
+    displayType: RequirementDisplayType = "stat",
   ): RequirementDisplay[] => {
     return requirements.map((req, idx) => {
       const { opposite } = req;
       const active = requirementsActive[idx];
-      const whilePrefix = `While${opposite ? " NOT" : ""}`;
+      const requirementPrefix =
+        displayType === "item"
+          ? `Requires${opposite ? " NOT" : ""}`
+          : `While${opposite ? " NOT" : ""}`;
 
       let out: Omit<RequirementDisplay, "active"> | undefined;
 
       switch (req.type) {
         case "mainSkill": {
           const skill = playerStore.skillsMap[req.requirement.skill];
-          out = { prefix: whilePrefix, text: skill.name, icon: skill.icon };
+          out = { prefix: requirementPrefix, text: skill.name, icon: skill.icon };
           break;
         }
 
         case "mainSkillType":
           out = {
-            prefix: `${whilePrefix} doing`,
+            prefix: `${requirementPrefix} doing`,
             text: `${req.requirement.type} skills`,
             icon: "",
           };
           break;
 
         case "traveling":
-          out = { prefix: whilePrefix, text: "Traveling", icon: "" };
+          out = { prefix: requirementPrefix, text: "Traveling", icon: "" };
           break;
 
         case "service": {
@@ -365,7 +371,7 @@ export function useRequirements(ctx: RequirementContext) {
             .filter((kw): kw is Keyword => kw !== null)[0];
           if (resolvedKw) {
             out = {
-              prefix: `${whilePrefix} in`,
+              prefix: `${requirementPrefix} in`,
               text: `${resolvedKw.name} location`,
               icon: resolvedKw.icon,
             };
@@ -376,7 +382,7 @@ export function useRequirements(ctx: RequirementContext) {
         case "realm": {
           const realm = playerStore.factionsMap[req.requirement.realm];
           out = {
-            prefix: `${whilePrefix} in`,
+            prefix: `${requirementPrefix} in`,
             text: `${realm.name} area`,
             icon: realm.icon,
           };
@@ -390,7 +396,7 @@ export function useRequirements(ctx: RequirementContext) {
             .filter((kw): kw is Keyword => kw !== null)[0];
           if (resolvedKw) {
             out = {
-              prefix: `${whilePrefix} wearing ${quantity}`,
+              prefix: `${requirementPrefix} wearing ${quantity}`,
               text: resolvedKw.name,
               icon: resolvedKw.icon,
             };
@@ -448,7 +454,7 @@ export function useRequirements(ctx: RequirementContext) {
           const { skill, level } = req.requirement;
           const skillData = playerStore.skillsMap[skill];
           out = {
-            prefix: `While at least ${level}`,
+            prefix: `${requirementPrefix} at least ${level}`,
             text: skillData.name,
             icon: skillData.icon,
           };
@@ -486,14 +492,14 @@ export function useRequirements(ctx: RequirementContext) {
             const kw = dataStore.keywordsMap[reqKeywords[0]];
             if (kw) {
               out = {
-                prefix: `${whilePrefix} doing`,
+                prefix: `${requirementPrefix} doing`,
                 text: `${kw.name} activity`,
                 icon: kw.icon,
               };
             }
           } else if (act) {
             out = {
-              prefix: `${whilePrefix} doing`,
+              prefix: `${requirementPrefix} doing`,
               text: `${act.name} activity`,
               icon: act.icon,
             };
