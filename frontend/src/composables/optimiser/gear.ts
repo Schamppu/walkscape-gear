@@ -1,5 +1,6 @@
 import { useActivityStore } from "@/store/activity";
 import { useDataStore } from "@/store/data";
+import { useSettingsStore } from "@/store/settings";
 import useBaseContext from "@/composables/context/useBaseContext";
 import { useShowItemForActivity } from "@/composables/useShowItemForActivity";
 import { useRequirements } from "@/composables/useRequirements";
@@ -147,7 +148,9 @@ type ActivitySourceCompat = {
 /** Shared setup called once per public gear-options function. */
 const makeGearCtx = () => {
   const activityStore = useActivityStore();
+  const settingsStore = useSettingsStore();
   const baseCtx = useBaseContext();
+  const { canBeEquipped } = useRequirements(baseCtx as unknown as RequirementContext);
   const { showItemForActivity, usefulKeywords, usefulAbilities } =
     useShowItemForActivity(baseCtx as unknown as LootTablesContext);
 
@@ -157,16 +160,27 @@ const makeGearCtx = () => {
   const filterOwned = (item: ItemDetail): boolean =>
     item.id in baseCtx.ownedItems.value;
 
+  const hideUnmetRequirements =
+    settingsStore.gearSettings.showUnmetRequirements?.value === false;
+
+  const itemPassesRequirements = (item: ItemDetail): boolean =>
+    !hideUnmetRequirements || canBeEquipped(item);
+
   const filterItems = (items: QualityItem[]): QualityItem[] =>
     items.filter(
-      (item) => filterOwned(item) && showItemForActivity(item as unknown as DisplayableItem),
+      (item) =>
+        filterOwned(item) &&
+        itemPassesRequirements(item) &&
+        showItemForActivity(item as unknown as DisplayableItem),
     );
 
   /** Items the player owns but that don't match the current activity. */
   const filterOwnedOnly = (items: QualityItem[]): QualityItem[] =>
     items.filter(
       (item) =>
-        filterOwned(item) && !showItemForActivity(item as unknown as DisplayableItem),
+        filterOwned(item) &&
+        itemPassesRequirements(item) &&
+        !showItemForActivity(item as unknown as DisplayableItem),
     );
 
   return {

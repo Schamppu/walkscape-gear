@@ -48,14 +48,15 @@ const ALLOWED_SETTINGS = new Set([
   "showOwned",
   "showUseful",
   "openStatRequirements",
+  "showUnmetRequirements",
+  "undoRedo",
+  "activityOptimiserPriority",
+  "recipeOptimiserPriority",
   "showCombined",
   "hideOwnedCollectibles",
-  "undoRedo",
   "shownDropRate",
   "thousandSeparator",
   "decimalSeparator",
-  "activityOptimiserPriority",
-  "recipeOptimiserPriority",
   ...DEBUG_SETTINGS,
 ]);
 

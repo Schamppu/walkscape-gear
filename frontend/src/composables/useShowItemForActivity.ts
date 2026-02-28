@@ -2,6 +2,7 @@ import { useRequirements, type RequirementContext } from "@/composables/useRequi
 import { getRawData } from "@/utils/rawData";
 import { usedAttrs, type Attribute } from "@/domain/quality/qualityAttrs";
 import { useLootTables, type LootTablesContext } from "./useLootTables";
+import { useSettingsStore } from "@/store/settings";
 import {
   filterUsefulAbilities,
   filterUsefulKeywords,
@@ -20,6 +21,7 @@ import type { LevelBonusGearItem } from "@/composables/useLevelBonus";
 type ItemForDisplay = {
   abilities?: (string | { ability: string; unlockLevel: string })[];
   keywords?: string[];
+  requirements?: Requirement[];
   tables?: LootTableRef[];
   quality: string | null;
   [key: string]: unknown;
@@ -68,7 +70,8 @@ export function useShowItemForActivity(ctx: LootTablesContext): {
   ) => Attribute[];
   itemTables: (item: ItemForDisplay) => LootTableRef[];
 } {
-  const { checkRequirements } = useRequirements(ctx as unknown as RequirementContext);
+  const { checkRequirements, canBeEquipped } = useRequirements(ctx as unknown as RequirementContext);
+  const settingsStore = useSettingsStore();
   const { hasCollectibleDrops, hasFineDrops } = useLootTables(ctx);
 
   const usefulAbilities = (
@@ -143,6 +146,10 @@ export function useShowItemForActivity(ctx: LootTablesContext): {
     if (!ctx.source.value || !currentSource) return false;
 
     const item = getRawData(itemProxy);
+
+    const hideUnmetRequirements =
+      settingsStore.gearSettings.showUnmetRequirements?.value === false;
+    if (hideUnmetRequirements && !canBeEquipped(item)) return false;
 
     const [skill] = currentSource.relatedSkillsList ??
       currentSource.relatedSkills ?? [null];

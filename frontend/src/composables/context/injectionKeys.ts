@@ -6,7 +6,12 @@ import type {
   DetailedContextLootTable,
   MappedTableRow,
 } from "@/domain/types/lootTable";
-import type { RequirementContext, RequirementDisplay } from "@/composables/useRequirements";
+import type {
+  RequirementContext,
+  RequirementDisplay,
+  RequirementDisplayType,
+  RequirementOwner,
+} from "@/composables/useRequirements";
 import type { Requirement } from "@/domain/types/common";
 import type { XpReward, XpPerStep } from "@/domain/skillModifiers";
 
@@ -53,9 +58,14 @@ export type SharedRequirements = {
     reqs: Requirement[] | null | undefined,
     context?: RequirementContext,
   ) => boolean;
+  canBeEquipped: (
+    item: RequirementOwner | null | undefined,
+    context?: RequirementContext,
+  ) => boolean;
   mapRequirementsText: (
     reqs: Requirement[],
     fulfilled?: boolean[],
+    displayType?: RequirementDisplayType,
   ) => RequirementDisplay[];
   mergeRequirements: typeof import("@/domain/requirements/requirementUtils").mergeRequirements;
   getLevelRequirementsMap: (

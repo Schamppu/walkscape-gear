@@ -4,6 +4,7 @@ import { craftingQualityOptions, qualityOptions } from "@/domain/constants/quali
 import { useItemsStore } from "@/store/items";
 import WsIcon from "@/components/common/WsIcon.vue";
 import StatsDisplay from "../common/StatsDisplay.vue";
+import RequirementDisplay from "@/components/activity/Info/RequirementDisplay.vue";
 import { injectBaseContext } from "@/composables/context/injectShared";
 import AbilitiesDisplay from "../common/abilities/AbilitiesDisplay.vue";
 
@@ -191,6 +192,12 @@ const toggleChecked = (e) => {
       <abilities-display
         v-if="props.item.abilities"
         :abilities="props.item.abilities"
+      />
+      <requirement-display
+        v-for="(requirement, idx) in props.item.requirements"
+        :key="`requirement-${idx}`"
+        :requirement="requirement"
+        display-type="item"
       />
     </section>
   </section>

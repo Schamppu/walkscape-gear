@@ -12,7 +12,10 @@ import type { LocationDetail } from "@/domain/types/location";
 import type { ServiceDetail } from "@/domain/types/service";
 import type { Keyword } from "@/domain/types/keyword";
 import { serviceTiers } from "@/domain/constants/services";
-import { getLevelRequirementsMap, mergeRequirements } from "@/domain/requirements/requirementUtils";
+import {
+  getLevelRequirementsMap,
+  mergeRequirements,
+} from "@/domain/requirements/requirementUtils";
 
 // Re-export pure functions so callers only need one import.
 export { getLevelRequirementsMap, mergeRequirements };
@@ -71,6 +74,12 @@ export type RequirementDisplay = {
   active: boolean;
 };
 
+export type RequirementDisplayType = "stat" | "item";
+
+export type RequirementOwner = {
+  requirements?: Requirement[] | null;
+};
+
 // ---------------------------------------------------------------------------
 // Composable
 // ---------------------------------------------------------------------------
@@ -93,6 +102,11 @@ export function useRequirements(ctx: RequirementContext) {
     return reqs.every((req) => checkRequirement(req, context));
   };
 
+  const canBeEquipped = (
+    item: RequirementOwner | null | undefined,
+    context: RequirementContext = ctx,
+  ): boolean => checkRequirements(item?.requirements, context);
+
   const checkRequirement = (
     req: Requirement,
     context: RequirementContext = ctx,
@@ -102,8 +116,9 @@ export function useRequirements(ctx: RequirementContext) {
     const equippedKeywordCounts: Record<string, number> = context.equippedGear
       .value
       ? context.equippedGear.value
-          .filter((val): val is RequirementItem & { keywords: string[] } =>
-            "keywords" in val,
+          .filter(
+            (val): val is RequirementItem & { keywords: string[] } =>
+              "keywords" in val,
           )
           .flatMap(({ keywords }) => keywords)
           .reduce<Record<string, number>>((acc, val) => {
@@ -244,7 +259,8 @@ export function useRequirements(ctx: RequirementContext) {
       case "activityType": {
         const source = context.source.value;
         if (source) {
-          const { activity: reqActivity, keywords: reqKeywords } = req.requirement;
+          const { activity: reqActivity, keywords: reqKeywords } =
+            req.requirement;
           value =
             (!reqActivity || source.id === reqActivity) &&
             (!reqKeywords?.length ||
@@ -290,7 +306,9 @@ export function useRequirements(ctx: RequirementContext) {
       }
 
       case "itemEquipped":
-        value = ctx.equippedGear.value.some(({ id }) => id === req.requirement.item);
+        value = ctx.equippedGear.value.some(
+          ({ id }) => id === req.requirement.item,
+        );
         break;
 
       case "abilityAvailable": {
@@ -317,31 +335,39 @@ export function useRequirements(ctx: RequirementContext) {
   const mapRequirementsText = (
     requirements: Requirement[],
     requirementsActive: boolean[],
+    displayType: RequirementDisplayType = "stat",
   ): RequirementDisplay[] => {
     return requirements.map((req, idx) => {
       const { opposite } = req;
       const active = requirementsActive[idx];
-      const whilePrefix = `While${opposite ? " NOT" : ""}`;
+      const requirementPrefix =
+        displayType === "item"
+          ? `Requires${opposite ? " NOT" : ""}`
+          : `While${opposite ? " NOT" : ""}`;
 
       let out: Omit<RequirementDisplay, "active"> | undefined;
 
       switch (req.type) {
         case "mainSkill": {
           const skill = playerStore.skillsMap[req.requirement.skill];
-          out = { prefix: whilePrefix, text: skill.name, icon: skill.icon };
+          out = {
+            prefix: requirementPrefix,
+            text: skill.name,
+            icon: skill.icon,
+          };
           break;
         }
 
         case "mainSkillType":
           out = {
-            prefix: `${whilePrefix} doing`,
+            prefix: `${requirementPrefix} doing`,
             text: `${req.requirement.type} skills`,
             icon: "",
           };
           break;
 
         case "traveling":
-          out = { prefix: whilePrefix, text: "Traveling", icon: "" };
+          out = { prefix: requirementPrefix, text: "Traveling", icon: "" };
           break;
 
         case "service": {
@@ -365,7 +391,7 @@ export function useRequirements(ctx: RequirementContext) {
             .filter((kw): kw is Keyword => kw !== null)[0];
           if (resolvedKw) {
             out = {
-              prefix: `${whilePrefix} in`,
+              prefix: `${requirementPrefix} in`,
               text: `${resolvedKw.name} location`,
               icon: resolvedKw.icon,
             };
@@ -376,7 +402,7 @@ export function useRequirements(ctx: RequirementContext) {
         case "realm": {
           const realm = playerStore.factionsMap[req.requirement.realm];
           out = {
-            prefix: `${whilePrefix} in`,
+            prefix: `${requirementPrefix} in`,
             text: `${realm.name} area`,
             icon: realm.icon,
           };
@@ -390,7 +416,7 @@ export function useRequirements(ctx: RequirementContext) {
             .filter((kw): kw is Keyword => kw !== null)[0];
           if (resolvedKw) {
             out = {
-              prefix: `${whilePrefix} wearing ${quantity}`,
+              prefix: `${requirementPrefix} wearing ${quantity}`,
               text: resolvedKw.name,
               icon: resolvedKw.icon,
             };
@@ -420,7 +446,7 @@ export function useRequirements(ctx: RequirementContext) {
         case "achievementPoint":
           out = {
             prefix: "Have",
-            text: `${req.requirement.value} achievement points`,
+            text: `${req.requirement.value} achievement point${req.requirement.value !== 1 ? "s" : ""}`,
             icon: "assets/icons/text/general_icons/achievement_point.png",
           };
           break;
@@ -448,7 +474,7 @@ export function useRequirements(ctx: RequirementContext) {
           const { skill, level } = req.requirement;
           const skillData = playerStore.skillsMap[skill];
           out = {
-            prefix: `While at least ${level}`,
+            prefix: `${requirementPrefix} at least ${level}`,
             text: skillData.name,
             icon: skillData.icon,
           };
@@ -461,7 +487,9 @@ export function useRequirements(ctx: RequirementContext) {
             (a, b) => a + b,
             0,
           );
-          out = { text: `Have ${Math.min(current, levels)}/${levels} total level` };
+          out = {
+            text: `Have ${Math.min(current, levels)}/${levels} total level`,
+          };
           break;
         }
 
@@ -478,7 +506,8 @@ export function useRequirements(ctx: RequirementContext) {
         }
 
         case "activityType": {
-          const { activity: reqActivity, keywords: reqKeywords } = req.requirement;
+          const { activity: reqActivity, keywords: reqKeywords } =
+            req.requirement;
           const act = reqActivity
             ? activityStore.activitiesMap[reqActivity]
             : undefined;
@@ -486,14 +515,14 @@ export function useRequirements(ctx: RequirementContext) {
             const kw = dataStore.keywordsMap[reqKeywords[0]];
             if (kw) {
               out = {
-                prefix: `${whilePrefix} doing`,
+                prefix: `${requirementPrefix} doing`,
                 text: `${kw.name} activity`,
                 icon: kw.icon,
               };
             }
           } else if (act) {
             out = {
-              prefix: `${whilePrefix} doing`,
+              prefix: `${requirementPrefix} doing`,
               text: `${act.name} activity`,
               icon: act.icon,
             };
@@ -527,7 +556,11 @@ export function useRequirements(ctx: RequirementContext) {
         case "itemEquipped": {
           const item = ctx.allGearItems.value[req.requirement.item];
           if (item) {
-            out = { prefix: "Have", text: `${item.name} equipped`, icon: item.icon };
+            out = {
+              prefix: "Have",
+              text: `${item.name} equipped`,
+              icon: item.icon,
+            };
           }
           break;
         }
@@ -555,6 +588,7 @@ export function useRequirements(ctx: RequirementContext) {
   return {
     checkRequirement,
     checkRequirements,
+    canBeEquipped,
     mapRequirementsText,
     mergeRequirements,
     getLevelRequirementsMap,
