@@ -12,7 +12,10 @@ import type { LocationDetail } from "@/domain/types/location";
 import type { ServiceDetail } from "@/domain/types/service";
 import type { Keyword } from "@/domain/types/keyword";
 import { serviceTiers } from "@/domain/constants/services";
-import { getLevelRequirementsMap, mergeRequirements } from "@/domain/requirements/requirementUtils";
+import {
+  getLevelRequirementsMap,
+  mergeRequirements,
+} from "@/domain/requirements/requirementUtils";
 
 // Re-export pure functions so callers only need one import.
 export { getLevelRequirementsMap, mergeRequirements };
@@ -113,8 +116,9 @@ export function useRequirements(ctx: RequirementContext) {
     const equippedKeywordCounts: Record<string, number> = context.equippedGear
       .value
       ? context.equippedGear.value
-          .filter((val): val is RequirementItem & { keywords: string[] } =>
-            "keywords" in val,
+          .filter(
+            (val): val is RequirementItem & { keywords: string[] } =>
+              "keywords" in val,
           )
           .flatMap(({ keywords }) => keywords)
           .reduce<Record<string, number>>((acc, val) => {
@@ -255,7 +259,8 @@ export function useRequirements(ctx: RequirementContext) {
       case "activityType": {
         const source = context.source.value;
         if (source) {
-          const { activity: reqActivity, keywords: reqKeywords } = req.requirement;
+          const { activity: reqActivity, keywords: reqKeywords } =
+            req.requirement;
           value =
             (!reqActivity || source.id === reqActivity) &&
             (!reqKeywords?.length ||
@@ -301,7 +306,9 @@ export function useRequirements(ctx: RequirementContext) {
       }
 
       case "itemEquipped":
-        value = ctx.equippedGear.value.some(({ id }) => id === req.requirement.item);
+        value = ctx.equippedGear.value.some(
+          ({ id }) => id === req.requirement.item,
+        );
         break;
 
       case "abilityAvailable": {
@@ -343,7 +350,11 @@ export function useRequirements(ctx: RequirementContext) {
       switch (req.type) {
         case "mainSkill": {
           const skill = playerStore.skillsMap[req.requirement.skill];
-          out = { prefix: requirementPrefix, text: skill.name, icon: skill.icon };
+          out = {
+            prefix: requirementPrefix,
+            text: skill.name,
+            icon: skill.icon,
+          };
           break;
         }
 
@@ -435,7 +446,7 @@ export function useRequirements(ctx: RequirementContext) {
         case "achievementPoint":
           out = {
             prefix: "Have",
-            text: `${req.requirement.value} achievement points`,
+            text: `${req.requirement.value} achievement point${req.requirement.value !== 1 ? "s" : ""}`,
             icon: "assets/icons/text/general_icons/achievement_point.png",
           };
           break;
@@ -476,7 +487,9 @@ export function useRequirements(ctx: RequirementContext) {
             (a, b) => a + b,
             0,
           );
-          out = { text: `Have ${Math.min(current, levels)}/${levels} total level` };
+          out = {
+            text: `Have ${Math.min(current, levels)}/${levels} total level`,
+          };
           break;
         }
 
@@ -493,7 +506,8 @@ export function useRequirements(ctx: RequirementContext) {
         }
 
         case "activityType": {
-          const { activity: reqActivity, keywords: reqKeywords } = req.requirement;
+          const { activity: reqActivity, keywords: reqKeywords } =
+            req.requirement;
           const act = reqActivity
             ? activityStore.activitiesMap[reqActivity]
             : undefined;
@@ -542,7 +556,11 @@ export function useRequirements(ctx: RequirementContext) {
         case "itemEquipped": {
           const item = ctx.allGearItems.value[req.requirement.item];
           if (item) {
-            out = { prefix: "Have", text: `${item.name} equipped`, icon: item.icon };
+            out = {
+              prefix: "Have",
+              text: `${item.name} equipped`,
+              icon: item.icon,
+            };
           }
           break;
         }
