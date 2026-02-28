@@ -1,38 +1,38 @@
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
-import { useIconStore } from "@/store/icon";
+import { computed, toRef } from "vue";
 import LoadingThrobber from "./LoadingThrobber.vue";
 import { iconSizeMap, type IconSizeKey } from "@/constants/iconSizes";
+import { useIconLoader } from "@/composables/useIconLoader";
 
-// Define props
-const props = defineProps<{
-  iconPath: string;
-  size?: IconSizeKey;
-  outlineClass?: string;
-  extraClasses?: string[];
-}>();
-
-const sizeWithDefault = computed<IconSizeKey>(() => props.size ?? "default");
-
-// State variables
-const iconStore = useIconStore();
-const iconUrl = ref<string | null>(null);
-const loading = ref<boolean>(true);
-
-const loadIcon = async (icon: string): Promise<void> => {
-  loading.value = true;
-  iconUrl.value = await iconStore.loadIcon(icon);
-  loading.value = false;
-};
-
-watch(
-  () => props.iconPath,
-  (icon) => void loadIcon(icon),
-  { immediate: true },
+/**
+ * Purpose:
+ * Renders a cached icon with consistent sizing while exposing accessibility-friendly
+ * semantics for both decorative and informative usage.
+ */
+const props = withDefaults(
+  defineProps<{
+    iconPath?: string | null;
+    size?: IconSizeKey;
+    altText?: string;
+    decorative?: boolean;
+    outlineClass?: string;
+    extraClasses?: string[];
+  }>(),
+  {
+    size: "default",
+    altText: "",
+    decorative: true,
+    outlineClass: "",
+    extraClasses: () => [],
+  },
 );
 
+const { iconUrl, loading } = useIconLoader(toRef(props, "iconPath"));
+
 // Map size key to CSS pixel value
-const iconSize = computed<string>(() => iconSizeMap[sizeWithDefault.value]);
+const iconSize = computed<string>(() => iconSizeMap[props.size]);
+const imgAlt = computed<string>(() => (props.decorative ? "" : props.altText || "Icon"));
+const isAriaHidden = computed<boolean>(() => props.decorative);
 </script>
 
 <template>
@@ -44,14 +44,16 @@ const iconSize = computed<string>(() => iconSizeMap[sizeWithDefault.value]);
       minHeight: iconSize,
     }"
     class="ws-icon"
+    :aria-hidden="isAriaHidden"
+    :aria-busy="loading"
   >
-    <loading-throbber v-if="loading" />
+    <loading-throbber v-if="loading" aria-hidden="true" />
     <img
       v-if="iconUrl"
       :src="iconUrl"
-      :alt="iconPath"
+      :alt="imgAlt"
       :style="{ width: '100%', height: '100%', objectFit: 'contain' }"
-      :class="[outlineClass, ...(props.extraClasses ?? [])]"
+      :class="[outlineClass, ...extraClasses]"
     />
   </div>
 </template>
