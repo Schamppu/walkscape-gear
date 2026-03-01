@@ -17,6 +17,7 @@ import {
   mergeRequirements,
 } from "@/domain/requirements/requirementUtils";
 import icons from "@/constants/iconPaths";
+import { capitalize } from "@/utils/string";
 
 // Re-export pure functions so callers only need one import.
 export { getLevelRequirementsMap, mergeRequirements };
@@ -530,7 +531,7 @@ export function useRequirements(ctx: RequirementContext) {
           );
           out = {
             prefix: `Have ${target}% towards maximum`,
-            text: `${skill.type} level (${Math.min(current, target)}/${target})`,
+            text: `${capitalize(skill.type)} level (${Math.min(current, target)}/${target})`,
             icon: skill.typeIcon,
           };
           break;

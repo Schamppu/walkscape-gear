@@ -9,7 +9,7 @@ import { useNotificationStore } from "@/store/notifications";
 
 export type SkillOption = Skill & { value: string };
 
-export type SkillInfo = Pick<Skill, "icon" | "name" | "type">;
+export type SkillInfo = Pick<Skill, "icon" | "name" | "type" | "typeIcon">;
 
 export type FactionInfo = Pick<Faction, "icon" | "name" | "color" | "reputation">;
 
