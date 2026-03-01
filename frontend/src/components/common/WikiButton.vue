@@ -1,20 +1,25 @@
-<script setup>
-import { getWikiUrl } from "@/utils/wiki";
-import WsButton from "./WsButton.vue";
+<script setup lang="ts">
+import { computed, toRef } from "vue";
+import WsButton from "@/components/primitives/WsButton.vue";
+import { useWikiLink } from "@/composables/useWikiLink";
 
-const props = defineProps({
-  name: {
-    type: String,
-    required: true,
-  },
-});
+const WIKI_BUTTON_TEXT = "Wiki";
+const WIKI_TITLE_SUFFIX = "(opens in a new tab)";
 
-const wikiUrl = getWikiUrl(props.name);
-const openWiki = () => {
-  window.open(wikiUrl, "_blank");
-};
+const props = defineProps<{
+  name: string;
+}>();
+
+const { openWiki } = useWikiLink(toRef(props, "name"));
+const buttonTitle = computed<string>(() => `${WIKI_BUTTON_TEXT}: ${props.name} ${WIKI_TITLE_SUFFIX}`);
+const ariaLabel = computed<string>(() => buttonTitle.value);
 </script>
 
 <template>
-  <ws-button text="Wiki" @click="openWiki" />
+  <ws-button
+    :text="WIKI_BUTTON_TEXT"
+    :aria-label="ariaLabel"
+    :title="buttonTitle"
+    @click="openWiki"
+  />
 </template>

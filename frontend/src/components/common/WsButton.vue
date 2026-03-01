@@ -1,44 +1,40 @@
-<script setup>
-import WsIcon from "@/components/common/WsIcon.vue";
+<script setup lang="ts">
+import PrimitiveWsButton from "@/components/primitives/WsButton.vue";
+import type { IconSizeKey } from "@/constants/iconSizes";
+import type { WsButtonVariant } from "@/constants/wsButton";
 
-defineProps({
-  text: String,
-  iconPath: String,
-  iconSize: {
-    type: String,
-    default: "sm",
+const props = withDefaults(
+  defineProps<{
+    text?: string;
+    iconPath?: string | null;
+    iconSize?: IconSizeKey;
+    variant?: WsButtonVariant;
+    disabled?: boolean;
+    type?: "button" | "submit" | "reset";
+    ariaLabel?: string;
+  }>(),
+  {
+    text: "",
+    iconPath: "",
+    iconSize: "sm",
+    variant: "default",
+    disabled: false,
+    type: "button",
+    ariaLabel: "",
   },
-});
+);
 
-defineEmits(["click"]);
+const emit = defineEmits<{
+  (event: "click", payload: MouseEvent): void;
+}>();
+
+const handleClick = (event: MouseEvent): void => {
+  emit("click", event);
+};
 </script>
 
 <template>
-  <button @click="$emit('click', $event)" class="button">
-    <ws-icon v-if="iconPath" :icon-path="iconPath" :size="iconSize" />
-    {{ text }}
-  </button>
+  <primitive-ws-button v-bind="props" @click="handleClick">
+    <slot />
+  </primitive-ws-button>
 </template>
-
-<style lang="scss" scoped>
-.button {
-  cursor: pointer;
-
-  display: flex;
-  align-items: center;
-  align-self: center;
-  gap: $xxxxs;
-  padding: $xxxs;
-
-  word-wrap: nowrap;
-
-  background-color: $boxDarkBackground;
-  border: 1px solid $boxDarkOutline;
-  border-radius: $md;
-
-  &:hover,
-  &:focus {
-    background-color: $boxTransparentDarkOutline;
-  }
-}
-</style>
