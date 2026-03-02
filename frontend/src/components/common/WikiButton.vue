@@ -11,7 +11,9 @@ const props = defineProps<{
 }>();
 
 const { openWiki } = useWikiLink(toRef(props, "name"));
-const buttonTitle = computed<string>(() => `${WIKI_BUTTON_TEXT}: ${props.name} ${WIKI_TITLE_SUFFIX}`);
+const buttonTitle = computed<string>(
+  () => `${WIKI_BUTTON_TEXT}: ${props.name} ${WIKI_TITLE_SUFFIX}`,
+);
 const ariaLabel = computed<string>(() => buttonTitle.value);
 </script>
 

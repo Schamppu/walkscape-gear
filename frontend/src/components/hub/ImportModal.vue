@@ -1,7 +1,7 @@
 <script setup>
 import { ref, watch, computed } from "vue";
 import BaseModal from "@/components/common/BaseModal.vue";
-import WsButton from "@/components/common/WsButton.vue";
+import WsButton from "@/components/primitives/WsButton.vue";
 
 const props = defineProps({
   modelValue: Boolean,
@@ -56,7 +56,7 @@ watch(
         textareaRef.value?.focus();
       }, 100);
     }
-  }
+  },
 );
 
 function handleSave() {

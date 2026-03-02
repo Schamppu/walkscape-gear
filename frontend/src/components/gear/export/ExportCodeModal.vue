@@ -3,7 +3,7 @@ import { ref, watch } from "vue";
 import { useNotificationStore } from "@/store/notifications";
 import { icons } from "@/constants/iconPaths";
 import BaseModal from "@/components/common/BaseModal.vue";
-import WsButton from "@/components/common/WsButton.vue";
+import WsButton from "@/components/primitives/WsButton.vue";
 
 const props = defineProps({
   modelValue: Boolean,
@@ -24,7 +24,7 @@ watch(
   () => props.modelValue,
   (newValue) => {
     isOpen.value = newValue;
-  }
+  },
 );
 
 // Watch local state to emit changes

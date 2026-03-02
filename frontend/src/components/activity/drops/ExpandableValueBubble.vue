@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
-import WsIcon from "@/components/common/WsIcon.vue";
+import WsIcon from "@/components/primitives/WsIcon.vue";
 import type { BreakdownLine } from "@/domain/drops/aggregateDropValue";
 import { n } from "@/utils/number";
 import { snakeToTitle } from "@/utils/string";
@@ -15,7 +15,7 @@ const props = defineProps<{
 const expanded = ref(false);
 
 const visibleBreakdown = computed(() =>
-  props.breakdown.filter((line) => Math.abs(line.value) >= 0.005)
+  props.breakdown.filter((line) => Math.abs(line.value) >= 0.005),
 );
 
 const hasBreakdown = computed(() => visibleBreakdown.value.length > 0);
@@ -52,11 +52,7 @@ function close() {
           class="breakdown-line"
           :title="snakeToTitle(line.label)"
         >
-          <ws-icon
-            v-if="line.icon"
-            :icon-path="line.icon"
-            size="xs"
-          />
+          <ws-icon v-if="line.icon" :icon-path="line.icon" size="xs" />
           <span v-else class="line-icon-placeholder" />
           <span
             :class="['line-value', line.value < 0 ? 'negative' : 'positive']"

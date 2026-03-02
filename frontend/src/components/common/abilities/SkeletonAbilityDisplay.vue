@@ -1,5 +1,5 @@
 <script setup>
-import WsIcon from "../WsIcon.vue";
+import WsIcon from "@/components/primitives/WsIcon.vue";
 
 const props = defineProps({
   ability: Object,

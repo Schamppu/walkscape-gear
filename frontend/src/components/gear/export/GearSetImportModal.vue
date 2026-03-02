@@ -1,7 +1,7 @@
 <script setup>
 import { ref, watch } from "vue";
 import BaseModal from "@/components/common/BaseModal.vue";
-import WsButton from "@/components/common/WsButton.vue";
+import WsButton from "@/components/primitives/WsButton.vue";
 
 const props = defineProps({
   modelValue: Boolean,
@@ -37,7 +37,7 @@ watch(
         textareaRef.value?.focus();
       }, 100);
     }
-  }
+  },
 );
 
 function handleSave() {
@@ -79,7 +79,9 @@ async function handlePasteClick() {
   >
     <!-- Main content goes in the default slot -->
     <div class="content">
-      <p class="instructions">Paste your gear set data into the text field below.</p>
+      <p class="instructions">
+        Paste your gear set data into the text field below.
+      </p>
       <p class="instructions">
         You can copy gear set data from the gear calculator or other sources.
       </p>

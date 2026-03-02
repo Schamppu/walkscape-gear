@@ -111,13 +111,13 @@ const updateRecipeAndUrl = async (recipe, update) => {
 };
 
 const activitySelected = computed(
-  () => !loadingActivity.value && activityStore.activitySelected
+  () => !loadingActivity.value && activityStore.activitySelected,
 );
 const travellingSelected = computed(() => {
   return activitySelected.value && activityStore.activity?.id === "travelling";
 });
 const recipeSelected = computed(
-  () => !loadingActivity.value && activityStore.recipeSelected
+  () => !loadingActivity.value && activityStore.recipeSelected,
 );
 </script>
 

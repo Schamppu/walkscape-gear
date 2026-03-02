@@ -1,5 +1,5 @@
 <script setup>
-import WsIcon from "../WsIcon.vue";
+import WsIcon from "@/components/primitives/WsIcon.vue";
 import { usePlayerStore } from "@/store/player";
 
 const props = defineProps({ skill: String });

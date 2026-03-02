@@ -18,8 +18,8 @@ const iconPath =
   props.skill === "steps"
     ? "assets/icons/text/general_icons/steps.png"
     : props.skill === "xp"
-    ? "assets/icons/text/stats/skilling/bonus_experience.png"
-    : `assets/icons/text/skill_icons/${props.skill}.png`;
+      ? "assets/icons/text/stats/skilling/bonus_experience.png"
+      : `assets/icons/text/skill_icons/${props.skill}.png`;
 const borderClass =
   props.useColorBorder && props.skill !== "steps"
     ? `border-${props.skill}`

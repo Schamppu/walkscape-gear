@@ -19,8 +19,8 @@ import Footer from "@/components/footer/FooterNav.vue";
 import About from "@/components/about/AboutView.vue";
 import PrivacyPolicy from "@/components/about/PrivacyPolicyView.vue";
 import SiteNotice from "@/components/about/SiteNotice.vue";
-import LoadingThrobber from "@/components/common/LoadingThrobber.vue";
-import WsButton from "@/components/common/WsButton.vue";
+import LoadingThrobber from "@/components/primitives/LoadingThrobber.vue";
+import WsButton from "@/components/primitives/WsButton.vue";
 import SettingsModal from "@/components/settings/SettingsModal.vue";
 import NotificationContainer from "@/components/common/NotificationContainer.vue";
 import UndoRedoButtons from "@/components/common/UndoRedoButtons.vue";
@@ -159,7 +159,10 @@ onUnmounted(() => {
         :class="['tab-panel', { active: activeTab === 'About' }]"
         :tabindex="isMobile ? 0 : undefined"
       >
-        <About @back="scrollToTab('Hub')" @privacy-policy="scrollToTab('PrivacyPolicy')" />
+        <About
+          @back="scrollToTab('Hub')"
+          @privacy-policy="scrollToTab('PrivacyPolicy')"
+        />
       </div>
 
       <div

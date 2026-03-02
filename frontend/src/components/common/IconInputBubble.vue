@@ -1,7 +1,7 @@
 <script setup>
 import { ref, watch } from "vue";
-import WsIcon from "@/components/common/WsIcon.vue";
-import WsLabel from "@/components/common/WsLabel.vue";
+import WsIcon from "@/components/primitives/WsIcon.vue";
+import WsLabel from "@/components/primitives/WsLabel.vue";
 
 const emit = defineEmits(["input"]);
 

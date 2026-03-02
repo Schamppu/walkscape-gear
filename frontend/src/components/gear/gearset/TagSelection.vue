@@ -1,8 +1,8 @@
 <script setup>
 import { ref, computed } from "vue";
 import { useGearSetStore } from "@/store/gearSet";
-import WsIcon from "@/components/common/WsIcon.vue";
-import WsButton from "@/components/common/WsButton.vue";
+import WsIcon from "@/components/primitives/WsIcon.vue";
+import WsButton from "@/components/primitives/WsButton.vue";
 
 const props = defineProps({
   modelValue: {

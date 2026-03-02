@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from "vue";
-import WsLabel from "../../common/WsLabel.vue";
+import WsLabel from "../../primitives/WsLabel.vue";
 import { getOutcomeOdds } from "@/domain/quality/qualityOutcomeOdds";
 import { n } from "@/utils/number";
 
@@ -17,7 +17,7 @@ const craftingOdds = computed(() => {
     levelReq,
     props.qualityOutcome,
     props.useFineMaterials,
-    props.craftsPerMaterial
+    props.craftsPerMaterial,
   );
 });
 </script>

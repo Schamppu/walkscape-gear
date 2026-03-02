@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import { computed, toRef } from "vue";
-import { useWsButton } from "../../composables/useWsButton";
+import {
+  useWsButton,
+  type WsButtonVariant,
+} from "../../composables/useWsButton";
 import type { IconSizeKey } from "../../constants/iconSizes";
-import type { WsButtonVariant } from "../../constants/wsButton";
+import WsIcon from "./WsIcon.vue";
 
 const props = withDefaults(
   defineProps<{
@@ -30,7 +33,9 @@ const emit = defineEmits<{
 }>();
 
 const { variantClass } = useWsButton(toRef(props, "variant"));
-const computedAriaLabel = computed<string | undefined>(() => props.ariaLabel || props.text || undefined);
+const computedAriaLabel = computed<string | undefined>(
+  () => props.ariaLabel || props.text || undefined,
+);
 
 const handleClick = (event: MouseEvent): void => {
   if (props.disabled) {

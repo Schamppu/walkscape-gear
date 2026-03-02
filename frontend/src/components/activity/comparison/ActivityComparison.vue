@@ -20,7 +20,7 @@ const gs1Ctx = useGearContext(0, { location: gs1Location });
 const gs2Ctx = useGearContext(1, { location: gs2Location });
 
 const borderClass = computed(
-  () => `border-${gs1Ctx.activity.value?.relatedSkillsList[0]}`
+  () => `border-${gs1Ctx.activity.value?.relatedSkillsList[0]}`,
 );
 
 const sm1 = useSkillModifiers(gs1Ctx);

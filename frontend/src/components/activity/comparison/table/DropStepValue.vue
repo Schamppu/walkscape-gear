@@ -1,5 +1,5 @@
 <script setup>
-import WsIcon from "@/components/common/WsIcon.vue";
+import WsIcon from "@/components/primitives/WsIcon.vue";
 import { icons } from "@/constants/iconPaths";
 import { n } from "@/utils/number";
 

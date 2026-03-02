@@ -1,7 +1,7 @@
 <script setup>
 import { computed } from "vue";
 import { useGearStore } from "@/store/gear";
-import WsIcon from "@/components/common/WsIcon.vue";
+import WsIcon from "@/components/primitives/WsIcon.vue";
 import StatsDisplay from "@/components/common/StatsDisplay.vue";
 import QualitySelection from "./QualitySelection.vue";
 import RequirementDisplay from "@/components/activity/Info/RequirementDisplay.vue";
@@ -30,7 +30,7 @@ const icon = computed(() => {
   return getPetIcon(
     item.value,
     item.value.quality,
-    item.value.quality2 === "rare"
+    item.value.quality2 === "rare",
   );
 });
 
@@ -48,7 +48,7 @@ const petLevelOptions = computed(() =>
         value: `${level}`,
         name: `lvl ${level}: ${stage}`,
       }))
-    : null
+    : null,
 );
 </script>
 

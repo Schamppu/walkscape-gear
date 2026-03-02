@@ -1,5 +1,5 @@
 <script setup>
-import WsButton from "@/components/common/WsButton.vue";
+import WsButton from "@/components/primitives/WsButton.vue";
 import { useGearStore } from "@/store/gear";
 import { useNotificationStore } from "@/store/notifications";
 import { icons } from "@/constants/iconPaths";

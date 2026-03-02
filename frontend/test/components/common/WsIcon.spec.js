@@ -3,8 +3,8 @@ import { describe, test, expect, vi, beforeEach } from "vitest";
 import { nextTick } from "vue";
 
 // Unmock WsIcon for this test file since we want to test the actual component
-vi.unmock("@/components/common/WsIcon.vue");
-import WsIcon from "@/components/common/WsIcon.vue";
+vi.unmock("@/components/primitives/WsIcon.vue");
+import WsIcon from "@/components/primitives/WsIcon.vue";
 
 // Mock the icon store
 const mockIconStore = {
@@ -17,7 +17,7 @@ vi.mock("@/store/icon", () => ({
 }));
 
 // Mock LoadingThrobber component
-vi.mock("@/components/common/LoadingThrobber.vue", () => ({
+vi.mock("@/components/primitives/LoadingThrobber.vue", () => ({
   default: {
     name: "LoadingThrobber",
     template: '<div data-testid="loading-throbber">Loading...</div>',

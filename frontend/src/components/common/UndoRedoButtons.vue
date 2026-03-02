@@ -116,7 +116,7 @@ const containerClass = computed(() => [
     .undo-redo-button {
       padding: $sm;
       aspect-ratio: 1;
-      
+
       .button-icon {
         font-size: 1.2em;
       }
@@ -128,7 +128,7 @@ const containerClass = computed(() => [
   display: flex;
   align-items: center;
   gap: $xs;
-  
+
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--border-radius);

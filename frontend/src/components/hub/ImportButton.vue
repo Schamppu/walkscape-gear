@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from "vue";
-import WsButton from "@/components/common/WsButton.vue";
+import WsButton from "@/components/primitives/WsButton.vue";
 import ImportModal from "./ImportModal.vue";
 
 const emit = defineEmits(["import-data"]);

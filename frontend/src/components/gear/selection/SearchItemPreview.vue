@@ -6,7 +6,7 @@ import {
 import { computed } from "vue";
 import { useSkillModifiers } from "@/composables/useSkillModifiers";
 import { n } from "@/utils/number";
-import WsLabel from "@/components/common/WsLabel.vue";
+import WsLabel from "@/components/primitives/WsLabel.vue";
 import SkillBubble from "@/components/common/SkillBubble.vue";
 import InfoBubble from "@/components/common/InfoBubble.vue";
 import { icons } from "@/constants/iconPaths";
@@ -22,7 +22,7 @@ const { id: itemId, quality: itemQuality } = itemInSlot || {
   quality: null,
 };
 const itemIndex = ctx.equippedGear.value.findIndex(
-  ({ id, quality }) => id === itemId && quality === itemQuality
+  ({ id, quality }) => id === itemId && quality === itemQuality,
 );
 
 const editedContext = {
@@ -75,7 +75,7 @@ const xpBubbles = computed(() => {
     .map((xp, i) => ({
       skill: xp.skill,
       text: `${n(xp.displayedValue)} → ${n(
-        newXpPerStep.value[i].displayedValue
+        newXpPerStep.value[i].displayedValue,
       )}`,
       value: newXpPerStep.value[i].displayedValue - xp.displayedValue,
     }))

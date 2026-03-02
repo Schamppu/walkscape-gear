@@ -1,5 +1,5 @@
 <script setup>
-import WsIcon from "../WsIcon.vue";
+import WsIcon from "@/components/primitives/WsIcon.vue";
 import { useRouteStore } from "@/store/route";
 import { useDataStore } from "@/store/data";
 import { getDataIdMapping } from "@/utils/stringTokenizer";

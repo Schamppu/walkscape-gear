@@ -1,7 +1,7 @@
 <script setup>
 import { computed } from "vue";
 import DropItemDisplay from "./DropItemDisplay.vue";
-import WsLabel from "@/components/common/WsLabel.vue";
+import WsLabel from "@/components/primitives/WsLabel.vue";
 import { mapTableToItems } from "@/domain/lootTables/lootTables";
 
 const props = defineProps({
@@ -20,7 +20,7 @@ const lootTableLabels = computed(() => {
   } else {
     labels.push.apply(
       labels,
-      tables.map(({ name }) => name)
+      tables.map(({ name }) => name),
     );
   }
 
@@ -31,7 +31,7 @@ const lootTableLabels = computed(() => {
 });
 
 const tableItems = computed(() =>
-  mapTableToItems(props.lootTable).map((item) => item?.rowItemID || "gold")
+  mapTableToItems(props.lootTable).map((item) => item?.rowItemID || "gold"),
 );
 </script>
 

@@ -4,7 +4,7 @@ import { injectBaseContext } from "@/composables/context/injectShared";
 import { useGearSetExport } from "@/composables/useGearSetExport";
 import { icons } from "@/constants/iconPaths";
 import { useNotificationStore } from "@/store/notifications";
-import WsButton from "@/components/common/WsButton.vue";
+import WsButton from "@/components/primitives/WsButton.vue";
 import ExportCodeModal from "./ExportCodeModal.vue";
 
 const ctx = injectBaseContext();
@@ -27,7 +27,7 @@ async function copyExportCode() {
       currentExportCode.value = await exportCode();
       showModal.value = true;
       notificationStore.info(
-        "Clipboard access failed. Export code displayed in modal."
+        "Clipboard access failed. Export code displayed in modal.",
       );
     } catch (exportError) {
       console.error("Export code generation failed:", exportError);

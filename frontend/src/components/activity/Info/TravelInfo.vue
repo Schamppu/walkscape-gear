@@ -1,7 +1,7 @@
 <script setup>
 import { computed, ref, watch } from "vue";
-import WsIcon from "@/components/common/WsIcon.vue";
-import WsLabel from "@/components/common/WsLabel.vue";
+import WsIcon from "@/components/primitives/WsIcon.vue";
+import WsLabel from "@/components/primitives/WsLabel.vue";
 import InfoBubble from "@/components/common/InfoBubble.vue";
 import NestedDropdown from "@/components/common/dropdowns/NestedDropdown.vue";
 import TravelRequirementsList from "./TravelRequirementsList.vue";
@@ -70,7 +70,7 @@ watch(
     const result = getRoute(s.id, e.id);
     route.value = result;
   },
-  { flush: "post" }
+  { flush: "post" },
 );
 
 const noPath = computed(() => {
@@ -126,9 +126,7 @@ const stats = (segment) => {
         tooltip: `Work Efficiency: ${n(uncappedWorkEfficiency * 100)}%`,
         iconPath: icons.WE,
         borderClass:
-          workEfficiency >= effectiveMaxWorkEfficiency
-            ? "border-green"
-            : "",
+          workEfficiency >= effectiveMaxWorkEfficiency ? "border-green" : "",
       },
       {
         text: `${n(doubleAction * 100)}%`,
@@ -161,14 +159,14 @@ const statsRow = computed(() => {
       {
         text: `${getRangeText(
           [totalMinSteps.value, totalMaxSteps.value],
-          false
+          false,
         )} (~${n(totalAverageSteps.value, 0)})`,
         tooltip: `Min steps: ${Math.round(
-          totalMinSteps.value
+          totalMinSteps.value,
         )} (best case with double action)\nMax steps: ${
           totalMaxSteps.value
         } (worst case, no double action)\nAverage steps: ${Math.round(
-          totalAverageSteps.value
+          totalAverageSteps.value,
         )}`,
         iconPath: icons.steps,
       },
@@ -190,11 +188,11 @@ const reqs = computed(() => {
   const segmentRequirements = segments.value.map(
     ({ requirements, context }) => {
       return { requirements, context };
-    }
+    },
   );
   const requirementsActive = segmentRequirements.map(
     ({ requirements, context }) =>
-      requirements.map((reqs) => checkRequirements([reqs], context))
+      requirements.map((reqs) => checkRequirements([reqs], context)),
   );
 
   return segmentRequirements.map(({ requirements }, idx) => {

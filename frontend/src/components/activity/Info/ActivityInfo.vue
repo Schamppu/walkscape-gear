@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from "vue";
-import WsLabel from "@/components/common/WsLabel.vue";
+import WsLabel from "@/components/primitives/WsLabel.vue";
 import InfoBubble from "@/components/common/InfoBubble.vue";
 import LocationBubble from "@/components/common/LocationBubble.vue";
 import SkillBubble from "@/components/common/SkillBubble.vue";

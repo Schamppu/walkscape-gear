@@ -12,7 +12,7 @@ import { consumableQualityOptions } from "@/domain/constants/quality";
 import { itemQualityNameSort } from "@/domain/gear/sorting";
 import { usedAttrs } from "@/domain/quality/qualityAttrs";
 import { intersect } from "@/utils/intersect";
-import WsIcon from "@/components/common/WsIcon.vue";
+import WsIcon from "@/components/primitives/WsIcon.vue";
 import SearchItemDisplay from "./SearchItemDisplay.vue";
 
 const props = defineProps({
@@ -42,7 +42,7 @@ const slotItems = Object.values(ctx.allGearItems.value).filter(
   ({ gearType, type, egg }) =>
     gearType === props.gearType ||
     type === props.gearType ||
-    (props.gearType === "pet" && egg)
+    (props.gearType === "pet" && egg),
 );
 
 const otherSlotIds = computed(() => {
@@ -87,12 +87,12 @@ const filteredItems = computed(() => {
     const otherSlotsItems = Object.entries(ctx.gearSlots.value)
       .filter(
         ([slot, item]) =>
-          item && slot !== props.slotName && slot.includes(props.gearType)
+          item && slot !== props.slotName && slot.includes(props.gearType),
       )
       .map(([, item]) => item);
     const equippedKeywords = otherSlotsItems.flatMap((item) => item.keywords);
     const bannedKeywords = equippedKeywords.flatMap(
-      (keyword) => dataStore.keywordsMap[keyword]?.bannedKeywords || []
+      (keyword) => dataStore.keywordsMap[keyword]?.bannedKeywords || [],
     );
     const commonKeywords = intersect(item.keywords, bannedKeywords);
     return commonKeywords.length === 0;
@@ -181,7 +181,7 @@ const filteredItems = computed(() => {
         filterStat(item) &&
         filterBannedKeywords(item) &&
         filterHidden(item) &&
-        filterEmbargo(item)
+        filterEmbargo(item),
     )
     .sort((a, b) => {
       if (dataStore.selectedStat === "none")

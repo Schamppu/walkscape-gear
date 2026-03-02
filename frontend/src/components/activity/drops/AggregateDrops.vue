@@ -1,6 +1,6 @@
 <script setup>
 import { icons } from "@/constants/iconPaths";
-import WsIcon from "@/components/common/WsIcon.vue";
+import WsIcon from "@/components/primitives/WsIcon.vue";
 import AggregateDropDisplay from "./AggregateDropDisplay.vue";
 
 const props = defineProps({

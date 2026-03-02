@@ -18,7 +18,7 @@ const includedStats = computed(() => {
     })
     .filter(({ stat, isPercent }) => {
       return attrStats.some(
-        (stats) => stats.isPercent === isPercent && stats.type === stat.type
+        (stats) => stats.isPercent === isPercent && stats.type === stat.type,
       );
     });
 
@@ -39,7 +39,8 @@ const includedStats = computed(() => {
         index ===
         array.findIndex(
           (other) =>
-            other.stat.id === item.stat.id && other.isPercent === item.isPercent
+            other.stat.id === item.stat.id &&
+            other.isPercent === item.isPercent,
         )
       );
     });

@@ -2,7 +2,7 @@
 import { computed } from "vue";
 import { useGearStore } from "@/store/gear";
 import { getPetIcon } from "@/domain/pets/getPetIcon";
-import WsIcon from "@/components/common/WsIcon.vue";
+import WsIcon from "@/components/primitives/WsIcon.vue";
 
 const emit = defineEmits(["select"]);
 
@@ -27,7 +27,7 @@ const icon = computed(() => {
     ? getPetIcon(
         gearRef.value,
         gearRef.value.quality,
-        gearRef.value.quality2 === "rare"
+        gearRef.value.quality2 === "rare",
       )
     : gearRef.value.icon;
 });

@@ -5,7 +5,7 @@ import {
   upsertFactionReputations,
 } from "@/utils/axios/db_routes";
 import { usePlayerStore } from "@/store/player";
-import WsIcon from "@/components/common/WsIcon.vue";
+import WsIcon from "@/components/primitives/WsIcon.vue";
 import TabContentWrapper from "@/components/common/TabContentWrapper.vue";
 import SkillLevelDisplay from "./SkillLevelDisplay.vue";
 import IconInputBubble from "@/components/common/IconInputBubble.vue";

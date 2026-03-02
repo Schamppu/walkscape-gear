@@ -2,7 +2,7 @@
 import { ref, computed, onMounted } from "vue";
 import { petQualityOptions } from "@/domain/constants/quality";
 import { useItemsStore } from "@/store/items";
-import WsIcon from "@/components/common/WsIcon.vue";
+import WsIcon from "@/components/primitives/WsIcon.vue";
 import StatsDisplay from "../common/StatsDisplay.vue";
 import AbilitiesDisplay from "../common/abilities/AbilitiesDisplay.vue";
 import { injectBaseContext } from "@/composables/context/injectShared";

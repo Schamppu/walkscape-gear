@@ -63,10 +63,7 @@ const toggleOnlySettings = computed(() =>
     <h3>{{ title }}</h3>
 
     <!-- Toggle + Visible in UI -->
-    <table
-      v-if="toggleWithVisibilitySettings.length"
-      class="settings-table"
-    >
+    <table v-if="toggleWithVisibilitySettings.length" class="settings-table">
       <thead>
         <tr>
           <th>Setting</th>
@@ -135,7 +132,10 @@ const toggleOnlySettings = computed(() =>
     <table
       v-if="toggleOnlySettings.length"
       class="settings-table"
-      :class="{ 'mt-table': toggleWithVisibilitySettings.length || dropdownSettings.length }"
+      :class="{
+        'mt-table':
+          toggleWithVisibilitySettings.length || dropdownSettings.length,
+      }"
     >
       <thead>
         <tr>

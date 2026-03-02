@@ -2,7 +2,7 @@
 import { ref, computed } from "vue";
 import { useItemsStore } from "@/store/items";
 import ItemCategoryPanel from "./ItemCategoryPanel.vue";
-import LoadingThrobber from "@/components/common/LoadingThrobber.vue";
+import LoadingThrobber from "@/components/primitives/LoadingThrobber.vue";
 
 const openCategoryGroup = ref(null);
 const openCategory = ref(null);
@@ -25,14 +25,14 @@ const categoryOwnedCount = computed(() => {
   return Object.fromEntries(
     itemsStore.categorizedItems.map(({ title, categories }) => {
       const allIds = categories.flatMap((cat) =>
-        cat.items.map((item) => item.id)
+        cat.items.map((item) => item.id),
       );
       const uniqueIds = Array.from(new Set(allIds));
       const ownedCount = uniqueIds.filter(
-        (id) => id in itemsStore.ownedItems && itemsStore.ownedItems[id].owned
+        (id) => id in itemsStore.ownedItems && itemsStore.ownedItems[id].owned,
       ).length;
       return [title, `${ownedCount} / ${uniqueIds.length}`];
-    })
+    }),
   );
 });
 </script>

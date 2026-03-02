@@ -3,7 +3,7 @@ import { useNotificationStore } from "@/store/notifications";
 import { injectBaseContext } from "@/composables/context/injectShared";
 import { useGearSetExport } from "@/composables/useGearSetExport";
 import { icons } from "@/constants/iconPaths";
-import WsButton from "@/components/common/WsButton.vue";
+import WsButton from "@/components/primitives/WsButton.vue";
 
 const notificationStore = useNotificationStore();
 const ctx = injectBaseContext();
@@ -48,7 +48,11 @@ async function downloadAllGearSets() {
         <tr>
           <td class="setting-label">Download all gear sets</td>
           <td class="setting-action">
-            <ws-button text="Download" :icon-path="icons.deposit" @click="downloadAllGearSets" />
+            <ws-button
+              text="Download"
+              :icon-path="icons.deposit"
+              @click="downloadAllGearSets"
+            />
           </td>
         </tr>
       </tbody>
@@ -66,6 +70,10 @@ async function downloadAllGearSets() {
 }
 
 .settings-table {
-  @include table.settings-table($label-width: 70%, $control-width: 30%, $striped-rows: false);
+  @include table.settings-table(
+    $label-width: 70%,
+    $control-width: 30%,
+    $striped-rows: false
+  );
 }
 </style>

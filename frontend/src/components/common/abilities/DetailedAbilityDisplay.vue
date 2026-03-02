@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import WsText from "@/components/common/text/WsText.vue";
-import WsIcon from "../WsIcon.vue";
+import WsIcon from "@/components/primitives/WsIcon.vue";
 import RequirementDisplay from "@/components/activity/Info/RequirementDisplay.vue";
 import { icons } from "@/constants/iconPaths";
 

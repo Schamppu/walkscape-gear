@@ -1,6 +1,6 @@
 <script setup>
-import WsIcon from "@/components/common/WsIcon.vue";
-import WsLabel from "@/components/common/WsLabel.vue";
+import WsIcon from "@/components/primitives/WsIcon.vue";
+import WsLabel from "@/components/primitives/WsLabel.vue";
 
 defineProps({
   iconPath: String,

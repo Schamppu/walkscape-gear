@@ -1,8 +1,11 @@
 <script setup>
 import { computed, ref, onMounted, watch } from "vue";
-import { craftingQualityOptions, qualityOptions } from "@/domain/constants/quality";
+import {
+  craftingQualityOptions,
+  qualityOptions,
+} from "@/domain/constants/quality";
 import { useItemsStore } from "@/store/items";
-import WsIcon from "@/components/common/WsIcon.vue";
+import WsIcon from "@/components/primitives/WsIcon.vue";
 import StatsDisplay from "../common/StatsDisplay.vue";
 import RequirementDisplay from "@/components/activity/Info/RequirementDisplay.vue";
 import { injectBaseContext } from "@/composables/context/injectShared";
@@ -41,9 +44,9 @@ onMounted(() => {
     isHidden.value = entry.hidden;
     quality.value = isCrafted
       ? entry.quality
-      : props.item?.quality ?? defaultQuality;
+      : (props.item?.quality ?? defaultQuality);
     quality2.value =
-      props.qualities < 2 ? null : entry.quality2 ?? defaultQuality;
+      props.qualities < 2 ? null : (entry.quality2 ?? defaultQuality);
   }
 });
 
@@ -53,7 +56,7 @@ watch(
     if (val !== isOwned.value) {
       isOwned.value = val;
     }
-  }
+  },
 );
 
 const colorClass = computed(() => {

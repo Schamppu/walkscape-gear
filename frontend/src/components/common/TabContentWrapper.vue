@@ -1,6 +1,6 @@
 <script setup>
 import { toRef } from "vue";
-import LoadingThrobber from "@/components/common/LoadingThrobber.vue";
+import LoadingThrobber from "@/components/primitives/LoadingThrobber.vue";
 
 const props = defineProps({
   title: {

@@ -8,11 +8,11 @@ import { useSettingsStore } from "@/store/settings";
  * A component that displays notifications using a teleport to the body element.
  * Notifications are displayed in a stack at the bottom right of the screen (or bottom left on mobile).
  * Each notification can be clicked to remove it from the stack.
- * 
+ *
  * The component uses a transition group for smooth animations when notifications are added or removed.
  * The notification store is accessed to retrieve the current notifications and to remove them when clicked.
  * The styles are scoped to ensure they do not affect other parts of the application, and media queries are used for responsive design.
- * 
+ *
  * Does NOT:
  * - Handle the logic for adding notifications (this is done in the notification store).
  * - Display different content based on notification type (all notifications display the message, but have different border colors).
@@ -30,7 +30,8 @@ const notifications = computed(() => notificationStore.notifications);
  * overlap them. The offset matches the approximate height of that container.
  */
 const containerStyle = computed(() => ({
-  "--undo-redo-offset": settingsStore.gearSettings?.undoRedo?.display === 2 ? "5rem" : "0px",
+  "--undo-redo-offset":
+    settingsStore.gearSettings?.undoRedo?.display === 2 ? "5rem" : "0px",
 }));
 
 function handleNotificationClick(id: number): void {

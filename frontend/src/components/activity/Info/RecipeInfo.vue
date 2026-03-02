@@ -1,7 +1,7 @@
 <script setup>
 import { computed } from "vue";
 import { storeToRefs } from "pinia";
-import WsLabel from "@/components/common/WsLabel.vue";
+import WsLabel from "@/components/primitives/WsLabel.vue";
 import InfoBubble from "@/components/common/InfoBubble.vue";
 import ServiceBubble from "@/components/common/ServiceBubble.vue";
 import LocationBubble from "@/components/common/LocationBubble.vue";
@@ -34,9 +34,11 @@ const stats = computed(() => {
     maxWorkEfficiency: sharedModifiers.maxWorkEfficiency.value,
     workEfficiency: sharedModifiers.workEfficiency.value,
     uncappedWorkEfficiency: sharedModifiers.uncappedWorkEfficiency.value,
-    effectiveMaxWorkEfficiency: sharedModifiers.effectiveMaxWorkEfficiency.value,
+    effectiveMaxWorkEfficiency:
+      sharedModifiers.effectiveMaxWorkEfficiency.value,
     qualityOutcome: sharedModifiers.qualityOutcome.value,
-    uncappedStepsPerCompletion: sharedModifiers.uncappedStepsPerCompletion.value,
+    uncappedStepsPerCompletion:
+      sharedModifiers.uncappedStepsPerCompletion.value,
     stepsPerCompletion: sharedModifiers.stepsPerCompletion.value,
     stepsPerRewardRoll: sharedModifiers.stepsPerRewardRoll.value,
     craftsPerMaterial: sharedModifiers.craftsPerMaterial.value,

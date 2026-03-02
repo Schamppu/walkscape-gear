@@ -2,8 +2,8 @@
 import { ref, watch } from "vue";
 import { usePlayerStore } from "@/store/player";
 import { deleteUserData } from "@/utils/axios/db_routes";
-import WsLabel from "../common/WsLabel.vue";
-import WsButton from "../common/WsButton.vue";
+import WsLabel from "../primitives/WsLabel.vue";
+import WsButton from "../primitives/WsButton.vue";
 
 const emit = defineEmits(["update-uuid"]);
 
@@ -23,13 +23,13 @@ watch(
     uuidInput.value = newUuid || "";
     error.value = "";
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 function isValidUuid(uuid) {
   // Standard UUID v4 regex
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
-    uuid
+    uuid,
   );
 }
 

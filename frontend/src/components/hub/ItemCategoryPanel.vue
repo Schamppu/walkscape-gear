@@ -32,15 +32,15 @@ const getSortFn = (group) => {
 
 const itemsStore = useItemsStore();
 const items = itemsStore.itemsByCategory[props.itemCategory].sort(
-  getSortFn(props.group)
+  getSortFn(props.group),
 );
 
 const selectedItems = ref(
   new Set(
     items
       .filter((item) => itemsStore.ownedItems[item.id]?.owned)
-      .map((item) => item.id)
-  )
+      .map((item) => item.id),
+  ),
 );
 
 const allSelected = computed(() => {
@@ -137,17 +137,17 @@ watch(
     if (newVal && !hasLoaded.value) {
       hasLoaded.value = true;
     }
-  }
+  },
 );
 
 watch(
   () => items.map((item) => itemsStore.ownedItems[item.id]?.owned),
   (ownedArr) => {
     selectedItems.value = new Set(
-      items.filter((item, i) => ownedArr[i]).map((item) => item.id)
+      items.filter((item, i) => ownedArr[i]).map((item) => item.id),
     );
   },
-  { immediate: true }
+  { immediate: true },
 );
 </script>
 

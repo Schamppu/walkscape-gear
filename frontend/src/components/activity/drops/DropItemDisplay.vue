@@ -2,7 +2,7 @@
 import { computed } from "vue";
 import { storeToRefs } from "pinia";
 import { useSettingsStore } from "@/store/settings";
-import WsIcon from "@/components/common/WsIcon.vue";
+import WsIcon from "@/components/primitives/WsIcon.vue";
 import { injectLootTables } from "@/composables/context/injectShared";
 import { icons } from "@/constants/iconPaths";
 import { n } from "@/utils/number";

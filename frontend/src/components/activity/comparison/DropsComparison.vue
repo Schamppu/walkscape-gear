@@ -1,7 +1,7 @@
 <script setup>
 import { computed } from "vue";
 import ComparisonTableShell from "./table/ComparisonTableShell.vue";
-import WsIcon from "@/components/common/WsIcon.vue";
+import WsIcon from "@/components/primitives/WsIcon.vue";
 import { useGearContext } from "@/composables/context/useGearContext";
 import { useLootTables } from "@/composables/useLootTables";
 import { icons } from "@/constants/iconPaths";

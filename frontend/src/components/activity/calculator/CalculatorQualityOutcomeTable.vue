@@ -7,7 +7,7 @@ import {
   injectSkillModifiers,
   injectFineMaterials,
 } from "@/composables/context/injectShared";
-import WsLabel from "@/components/common/WsLabel.vue";
+import WsLabel from "@/components/primitives/WsLabel.vue";
 import { getOutcomeOdds } from "@/domain/quality/qualityOutcomeOdds";
 import { n } from "@/utils/number";
 

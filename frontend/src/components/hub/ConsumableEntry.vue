@@ -2,7 +2,7 @@
 import { computed, ref, onMounted, watch } from "vue";
 import { consumableQualityOptions } from "@/domain/constants/quality";
 import { useItemsStore } from "@/store/items";
-import WsIcon from "@/components/common/WsIcon.vue";
+import WsIcon from "@/components/primitives/WsIcon.vue";
 import StatsDisplay from "../common/StatsDisplay.vue";
 import { injectBaseContext } from "@/composables/context/injectShared";
 
@@ -43,7 +43,7 @@ watch(
   () => {
     updateOwnedFromStore();
   },
-  { deep: true }
+  { deep: true },
 );
 
 watch([normalOwned, fineOwned, isHidden], () => {

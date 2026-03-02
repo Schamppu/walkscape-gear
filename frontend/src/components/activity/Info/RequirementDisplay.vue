@@ -3,7 +3,7 @@ import {
   injectBaseContext,
   injectRequirements,
 } from "@/composables/context/injectShared";
-import WsIcon from "@/components/common/WsIcon.vue";
+import WsIcon from "@/components/primitives/WsIcon.vue";
 import { computed } from "vue";
 
 const props = defineProps({
@@ -18,7 +18,11 @@ const ctx = injectBaseContext();
 const { checkRequirements, mapRequirementsText } = injectRequirements();
 const fulfilled = computed(() => checkRequirements([props.requirement], ctx));
 const reqText = computed(() =>
-  mapRequirementsText([props.requirement], [fulfilled.value], props.displayType)
+  mapRequirementsText(
+    [props.requirement],
+    [fulfilled.value],
+    props.displayType,
+  ),
 );
 
 const borderClass = computed(() => {

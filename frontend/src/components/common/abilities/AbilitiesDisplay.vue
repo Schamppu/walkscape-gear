@@ -14,8 +14,8 @@ const detailedAvailable = ref(
     props.abilities.map((ability) => [
       ability,
       ability in dataStore.detailedAbilitiesMap,
-    ])
-  )
+    ]),
+  ),
 );
 
 dataStore

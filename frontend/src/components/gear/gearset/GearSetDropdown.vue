@@ -2,8 +2,8 @@
 import { ref, computed } from "vue";
 import { useGearSetStore } from "@/store/gearSet";
 import { icons } from "@/constants/iconPaths";
-import WsIcon from "@/components/common/WsIcon.vue";
-import WsButton from "@/components/common/WsButton.vue";
+import WsIcon from "@/components/primitives/WsIcon.vue";
+import WsButton from "@/components/primitives/WsButton.vue";
 import TagSelection from "./TagSelection.vue";
 
 const gearSetStore = useGearSetStore();
@@ -221,7 +221,6 @@ function isConfirmingDelete(setId) {
         <span v-else> No gear sets available </span>
       </div>
     </div>
-
   </div>
 </template>
 

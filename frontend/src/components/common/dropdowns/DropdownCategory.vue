@@ -1,5 +1,3 @@
-
-
 <script setup>
 import { ref, watch } from "vue";
 import LabelWithIcon from "../LabelWithIcon.vue";
@@ -35,7 +33,7 @@ watch(
   (val) => {
     if (val) isOpen.value = true;
   },
-  { immediate: true }
+  { immediate: true },
 );
 </script>
 

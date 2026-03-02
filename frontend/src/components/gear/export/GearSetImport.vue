@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from "vue";
-import WsButton from "@/components/common/WsButton.vue";
+import WsButton from "@/components/primitives/WsButton.vue";
 import GearSetImportModal from "./GearSetImportModal.vue";
 import { injectBaseContext } from "@/composables/context/injectShared";
 import { useGearSetExport } from "@/composables/useGearSetExport";
@@ -46,7 +46,7 @@ async function handleImportData(data) {
         if (item === null) return [gearSlot, null];
         const newId = newIds[item.id];
         return [gearSlot, { ...item, id: newId }];
-      })
+      }),
     );
 
     await gearStore.equipMultiple(newGearSet, false);
@@ -61,11 +61,7 @@ async function handleImportData(data) {
 
 <template>
   <div>
-    <ws-button
-      text="Import"
-      :icon-path="icons.equip"
-      @click="openModal"
-    />
+    <ws-button text="Import" :icon-path="icons.equip" @click="openModal" />
     <gear-set-import-modal
       v-model="showModal"
       @import-data="handleImportData"

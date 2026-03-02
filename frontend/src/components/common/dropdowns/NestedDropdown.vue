@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount, watch } from "vue";
-import WsLabel from "../WsLabel.vue";
+import WsLabel from "@/components/primitives/WsLabel.vue";
 import LabelWithIcon from "../LabelWithIcon.vue";
 import DropdownCategory from "./DropdownCategory.vue";
 
@@ -61,7 +61,7 @@ const filteredData = computed(() => {
       const matchesCategory = category.value.toLowerCase().includes(term);
 
       const matchingItems = category.items.filter((item) =>
-        item.value.toLowerCase().includes(term)
+        item.value.toLowerCase().includes(term),
       );
 
       if (matchesCategory || matchingItems.length > 0) {
@@ -86,7 +86,7 @@ watch(
   () => props.modelValue,
   (val) => {
     selected.value = val;
-  }
+  },
 );
 
 const selectItem = (item, update = true) => {

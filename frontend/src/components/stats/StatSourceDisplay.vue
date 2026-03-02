@@ -1,7 +1,7 @@
 <script setup>
 import { computed } from "vue";
 import { injectEffectiveAttrs } from "@/composables/context/injectShared";
-import WsIcon from "@/components/common/WsIcon.vue";
+import WsIcon from "@/components/primitives/WsIcon.vue";
 import { n } from "@/utils/number";
 
 const props = defineProps({
