@@ -1,29 +1,31 @@
-<script setup>
+<script setup lang="ts">
 import { computed } from "vue";
 import Tab from "./FooterTab.vue";
 
-const props = defineProps({
-  tabs: {
-    type: Object,
-    required: true,
-  },
-  activeTab: {
-    type: String,
-    required: true,
-  },
-});
+interface FooterTabItem {
+  name: string;
+  icon?: string;
+}
 
-const emit = defineEmits(["selectTab"]);
-const tabNames = props.tabs.map(({ name }) => name);
-const activeTabIndex = computed(() => tabNames.indexOf(props.activeTab));
+const props = defineProps<{
+  tabs: FooterTabItem[];
+  activeTab: string;
+}>();
 
-const changeTab = (index) => {
-  emit("selectTab", tabNames[index]);
+const emit = defineEmits<{
+  (event: "selectTab", name: string): void;
+}>();
+
+const tabNames = computed(() => props.tabs.map(({ name }) => name));
+const activeTabIndex = computed(() => tabNames.value.indexOf(props.activeTab));
+
+const changeTab = (index: number): void => {
+  emit("selectTab", tabNames.value[index]);
 };
 </script>
 
 <template>
-  <div class="footer">
+  <nav class="footer" aria-label="Main navigation">
     <tab
       v-for="({ name, icon }, index) in props.tabs"
       :key="name"
@@ -31,8 +33,8 @@ const changeTab = (index) => {
       :name="name"
       :icon="icon"
       @click="changeTab(index)"
-    ></tab>
-  </div>
+    />
+  </nav>
 </template>
 
 <style lang="scss" scoped>

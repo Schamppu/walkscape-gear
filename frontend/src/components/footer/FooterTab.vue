@@ -1,19 +1,30 @@
 <script setup lang="ts">
 import WsIcon from "../primitives/WsIcon.vue";
 
-const props = defineProps({
-  name: String,
-  icon: String,
-  active: Boolean,
-});
+const props = withDefaults(
+  defineProps<{
+    name?: string;
+    icon?: string;
+    active?: boolean;
+  }>(),
+  {
+    active: false,
+  },
+);
 
-defineEmits(["click"]);
+const emit = defineEmits<{
+  (event: "click"): void;
+}>();
 </script>
 
 <template>
-  <button :class="['tab', { active }]" @click="$emit('click')">
-    <ws-icon v-if="props.icon" :icon-path="props.icon" size="sm" />
-    {{ props.name }}
+  <button
+    :class="['tab', { active: props.active }]"
+    :aria-current="props.active ? 'page' : undefined"
+    @click="emit('click')"
+  >
+    <ws-icon v-if="props.icon" :icon-path="props.icon" size="sm" :decorative="true" />
+    <span>{{ props.name }}</span>
   </button>
 </template>
 
@@ -32,6 +43,11 @@ defineEmits(["click"]);
 
   &.active {
     background-color: $boxDarkBackground;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $boxDarkOutline;
+    outline-offset: -2px;
   }
 }
 </style>
