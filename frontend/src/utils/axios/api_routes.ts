@@ -171,11 +171,11 @@ export function getItem({
   });
 }
 
-export function getMaterials(): Promise<AxiosResponse<ItemSummary[]>> {
-  return proxy<ItemSummary[]>({
+export function getMaterials(): Promise<AxiosResponse<ItemDetail[]>> {
+  return proxy<ItemDetail[]>({
     url: "items/search",
     options: {
-      params: { type: "material" },
+      params: { type: "material", detailed: true },
     },
   });
 }

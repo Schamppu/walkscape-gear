@@ -1,7 +1,7 @@
 import { computed, type ComputedRef } from "vue";
 import { useActivityStore } from "@/store/activity";
 import { useGearStore, type EquippedGearSet, type EquippedItem } from "@/store/gear";
-import { useItemsStore, type OwnedItemState, type MaterialInfo } from "@/store/items";
+import { useItemsStore, type OwnedItemState } from "@/store/items";
 import { usePlayerStore } from "@/store/player";
 import { useRouteStore, type RouteSegment } from "@/store/route";
 import type { ActivityNone } from "@/domain/constants/activityNone";
@@ -31,7 +31,7 @@ export type BaseContext = {
   itemsByCategory: ComputedRef<Record<string, ItemDetail[]>>;
   ownedItems: ComputedRef<Record<string, OwnedItemState>>;
   embargoedItems: ComputedRef<Set<string>>;
-  materials: ComputedRef<Record<string, MaterialInfo>>;
+  materials: ComputedRef<Record<string, ItemDetail>>;
 
   gearSlots: ComputedRef<EquippedGearSet>;
   equippedGear: ComputedRef<EquippedItem[]>;

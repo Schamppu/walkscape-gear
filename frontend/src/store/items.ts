@@ -11,7 +11,6 @@ import type {
   DbOwnedItem,
   ItemCategoryGroup,
   ItemDetail,
-  ItemSummary,
 } from "@/domain/types";
 
 /**
@@ -32,8 +31,6 @@ import type {
 
 export type OwnedItemState = Omit<DbOwnedItem, "itemId">;
 
-export type MaterialInfo = Pick<ItemSummary, "icon" | "name">;
-
 export type ToggleItemPayload = {
   itemId: string;
   owned?: boolean;
@@ -51,7 +48,7 @@ export const useItemsStore = defineStore("itemStore", {
     petsMap: {} as Record<string, ItemDetail>,
     embargoedItems: new Set<string>(),
     changedOwnedItems: {} as Record<string, OwnedItemState>,
-    materials: {} as Record<string, MaterialInfo>,
+    materials: {} as Record<string, ItemDetail>,
     fineMaterials: {} as Record<string, boolean>,
     isLoaded: false,
   }),
@@ -104,7 +101,7 @@ export const useItemsStore = defineStore("itemStore", {
           .map(({ id }) => id),
       );
       this.materials = Object.fromEntries(
-        materials.map(({ id, icon, name }) => [id, { icon, name }]),
+        materials.map((item) => [item.id, item]),
       );
       this.fineMaterials = Object.fromEntries(
         fineMaterials.map((id) => [id, true]),

@@ -14,12 +14,10 @@
  */
 
 import type { DropItemInfo } from "@/domain/lootTables/dropInfo";
-import type { ItemValueMap } from "@/domain/types/item";
+import type { ItemDetail, ItemValueMap } from "@/domain/types/item";
 import type { TokenValuesMap } from "@/domain/constants/tokenValues";
 import type { QualityOutcomeResult } from "@/domain/quality/qualityOutcomeOdds";
 import type { RecipeMaterial } from "@/domain/types/recipe";
-import { all } from "axios";
-import { MaterialInfo } from "@/store/items";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -275,7 +273,7 @@ export function computeRecipeValue(params: RecipeValueParams): number {
 export function buildGoldBreakdown(
   dropItemInfoMap: Record<string, DropItemInfo>,
   allGearItems: Record<string, GearItemRef>,
-  allMaterialItems: Record<string, MaterialInfo>,
+  allMaterialItems: Record<string, ItemDetail>,
   itemValues: ItemValueMap,
   recipeParams?: RecipeValueParams,
 ): BreakdownLine[] {
