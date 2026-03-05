@@ -34,6 +34,7 @@ interface SectionRow {
   items: unknown[];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   itemProps: (item: any) => Record<string, unknown>;
+  showFineCheckbox?: boolean;
 }
 
 const activityStore = useActivityStore();
@@ -71,8 +72,10 @@ const sections = computed(() => {
   const inputs =
     options
       ?.filter((opt): opt is ActivityInputOption => opt?.type === "inputActivity")
-      .flatMap(({ inputs }) => inputs)
-      .map(({ type, keyword, item, quantity }) => {
+      .flatMap(({ inputs, enableFineBenefit }) =>
+        inputs.map((input) => ({ ...input, enableFineBenefit })),
+      )
+      .map(({ type, keyword, item, quantity, enableFineBenefit }) => {
         if (type === "keyword") {
           const kw = dataStore.getKeywordById(keyword!);
           if (!kw) {
@@ -80,25 +83,33 @@ const sections = computed(() => {
             return null;
           }
           const { name, icon } = kw;
-          return { name, icon, quantity };
+          return { name, icon, quantity, enableFineBenefit };
         } else if (type === "specific") {
           const itemObj = ctx.materials.value[item!];
           if (!itemObj) return null;
           const { name, icon } = itemObj;
-          return { name, icon, quantity };
+          return { name, icon, quantity, enableFineBenefit };
         }
         return null;
       })
-      .filter((x): x is { name: string; icon: string; quantity: number } => x !== null)
+      .filter(
+        (x): x is { name: string; icon: string; quantity: number; enableFineBenefit: boolean } =>
+          x !== null,
+      )
     ?? [];
+
+  const hasFineInputs = inputs.some(({ enableFineBenefit }) => enableFineBenefit);
 
   const inputsRow: SectionRow = {
     label: "Inputs",
     component: InfoBubble,
-    items: inputs.map(({ name, icon, quantity }) => ({
+    showFineCheckbox: hasFineInputs,
+    items: inputs.map(({ name, icon, quantity, enableFineBenefit }) => ({
       text: `${quantity ? `${quantity} ` : ""}${name}`,
       tooltip: `${quantity ? `${quantity} ` : ""}${name}`,
       iconPath: icon,
+      borderClass:
+        enableFineBenefit && activityStore.useFineInputs ? "border-fine" : undefined,
     })),
     itemProps: (item) => ({ ...item }),
   };
@@ -245,6 +256,10 @@ const sections = computed(() => {
         :key="section.label"
       >
         <ws-label :label="section.label" />
+        <label v-if="section.showFineCheckbox" class="fine-input-checkbox">
+          <input type="checkbox" v-model="activityStore.useFineInputs" />
+          Use fine inputs
+        </label>
         <div class="info-row">
           <component
             v-for="(item, idx) in section.items"
@@ -281,6 +296,19 @@ const sections = computed(() => {
     display: flex;
     flex-wrap: wrap;
     gap: $md;
+  }
+}
+
+.fine-input-checkbox {
+  display: flex;
+  align-items: center;
+  gap: $xs;
+  cursor: pointer;
+  font-size: 0.85em;
+  opacity: 0.85;
+
+  &:hover {
+    opacity: 1;
   }
 }
 </style>

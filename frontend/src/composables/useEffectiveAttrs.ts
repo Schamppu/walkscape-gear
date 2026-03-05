@@ -1,6 +1,7 @@
 import { computed, type ComputedRef, type Ref } from "vue";
 import { useRequirements, type RequirementContext } from "./useRequirements";
 import { useLevelBonus, type LevelBonusContext } from "./useLevelBonus";
+import { useFineInputBenefit } from "./useFineInputBenefit";
 import { toDeepRaw } from "../utils/rawData";
 import type { ItemDetail } from "@/domain/types/item";
 import type { ServiceDetail } from "@/domain/types/service";
@@ -34,6 +35,7 @@ export function useEffectiveAttrs(ctx: EffectiveAttrsContext): {
 } {
   const { checkRequirements } = useRequirements(ctx);
   const { workEfficiencyBonus, qualityOutcomeBonus } = useLevelBonus(ctx);
+  const { fineInputBonusAttrs } = useFineInputBenefit(ctx);
 
   const allEquippedItems = computed(() => {
     const rawItems = toDeepRaw([
@@ -49,6 +51,7 @@ export function useEffectiveAttrs(ctx: EffectiveAttrsContext): {
       workEfficiencyBonus.value,
       qualityOutcomeBonus.value,
       ctx.service.value,
+      fineInputBonusAttrs.value,
     ),
   );
 
