@@ -7,6 +7,7 @@ import {
   getMultipleAbilities,
   getMultipleLootTables,
   getItemValueMap,
+  getGlobalVariables,
 } from "@/utils/axios/api_routes";
 import type { AxiosResponse } from "axios";
 import type { AbilityDetail, AbilitySummary } from "@/domain/types/ability";
@@ -18,6 +19,7 @@ import type {
 } from "@/domain/types/lootTable";
 import type { ItemValueMap } from "@/domain/types/item";
 import { useNotificationStore } from "@/store/notifications";
+import { GlobalVariable } from "@/domain/types/global_variable";
 
 /**
  * Centralized store for static game data like abilities, keywords, stats, and loot tables.
@@ -49,6 +51,8 @@ export const useDataStore = defineStore("dataStore", {
     isLoaded: false,
     abilities: [] as AbilitySummary[],
     abilitiesMap: {} as Record<string, AbilitySummary>,
+    globalVariables: [] as GlobalVariable[],
+    globalVariablesMap: {} as Record<string, GlobalVariable>,
     keywords: [] as Keyword[],
     keywordsMap: {} as Record<string, Keyword>,
     stats: [] as StatDefinition[],
@@ -96,17 +100,24 @@ export const useDataStore = defineStore("dataStore", {
         { data: statList },
         { data: lootTables },
         { data: itemValues },
+        { data: globalVariables },
       ] = await Promise.all([
         getAbilities(),
         getKeywords(),
         getStats(),
         getLootTables(),
         getItemValueMap(),
+        getGlobalVariables(),
       ]);
 
       this.abilities = abilities;
       this.abilitiesMap = Object.fromEntries(
         abilities.map((ability) => [ability.id, ability]),
+      );
+
+      this.globalVariables = globalVariables;
+      this.globalVariablesMap = Object.fromEntries(
+        globalVariables.map((variable) => [variable.id, variable]),
       );
 
       this.keywords = keywords;
