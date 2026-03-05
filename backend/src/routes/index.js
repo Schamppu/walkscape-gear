@@ -10,6 +10,7 @@ import {
   abilitiesService,
   activityService,
   factionService,
+  globalVariableService,
   keywordService,
   lootTableService,
   petService,
@@ -28,6 +29,7 @@ export function registerRoutes(app) {
   apiRouter.use("/achievements", achievementRoutes);
   apiRouter.use("/activities", createBaseRouter("Activity", activityService));
   apiRouter.use("/factions", createBaseRouter("Faction", factionService));
+  apiRouter.use("/global_variables", createBaseRouter("Global Variable", globalVariableService));
   apiRouter.use("/icons", iconRoutes);
   apiRouter.use("/items", itemRoutes);
   apiRouter.use("/keywords", createBaseRouter("Keyword", keywordService));

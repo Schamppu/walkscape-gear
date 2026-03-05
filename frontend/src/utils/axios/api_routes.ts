@@ -25,6 +25,7 @@ import {
   LocationSummary,
   ItemDetail,
   UrlMap,
+  GlobalVariable,
 } from "@/domain/types";
 
 const rawProxy = createProxyInstance("/api");
@@ -119,6 +120,16 @@ export function getSkills(): Promise<AxiosResponse<Skill[]>> {
 export function getFactions(): Promise<AxiosResponse<Faction[]>> {
   return proxy<Faction[]>({
     url: "factions",
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Global variables
+// ---------------------------------------------------------------------------
+
+export function getGlobalVariables(): Promise<AxiosResponse<GlobalVariable[]>> {
+  return proxy<GlobalVariable[]>({
+    url: "global_variables",
   });
 }
 

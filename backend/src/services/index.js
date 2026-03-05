@@ -11,6 +11,7 @@ const achievementService = new BaseService("achievements");
 const activityService = new BaseService("activities");
 const buildingService = new BaseService("buildings");
 const factionService = new BaseService("factions");
+const globalVariableService = new BaseService("global_variables");
 const iconService = new IconService();
 const itemService = new ItemService();
 const keywordService = new BaseService("keywords");
@@ -32,6 +33,7 @@ export {
   activityService,
   buildingService,
   factionService,
+  globalVariableService,
   iconService,
   itemService,
   keywordService,

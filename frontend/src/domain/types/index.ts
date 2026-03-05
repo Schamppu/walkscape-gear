@@ -12,6 +12,7 @@ export * from "./ability";
 export * from "./achievement";
 export * from "./activity";
 export * from "./faction";
+export * from "./global_variable";
 export * from "./icon";
 export * from "./keyword";
 export * from "./location";
