@@ -168,12 +168,18 @@ export function sumBuffAttrs(buffs: Buff[], quality: string): Attribute[] {
  */
 export function usedAttrs(item: Item, quality: string): Attribute[] {
   const pet = isPet(item);
-  const attrs = pet
-    ? Number(quality) > 0
-      ? item.levels[Number(quality) - 1].attributes
-      : []
-    : item.itemAttrs;
+  const getAttrs = (item: Item) => {
+    if ("egg" in item) {
+      const levelIndex = Number(quality) - 1;
+      return item.levels[levelIndex]?.attributes ?? [];
+    } else if ("materialAttrs" in item) {
+      return item.materialAttrs ?? [];
+    } else {
+      return item.itemAttrs ?? [];
+    }
+  };
 
+  const attrs = getAttrs(item);
   const usedQuality = pet ? "common" : quality;
   const gearItem = pet ? undefined : (item as GearItem);
 

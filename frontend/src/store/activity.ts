@@ -60,6 +60,7 @@ export const useActivityStore = defineStore("activityStore", {
     services: null as ServiceDetail[] | null,
     service: null as ServiceDetail | null,
     useFineMaterials: false,
+    useFineInputs: false,
     isLoaded: false,
     _isUndoRedoOperation: false, // Flag to prevent auto-selection during undo/redo
   }),

@@ -28,7 +28,11 @@ const clickOutside: Directive<ClickOutsideElement, ClickOutsideBinding> = {
       }
     };
 
-    document.addEventListener("click", el.__clickOutsideHandler__);
+    // Defer so the click that triggered mounting this element doesn't
+    // immediately fire the outside-click handler.
+    requestAnimationFrame(() => {
+      document.addEventListener("click", el.__clickOutsideHandler__!);
+    });
 
     if (escEnabled) {
       el.__escHandler__ = (event: KeyboardEvent) => {

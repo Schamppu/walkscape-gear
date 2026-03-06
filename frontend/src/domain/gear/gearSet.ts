@@ -44,6 +44,7 @@ export function createEmptyGearSet(): GearSet {
     pet: null,
     consumable: null,
     service: null,
+    activityInput: null,
   };
 }
 

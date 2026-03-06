@@ -1,6 +1,4 @@
 <script setup>
-import { onBeforeUnmount } from "vue";
-
 defineProps({
   modelValue: Boolean,
   title: {
@@ -27,21 +25,21 @@ defineProps({
     type: String,
     default: "200px",
   },
+  height: {
+    type: String,
+    default: "",
+  },
+  bottomSheet: {
+    type: Boolean,
+    default: false,
+  },
+  noPadding: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const emit = defineEmits(["update:modelValue", "close"]);
-
-const onEsc = (e) => {
-  if (e.key === "Escape" || e.key === "Esc") {
-    emit("update:modelValue", false);
-    emit("close");
-  }
-};
-window.addEventListener("keydown", onEsc);
-// Clean up
-onBeforeUnmount(() => {
-  window.removeEventListener("keydown", onEsc);
-});
 
 function close() {
   emit("update:modelValue", false);
@@ -50,37 +48,46 @@ function close() {
 </script>
 
 <template>
-  <div v-if="modelValue" class="modal-backdrop" @click.self="close">
-    <div
-      class="modal-content"
-      :style="{
-        width: width,
-        maxWidth: maxWidth,
-        minWidth: minWidth,
-        minHeight: minHeight,
-        maxHeight: '80vh',
-      }"
-    >
+  <div
+    v-if="modelValue"
+    class="modal-backdrop"
+    :class="{ 'bottom-sheet': bottomSheet }"
+  >
+    <transition :name="bottomSheet ? 'slide-up' : ''" :appear="bottomSheet">
       <div
-        v-if="title || showCloseButton || $slots.header"
-        class="modal-header"
+        v-click-outside="{ handler: close, esc: true }"
+        class="modal-content"
+        :class="{ 'bottom-sheet': bottomSheet, 'no-padding': noPadding }"
+        :style="{
+          width: width,
+          maxWidth: maxWidth,
+          minWidth: minWidth || undefined,
+          minHeight: minHeight || undefined,
+          maxHeight: bottomSheet ? undefined : '80vh',
+          height: height || undefined,
+        }"
       >
-        <slot name="header">
-          <h2 v-if="title">{{ title }}</h2>
-        </slot>
-        <button v-if="showCloseButton" class="close-btn" @click="close">
-          ✕
-        </button>
-      </div>
+        <div
+          v-if="title || showCloseButton || $slots.header"
+          class="modal-header"
+        >
+          <slot name="header">
+            <h2 v-if="title">{{ title }}</h2>
+          </slot>
+          <button v-if="showCloseButton" class="close-btn" @click="close">
+            ✕
+          </button>
+        </div>
 
-      <div class="modal-body">
-        <slot />
-      </div>
+        <div class="modal-body">
+          <slot />
+        </div>
 
-      <div v-if="$slots.footer" class="modal-footer">
-        <slot name="footer" />
+        <div v-if="$slots.footer" class="modal-footer">
+          <slot name="footer" />
+        </div>
       </div>
-    </div>
+    </transition>
   </div>
 </template>
 
@@ -93,6 +100,10 @@ function close() {
   display: flex;
   align-items: center;
   justify-content: center;
+
+  &.bottom-sheet {
+    align-items: flex-end;
+  }
 }
 
 .modal-content {
@@ -101,28 +112,58 @@ function close() {
   padding: $xxxlg;
   border-radius: $sm;
   position: relative;
-  overflow-y: scroll;
+  overflow-y: auto;
+
+  &.no-padding {
+    padding: 0;
+  }
+
+  &.bottom-sheet {
+    border-radius: 0;
+    border-top-left-radius: $base;
+    border-top-right-radius: $base;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+}
+
+.modal-content.bottom-sheet {
+  .modal-header {
+    background-color: $boxDarkBackground;
+    border-bottom: 1px solid $boxDarkOutline;
+    border-radius: calc($sm - 2px) calc($sm - 2px) 0 0;
+    margin-bottom: $xxxs;
+  }
+
+  .modal-body {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
 }
 
 .modal-header {
-  position: relative;
+  display: flex;
+  align-items: center;
   margin-bottom: $base;
 
   h2 {
+    flex: 1;
     margin: 0;
-    padding-right: $xlg; // Space for close button
   }
 }
 
 .close-btn {
-  position: absolute;
-  top: -$xs;
-  right: -$xs;
   background: none;
   border: none;
   font-size: $xlg;
   cursor: pointer;
   color: $txPrimary;
+  flex-shrink: 0;
+  margin-left: auto;
 
   &:hover {
     opacity: 0.7;
@@ -137,5 +178,15 @@ function close() {
   margin-top: $base;
   padding-top: $base;
   border-top: 1px solid $boxDarkOutline;
+}
+
+/* Slide-up transition for bottom-sheet variant */
+.slide-up-enter-active,
+.slide-up-leave-active {
+  transition: transform 0.3s ease;
+}
+.slide-up-enter-from,
+.slide-up-leave-to {
+  transform: translateY(100%);
 }
 </style>

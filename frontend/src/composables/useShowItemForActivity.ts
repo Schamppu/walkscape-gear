@@ -1,4 +1,7 @@
-import { useRequirements, type RequirementContext } from "@/composables/useRequirements";
+import {
+  useRequirements,
+  type RequirementContext,
+} from "@/composables/useRequirements";
 import { getRawData } from "@/utils/rawData";
 import { usedAttrs, type Attribute } from "@/domain/quality/qualityAttrs";
 import { useLootTables, type LootTablesContext } from "./useLootTables";
@@ -12,6 +15,7 @@ import {
 import type { Requirement } from "@/domain/types/common";
 import type { LootTableRef } from "@/domain/types/common";
 import type { LevelBonusGearItem } from "@/composables/useLevelBonus";
+import { ActivityInputOption } from "@/domain/types";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -35,6 +39,7 @@ type SourceLike = SourceForItem & {
   name: string;
   relatedSkillsList?: string[];
   relatedSkills?: string[];
+  options?: ActivityInputOption[];
 };
 
 type ServiceLike = {
@@ -70,7 +75,9 @@ export function useShowItemForActivity(ctx: LootTablesContext): {
   ) => Attribute[];
   itemTables: (item: ItemForDisplay) => LootTableRef[];
 } {
-  const { checkRequirements, canBeEquipped } = useRequirements(ctx as unknown as RequirementContext);
+  const { checkRequirements, canBeEquipped } = useRequirements(
+    ctx as unknown as RequirementContext,
+  );
   const settingsStore = useSettingsStore();
   const { hasCollectibleDrops, hasFineDrops } = useLootTables(ctx);
 
@@ -91,13 +98,13 @@ export function useShowItemForActivity(ctx: LootTablesContext): {
 
     const travelReqs: Requirement[] =
       source.name === "Travelling"
-        ? (ctx.segments.value as unknown as { requirements: Requirement[] }[]).flatMap(
-            ({ requirements }) => requirements,
-          )
+        ? (
+            ctx.segments.value as unknown as { requirements: Requirement[] }[]
+          ).flatMap(({ requirements }) => requirements)
         : [];
 
     const allRequirements = [
-      ...source?.requirements ?? [],
+      ...(source?.requirements ?? []),
       ...(service?.requirements ?? []),
       ...travelReqs,
     ];
@@ -111,7 +118,10 @@ export function useShowItemForActivity(ctx: LootTablesContext): {
     quality: string | null,
     isRecipe: boolean | null,
   ): Attribute[] => {
-    const attrs = usedAttrs(item as unknown as Parameters<typeof usedAttrs>[0], quality ?? "common");
+    const attrs = usedAttrs(
+      item as unknown as Parameters<typeof usedAttrs>[0],
+      quality ?? "common",
+    );
 
     const craftedRewardItemIds = Object.keys(source.itemRewards ?? {}).filter(
       (id) =>
@@ -141,7 +151,8 @@ export function useShowItemForActivity(ctx: LootTablesContext): {
     const currentSource = (source || ctx.source.value) as SourceLike | null;
     const currentService = service || ctx.service.value;
     const currentQuality = quality || itemProxy.quality;
-    const currentIsRecipe = isRecipe !== null ? isRecipe : ctx.recipeSelected.value;
+    const currentIsRecipe =
+      isRecipe !== null ? isRecipe : ctx.recipeSelected.value;
 
     if (!ctx.source.value || !currentSource) return false;
 
@@ -159,7 +170,9 @@ export function useShowItemForActivity(ctx: LootTablesContext): {
       usefulKeywords(item, currentSource, currentService).length > 0;
     const abilities = usefulAbilities(item, currentSource);
     const hasUsefulAbility = abilities !== false && abilities.length > 0;
-    const hasUsefulAttrs = usefulAttrs(item, currentSource, currentQuality, currentIsRecipe).length > 0;
+    const hasUsefulAttrs =
+      usefulAttrs(item, currentSource, currentQuality, currentIsRecipe).length >
+      0;
     const hasTables = itemTables(item).length > 0;
 
     return hasUsefulKeywords || hasUsefulAttrs || hasUsefulAbility || hasTables;

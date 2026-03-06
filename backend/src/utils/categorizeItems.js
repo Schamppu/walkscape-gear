@@ -229,29 +229,32 @@ const resolveCraftedCategories = (crafted, allRecipes, loot) => {
     { suffix: "chests", type: "chest" },
   ];
 
-  const categories = categoryDefs.map(({ suffix, keyword, type, qualities }) => {
-    let items;
-    if (keyword && type) {
-      // Union (OR): items with keyword OR matching gearType, deduplicated by id.
-      const seen = new Map();
-      for (const item of (byKeyword.get(keyword) ?? [])) seen.set(item.id, item);
-      for (const item of (byGearType.get(type) ?? [])) seen.set(item.id, item);
-      items = [...seen.values()];
-    } else if (keyword) {
-      items = byKeyword.get(keyword) ?? [];
-    } else if (type) {
-      items = byGearType.get(type) ?? [];
-    } else {
-      items = [];
-    }
+  const categories = categoryDefs.map(
+    ({ suffix, keyword, type, qualities }) => {
+      let items;
+      if (keyword && type) {
+        // Union (OR): items with keyword OR matching gearType, deduplicated by id.
+        const seen = new Map();
+        for (const item of byKeyword.get(keyword) ?? [])
+          seen.set(item.id, item);
+        for (const item of byGearType.get(type) ?? []) seen.set(item.id, item);
+        items = [...seen.values()];
+      } else if (keyword) {
+        items = byKeyword.get(keyword) ?? [];
+      } else if (type) {
+        items = byGearType.get(type) ?? [];
+      } else {
+        items = [];
+      }
 
-    return {
-      title: `Crafted ${capitalize(suffix)}`,
-      key: `crafted_${keyword ?? type}`,
-      qualities: qualities || 1,
-      items,
-    };
-  });
+      return {
+        title: `Crafted ${capitalize(suffix)}`,
+        key: `crafted_${keyword ?? type}`,
+        qualities: qualities || 1,
+        items,
+      };
+    },
+  );
 
   const upgraded = resolveUpgradedItems(crafted, allRecipes, loot);
   if (upgraded.length)
@@ -280,12 +283,14 @@ const resolveCraftedCategories = (crafted, allRecipes, loot) => {
     }),
   );
 
-  const sortedCategories = categories.map((category) => ({
-    ...category,
-    items: [...category.items].sort((a, b) => {
-      return recipeLevels[a.id] - recipeLevels[b.id];
-    }),
-  }));
+  const sortedCategories = categories
+    .filter((category) => category.items.length > 0)
+    .map((category) => ({
+      ...category,
+      items: [...category.items].sort((a, b) => {
+        return recipeLevels[a.id] - recipeLevels[b.id];
+      }),
+    }));
 
   return sortedCategories;
 };

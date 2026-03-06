@@ -32,6 +32,15 @@ const icon = computed(() => {
     : gearRef.value.icon;
 });
 
+const getTypeName = (gearType) => {
+  switch (gearType) {
+    case "activityInput":
+      return "Input";
+    default:
+      return gearType;
+  }
+};
+
 const handleClick = () => emit("select", props.gearType, storeKey);
 </script>
 
@@ -45,7 +54,7 @@ const handleClick = () => emit("select", props.gearType, storeKey);
         gearType.length >= 9 ? 'font-size: 0.5rem;' : '',
       ]"
     >
-      {{ gearType }}
+      {{ getTypeName(props.gearType) }}
     </p>
     <div v-else class="content">
       <ws-icon

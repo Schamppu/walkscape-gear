@@ -1,13 +1,26 @@
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import GearSlot from "./GearSlot.vue";
 import GearModal from "./GearModal.vue";
+import { injectBaseContext } from "@/composables/context/injectShared";
 
 defineProps({
   isRecipe: {
     type: Boolean,
     default: false,
   },
+});
+
+const ctx = injectBaseContext();
+
+const hasKeywordInput = computed(() => {
+  const activity = ctx.activity.value;
+  if (!activity || !("options" in activity) || !activity.options) return false;
+  return activity.options.some(
+    (opt) =>
+      opt.type === "inputActivity" &&
+      opt.inputs.some((input) => input.type === "keyword"),
+  );
 });
 
 const showGearModal = ref(false);
@@ -67,6 +80,11 @@ const updateVisible = (visibility) => {
     <div class="row">
       <gear-slot gearType="consumable" @select="handleGearSlotSelect" />
       <gear-slot gearType="pet" @select="handleGearSlotSelect" />
+      <gear-slot
+        v-if="hasKeywordInput"
+        gearType="activityInput"
+        @select="handleGearSlotSelect"
+      />
     </div>
     <div v-if="showGearModal">
       <gear-modal

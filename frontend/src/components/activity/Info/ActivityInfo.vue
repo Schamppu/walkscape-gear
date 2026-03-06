@@ -1,5 +1,5 @@
-<script setup>
-import { computed } from "vue";
+<script setup lang="ts">
+import { computed, type Component } from "vue";
 import WsLabel from "@/components/primitives/WsLabel.vue";
 import InfoBubble from "@/components/common/InfoBubble.vue";
 import LocationBubble from "@/components/common/LocationBubble.vue";
@@ -14,11 +14,28 @@ import {
   injectSkillModifiers,
   injectRequirements,
 } from "@/composables/context/injectShared";
-
 import { isEmpty } from "@/utils/isEmpty";
 import { n } from "@/utils/number";
 import AbilitiesDisplay from "../../common/abilities/AbilitiesDisplay.vue";
 import { icons } from "@/constants/iconPaths";
+import type { ActivityDetail, ActivityInputOption } from "@/domain/types/activity";
+import type { Requirement } from "@/domain/types/common";
+
+// Shape of a faction-based activity reward
+interface FactionActivityReward {
+  runtimeType: string;
+  faction: string;
+  amount: number;
+}
+
+interface SectionRow {
+  label: string;
+  component: Component;
+  items: unknown[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  itemProps: (item: any) => Record<string, unknown>;
+  showFineCheckbox?: boolean;
+}
 
 const activityStore = useActivityStore();
 const playerStore = usePlayerStore();
@@ -45,8 +62,8 @@ const borderClass = computed(
 );
 
 const sections = computed(() => {
-  const { id, workRequired, requirements, rewards, options, abilities } =
-    ctx.activity.value;
+  const activity = ctx.activity.value as ActivityDetail;
+  const { id, workRequired, requirements, rewards, options, abilities } = activity;
   const levelRequirementsMap = getLevelRequirementsMap(requirements);
 
   const isTravel = id === "travelling";
@@ -54,48 +71,50 @@ const sections = computed(() => {
 
   const inputs =
     options
-      ?.filter(Boolean)
-      ?.filter(({ type }) => type === "inputActivity")
-      .flatMap(({ inputs }) => inputs)
-      .map(({ type, keyword, item, quantity }) => {
+      ?.filter((opt): opt is ActivityInputOption => opt?.type === "inputActivity")
+      .flatMap(({ inputs, enableFineBenefit }) =>
+        inputs.map((input) => ({ ...input, enableFineBenefit })),
+      )
+      .map(({ type, keyword, item, quantity, enableFineBenefit }) => {
         if (type === "keyword") {
-          const kw = dataStore.getKeywordById(keyword);
+          const kw = dataStore.getKeywordById(keyword!);
           if (!kw) {
             console.warn("Keyword not found:", keyword);
             return null;
           }
           const { name, icon } = kw;
-          return {
-            name,
-            icon,
-            quantity,
-          };
+          return { name, icon, quantity, enableFineBenefit };
         } else if (type === "specific") {
-          const itemObj = ctx.materials.value[item];
+          const itemObj = ctx.materials.value[item!];
           if (!itemObj) return null;
           const { name, icon } = itemObj;
-
-          return {
-            name,
-            icon,
-            quantity,
-          };
+          return { name, icon, quantity, enableFineBenefit };
         }
         return null;
       })
-      .filter(Boolean) || [];
-  const inputsRow = {
+      .filter(
+        (x): x is { name: string; icon: string; quantity: number; enableFineBenefit: boolean } =>
+          x !== null,
+      )
+    ?? [];
+
+  const hasFineInputs = inputs.some(({ enableFineBenefit }) => enableFineBenefit);
+
+  const inputsRow: SectionRow = {
     label: "Inputs",
     component: InfoBubble,
-    items: inputs.map(({ name, icon, quantity }) => ({
+    showFineCheckbox: hasFineInputs,
+    items: inputs.map(({ name, icon, quantity, enableFineBenefit }) => ({
       text: `${quantity ? `${quantity} ` : ""}${name}`,
       tooltip: `${quantity ? `${quantity} ` : ""}${name}`,
       iconPath: icon,
+      borderClass:
+        enableFineBenefit && activityStore.useFineInputs ? "border-fine" : undefined,
     })),
     itemProps: (item) => ({ ...item }),
   };
 
-  const statsRow = {
+  const statsRow: SectionRow = {
     label: "Stats (current / base)",
     component: InfoBubble,
     items: [
@@ -136,7 +155,7 @@ const sections = computed(() => {
     itemProps: (item) => ({ ...item }),
   };
 
-  const abilitiesRow = {
+  const abilitiesRow: SectionRow = {
     label: "Abilities",
     component: AbilitiesDisplay,
     items: abilities ? [1] : [],
@@ -144,18 +163,19 @@ const sections = computed(() => {
   };
 
   if (showRewards) {
-    const rewardsFaction = playerStore.factionsMap[rewards[0].faction];
-    const stepsPerRep = n((1 / rewards[0].amount) * stepsPerAction.value, 0);
+    const factionReward = rewards[0] as unknown as FactionActivityReward;
+    const rewardsFaction = playerStore.factionsMap[factionReward.faction];
+    const stepsPerRep = n((1 / factionReward.amount) * stepsPerAction.value, 0);
 
     statsRow.items.push({
-      text: `+${rewards[0].amount} / ${stepsPerRep}`,
-      tooltip: `+${rewards[0].amount} ${rewardsFaction.name} reputation from action\n${stepsPerRep} steps per full rep`,
+      text: `+${factionReward.amount} / ${stepsPerRep}`,
+      tooltip: `+${factionReward.amount} ${rewardsFaction.name} reputation from action\n${stepsPerRep} steps per full rep`,
       iconPath: rewardsFaction.icon,
-      borderClass: `border-${rewardsFaction.id}`,
+      borderClass: `border-${factionReward.faction}`,
     });
   }
 
-  const skillReqsRow = {
+  const skillReqsRow: SectionRow = {
     label: "Skill requirements",
     component: SkillBubble,
     items: Object.entries(levelRequirementsMap || {}).map(([skill, level]) => ({
@@ -166,20 +186,16 @@ const sections = computed(() => {
     itemProps: (item) => ({ ...item }),
   };
 
-  const otherReqs = requirements.filter(({ type }) => type !== "skillLevel");
+  const otherReqs: Requirement[] = requirements.filter(({ type }) => type !== "skillLevel");
 
-  const requirementsRow = {
+  const requirementsRow: SectionRow = {
     label: "Requirements",
     component: RequirementDisplay,
     items: otherReqs,
-    itemProps: (item) => {
-      return {
-        requirement: item,
-      };
-    },
+    itemProps: (item) => ({ requirement: item }),
   };
 
-  const xpRewardsRow = {
+  const xpRewardsRow: SectionRow = {
     label: "XP rewards (current / base)",
     component: SkillBubble,
     items: xpRewards.value.map(({ skill, skillText, value, base }) => ({
@@ -192,23 +208,21 @@ const sections = computed(() => {
     itemProps: (item) => ({ ...item }),
   };
 
-  const xpPerStepRow = {
+  const xpPerStepRow: SectionRow = {
     label: "XP per step (real / displayed)",
     component: SkillBubble,
-    items: xpPerStep.value.map(
-      ({ skill, skillText, value, displayedValue }) => ({
-        skill,
-        text: `${n(value)} /  ${n(displayedValue)}`,
-        tooltip: `Gains ${n(value)} ${skillText} XP per step`,
-      }),
-    ),
+    items: xpPerStep.value.map(({ skill, skillText, value, displayedValue }) => ({
+      skill,
+      text: `${n(value)} /  ${n(displayedValue)}`,
+      tooltip: `Gains ${n(value)} ${skillText} XP per step`,
+    })),
     itemProps: (item) => ({ ...item }),
   };
 
-  const locationsRow = {
+  const locationsRow: SectionRow = {
     label: "Locations",
     component: LocationBubble,
-    items: !isTravel ? activityStore.locations : [],
+    items: !isTravel ? (activityStore.locations ?? []) : [],
     itemProps: (item) => ({ location: item }),
   };
 
@@ -234,7 +248,7 @@ const sections = computed(() => {
       :key="activityStore.activity?.id"
     >
       <div class="info-section">
-        <wiki-button :name="activityStore.activity?.name" />
+        <wiki-button :name="activityStore.activity?.name ?? ''" />
       </div>
       <div
         v-for="section in sections"
@@ -242,6 +256,10 @@ const sections = computed(() => {
         :key="section.label"
       >
         <ws-label :label="section.label" />
+        <label v-if="section.showFineCheckbox" class="fine-input-checkbox">
+          <input type="checkbox" v-model="activityStore.useFineInputs" />
+          Use fine inputs
+        </label>
         <div class="info-row">
           <component
             v-for="(item, idx) in section.items"
@@ -278,6 +296,19 @@ const sections = computed(() => {
     display: flex;
     flex-wrap: wrap;
     gap: $md;
+  }
+}
+
+.fine-input-checkbox {
+  display: flex;
+  align-items: center;
+  gap: $xs;
+  cursor: pointer;
+  font-size: 0.85em;
+  opacity: 0.85;
+
+  &:hover {
+    opacity: 1;
   }
 }
 </style>

@@ -36,6 +36,82 @@
     "tool_5": "wanderlust_walking_stick_legendary",
     "tool_6": "adoring_fan_statue"
   },
+  "pets": {
+    "pet": {
+      "name": "🦌🦌🦌",
+      "species": "reindeer",
+      "level": 3,
+      "xp": 0,
+      "stage": "adult"
+    },
+    "egg": {
+      "name": "Chicken egg",
+      "species": "lovestruck_chicken",
+      "level": 0,
+      "xp": 0,
+      "stage": "egg"
+    }
+  },
+  "available_pets": [
+    {
+      "name": "🐪 🐪 🐪",
+      "species": "camel",
+      "level": 2,
+      "xp": 37221,
+      "stage": "juvenile"
+    },
+    {
+      "name": "🐔🐔🐔",
+      "species": "chicken",
+      "level": 4,
+      "xp": 0,
+      "stage": "adult"
+    },
+    {
+      "name": "🐬",
+      "species": "dolphin",
+      "level": 2,
+      "xp": 0,
+      "stage": "juvenile"
+    },
+    {
+      "name": "🐬 🐬 🐬",
+      "species": "dolphin",
+      "level": 3,
+      "xp": 2620,
+      "stage": "juvenile"
+    },
+    {
+      "name": "🐢🐢🐢",
+      "species": "tortoise",
+      "level": 1,
+      "xp": 11687,
+      "stage": "juvenile"
+    },
+    {
+      "name": "🐢🌸🐢",
+      "species": "precious_tortoise",
+      "level": 4,
+      "xp": 0,
+      "stage": "adult"
+    }
+  ],
+  "available_eggs": [
+    {
+      "name": "Reindeer egg",
+      "species": "reindeer",
+      "level": 0,
+      "xp": 0,
+      "stage": "egg"
+    },
+    {
+      "name": "Tiger egg",
+      "species": "tiger",
+      "level": 0,
+      "xp": 0,
+      "stage": "egg"
+    }
+  ],
   "consumables": {
     "cooked_squid": 5
   },
@@ -116,6 +192,7 @@
     "adventuring_wrench": 2,
     "adventuring_ring": 1,
     "cape_of_half_achiever": 1,
+    "camel_egg": 2,
     "magnifying_lens": 4,
     "chefs_leg_apron": 4,
     "amulet_of_measuring_spoon_rare": 3,

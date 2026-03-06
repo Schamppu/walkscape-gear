@@ -111,10 +111,18 @@ export type PetItem = {
 };
 
 // ---------------------------------------------------------------------------
+// Material item type
+// ---------------------------------------------------------------------------
+
+export type MaterialItem = {
+  materialAttrs: Attribute[];
+};
+
+// ---------------------------------------------------------------------------
 // Union
 // ---------------------------------------------------------------------------
 
-export type Item = GearItem | PetItem;
+export type Item = GearItem | PetItem | MaterialItem;
 
 // ---------------------------------------------------------------------------
 // Item API types
@@ -137,6 +145,7 @@ export type ItemDetail = {
   requirements: Requirement[];
   itemAttrs: Attribute[];
   itemQualityAttrs: QualityAttr[];
+  materialAttrs?: Attribute[];
   itemValue: string;
   itemValueModifier: number;
   buffs: Buff[];

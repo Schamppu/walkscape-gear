@@ -18,6 +18,7 @@ import {
 } from "@/domain/requirements/requirementUtils";
 import icons from "@/constants/iconPaths";
 import { capitalize } from "@/utils/string";
+import { ItemDetail } from "@/domain/types";
 
 // Re-export pure functions so callers only need one import.
 export { getLevelRequirementsMap, mergeRequirements };
@@ -68,6 +69,7 @@ export type RequirementContext = {
   factionReputation: Ref<Record<string, number> | null>;
   source: Ref<RequirementSource | null>;
   allGearItems: Ref<Record<string, { name: string; icon: string }>>;
+  inputItem: Ref<ItemDetail>;
 };
 
 /** A single rendered requirement entry ready for display in the UI. */
@@ -117,19 +119,20 @@ export function useRequirements(ctx: RequirementContext) {
   ): boolean => {
     const { opposite } = req;
 
-    const equippedKeywordCounts: Record<string, number> = context.equippedGear
-      .value
-      ? context.equippedGear.value
-          .filter(
-            (val): val is RequirementItem & { keywords: string[] } =>
-              "keywords" in val,
-          )
-          .flatMap(({ keywords }) => keywords)
-          .reduce<Record<string, number>>((acc, val) => {
-            acc[val] = (acc[val] || 0) + 1;
-            return acc;
-          }, {})
-      : {};
+    const getEquippedKeywordCounts = () => {
+      return context?.equippedGear?.value
+        ? context.equippedGear.value
+            .filter(
+              (val): val is RequirementItem & { keywords: string[] } =>
+                "keywords" in val,
+            )
+            .flatMap(({ keywords }) => keywords)
+            .reduce<Record<string, number>>((acc, val) => {
+              acc[val] = (acc[val] || 0) + 1;
+              return acc;
+            }, {})
+        : {};
+    };
 
     let value = false;
 
@@ -181,7 +184,9 @@ export function useRequirements(ctx: RequirementContext) {
 
       case "distinctKeywordItemsEquipped": {
         const { keywords, quantity } = req.requirement;
-        value = keywords.every((kw) => equippedKeywordCounts[kw] >= quantity);
+        value = keywords.every(
+          (kw) => getEquippedKeywordCounts()[kw] >= quantity,
+        );
         break;
       }
 
@@ -256,26 +261,26 @@ export function useRequirements(ctx: RequirementContext) {
 
       case "characterLevel": {
         const { level } = req.requirement;
-        value = ctx.characterLevel.value >= level;
+        value = context.characterLevel.value >= level;
         break;
       }
 
       case "skillLevel": {
         const { skill, level } = req.requirement;
-        value = ctx.skillLevels.value[skill] >= level;
+        value = context.skillLevels.value[skill] >= level;
         break;
       }
 
       case "skillTypeLevel": {
         const { type, relativeLevel } = req.requirement;
         const skillsByType = Object.entries(playerStore.skillsMap).filter(
-          ([,s]) => s.type === type,
+          ([, s]) => s.type === type,
         );
         const skillIds = skillsByType.map(([id]) => id);
         const maximum = 98 * skillsByType.length;
         const required = relativeLevel * maximum;
         const current = skillIds.reduce(
-          (a, id) => a + ctx.skillLevels.value[id] - 1,
+          (a, id) => a + context.skillLevels.value[id] - 1,
           0,
         );
         value = current >= required;
@@ -315,14 +320,14 @@ export function useRequirements(ctx: RequirementContext) {
         break;
 
       case "keywordEquipped":
-        value = ctx.equippedGear.value.some((gear) =>
+        value = context.equippedGear.value.some((gear) =>
           gear.keywords?.includes(req.requirement.keyword),
         );
         break;
 
       case "keywordWithLevelEquipped": {
         const { keyword, skill, level } = req.requirement;
-        value = ctx.equippedGear.value.some((gear) => {
+        value = context.equippedGear.value.some((gear) => {
           const kwCheck = gear.keywords?.includes(keyword);
           const levelReqs = getLevelRequirementsMap(gear.requirements);
           const levelCheck = skill in levelReqs && levelReqs[skill] >= level;
@@ -331,15 +336,26 @@ export function useRequirements(ctx: RequirementContext) {
         break;
       }
 
+      case "inputKeywordWithLevel": {
+        if (!(context.inputItem.value && "requirements" in context.inputItem.value)) break;
+
+        const { skill, level } = req.requirement;
+        const levelReqs = getLevelRequirementsMap(
+          context.inputItem.value.requirements,
+        );
+        value = levelReqs[skill] >= level;
+        break;
+      }
+
       case "itemEquipped":
-        value = ctx.equippedGear.value.some(
+        value = context.equippedGear.value.some(
           ({ id }) => id === req.requirement.item,
         );
         break;
 
       case "abilityAvailable": {
         const { ability } = req.requirement;
-        value = ctx.equippedGear.value.some(({ abilities }) =>
+        value = context.equippedGear.value.some(({ abilities }) =>
           abilities
             ?.flatMap((a) => (typeof a === "object" ? a.ability : a))
             .includes(ability),
@@ -526,7 +542,7 @@ export function useRequirements(ctx: RequirementContext) {
           const [, skill] = skillsByType[0];
           const target = relativeLevel * 100;
           const current = skillIds.reduce(
-            (a, b) => a + ctx.skillLevels.value[b] - 1,
+            (a, b) => a + context.skillLevels.value[b] - 1,
             0,
           );
           out = {
@@ -588,7 +604,7 @@ export function useRequirements(ctx: RequirementContext) {
 
         case "itemAnywhere":
         case "itemAnywhereWithYou": {
-          const item = ctx.allGearItems.value[req.requirement.item];
+          const item = context.allGearItems.value[req.requirement.item];
           if (item) out = { prefix: "Own a", text: item.name, icon: item.icon };
           break;
         }
@@ -610,7 +626,7 @@ export function useRequirements(ctx: RequirementContext) {
         }
 
         case "itemEquipped": {
-          const item = ctx.allGearItems.value[req.requirement.item];
+          const item = context.allGearItems.value[req.requirement.item];
           if (item) {
             out = {
               prefix: "Have",

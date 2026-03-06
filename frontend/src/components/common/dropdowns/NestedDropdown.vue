@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount, watch } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import WsLabel from "@/components/primitives/WsLabel.vue";
 import LabelWithIcon from "../LabelWithIcon.vue";
 import DropdownCategory from "./DropdownCategory.vue";
@@ -33,17 +33,6 @@ const searchTerm = ref("");
 onMounted(() => {
   const noneOption = props.data.filter(({ value }) => value === "None");
   if (!selected.value && noneOption.length) selectItem(noneOption[0], false);
-
-  const onEsc = (e) => {
-    if (e.key === "Escape" || e.key === "Esc") {
-      isOpen.value = false;
-    }
-  };
-  window.addEventListener("keydown", onEsc);
-  // Clean up
-  onBeforeUnmount(() => {
-    window.removeEventListener("keydown", onEsc);
-  });
 });
 
 const toggle = () => {
@@ -139,6 +128,7 @@ ul {
   display: flex;
   flex-direction: column;
   text-align: left;
+  position: relative;
 
   .header {
     display: flex;
@@ -163,7 +153,7 @@ ul {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: $boxTransparentPrimaryBackground;
+  background-color: $boxPrimaryBackground;
 
   padding: $sm;
   border: 1px solid $boxPrimaryOutline;
@@ -171,9 +161,14 @@ ul {
 }
 
 .dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 100;
   border: 1px solid $boxPrimaryOutline;
   border-radius: $md;
-  background-color: $boxTransparentPrimaryBackground;
+  background-color: $boxPrimaryBackground;
   overflow: hidden;
 
   .dropdown-search {

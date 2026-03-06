@@ -37,6 +37,9 @@ export type CharacterImportRaw = {
   bank?: unknown;
   collectibles?: unknown;
   reputation?: unknown;
+  pets?: unknown;
+  available_pets?: unknown;
+  available_eggs?: unknown;
 };
 
 /** Minimal item descriptor required for quality resolution. */
@@ -97,14 +100,20 @@ export function parseSkillLevels(
   skillsData: unknown,
   knownSkillIds: ReadonlyArray<string>,
 ): Record<string, number> {
-  if (!skillsData || typeof skillsData !== "object" || Array.isArray(skillsData)) {
+  if (
+    !skillsData ||
+    typeof skillsData !== "object" ||
+    Array.isArray(skillsData)
+  ) {
     return {};
   }
 
   const result: Record<string, number> = {};
   const knownSet = new Set(knownSkillIds);
 
-  for (const [skillId, xp] of Object.entries(skillsData as Record<string, unknown>)) {
+  for (const [skillId, xp] of Object.entries(
+    skillsData as Record<string, unknown>,
+  )) {
     if (knownSet.has(skillId) && typeof xp === "number" && xp >= 0) {
       result[skillId] = skillLevelFromXp(xp);
     }
@@ -121,8 +130,11 @@ export function parseSkillLevels(
  * Extracts achievement points from an import payload.
  * Returns null when the value is absent or not a non-negative integer.
  */
-export function parseAchievementPoints(achievementPoints: unknown): number | null {
-  if (typeof achievementPoints !== "number" || achievementPoints < 0) return null;
+export function parseAchievementPoints(
+  achievementPoints: unknown,
+): number | null {
+  if (typeof achievementPoints !== "number" || achievementPoints < 0)
+    return null;
   return Math.floor(achievementPoints);
 }
 
@@ -141,7 +153,11 @@ export function parseFactionReputations(
   reputationData: unknown,
   factionsMap: Readonly<Record<string, FactionMapEntry>>,
 ): Record<string, number> {
-  if (!reputationData || typeof reputationData !== "object" || Array.isArray(reputationData)) {
+  if (
+    !reputationData ||
+    typeof reputationData !== "object" ||
+    Array.isArray(reputationData)
+  ) {
     return {};
   }
 
@@ -151,7 +167,12 @@ export function parseFactionReputations(
     reputationData as Record<string, unknown>,
   )) {
     const faction = factionsMap[factionId];
-    if (faction && faction.reputation !== null && typeof value === "number" && value >= 0) {
+    if (
+      faction &&
+      faction.reputation !== null &&
+      typeof value === "number" &&
+      value >= 0
+    ) {
       result[faction.reputation] = Math.floor(value);
     }
   }
@@ -202,8 +223,15 @@ function collectRawItems(
 
   const addMany = (items: unknown): void => {
     if (!items || typeof items !== "object" || Array.isArray(items)) return;
-    for (const [id, count] of Object.entries(items as Record<string, unknown>)) {
-      if (typeof count === "number" && count > 0 && typeof id === "string" && id) {
+    for (const [id, count] of Object.entries(
+      items as Record<string, unknown>,
+    )) {
+      if (
+        typeof count === "number" &&
+        count > 0 &&
+        typeof id === "string" &&
+        id
+      ) {
         counts[id] = (counts[id] ?? 0) + count;
       }
     }
@@ -224,6 +252,68 @@ function collectRawItems(
   }
 
   return counts;
+}
+
+// ---------------------------------------------------------------------------
+// Pet parsing helpers (internal)
+// ---------------------------------------------------------------------------
+
+type PetGroup = {
+  level: number;
+  rarity: "common" | "rare";
+};
+
+/**
+ * Extracts a base species id and rarity from a raw species string.
+ * Species with an underscore prefix variant (e.g. "lovestruck_chicken") are
+ * treated as rare; the last underscore-delimited segment is the base id.
+ * Single-word species (e.g. "reindeer") are common.
+ */
+function parsePetSpecies(species: string): { baseId: string; rarity: "common" | "rare" } {
+  const lastUnderscore = species.lastIndexOf("_");
+  if (lastUnderscore > 0) {
+    return { baseId: species.slice(lastUnderscore + 1), rarity: "rare" };
+  }
+  return { baseId: species, rarity: "common" };
+}
+
+/**
+ * Processes all pet and egg sources in the import and returns a map of
+ * base species id → the best (highest-level) PetGroup found.
+ *
+ * Sources: `pets.pet`, `pets.egg`, `available_pets`, `available_eggs`.
+ */
+function collectPetData(
+  pets: unknown,
+  availablePets: unknown,
+  availableEggs: unknown,
+): Record<string, PetGroup> {
+  const groups: Record<string, PetGroup> = {};
+
+  const processEntry = (entry: unknown): void => {
+    if (!entry || typeof entry !== "object" || Array.isArray(entry)) return;
+    const obj = entry as Record<string, unknown>;
+    const species = typeof obj.species === "string" && obj.species ? obj.species : null;
+    const level = typeof obj.level === "number" ? obj.level : null;
+    if (!species || level === null) return;
+
+    const { baseId, rarity } = parsePetSpecies(species);
+    const existing = groups[baseId];
+    if (!existing || level > existing.level) {
+      groups[baseId] = { level, rarity };
+    }
+  };
+
+  if (pets && typeof pets === "object" && !Array.isArray(pets)) {
+    const petsObj = pets as Record<string, unknown>;
+    processEntry(petsObj.pet);
+    processEntry(petsObj.egg);
+  }
+
+  if (Array.isArray(availablePets)) availablePets.forEach(processEntry);
+  if (Array.isArray(availableEggs)) availableEggs.forEach(processEntry);
+
+  return groups;
 }
 
 /**
@@ -267,7 +357,14 @@ function resolveQualities(
 export function parseOwnedItems(
   importData: Pick<
     CharacterImportRaw,
-    "collectibles" | "inventory" | "bank" | "consumables" | "gear"
+    | "collectibles"
+    | "inventory"
+    | "bank"
+    | "consumables"
+    | "gear"
+    | "pets"
+    | "available_pets"
+    | "available_eggs"
   >,
   knownItems: Readonly<Record<string, ItemCatalogEntry>>,
   currentOwnedItems: Readonly<Record<string, OwnedItemEntry>>,
@@ -283,7 +380,8 @@ export function parseOwnedItems(
   );
 
   // Group counts by base item id, accumulating all quality variants
-  const groups: Record<string, { qualities: string[]; totalCount: number }> = {};
+  const groups: Record<string, { qualities: string[]; totalCount: number }> =
+    {};
 
   for (const [rawId, count] of Object.entries(rawCounts)) {
     const { baseId, quality } = parseItemId(rawId);
@@ -319,7 +417,9 @@ export function parseOwnedItems(
 
     if (itemData.type === "consumable") {
       const quality = qualities.includes("common") ? "consumableCommon" : null;
-      const quality2 = qualities.includes("consumableFine") ? "consumableFine" : null;
+      const quality2 = qualities.includes("consumableFine")
+        ? "consumableFine"
+        : null;
       result[baseId] = {
         owned: quality !== null || quality2 !== null,
         hidden,
@@ -327,7 +427,10 @@ export function parseOwnedItems(
         quality2,
       };
     } else if (itemData.type === "crafted") {
-      const { quality, quality2 } = resolveQualities(qualities, itemData.gearType === "ring");
+      const { quality, quality2 } = resolveQualities(
+        qualities,
+        itemData.gearType === "ring",
+      );
       result[baseId] = { owned: true, hidden, quality, quality2 };
     } else {
       result[baseId] = {
@@ -337,6 +440,24 @@ export function parseOwnedItems(
         quality2: null,
       };
     }
+  }
+
+  // Process pets from dedicated pet sections
+  const petGroups = collectPetData(
+    importData.pets,
+    importData.available_pets,
+    importData.available_eggs,
+  );
+
+  for (const [baseId, { level, rarity }] of Object.entries(petGroups)) {
+    if (!(baseId in petsMap)) continue;
+    const hidden = currentOwnedItems[baseId]?.hidden ?? false;
+    result[baseId] = {
+      owned: true,
+      hidden,
+      quality: String(level),
+      quality2: rarity,
+    };
   }
 
   return result;
@@ -365,7 +486,25 @@ export function parseCharacterImport(
     characterLevel: parseCharacterLevel(importData.steps),
     skillLevels: parseSkillLevels(importData.skills, knownSkillIds),
     achievementPoints: parseAchievementPoints(importData.achievement_points),
-    factionReputations: parseFactionReputations(importData.reputation, factionsMap),
-    ownedItems: parseOwnedItems(importData, knownItems, currentOwnedItems, petsMap, reset),
+    factionReputations: parseFactionReputations(
+      importData.reputation,
+      factionsMap,
+    ),
+    ownedItems: parseOwnedItems(
+      {
+        collectibles: importData.collectibles,
+        inventory: importData.inventory,
+        bank: importData.bank,
+        consumables: importData.consumables,
+        gear: importData.gear,
+        pets: importData.pets,
+        available_pets: importData.available_pets,
+        available_eggs: importData.available_eggs,
+      },
+      knownItems,
+      currentOwnedItems,
+      petsMap,
+      reset,
+    ),
   };
 }

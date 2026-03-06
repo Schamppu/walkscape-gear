@@ -25,6 +25,7 @@ import {
   LocationSummary,
   ItemDetail,
   UrlMap,
+  GlobalVariable,
 } from "@/domain/types";
 
 const rawProxy = createProxyInstance("/api");
@@ -123,6 +124,16 @@ export function getFactions(): Promise<AxiosResponse<Faction[]>> {
 }
 
 // ---------------------------------------------------------------------------
+// Global variables
+// ---------------------------------------------------------------------------
+
+export function getGlobalVariables(): Promise<AxiosResponse<GlobalVariable[]>> {
+  return proxy<GlobalVariable[]>({
+    url: "global_variables",
+  });
+}
+
+// ---------------------------------------------------------------------------
 // Keywords
 // ---------------------------------------------------------------------------
 
@@ -160,11 +171,11 @@ export function getItem({
   });
 }
 
-export function getMaterials(): Promise<AxiosResponse<ItemSummary[]>> {
-  return proxy<ItemSummary[]>({
+export function getMaterials(): Promise<AxiosResponse<ItemDetail[]>> {
+  return proxy<ItemDetail[]>({
     url: "items/search",
     options: {
-      params: { type: "material" },
+      params: { type: "material", detailed: true },
     },
   });
 }

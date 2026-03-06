@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { ref } from "vue";
 
 const showNotice = ref(false);
@@ -8,7 +8,7 @@ localStorage.removeItem("hideNotice");
 
 function hideNotice() {
   showNotice.value = false;
-  localStorage.setItem("hideNotice", true);
+  localStorage.setItem("hideNotice", "true");
 }
 </script>
 

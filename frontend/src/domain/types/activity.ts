@@ -16,15 +16,25 @@ export type ActivityRequiredKeyword = {
   keyword: string;
 };
 
-export type ActivityInput = {
+export type ActivityInputBase = {
   type: string;
-  keyword?: string;
-  item?: string;
+};
+
+export type KeywordInputActivity = ActivityInputBase & {
+  type: "keyword";
+  keyword: string;
+  requirements?: Requirement[];
+}
+
+export type SpecificInputActivity = ActivityInputBase & {
+  type: "specific";
+  item: string;
   quantity: number;
   quality: string | null;
   isOptional: boolean;
-  minimumTier?: string;
-};
+}
+
+export type ActivityInput = KeywordInputActivity | SpecificInputActivity;
 
 export type ActivityInputOption = {
   type: "inputActivity";

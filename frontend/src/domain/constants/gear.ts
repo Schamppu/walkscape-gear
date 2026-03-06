@@ -26,6 +26,7 @@ export const gearTypes = [
   "pet",
   "consumable",
   "location",
+  "activityInput",
 ] as const;
 
 export type GearType = (typeof gearTypes)[number];
@@ -52,6 +53,7 @@ export const gearSlots = [
   "pet",
   "consumable",
   "service",
+  "activityInput",
 ] as const;
 
 export type GearSlot = (typeof gearSlots)[number];

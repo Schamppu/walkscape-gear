@@ -38,12 +38,26 @@ const { showItemForActivity } = useShowItemForActivity(ctx);
 
 const searchTerm = ref("");
 
-const slotItems = Object.values(ctx.allGearItems.value).filter(
-  ({ gearType, type, egg }) =>
-    gearType === props.gearType ||
-    type === props.gearType ||
-    (props.gearType === "pet" && egg),
-);
+const slotItems =
+  props.gearType === "activityInput"
+    ? Object.values(ctx.materials.value).filter((mat) => {
+        // Get first activity input option with type keyword
+        const inputOption = ctx.activity.value?.options
+          ?.find(
+            (opt) =>
+              opt.type === "inputActivity" &&
+              opt.inputs.some((input) => input.type === "keyword"),
+          )
+          ?.inputs.find((input) => input.type === "keyword");
+        if (!inputOption) return false;
+        return mat.keywords?.includes(inputOption.keyword);
+      })
+    : Object.values(ctx.allGearItems.value).filter(
+        ({ gearType, type, egg }) =>
+          gearType === props.gearType ||
+          type === props.gearType ||
+          (props.gearType === "pet" && egg),
+      );
 
 const otherSlotIds = computed(() => {
   if (props.gearType !== "tool") return [];
@@ -103,6 +117,32 @@ const filteredItems = computed(() => {
       ctx.embargoedItems.value.has(item.id) &&
       !(item.id in ctx.ownedItems.value)
     );
+
+  if (props.gearType === "activityInput") {
+    const optionRequirements =
+      ctx.activity.value?.options?.flatMap(({ inputs }) =>
+        inputs
+          .filter((input) => input.type === "keyword")
+          .flatMap((input) => input.requirements ?? []),
+      ) ?? [];
+
+    return slotItems
+      .map((item) => ({
+        ...item,
+        hidden: false,
+        owned: true,
+        quality: null,
+        quality2: null,
+        attrs: usedAttrs(item, null),
+        stats: usedAttrs(item, null).flatMap(({ stats }) => stats),
+      }))
+      .filter((item) =>
+        checkRequirements(optionRequirements, {
+          ...ctx,
+          inputItem: computed(() => item),
+        }),
+      );
+  }
 
   return slotItems
     .map((item) => {
@@ -273,12 +313,21 @@ const handleClick = (item) => {
   gap: $xxs;
   padding: $xxs;
   box-sizing: border-box;
+  min-width: 0;
+
+  label {
+    flex-shrink: 0;
+  }
 
   select {
+    flex: 1;
+    min-width: 0;
     padding: $xxxs $xxs;
     border-radius: $sm;
     border: 1px solid $boxPrimaryOutline;
     background-color: $bgPrimary;
+    overflow: hidden;
+    text-overflow: ellipsis;
 
     &:focus {
       outline: 1px solid $chipOutline;

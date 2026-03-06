@@ -87,6 +87,7 @@ export function buildAllAttrEntries(
   workEfficiencyBonus: LevelBonusAttr | null,
   qualityOutcomeBonus: LevelBonusAttr | null,
   service: ServiceDetail | null,
+  fineInputBonusAttrs: EffectiveAttrEntry[] = [],
 ): EffectiveAttrEntry[] {
   const entries: EffectiveAttrEntry[] = resolvedItems.flatMap((item) =>
     item.attrs.map((attr: Attribute): EffectiveAttrEntry => {
@@ -104,6 +105,10 @@ export function buildAllAttrEntries(
 
   if (qualityOutcomeBonus) {
     entries.push(qualityOutcomeBonus);
+  }
+
+  if (fineInputBonusAttrs.length > 0) {
+    entries.push(...fineInputBonusAttrs);
   }
 
   if (service?.attributes.length) {

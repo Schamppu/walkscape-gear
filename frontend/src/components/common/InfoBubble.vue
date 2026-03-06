@@ -46,7 +46,7 @@ defineProps({
     background-color: $boxPrimaryBackground;
 
     &.border-green {
-      border: 1px solid $txPositive;
+      border-color: $txPositive;
     }
 
     &.selected-border {

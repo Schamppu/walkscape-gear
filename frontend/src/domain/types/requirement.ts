@@ -107,6 +107,11 @@ export type TotalSkillLevelUpsRequirement = RequirementBase & {
   requirement: { levels: number };
 };
 
+export type InputKeywordWithLevelRequirement = RequirementBase & {
+  type: "inputKeywordWithLevel";
+  requirement: { skill: string; level: number };
+};
+
 export type ItemAnywhereRequirement = RequirementBase & {
   type: "itemAnywhere";
   requirement: { item: string };
@@ -158,6 +163,7 @@ export type Requirement =
   | ActivityTypeRequirement
   | TotalSkillLevelRequirement
   | TotalSkillLevelUpsRequirement
+  | InputKeywordWithLevelRequirement
   | ItemAnywhereRequirement
   | ItemAnywhereWithYouRequirement
   | KeywordEquippedRequirement
