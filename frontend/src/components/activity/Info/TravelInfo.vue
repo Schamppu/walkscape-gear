@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, watch } from "vue";
+import { computed, shallowRef, watch } from "vue";
 import WsIcon from "@/components/primitives/WsIcon.vue";
 import WsLabel from "@/components/primitives/WsLabel.vue";
 import InfoBubble from "@/components/common/InfoBubble.vue";
@@ -22,7 +22,7 @@ const { getRoute, averageStepsPerRoute, stepsPerNode } = useRoutes(ctx);
 const { checkRequirements, mapRequirementsText, mergeRequirements } =
   injectRequirements();
 
-const route = ref(null);
+const route = shallowRef(null);
 
 const start = computed({
   get: () => routeStore.start,
