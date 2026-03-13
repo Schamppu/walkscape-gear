@@ -111,7 +111,7 @@ export function buildAllAttrEntries(
     entries.push(...fineInputBonusAttrs);
   }
 
-  if (service?.attributes.length) {
+  if (service?.attributes?.length) {
     entries.push(
       ...service.attributes.map((attr) => ({ ...attr, item: service })),
     );
