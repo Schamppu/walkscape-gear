@@ -6,6 +6,7 @@ import ItemEntry from "./ItemEntry.vue";
 import ConsumableEntry from "./ConsumableEntry.vue";
 import PetEntry from "./PetEntry.vue";
 import WsIcon from "../primitives/WsIcon.vue";
+import { getItemEntryQualities } from "@/domain/gear/itemEntryQualities";
 import type { ItemDetail, Keyword, PetDetail } from "@/domain/types";
 import type { ToggleItemPayload } from "@/store/items";
 
@@ -30,7 +31,7 @@ function isPetItem(item: KeywordItem): item is ItemDetail & PetDetail {
 }
 
 function isConsumableItem(item: KeywordItem): boolean {
-  return item.type === "consumable" || item.consumableType !== null;
+  return item.type === "consumable" || !!item.consumableType;
 }
 
 const allKeywords = computed(() => {
@@ -126,7 +127,7 @@ function toggleItem(data: ToggleItemPayload) {
           v-else
           :key="`gear-${item.id}`"
           :item="item"
-          :qualities="0"
+          :qualities="getItemEntryQualities(item)"
           :selected="!!itemsStore.ownedItems[item.id]?.owned"
           @change="toggleItem"
         />

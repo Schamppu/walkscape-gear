@@ -5,13 +5,13 @@ import ItemEntry from "./ItemEntry.vue";
 import ConsumableEntry from "./ConsumableEntry.vue";
 import PetEntry from "./PetEntry.vue";
 import { itemQualityNameSort, levelReqNameSort } from "@/domain/gear/sorting";
+import { getItemEntryQualities } from "@/domain/gear/itemEntryQualities";
 import { consumableQualityOptions } from "@/domain/constants/quality";
 import { injectBaseContext } from "@/composables/context/injectShared";
 
 const props = defineProps({
   group: String,
   title: String,
-  qualities: Number,
   itemCategory: String,
   isOpen: Boolean,
 });
@@ -193,7 +193,7 @@ watch(
           v-for="item in items"
           :key="item.id"
           :item="item"
-          :qualities="qualities || 0"
+          :qualities="getItemEntryQualities(item)"
           :selected="selectedItems.has(item.id)"
           @change="toggleItemSelection"
         />

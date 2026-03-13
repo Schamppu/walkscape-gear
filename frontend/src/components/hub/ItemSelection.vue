@@ -63,7 +63,6 @@ const categoryOwnedCount = computed(() => {
               :key="cat.title"
               :group="group.title"
               :title="cat.title"
-              :qualities="cat.qualities"
               :item-category="cat.key"
               :is-open="
                 openCategoryGroup === group.title && openCategory === cat.title
