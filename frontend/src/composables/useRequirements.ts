@@ -508,6 +508,10 @@ export function useRequirements(ctx: RequirementContext) {
               text: `${act.name} activity ${value} times`,
               icon: act.icon,
             };
+          } else if (category === "stepsWalkedTraveling") {
+            out = {
+              text: `Walk a total amount of steps dedicated to travel. ${value}`,
+            };
           }
           break;
         }
