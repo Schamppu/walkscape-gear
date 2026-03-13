@@ -48,11 +48,15 @@ const allKeywords = computed(() => {
     .filter((kw): kw is Keyword => kw !== null);
 });
 
+const selectedKeyword = computed<Keyword | null>(() => {
+  if (!props.keyword) return null;
+  return allKeywords.value.find((kw) => kw.id === props.keyword) ?? null;
+});
+
 const filteredItems = computed(() => {
   if (!props.keyword) return [];
   return (Object.values(itemsStore.allGearItems) as KeywordItem[]).filter(
-    (item) =>
-    item.keywords && item.keywords.includes(props.keyword),
+    (item) => item.keywords && item.keywords.includes(props.keyword),
   );
 });
 
@@ -77,6 +81,14 @@ function toggleItem(data: ToggleItemPayload) {
         Show items with keyword:
       </label>
       <div class="select-wrapper">
+        <ws-icon
+          v-if="selectedKeyword?.icon"
+          :icon-path="selectedKeyword.icon"
+          size="sm"
+          alt-text=""
+          decorative
+          class="keyword-icon"
+        />
         <select
           id="keyword-select"
           :value="keyword ?? ''"
@@ -85,14 +97,6 @@ function toggleItem(data: ToggleItemPayload) {
         >
           <option value="">— select keyword —</option>
           <option v-for="kw in allKeywords" :key="kw.id" :value="kw.id">
-            <ws-icon
-              v-if="kw.icon"
-              :icon-path="kw.icon"
-              size="sm"
-              alt-text=""
-              decorative
-              class="keyword-icon"
-            />
             {{ kw.name }}
           </option>
         </select>
