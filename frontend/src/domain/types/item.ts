@@ -71,6 +71,9 @@ export type Buff = {
 export type GearItem = {
   itemAttrs?: Attribute[];
   itemQualityAttrs?: QualityAttr[];
+};
+
+export type ConsumableItem = {
   buffs?: Buff[] | null;
 };
 
@@ -122,7 +125,7 @@ export type MaterialItem = {
 // Union
 // ---------------------------------------------------------------------------
 
-export type Item = GearItem | PetItem | MaterialItem;
+export type Item = GearItem | ConsumableItem | PetItem | MaterialItem;
 
 // ---------------------------------------------------------------------------
 // Item API types

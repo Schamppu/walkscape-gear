@@ -22,6 +22,7 @@ import {
 import type {
   Attribute,
   Buff,
+  ConsumableItem,
   GearItem,
   Item,
   PetItem,
@@ -33,6 +34,7 @@ export type {
   Buff,
   BuffData,
   BuffObj,
+  ConsumableItem,
   GearItem,
   Item,
   PetItem,
@@ -47,6 +49,10 @@ export type {
 
 function isPet(item: Item): item is PetItem {
   return "egg" in item;
+}
+
+function isConsumable(item: Item): item is ConsumableItem {
+  return "buffs" in item;
 }
 
 /**
@@ -168,6 +174,7 @@ export function sumBuffAttrs(buffs: Buff[], quality: string): Attribute[] {
  */
 export function usedAttrs(item: Item, quality: string): Attribute[] {
   const pet = isPet(item);
+  const consumable = isConsumable(item);
   const getAttrs = (item: Item) => {
     if ("egg" in item) {
       const levelIndex = Number(quality) - 1;
@@ -181,12 +188,13 @@ export function usedAttrs(item: Item, quality: string): Attribute[] {
 
   const attrs = getAttrs(item);
   const usedQuality = pet ? "common" : quality;
-  const gearItem = pet ? undefined : (item as GearItem);
+  const gearItem = pet || consumable ? undefined : (item as GearItem);
+  const consumableItem = consumable ? item : undefined;
 
   return sumAttrs(
     attrs,
     gearItem?.itemQualityAttrs,
-    gearItem?.buffs,
+    consumableItem?.buffs,
     usedQuality,
   );
 }
