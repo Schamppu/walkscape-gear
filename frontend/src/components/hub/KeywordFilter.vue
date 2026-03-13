@@ -1,9 +1,13 @@
-<script setup>
+<script setup lang="ts">
 import { computed } from "vue";
 import { useItemsStore } from "@/store/items";
 import { useDataStore } from "@/store/data";
 import ItemEntry from "./ItemEntry.vue";
+import ConsumableEntry from "./ConsumableEntry.vue";
+import PetEntry from "./PetEntry.vue";
 import WsIcon from "../primitives/WsIcon.vue";
+import type { ItemDetail, Keyword, PetDetail } from "@/domain/types";
+import type { ToggleItemPayload } from "@/store/items";
 
 const props = defineProps({
   keyword: {
@@ -12,42 +16,57 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(["update:keyword"]);
+const emit = defineEmits<{
+  (e: "update:keyword", value: string | null): void;
+}>();
 
 const itemsStore = useItemsStore();
 const dataStore = useDataStore();
 
+type KeywordItem = ItemDetail & Partial<PetDetail>;
+
+function isPetItem(item: KeywordItem): item is ItemDetail & PetDetail {
+  return "egg" in item && Array.isArray(item.levels);
+}
+
+function isConsumableItem(item: KeywordItem): boolean {
+  return item.type === "consumable" || item.consumableType !== null;
+}
+
 const allKeywords = computed(() => {
-  const kws = new Set();
-  for (const item of Object.values(itemsStore.allGearItems)) {
+  const kws = new Set<string>();
+  for (const item of Object.values(itemsStore.allGearItems) as KeywordItem[]) {
     if (!item.keywords) continue;
     for (const kw of item.keywords) {
       kws.add(kw);
     }
   }
-  return [...kws].sort().map((kw) => dataStore.getKeywordById(kw));
+  return [...kws]
+    .sort()
+    .map((kw) => dataStore.getKeywordById(kw))
+    .filter((kw): kw is Keyword => kw !== null);
 });
 
 const filteredItems = computed(() => {
   if (!props.keyword) return [];
-  return Object.values(itemsStore.allGearItems).filter((item) =>
+  return (Object.values(itemsStore.allGearItems) as KeywordItem[]).filter(
+    (item) =>
     item.keywords && item.keywords.includes(props.keyword),
   );
 });
 
-function onSelect(e) {
-  emit("update:keyword", e.target.value || null);
+function onSelect(e: Event) {
+  const target = e.target as HTMLSelectElement | null;
+  emit("update:keyword", target?.value || null);
 }
 
 function clear() {
   emit("update:keyword", null);
 }
 
-function toggleItem(data) {
+function toggleItem(data: ToggleItemPayload) {
   itemsStore.toggleItem(data);
 }
-
-console.log(allKeywords.value);
 </script>
 
 <template>
@@ -68,7 +87,7 @@ console.log(allKeywords.value);
             <ws-icon
               v-if="kw.icon"
               :icon-path="kw.icon"
-              size="small"
+              size="sm"
               alt-text=""
               decorative
               class="keyword-icon"
@@ -88,14 +107,30 @@ console.log(allKeywords.value);
     </div>
 
     <div v-if="keyword && filteredItems.length" class="keyword-results">
-      <item-entry
-        v-for="item in filteredItems"
-        :key="item.id"
-        :item="item"
-        :qualities="0"
-        :selected="!!itemsStore.ownedItems[item.id]?.owned"
-        @change="toggleItem"
-      />
+      <template v-for="item in filteredItems">
+        <pet-entry
+          v-if="isPetItem(item)"
+          :key="`pet-${item.id}`"
+          :pet="item"
+          :selected="!!itemsStore.ownedItems[item.id]?.owned"
+          @change="toggleItem"
+        />
+        <consumable-entry
+          v-else-if="isConsumableItem(item)"
+          :key="`consumable-${item.id}`"
+          :item="item"
+          :selected="!!itemsStore.ownedItems[item.id]?.owned"
+          @change="toggleItem"
+        />
+        <item-entry
+          v-else
+          :key="`gear-${item.id}`"
+          :item="item"
+          :qualities="0"
+          :selected="!!itemsStore.ownedItems[item.id]?.owned"
+          @change="toggleItem"
+        />
+      </template>
     </div>
     <div v-else-if="keyword && filteredItems.length === 0" class="no-results">
       No items found for "{{ keyword }}".
@@ -108,6 +143,7 @@ console.log(allKeywords.value);
   display: flex;
   flex-direction: column;
   gap: $sm;
+  margin-bottom: $xxs;
   width: 100%;
 }
 
