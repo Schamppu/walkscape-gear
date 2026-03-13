@@ -52,7 +52,7 @@ function isPet(item: Item): item is PetItem {
 }
 
 function isConsumable(item: Item): item is ConsumableItem {
-  return "buffs" in item;
+  return "buffs" in item && Array.isArray(item.buffs) && item.buffs.length > 0;
 }
 
 /**
