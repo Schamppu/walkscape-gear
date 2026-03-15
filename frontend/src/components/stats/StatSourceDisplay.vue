@@ -24,6 +24,13 @@ const statList = computed(() => {
     })
     .flatMap(({ stats, item, id }) => {
       return { stat: stats[0], item, effective: effectiveAttrIds.includes(id) };
+    })
+    .sort((a, b) => {
+      if (a.effective !== b.effective) {
+        return a.effective ? -1 : 1;
+      }
+
+      return b.stat.value - a.stat.value;
     });
 });
 </script>
@@ -35,7 +42,14 @@ const statList = computed(() => {
       v-for="({ item, stat, effective }, index) in statList"
       :key="index"
     >
-      <p :class="stat.isNegative ? 'negative' : 'positive'" class="stat-line">
+      <p
+        :class="{
+          negative: stat.isNegative,
+          positive: !stat.isNegative,
+          disabled: !effective,
+        }"
+        class="stat-line"
+      >
         <span v-if="stat.isPercent">
           <span v-if="!(stat.value <= 0)">+</span>{{ n(100 * stat.value, 2) }}%
         </span>
@@ -48,9 +62,15 @@ const statList = computed(() => {
           size="sm"
           :outlineClass="`outline-${item.quality}`"
         />
-        <span v-if="item" :class="effective ? 'positive' : 'negative'">{{
-          item.name
-        }}</span>
+        <span
+          v-if="item"
+          :class="{
+            positive: effective,
+            negative: !effective,
+            disabled: !effective,
+          }"
+          >{{ item.name }}</span
+        >
       </p>
     </li>
   </ul>
