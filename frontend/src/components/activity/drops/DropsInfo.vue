@@ -20,9 +20,9 @@ const { groupedLootTables, dropItemInfoMap } = injectLootTables();
   <details open>
     <summary>Drops</summary>
     <div v-if="ctx.embargoedActivities.value.has(ctx.source.value.id)">
-      Info hidden during wiki embargo
+      Info partially hidden during wiki embargo
     </div>
-    <div v-else>
+    <div>
       <div class="options">
         <label v-if="activitySettings.showCombined.display === 1">
           <input

@@ -67,7 +67,7 @@ const ownedBgClass = computed(() => {
 });
 
 const hasAttrs = computed(() => {
-  return props.item.itemAttrs.length > 0 || props.item.keywords.length > 0;
+  return props.item.itemAttrs?.length > 0 || props.item.keywords?.length > 0;
 });
 
 function emitChange(overrides = {}) {

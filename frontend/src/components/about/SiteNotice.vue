@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref } from "vue";
 
-const showNotice = ref(false);
-localStorage.removeItem("hideNotice");
-// const noticeHidden = localStorage.getItem("hideNotice");
-// showNotice.value = !noticeHidden;
+const showNotice = ref(true);
+// localStorage.removeItem("hideNotice");
+const noticeHidden = localStorage.getItem("hideNotice");
+showNotice.value = !noticeHidden;
 
 function hideNotice() {
   showNotice.value = false;
@@ -15,7 +15,7 @@ function hideNotice() {
 <template>
   <div v-if="showNotice" class="notice">
     <div></div>
-    <p>Wiki Embargo in place. New items hidden unless imported from in-game.</p>
+    <p>Wiki Embargo in place. New items & drops hidden</p>
     <button class="close-button" @click="hideNotice" type="button">✕</button>
   </div>
 </template>
