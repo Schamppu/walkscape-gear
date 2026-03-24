@@ -69,7 +69,7 @@ const extractScore = (
   }
   if (prio === "balancedRecipe") {
     const xpValue = result.xpPerStep[result.xpPerStep.length - 1]?.value ?? 1;
-    return result.craftsPerMaterial * (xpValue > 0 ? xpValue : 1);
+    return result.craftsPerMaterial * (xpValue > 0 ? Math.sqrt(xpValue) : 1);
   }
   if (prio === "stepsPerFineRoll") return result.stepsPerFineRoll;
   if (prio === "stepsPerCollectibleRoll") return result.stepsPerCollectibleRoll;

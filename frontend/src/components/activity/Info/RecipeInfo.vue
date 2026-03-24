@@ -6,6 +6,7 @@ import InfoBubble from "@/components/common/InfoBubble.vue";
 import ServiceBubble from "@/components/common/ServiceBubble.vue";
 import LocationBubble from "@/components/common/LocationBubble.vue";
 import RealmSelection from "./RealmSelection.vue";
+import RequirementDisplay from "@/components/activity/Info/RequirementDisplay.vue";
 import SkillBubble from "@/components/common/SkillBubble.vue";
 import WikiButton from "@/components/common/WikiButton.vue";
 import QualityOutcomeTable from "./QualityOutcomeTable.vue";
@@ -75,6 +76,12 @@ const sections = computed(() => {
         component: ServiceBubble,
         items: activityStore.services,
         itemProps: (item) => ({ service: item }),
+      },
+      {
+        label: "Service Requirements",
+        component: RequirementDisplay,
+        items: activityStore.service?.requirements ?? [],
+        itemProps: (item) => ({ requirement: item }),
       },
       {
         label: "Locations",
