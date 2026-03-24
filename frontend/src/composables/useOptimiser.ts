@@ -74,14 +74,14 @@ export function useOptimiser() {
     const source = baseCtx.source.value as {
       requirements: Parameters<typeof isHandledRequirement>[0][];
     } | null;
-    const reqs = (source?.requirements ?? []).filter(isHandledRequirement);
+    const serviceReqs = (activityStore.service?.requirements ?? []) as Parameters<typeof isHandledRequirement>[0][];
+    const reqs = (source?.requirements ?? []).concat(serviceReqs).filter(isHandledRequirement);
 
     let candidates: Candidate[] = [
       { gearSet: {}, score: startScore(), slotCounts: {} },
     ];
 
     const requiredOptions = getItemOptions(gearOptions, "required");
-
     reqs.forEach((requirement) => {
       const req = getReq(requirement);
 
