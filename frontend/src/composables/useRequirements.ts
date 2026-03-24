@@ -292,10 +292,11 @@ export function useRequirements(ctx: RequirementContext) {
         if (source) {
           const { activity: reqActivity, keywords: reqKeywords } =
             req.requirement;
-          value =
-            (!reqActivity || source.id === reqActivity) &&
-            (!reqKeywords?.length ||
-              reqKeywords.every((kw) => source.keywords.includes(kw)));
+          const activityMatches = !reqActivity || source.id === reqActivity;
+          const keywordsMatches =
+            !reqKeywords?.length ||
+            reqKeywords.every((kw) => source.keywords?.includes(kw));
+          value = activityMatches && keywordsMatches;
         }
         break;
       }
