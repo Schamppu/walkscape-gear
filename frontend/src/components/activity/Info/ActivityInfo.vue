@@ -6,9 +6,11 @@ import LocationBubble from "@/components/common/LocationBubble.vue";
 import SkillBubble from "@/components/common/SkillBubble.vue";
 import RequirementDisplay from "@/components/activity/Info/RequirementDisplay.vue";
 import WikiButton from "@/components/common/WikiButton.vue";
+import AbilitiesDisplay from "@/components/common/abilities/AbilitiesDisplay.vue";
 import { useActivityStore } from "@/store/activity";
 import { usePlayerStore } from "@/store/player";
 import { useDataStore } from "@/store/data";
+import { useItemsStore } from "@/store/items";
 import {
   injectBaseContext,
   injectSkillModifiers,
@@ -16,9 +18,11 @@ import {
 } from "@/composables/context/injectShared";
 import { isEmpty } from "@/utils/isEmpty";
 import { n } from "@/utils/number";
-import AbilitiesDisplay from "../../common/abilities/AbilitiesDisplay.vue";
 import { icons } from "@/constants/iconPaths";
-import type { ActivityDetail, ActivityInputOption } from "@/domain/types/activity";
+import type {
+  ActivityDetail,
+  ActivityInputOption,
+} from "@/domain/types/activity";
 import type { Requirement } from "@/domain/types/common";
 
 // Shape of a faction-based activity reward
@@ -40,6 +44,7 @@ interface SectionRow {
 const activityStore = useActivityStore();
 const playerStore = usePlayerStore();
 const dataStore = useDataStore();
+const itemsStore = useItemsStore();
 
 const ctx = injectBaseContext();
 const {
@@ -63,7 +68,8 @@ const borderClass = computed(
 
 const sections = computed(() => {
   const activity = ctx.activity.value as ActivityDetail;
-  const { id, workRequired, requirements, rewards, options, abilities } = activity;
+  const { id, workRequired, requirements, rewards, options, abilities } =
+    activity;
   const levelRequirementsMap = getLevelRequirementsMap(requirements);
 
   const isTravel = id === "travelling";
@@ -71,45 +77,60 @@ const sections = computed(() => {
 
   const inputs =
     options
-      ?.filter((opt): opt is ActivityInputOption => opt?.type === "inputActivity")
-      .flatMap(({ inputs, enableFineBenefit }) =>
-        inputs.map((input) => ({ ...input, enableFineBenefit })),
+      ?.filter(
+        (opt): opt is ActivityInputOption => opt?.type === "inputActivity",
       )
-      .map(({ type, keyword, item, quantity, enableFineBenefit }) => {
-        if (type === "keyword") {
-          const kw = dataStore.getKeywordById(keyword!);
+      .flatMap(({ inputs }) => inputs)
+      .map((input) => {
+        if (input.type === "keyword") {
+          const kw = dataStore.getKeywordById(input.keyword);
           if (!kw) {
-            console.warn("Keyword not found:", keyword);
+            console.warn("Keyword not found:", input.keyword);
             return null;
           }
           const { name, icon } = kw;
-          return { name, icon, quantity, enableFineBenefit };
-        } else if (type === "specific") {
-          const itemObj = ctx.materials.value[item!];
+          const canBeFine = Object.values(ctx.materials.value)
+            .filter((m) => m.keywords?.includes(input.keyword))
+            .every(({ id }) => id in itemsStore.fineMaterials);
+          return {
+            name,
+            icon,
+            quantity: undefined as number | undefined,
+            canBeFine,
+          };
+        } else if (input.type === "specific") {
+          const itemObj = ctx.materials.value[input.item];
           if (!itemObj) return null;
           const { name, icon } = itemObj;
-          return { name, icon, quantity, enableFineBenefit };
+          const canBeFine = input.item in itemsStore.fineMaterials;
+          return { name, icon, quantity: input.quantity, canBeFine };
         }
         return null;
       })
       .filter(
-        (x): x is { name: string; icon: string; quantity: number; enableFineBenefit: boolean } =>
-          x !== null,
-      )
-    ?? [];
+        (
+          x,
+        ): x is {
+          name: string;
+          icon: string;
+          quantity: number | undefined;
+          canBeFine: boolean;
+        } => x !== null,
+      ) ?? [];
 
-  const hasFineInputs = inputs.some(({ enableFineBenefit }) => enableFineBenefit);
+  const hasFineInputs =
+    inputs.length > 0 && inputs.every(({ canBeFine }) => canBeFine);
 
   const inputsRow: SectionRow = {
     label: "Inputs",
     component: InfoBubble,
     showFineCheckbox: hasFineInputs,
-    items: inputs.map(({ name, icon, quantity, enableFineBenefit }) => ({
+    items: inputs.map(({ name, icon, quantity, canBeFine }) => ({
       text: `${quantity ? `${quantity} ` : ""}${name}`,
       tooltip: `${quantity ? `${quantity} ` : ""}${name}`,
       iconPath: icon,
       borderClass:
-        enableFineBenefit && activityStore.useFineInputs ? "border-fine" : undefined,
+        canBeFine && activityStore.useFineInputs ? "border-fine" : undefined,
     })),
     itemProps: (item) => ({ ...item }),
   };
@@ -186,7 +207,9 @@ const sections = computed(() => {
     itemProps: (item) => ({ ...item }),
   };
 
-  const otherReqs: Requirement[] = requirements.filter(({ type }) => type !== "skillLevel");
+  const otherReqs: Requirement[] = requirements.filter(
+    ({ type }) => type !== "skillLevel",
+  );
 
   const requirementsRow: SectionRow = {
     label: "Requirements",
@@ -211,11 +234,13 @@ const sections = computed(() => {
   const xpPerStepRow: SectionRow = {
     label: "XP per step (real / displayed)",
     component: SkillBubble,
-    items: xpPerStep.value.map(({ skill, skillText, value, displayedValue }) => ({
-      skill,
-      text: `${n(value)} /  ${n(displayedValue)}`,
-      tooltip: `Gains ${n(value)} ${skillText} XP per step`,
-    })),
+    items: xpPerStep.value.map(
+      ({ skill, skillText, value, displayedValue }) => ({
+        skill,
+        text: `${n(value)} /  ${n(displayedValue)}`,
+        tooltip: `Gains ${n(value)} ${skillText} XP per step`,
+      }),
+    ),
     itemProps: (item) => ({ ...item }),
   };
 

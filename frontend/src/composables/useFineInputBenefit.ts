@@ -1,6 +1,7 @@
 import { computed, type ComputedRef, type Ref } from "vue";
 import { useDataStore } from "@/store/data";
 import { useActivityStore } from "@/store/activity";
+import { useItemsStore } from "@/store/items";
 import type { EffectiveAttrEntry } from "@/domain/effectiveAttrs";
 import type { ActivityDetail, ActivityInputOption } from "@/domain/types/activity";
 import type { ActivityNone } from "@/domain/constants/activityNone";
@@ -31,16 +32,35 @@ export function useFineInputBenefit(ctx: FineInputBenefitContext): {
 } {
   const dataStore = useDataStore();
   const activityStore = useActivityStore();
+  const itemsStore = useItemsStore();
 
-  /** True when the selected activity has at least one inputActivity option with enableFineBenefit. */
+  /** True when all materials required by the activity's input options have fine versions available. */
   const canUseFineInputs = computed<boolean>(() => {
     if (!ctx.activitySelected.value) return false;
     const activity = ctx.activity.value as ActivityDetail | null;
-    return (
-      activity?.options?.some(
-        (opt): opt is ActivityInputOption =>
-          opt.type === "inputActivity" && opt.enableFineBenefit,
-      ) ?? false
+
+    const inputOptions =
+      activity?.options?.filter(
+        (opt): opt is ActivityInputOption => opt.type === "inputActivity",
+      ) ?? [];
+
+    if (inputOptions.length === 0) return false;
+
+    return inputOptions.every((opt) =>
+      opt.inputs.every((input) => {
+        if (input.type === "specific") {
+          return input.item in itemsStore.fineMaterials;
+        } else if (input.type === "keyword") {
+          const materialsWithKeyword = Object.values(itemsStore.materials).filter(
+            (m) => m.keywords?.includes(input.keyword),
+          );
+          return (
+            materialsWithKeyword.length > 0 &&
+            materialsWithKeyword.every(({ id }) => id in itemsStore.fineMaterials)
+          );
+        }
+        return false;
+      }),
     );
   });
 
