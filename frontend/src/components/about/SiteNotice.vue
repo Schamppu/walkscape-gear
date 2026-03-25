@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref } from "vue";
 
-const showNotice = ref(true);
-// localStorage.removeItem("hideNotice");
-const noticeHidden = localStorage.getItem("hideNotice");
-showNotice.value = !noticeHidden;
+const showNotice = ref(false);
+localStorage.removeItem("hideNotice");
+// const noticeHidden = localStorage.getItem("hideNotice");
+// showNotice.value = !noticeHidden;
 
 function hideNotice() {
   showNotice.value = false;
