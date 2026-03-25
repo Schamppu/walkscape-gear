@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import farganitePickaxe from "../../fixtures/items/farganite_pickaxe.json";
 import tarsiliumBoots from "../../fixtures/items/tarsilium_toed_boots.json";
 import cookedSquid from "../../fixtures/items/cooked_squid.json";
+import spectralHuntingBow from "../../fixtures/items/spectral_hunting_bow.json";
 import camel from "../../fixtures/pets/camel.json";
 import {
   sumAttrs,
@@ -10,6 +11,7 @@ import {
   type GearItem,
   type PetItem,
 } from "@/domain/quality/qualityAttrs";
+import type { Attribute, Buff, GearItem, PetItem } from "@/domain/types/item";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -51,10 +53,18 @@ describe("sumAttrs", () => {
         "common",
       );
       expect(result).toHaveLength(4);
-      expect(getStat(result, "workEfficiency", "Mining")?.stats[0].value).toBe(0.04);
-      expect(getStat(result, "workEfficiency", "Smithing")?.stats[0].value).toBe(0.06);
-      expect(getStat(result, "doubleAction", "Mining")?.stats[0].value).toBe(0.01);
-      expect(getStat(result, "doubleAction", "Smithing")?.stats[0].value).toBe(0.01);
+      expect(getStat(result, "workEfficiency", "Mining")?.stats[0].value).toBe(
+        0.04,
+      );
+      expect(
+        getStat(result, "workEfficiency", "Smithing")?.stats[0].value,
+      ).toBe(0.06);
+      expect(getStat(result, "doubleAction", "Mining")?.stats[0].value).toBe(
+        0.01,
+      );
+      expect(getStat(result, "doubleAction", "Smithing")?.stats[0].value).toBe(
+        0.01,
+      );
     });
   });
 
@@ -178,6 +188,49 @@ describe("sumAttrs", () => {
     });
   });
 
+  describe("gear item with two doubleRewards attrs - good (uncommon) quality", () => {
+    it("returns both doubleRewards attrs at good quality", () => {
+      const result = sumAttrs(
+        spectralHuntingBow.itemAttrs as Attribute[],
+        spectralHuntingBow.itemQualityAttrs as Attribute[],
+        [],
+        "uncommon",
+      );
+      const doubleRewards = result.filter(
+        (a) => a.stats[0].type === "doubleRewards" && a.skillText === "Hunting",
+      );
+      expect(doubleRewards).toHaveLength(2);
+    });
+
+    it("first doubleRewards (general hunting) has value 0.05 at good quality", () => {
+      const result = sumAttrs(
+        spectralHuntingBow.itemAttrs as Attribute[],
+        spectralHuntingBow.itemQualityAttrs as Attribute[],
+        [],
+        "uncommon",
+      );
+      const doubleRewards = result.filter(
+        (a) => a.stats[0].type === "doubleRewards" && a.skillText === "Hunting",
+      );
+      // base 0.01 + uncommon bonus 0.04 = 0.05
+      expect(doubleRewards[0].stats[0].value).toBeCloseTo(0.05, 5);
+    });
+
+    it("second doubleRewards (spectral locations) has value 0.07 at good quality", () => {
+      const result = sumAttrs(
+        spectralHuntingBow.itemAttrs as Attribute[],
+        spectralHuntingBow.itemQualityAttrs as Attribute[],
+        [],
+        "uncommon",
+      );
+      const doubleRewards = result.filter(
+        (a) => a.stats[0].type === "doubleRewards" && a.skillText === "Hunting",
+      );
+      // base 0.07, quality bonus applies only to first matching attr
+      expect(doubleRewards[1].stats[0].value).toBeCloseTo(0.07, 5);
+    });
+  });
+
   describe("empty qualityAttrs", () => {
     it("returns just base attrs when qualityAttrs is empty array", () => {
       const result = sumAttrs(
@@ -227,7 +280,10 @@ describe("sumAttrs", () => {
 
 describe("sumBuffAttrs", () => {
   it("returns normal attributes for consumableCommon quality", () => {
-    const result = sumBuffAttrs(cookedSquid.buffs as Buff[], "consumableCommon");
+    const result = sumBuffAttrs(
+      cookedSquid.buffs as Buff[],
+      "consumableCommon",
+    );
     expect(result).toHaveLength(1);
     expect(result[0].stats[0].type).toBe("doubleAction");
     expect(result[0].stats[0].value).toBeCloseTo(0.08, 5);

@@ -1,0 +1,1140 @@
+{
+  "id": "spectral_hunting_bow",
+  "name": "Spectral hunting bow",
+  "keywords": ["tool", "hunting_bow", "spectral", "hunting"],
+  "type": "crafted",
+  "quality": "common",
+  "gearType": "tool",
+  "requirements": [
+    {
+      "type": "skillLevel",
+      "name": "",
+      "opposite": false,
+      "requirement": { "level": 55, "skill": "hunting" }
+    }
+  ],
+  "itemAttrs": [
+    {
+      "id": "9b245b63-4690-409a-b9d1-64d319707e9b",
+      "customIcon": null,
+      "customTextLocalizationKey": "",
+      "customText": "",
+      "textLocalizationKey": "attributes.singulars.skilling.workEfficiency.whileMainSkill.text",
+      "text": "<stat s=\"workEfficiency\"/> while <supp k=\"skill\"/>",
+      "statText": "Work efficiency",
+      "skillText": "Hunting",
+      "tables": null,
+      "requirements": [
+        {
+          "type": "mainSkill",
+          "name": "",
+          "opposite": false,
+          "requirement": { "skill": "hunting" }
+        }
+      ],
+      "stats": [
+        {
+          "stat": "work_efficiency",
+          "name": "Work efficiency",
+          "type": "workEfficiency",
+          "isPercent": true,
+          "value": -0.4,
+          "isNegative": true,
+          "isMultiplicative": true
+        }
+      ]
+    },
+    {
+      "id": "00ff7fe9-3241-4999-aa70-172ac77b2ffa",
+      "customIcon": null,
+      "customTextLocalizationKey": "",
+      "customText": "",
+      "textLocalizationKey": "",
+      "text": "",
+      "statText": "Fine material finding",
+      "skillText": "Hunting",
+      "tables": null,
+      "requirements": [
+        {
+          "type": "mainSkill",
+          "name": "",
+          "opposite": false,
+          "requirement": { "skill": "hunting" }
+        }
+      ],
+      "stats": [
+        {
+          "stat": "fine_material_finding",
+          "name": "Fine material finding",
+          "type": "fineMaterialFind",
+          "isPercent": true,
+          "value": 0.25,
+          "isNegative": false,
+          "isMultiplicative": true
+        }
+      ]
+    },
+    {
+      "id": "d7366ab8-5335-4e40-b024-c831ad21e7e7",
+      "customIcon": null,
+      "customTextLocalizationKey": "",
+      "customText": "",
+      "textLocalizationKey": "",
+      "text": "",
+      "statText": "Double rewards",
+      "skillText": "Hunting",
+      "tables": null,
+      "requirements": [
+        {
+          "type": "mainSkill",
+          "name": "",
+          "opposite": false,
+          "requirement": { "skill": "hunting" }
+        }
+      ],
+      "stats": [
+        {
+          "stat": "double_rewards",
+          "name": "Double rewards",
+          "type": "doubleRewards",
+          "isPercent": true,
+          "value": 0.02,
+          "isNegative": false,
+          "isMultiplicative": true
+        }
+      ]
+    },
+    {
+      "id": "cbf3fab5-dfde-4505-9026-8347cd69ac91",
+      "customIcon": null,
+      "customTextLocalizationKey": "",
+      "customText": "",
+      "textLocalizationKey": "",
+      "text": "",
+      "statText": "Double rewards",
+      "skillText": "Hunting",
+      "tables": null,
+      "requirements": [
+        {
+          "type": "mainSkill",
+          "name": "",
+          "opposite": false,
+          "requirement": { "skill": "hunting" }
+        },
+        {
+          "type": "locationHasKeywords",
+          "name": "",
+          "opposite": false,
+          "requirement": { "keywords": ["spectral"] }
+        }
+      ],
+      "stats": [
+        {
+          "stat": "double_rewards",
+          "name": "Double rewards",
+          "type": "doubleRewards",
+          "isPercent": true,
+          "value": 0.05,
+          "isNegative": false,
+          "isMultiplicative": true
+        }
+      ]
+    }
+  ],
+  "itemQualityAttrs": [
+    {
+      "quality": "uncommon",
+      "attributes": [
+        {
+          "id": "91eae665-8b24-4fbb-b138-adf53f925df0",
+          "customIcon": null,
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.skilling.workEfficiency.whileMainSkill.text",
+          "text": "<stat s=\"workEfficiency\"/> while <supp k=\"skill\"/>",
+          "statText": "Work efficiency",
+          "skillText": "Hunting",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": "",
+              "opposite": false,
+              "requirement": { "skill": "hunting" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "work_efficiency",
+              "name": "Work efficiency",
+              "type": "workEfficiency",
+              "isPercent": true,
+              "value": 0.18,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "94f7cd33-5158-42e6-b730-b3a9bd569f10",
+          "customIcon": "assets/icons/text/stats/skilling/find_ecto.png",
+          "customTextLocalizationKey": "attributes.singulars.custom.findEcto.text",
+          "customText": "Chance to find <hl>1</hl> ectoplasm",
+          "textLocalizationKey": "attributes.singulars.custom.findEcto.text",
+          "text": "Chance to find <hl>1</hl> ectoplasm",
+          "statText": "Roll special table",
+          "skillText": "Hunting",
+          "tables": [
+            {
+              "isPrimary": false,
+              "type": [],
+              "rollAmount": 1,
+              "tables": ["find_ectoplasm_drop"]
+            }
+          ],
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": "",
+              "opposite": false,
+              "requirement": { "skill": "hunting" }
+            },
+            {
+              "type": "locationHasKeywords",
+              "name": "",
+              "opposite": false,
+              "requirement": { "keywords": ["spectral"] }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "roll_special_table",
+              "name": "Roll special table",
+              "type": "rollSpecialTable",
+              "isPercent": true,
+              "value": 0.02,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "2a492e07-a125-4586-975a-f7b3e1d806cb",
+          "customIcon": null,
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.skilling.chestFind.whileMainSkill.text",
+          "text": "<stat s=\"chestFind\"/> while <supp k=\"skill\"/>",
+          "statText": "Chest finding",
+          "skillText": "Hunting",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": "",
+              "opposite": false,
+              "requirement": { "skill": "hunting" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "chest_finding",
+              "name": "Chest finding",
+              "type": "chestFind",
+              "isPercent": true,
+              "value": 0.1,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "4b490ff9-b8d4-4369-919a-e19578b930ac",
+          "customIcon": null,
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.skilling.fineMaterialFind.whileMainSkill.text",
+          "text": "<stat s=\"fineMaterialFind\"/> while <supp k=\"skill\"/>",
+          "statText": "Fine material finding",
+          "skillText": "Hunting",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": "",
+              "opposite": false,
+              "requirement": { "skill": "hunting" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "fine_material_finding",
+              "name": "Fine material finding",
+              "type": "fineMaterialFind",
+              "isPercent": true,
+              "value": 0.1,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "ed3a62f0-b84d-450e-ab78-7b0d12b69b76",
+          "customIcon": null,
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.skilling.doubleRewards.whileMainSkill.text",
+          "text": "<stat s=\"doubleRewards\"/> while <supp k=\"skill\"/>",
+          "statText": "Double rewards",
+          "skillText": "Hunting",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": "",
+              "opposite": false,
+              "requirement": { "skill": "hunting" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "double_rewards",
+              "name": "Double rewards",
+              "type": "doubleRewards",
+              "isPercent": true,
+              "value": 0.04,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "17ea401d-ba02-4712-9583-c92ada0992bf",
+          "customIcon": null,
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.skilling.doubleAction.whileMainSkill.text",
+          "text": "<stat s=\"doubleAction\"/> while <supp k=\"skill\"/>",
+          "statText": "Double action",
+          "skillText": "Hunting",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": "",
+              "opposite": false,
+              "requirement": { "skill": "hunting" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "double_action",
+              "name": "Double action",
+              "type": "doubleAction",
+              "isPercent": true,
+              "value": 0.01,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "quality": "rare",
+      "attributes": [
+        {
+          "id": "dbb88fe9-b7ae-4c9e-886c-110dc10f8998",
+          "customIcon": null,
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.skilling.workEfficiency.whileMainSkill.text",
+          "text": "<stat s=\"workEfficiency\"/> while <supp k=\"skill\"/>",
+          "statText": "Work efficiency",
+          "skillText": "Hunting",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": "",
+              "opposite": false,
+              "requirement": { "skill": "hunting" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "work_efficiency",
+              "name": "Work efficiency",
+              "type": "workEfficiency",
+              "isPercent": true,
+              "value": 0.18,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "5ce38999-e2c9-47cd-8550-d9a46f3335b9",
+          "customIcon": "assets/icons/text/stats/skilling/find_ecto.png",
+          "customTextLocalizationKey": "attributes.singulars.custom.findEcto.text",
+          "customText": "Chance to find <hl>1</hl> ectoplasm",
+          "textLocalizationKey": "attributes.singulars.custom.findEcto.text",
+          "text": "Chance to find <hl>1</hl> ectoplasm",
+          "statText": "Roll special table",
+          "skillText": "Hunting",
+          "tables": [
+            {
+              "isPrimary": false,
+              "type": [],
+              "rollAmount": 1,
+              "tables": ["find_ectoplasm_drop"]
+            }
+          ],
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": "",
+              "opposite": false,
+              "requirement": { "skill": "hunting" }
+            },
+            {
+              "type": "locationHasKeywords",
+              "name": "",
+              "opposite": false,
+              "requirement": { "keywords": ["spectral"] }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "roll_special_table",
+              "name": "Roll special table",
+              "type": "rollSpecialTable",
+              "isPercent": true,
+              "value": 0.03,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "315f00a6-059d-4b11-b1a9-0b22e9960884",
+          "customIcon": null,
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.skilling.chestFind.whileMainSkill.text",
+          "text": "<stat s=\"chestFind\"/> while <supp k=\"skill\"/>",
+          "statText": "Chest finding",
+          "skillText": "Hunting",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": "",
+              "opposite": false,
+              "requirement": { "skill": "hunting" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "chest_finding",
+              "name": "Chest finding",
+              "type": "chestFind",
+              "isPercent": true,
+              "value": 0.09,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "42b0361f-6495-4e78-a389-1fc9f3db7da6",
+          "customIcon": null,
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.skilling.fineMaterialFind.whileMainSkill.text",
+          "text": "<stat s=\"fineMaterialFind\"/> while <supp k=\"skill\"/>",
+          "statText": "Fine material finding",
+          "skillText": "Hunting",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": "",
+              "opposite": false,
+              "requirement": { "skill": "hunting" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "fine_material_finding",
+              "name": "Fine material finding",
+              "type": "fineMaterialFind",
+              "isPercent": true,
+              "value": 0.11,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "f9b7b541-c605-4f89-8018-088ddb337681",
+          "customIcon": null,
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.skilling.doubleRewards.whileMainSkill.text",
+          "text": "<stat s=\"doubleRewards\"/> while <supp k=\"skill\"/>",
+          "statText": "Double rewards",
+          "skillText": "Hunting",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": "",
+              "opposite": false,
+              "requirement": { "skill": "hunting" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "double_rewards",
+              "name": "Double rewards",
+              "type": "doubleRewards",
+              "isPercent": true,
+              "value": 0.05,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "21ee8ef0-a352-41bc-ae1c-9d4cd2dd1e5b",
+          "customIcon": null,
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.skilling.doubleAction.whileMainSkill.text",
+          "text": "<stat s=\"doubleAction\"/> while <supp k=\"skill\"/>",
+          "statText": "Double action",
+          "skillText": "Hunting",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": "",
+              "opposite": false,
+              "requirement": { "skill": "hunting" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "double_action",
+              "name": "Double action",
+              "type": "doubleAction",
+              "isPercent": true,
+              "value": 0.02,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "quality": "epic",
+      "attributes": [
+        {
+          "id": "00365432-43bd-4eca-be5e-f5800994c2c8",
+          "customIcon": null,
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.skilling.workEfficiency.whileMainSkill.text",
+          "text": "<stat s=\"workEfficiency\"/> while <supp k=\"skill\"/>",
+          "statText": "Work efficiency",
+          "skillText": "Hunting",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": "",
+              "opposite": false,
+              "requirement": { "skill": "hunting" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "work_efficiency",
+              "name": "Work efficiency",
+              "type": "workEfficiency",
+              "isPercent": true,
+              "value": 0.18,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "e9d44154-be92-47cd-b299-0ef9c680525d",
+          "customIcon": "assets/icons/text/stats/skilling/find_ecto.png",
+          "customTextLocalizationKey": "attributes.singulars.custom.findEcto.text",
+          "customText": "Chance to find <hl>1</hl> ectoplasm",
+          "textLocalizationKey": "attributes.singulars.custom.findEcto.text",
+          "text": "Chance to find <hl>1</hl> ectoplasm",
+          "statText": "Roll special table",
+          "skillText": "Hunting",
+          "tables": [
+            {
+              "isPrimary": false,
+              "type": [],
+              "rollAmount": 1,
+              "tables": ["find_ectoplasm_drop"]
+            }
+          ],
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": "",
+              "opposite": false,
+              "requirement": { "skill": "hunting" }
+            },
+            {
+              "type": "locationHasKeywords",
+              "name": "",
+              "opposite": false,
+              "requirement": { "keywords": ["spectral"] }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "roll_special_table",
+              "name": "Roll special table",
+              "type": "rollSpecialTable",
+              "isPercent": true,
+              "value": 0.04,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "a168604b-5603-446b-9029-0f8fa62d1e23",
+          "customIcon": null,
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.skilling.chestFind.whileMainSkill.text",
+          "text": "<stat s=\"chestFind\"/> while <supp k=\"skill\"/>",
+          "statText": "Chest finding",
+          "skillText": "Hunting",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": "",
+              "opposite": false,
+              "requirement": { "skill": "hunting" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "chest_finding",
+              "name": "Chest finding",
+              "type": "chestFind",
+              "isPercent": true,
+              "value": 0.08,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "971b6779-4521-42de-b56a-dd303546c068",
+          "customIcon": null,
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.skilling.fineMaterialFind.whileMainSkill.text",
+          "text": "<stat s=\"fineMaterialFind\"/> while <supp k=\"skill\"/>",
+          "statText": "Fine material finding",
+          "skillText": "Hunting",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": "",
+              "opposite": false,
+              "requirement": { "skill": "hunting" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "fine_material_finding",
+              "name": "Fine material finding",
+              "type": "fineMaterialFind",
+              "isPercent": true,
+              "value": 0.12,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "8c4ebbe3-7ddd-4684-bb10-a12955252907",
+          "customIcon": null,
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.skilling.doubleRewards.whileMainSkill.text",
+          "text": "<stat s=\"doubleRewards\"/> while <supp k=\"skill\"/>",
+          "statText": "Double rewards",
+          "skillText": "Hunting",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": "",
+              "opposite": false,
+              "requirement": { "skill": "hunting" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "double_rewards",
+              "name": "Double rewards",
+              "type": "doubleRewards",
+              "isPercent": true,
+              "value": 0.05,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "45a58699-fc27-4bec-8c9e-4b1039102fe8",
+          "customIcon": null,
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.skilling.doubleAction.whileMainSkill.text",
+          "text": "<stat s=\"doubleAction\"/> while <supp k=\"skill\"/>",
+          "statText": "Double action",
+          "skillText": "Hunting",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": "",
+              "opposite": false,
+              "requirement": { "skill": "hunting" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "double_action",
+              "name": "Double action",
+              "type": "doubleAction",
+              "isPercent": true,
+              "value": 0.02,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "quality": "legendary",
+      "attributes": [
+        {
+          "id": "6e5b3fe7-9778-4958-bc66-4c8b9c597f27",
+          "customIcon": null,
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.skilling.workEfficiency.whileMainSkill.text",
+          "text": "<stat s=\"workEfficiency\"/> while <supp k=\"skill\"/>",
+          "statText": "Work efficiency",
+          "skillText": "Hunting",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": "",
+              "opposite": false,
+              "requirement": { "skill": "hunting" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "work_efficiency",
+              "name": "Work efficiency",
+              "type": "workEfficiency",
+              "isPercent": true,
+              "value": 0.18,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "d9bbb9ba-6309-4890-a854-aec99317924f",
+          "customIcon": "assets/icons/text/stats/skilling/find_ecto.png",
+          "customTextLocalizationKey": "attributes.singulars.custom.findEcto.text",
+          "customText": "Chance to find <hl>1</hl> ectoplasm",
+          "textLocalizationKey": "attributes.singulars.custom.findEcto.text",
+          "text": "Chance to find <hl>1</hl> ectoplasm",
+          "statText": "Roll special table",
+          "skillText": "Hunting",
+          "tables": [
+            {
+              "isPrimary": false,
+              "type": [],
+              "rollAmount": 1,
+              "tables": ["find_ectoplasm_drop"]
+            }
+          ],
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": "",
+              "opposite": false,
+              "requirement": { "skill": "hunting" }
+            },
+            {
+              "type": "locationHasKeywords",
+              "name": "",
+              "opposite": false,
+              "requirement": { "keywords": ["spectral"] }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "roll_special_table",
+              "name": "Roll special table",
+              "type": "rollSpecialTable",
+              "isPercent": true,
+              "value": 0.05,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "9498c91b-55ad-447f-8bbb-0ec2961dab62",
+          "customIcon": null,
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.skilling.chestFind.whileMainSkill.text",
+          "text": "<stat s=\"chestFind\"/> while <supp k=\"skill\"/>",
+          "statText": "Chest finding",
+          "skillText": "Hunting",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": "",
+              "opposite": false,
+              "requirement": { "skill": "hunting" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "chest_finding",
+              "name": "Chest finding",
+              "type": "chestFind",
+              "isPercent": true,
+              "value": 0.07,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "ea1b28dc-ecae-47cf-9f1e-c8ee3f4e1d61",
+          "customIcon": null,
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.skilling.fineMaterialFind.whileMainSkill.text",
+          "text": "<stat s=\"fineMaterialFind\"/> while <supp k=\"skill\"/>",
+          "statText": "Fine material finding",
+          "skillText": "Hunting",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": "",
+              "opposite": false,
+              "requirement": { "skill": "hunting" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "fine_material_finding",
+              "name": "Fine material finding",
+              "type": "fineMaterialFind",
+              "isPercent": true,
+              "value": 0.13,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "39d2befc-a7f8-4687-8425-dce46d2322b7",
+          "customIcon": null,
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.skilling.doubleRewards.whileMainSkill.text",
+          "text": "<stat s=\"doubleRewards\"/> while <supp k=\"skill\"/>",
+          "statText": "Double rewards",
+          "skillText": "Hunting",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": "",
+              "opposite": false,
+              "requirement": { "skill": "hunting" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "double_rewards",
+              "name": "Double rewards",
+              "type": "doubleRewards",
+              "isPercent": true,
+              "value": 0.05,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "f17ab02e-91a6-4841-973a-3d779d1273c1",
+          "customIcon": null,
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.skilling.doubleAction.whileMainSkill.text",
+          "text": "<stat s=\"doubleAction\"/> while <supp k=\"skill\"/>",
+          "statText": "Double action",
+          "skillText": "Hunting",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": "",
+              "opposite": false,
+              "requirement": { "skill": "hunting" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "double_action",
+              "name": "Double action",
+              "type": "doubleAction",
+              "isPercent": true,
+              "value": 0.04,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "quality": "ethereal",
+      "attributes": [
+        {
+          "id": "a0307472-5cf4-4701-8297-c406588566d8",
+          "customIcon": null,
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.skilling.workEfficiency.whileMainSkill.text",
+          "text": "<stat s=\"workEfficiency\"/> while <supp k=\"skill\"/>",
+          "statText": "Work efficiency",
+          "skillText": "Hunting",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": "",
+              "opposite": false,
+              "requirement": { "skill": "hunting" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "work_efficiency",
+              "name": "Work efficiency",
+              "type": "workEfficiency",
+              "isPercent": true,
+              "value": 0.18,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "b406a5db-e72c-40cd-92cb-b04d4bc8a269",
+          "customIcon": "assets/icons/text/stats/skilling/find_ecto.png",
+          "customTextLocalizationKey": "attributes.singulars.custom.findEcto.text",
+          "customText": "Chance to find <hl>1</hl> ectoplasm",
+          "textLocalizationKey": "attributes.singulars.custom.findEcto.text",
+          "text": "Chance to find <hl>1</hl> ectoplasm",
+          "statText": "Roll special table",
+          "skillText": "Hunting",
+          "tables": [
+            {
+              "isPrimary": false,
+              "type": [],
+              "rollAmount": 1,
+              "tables": ["find_ectoplasm_drop"]
+            }
+          ],
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": "",
+              "opposite": false,
+              "requirement": { "skill": "hunting" }
+            },
+            {
+              "type": "locationHasKeywords",
+              "name": "",
+              "opposite": false,
+              "requirement": { "keywords": ["spectral"] }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "roll_special_table",
+              "name": "Roll special table",
+              "type": "rollSpecialTable",
+              "isPercent": true,
+              "value": 0.06,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "bab26ccd-67e3-4a2b-b69e-e1ed515cc577",
+          "customIcon": null,
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.skilling.chestFind.whileMainSkill.text",
+          "text": "<stat s=\"chestFind\"/> while <supp k=\"skill\"/>",
+          "statText": "Chest finding",
+          "skillText": "Hunting",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": "",
+              "opposite": false,
+              "requirement": { "skill": "hunting" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "chest_finding",
+              "name": "Chest finding",
+              "type": "chestFind",
+              "isPercent": true,
+              "value": 0.06,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "39c6a964-3a9a-4d75-9d54-9b0ed570c4d8",
+          "customIcon": null,
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.skilling.fineMaterialFind.whileMainSkill.text",
+          "text": "<stat s=\"fineMaterialFind\"/> while <supp k=\"skill\"/>",
+          "statText": "Fine material finding",
+          "skillText": "Hunting",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": "",
+              "opposite": false,
+              "requirement": { "skill": "hunting" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "fine_material_finding",
+              "name": "Fine material finding",
+              "type": "fineMaterialFind",
+              "isPercent": true,
+              "value": 0.13,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "403805cf-d10b-4cff-a266-2c1156ff5fea",
+          "customIcon": null,
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.skilling.doubleRewards.whileMainSkill.text",
+          "text": "<stat s=\"doubleRewards\"/> while <supp k=\"skill\"/>",
+          "statText": "Double rewards",
+          "skillText": "Hunting",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": "",
+              "opposite": false,
+              "requirement": { "skill": "hunting" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "double_rewards",
+              "name": "Double rewards",
+              "type": "doubleRewards",
+              "isPercent": true,
+              "value": 0.05,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "4f6b3fa1-b4b5-47f4-9b3a-e2ad9244d83c",
+          "customIcon": null,
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "attributes.singulars.skilling.doubleAction.whileMainSkill.text",
+          "text": "<stat s=\"doubleAction\"/> while <supp k=\"skill\"/>",
+          "statText": "Double action",
+          "skillText": "Hunting",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkill",
+              "name": "",
+              "opposite": false,
+              "requirement": { "skill": "hunting" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "double_action",
+              "name": "Double action",
+              "type": "doubleAction",
+              "isPercent": true,
+              "value": 0.1,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "itemValue": "lowHigh",
+  "itemValueModifier": 0.95,
+  "canBeFine": true,
+  "icon": "assets/icons/items/gear/spectral_hunting_bow.png"
+}
