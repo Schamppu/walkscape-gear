@@ -19,6 +19,7 @@ import {
 import icons from "@/constants/iconPaths";
 import { capitalize } from "@/utils/string";
 import { ItemDetail } from "@/domain/types";
+import { n } from "@/utils/number";
 
 // Re-export pure functions so callers only need one import.
 export { getLevelRequirementsMap, mergeRequirements };
@@ -277,13 +278,13 @@ export function useRequirements(ctx: RequirementContext) {
           ([, s]) => s.type === type,
         );
         const skillIds = skillsByType.map(([id]) => id);
-        const maximum = 98 * skillsByType.length;
+        const maximum = 100 * skillsByType.length;
         const required = relativeLevel * maximum;
         const current = skillIds.reduce(
           (a, id) => a + context.skillLevels.value[id] - 1,
           0,
         );
-        value = current >= required;
+        value = Math.floor(current) >= Math.floor(required);
         break;
       }
 
@@ -338,7 +339,12 @@ export function useRequirements(ctx: RequirementContext) {
       }
 
       case "inputKeywordWithLevel": {
-        if (!(context.inputItem.value && "requirements" in context.inputItem.value)) break;
+        if (
+          !(
+            context.inputItem.value && "requirements" in context.inputItem.value
+          )
+        )
+          break;
 
         const { skill, level } = req.requirement;
         const levelReqs = getLevelRequirementsMap(
@@ -550,9 +556,10 @@ export function useRequirements(ctx: RequirementContext) {
             (a, b) => a + playerStore.skillLevels[b] - 1,
             0,
           );
+          
           out = {
-            prefix: `Have ${target}% towards maximum`,
-            text: `${capitalize(skill.type)} level (${Math.min(current, target)}/${target})`,
+            prefix: `Have ${n(target)}% towards maximum`,
+            text: `${capitalize(skill.type)} level (${n(Math.min(current / skillIds.length, target))}/${n(target)})`,
             icon: skill.typeIcon,
           };
           break;
