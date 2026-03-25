@@ -109,13 +109,18 @@ export function sumAttrs(
 
   for (let qi = 0; qi <= qIndex; qi++) {
     const { attributes } = deepClone(sortedQualityAttrs[qi]);
-    const statIds = attrs.map(({ stats, skillText }) => {
-      return `${stats[0].type}-${skillText}`;
-    });
+    const attrKey = (a: Attribute) => {
+      const reqTypes = (a.requirements ?? [])
+        .map((r) => r.type)
+        .sort()
+        .join("|");
+      return `${a.stats[0].type}-${a.skillText}-${reqTypes}`;
+    };
+    const statIds = attrs.map(attrKey);
 
     attributes.forEach((attr) => {
       const stat = deepClone(attr.stats)[0];
-      const key = `${stat.type}-${attr.skillText}`;
+      const key = attrKey(attr);
       const prev = statIds.findIndex((id) => id === key);
       const exists = prev >= 0;
 

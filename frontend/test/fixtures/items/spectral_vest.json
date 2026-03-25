@@ -1,0 +1,1123 @@
+{
+  "id": "spectral_vest",
+  "name": "Spectral vest",
+  "keywords": ["spectral", "artisan"],
+  "type": "crafted",
+  "quality": "common",
+  "gearType": "chest",
+  "requirements": [
+    {
+      "type": "skillTypeLevel",
+      "name": "",
+      "opposite": false,
+      "requirement": { "type": "artisan", "relativeLevel": 0.5 }
+    }
+  ],
+  "itemAttrs": [
+    {
+      "id": "b2893fe8-cc8a-45e2-8d89-c21f003f64b1",
+      "customIcon": "",
+      "customTextLocalizationKey": "",
+      "customText": "",
+      "textLocalizationKey": "",
+      "text": "",
+      "statText": "Work efficiency",
+      "skillText": "",
+      "tables": null,
+      "requirements": [
+        {
+          "type": "mainSkillType",
+          "name": "",
+          "opposite": false,
+          "requirement": { "type": "artisan" }
+        }
+      ],
+      "stats": [
+        {
+          "stat": "work_efficiency",
+          "name": "Work efficiency",
+          "type": "workEfficiency",
+          "isPercent": true,
+          "value": -0.2,
+          "isNegative": true,
+          "isMultiplicative": true
+        }
+      ]
+    },
+    {
+      "id": "741d8b8f-8ac6-46f9-b5e7-0e3e02ba3515",
+      "customIcon": "",
+      "customTextLocalizationKey": "",
+      "customText": "",
+      "textLocalizationKey": "",
+      "text": "",
+      "statText": "Quality outcome",
+      "skillText": "",
+      "tables": null,
+      "requirements": [
+        {
+          "type": "mainSkillType",
+          "name": "",
+          "opposite": false,
+          "requirement": { "type": "artisan" }
+        }
+      ],
+      "stats": [
+        {
+          "stat": "quality_outcome",
+          "name": "Quality outcome",
+          "type": "qualityOutcome",
+          "isPercent": false,
+          "value": 7,
+          "isNegative": false,
+          "isMultiplicative": true
+        }
+      ]
+    },
+    {
+      "id": "b5980952-d03a-41b8-96fa-378e9d668fde",
+      "customIcon": "",
+      "customTextLocalizationKey": "",
+      "customText": "",
+      "textLocalizationKey": "",
+      "text": "",
+      "statText": "Double rewards",
+      "skillText": "",
+      "tables": null,
+      "requirements": [
+        {
+          "type": "mainSkillType",
+          "name": "",
+          "opposite": false,
+          "requirement": { "type": "artisan" }
+        },
+        {
+          "type": "locationHasKeywords",
+          "name": "",
+          "opposite": false,
+          "requirement": { "keywords": ["spectral"] }
+        }
+      ],
+      "stats": [
+        {
+          "stat": "double_rewards",
+          "name": "Double rewards",
+          "type": "doubleRewards",
+          "isPercent": true,
+          "value": 0.025,
+          "isNegative": false,
+          "isMultiplicative": true
+        }
+      ]
+    },
+    {
+      "id": "77e26f08-330e-4a38-b14f-164da691997e",
+      "customIcon": "assets/icons/text/stats/skilling/find_ecto.png",
+      "customTextLocalizationKey": "attributes.singulars.custom.findEcto.text",
+      "customText": "Chance to find <hl>1</hl> ectoplasm",
+      "textLocalizationKey": "attributes.singulars.custom.findEcto.text",
+      "text": "Chance to find <hl>1</hl> ectoplasm",
+      "statText": "Roll special table",
+      "skillText": "",
+      "tables": [
+        {
+          "isPrimary": false,
+          "type": [],
+          "rollAmount": 1,
+          "tables": ["find_ectoplasm_drop"]
+        }
+      ],
+      "requirements": [
+        {
+          "type": "mainSkillType",
+          "name": "",
+          "opposite": false,
+          "requirement": { "type": "artisan" }
+        },
+        {
+          "type": "locationHasKeywords",
+          "name": "",
+          "opposite": false,
+          "requirement": { "keywords": ["spectral"] }
+        }
+      ],
+      "stats": [
+        {
+          "stat": "roll_special_table",
+          "name": "Roll special table",
+          "type": "rollSpecialTable",
+          "isPercent": true,
+          "value": 0.01,
+          "isNegative": false,
+          "isMultiplicative": true
+        }
+      ]
+    }
+  ],
+  "itemQualityAttrs": [
+    {
+      "quality": "uncommon",
+      "attributes": [
+        {
+          "id": "f5dc50b5-feb4-4877-869e-9b234e6febf0",
+          "customIcon": "",
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "",
+          "text": "",
+          "statText": "Quality outcome",
+          "skillText": "",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkillType",
+              "name": "",
+              "opposite": false,
+              "requirement": { "type": "artisan" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "quality_outcome",
+              "name": "Quality outcome",
+              "type": "qualityOutcome",
+              "isPercent": false,
+              "value": 4,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "17044a7a-9a52-45b9-bd2e-7b5ce91cd164",
+          "customIcon": "",
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "",
+          "text": "",
+          "statText": "Work efficiency",
+          "skillText": "",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkillType",
+              "name": "",
+              "opposite": false,
+              "requirement": { "type": "artisan" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "work_efficiency",
+              "name": "Work efficiency",
+              "type": "workEfficiency",
+              "isPercent": true,
+              "value": 0.06,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "c444e9c7-d789-4365-b6d8-4e77300944a3",
+          "customIcon": "",
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "",
+          "text": "",
+          "statText": "Double rewards",
+          "skillText": "",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkillType",
+              "name": "",
+              "opposite": false,
+              "requirement": { "type": "artisan" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "double_rewards",
+              "name": "Double rewards",
+              "type": "doubleRewards",
+              "isPercent": true,
+              "value": 0.025,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "e4b5446a-6cb4-4ddc-9ccd-7e645fb8f82b",
+          "customIcon": "assets/icons/text/stats/skilling/find_ecto.png",
+          "customTextLocalizationKey": "attributes.singulars.custom.findEcto.text",
+          "customText": "Chance to find <hl>1</hl> ectoplasm",
+          "textLocalizationKey": "attributes.singulars.custom.findEcto.text",
+          "text": "Chance to find <hl>1</hl> ectoplasm",
+          "statText": "Roll special table",
+          "skillText": "",
+          "tables": [
+            {
+              "isPrimary": false,
+              "type": [],
+              "rollAmount": 1,
+              "tables": ["find_ectoplasm_drop"]
+            }
+          ],
+          "requirements": [
+            {
+              "type": "mainSkillType",
+              "name": "",
+              "opposite": false,
+              "requirement": { "type": "artisan" }
+            },
+            {
+              "type": "locationHasKeywords",
+              "name": "",
+              "opposite": false,
+              "requirement": { "keywords": ["spectral"] }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "roll_special_table",
+              "name": "Roll special table",
+              "type": "rollSpecialTable",
+              "isPercent": true,
+              "value": 0.01,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "quality": "rare",
+      "attributes": [
+        {
+          "id": "444a1556-e667-4b40-a767-64ff4adc08f4",
+          "customIcon": "",
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "",
+          "text": "",
+          "statText": "Bonus experience",
+          "skillText": "",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkillType",
+              "name": "",
+              "opposite": false,
+              "requirement": { "type": "artisan" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "bonus_experience",
+              "name": "Bonus experience",
+              "type": "bonusExperience",
+              "isPercent": true,
+              "value": 0.02,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "80430289-e6d2-41e7-a3aa-0b51e60c0c33",
+          "customIcon": "",
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "",
+          "text": "",
+          "statText": "Quality outcome",
+          "skillText": "",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkillType",
+              "name": "",
+              "opposite": false,
+              "requirement": { "type": "artisan" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "quality_outcome",
+              "name": "Quality outcome",
+              "type": "qualityOutcome",
+              "isPercent": false,
+              "value": 3,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "5172a6f4-9450-48d7-95d2-c0ea382a4a0f",
+          "customIcon": "",
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "",
+          "text": "",
+          "statText": "Work efficiency",
+          "skillText": "",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkillType",
+              "name": "",
+              "opposite": false,
+              "requirement": { "type": "artisan" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "work_efficiency",
+              "name": "Work efficiency",
+              "type": "workEfficiency",
+              "isPercent": true,
+              "value": 0.06,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "f5fc3e60-f20e-4b2a-a60a-b6b2908064c0",
+          "customIcon": "",
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "",
+          "text": "",
+          "statText": "Double rewards",
+          "skillText": "",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkillType",
+              "name": "",
+              "opposite": false,
+              "requirement": { "type": "artisan" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "double_rewards",
+              "name": "Double rewards",
+              "type": "doubleRewards",
+              "isPercent": true,
+              "value": 0.01,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "fe1468ea-f7b6-4ab5-9978-e994c8bf254d",
+          "customIcon": "assets/icons/text/stats/skilling/find_ecto.png",
+          "customTextLocalizationKey": "attributes.singulars.custom.findEcto.text",
+          "customText": "Chance to find <hl>1</hl> ectoplasm",
+          "textLocalizationKey": "attributes.singulars.custom.findEcto.text",
+          "text": "Chance to find <hl>1</hl> ectoplasm",
+          "statText": "Roll special table",
+          "skillText": "",
+          "tables": [
+            {
+              "isPrimary": false,
+              "type": [],
+              "rollAmount": 1,
+              "tables": ["find_ectoplasm_drop"]
+            }
+          ],
+          "requirements": [
+            {
+              "type": "mainSkillType",
+              "name": "",
+              "opposite": false,
+              "requirement": { "type": "artisan" }
+            },
+            {
+              "type": "locationHasKeywords",
+              "name": "",
+              "opposite": false,
+              "requirement": { "keywords": ["spectral"] }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "roll_special_table",
+              "name": "Roll special table",
+              "type": "rollSpecialTable",
+              "isPercent": true,
+              "value": 0.015,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "quality": "epic",
+      "attributes": [
+        {
+          "id": "3fb386ae-11e4-46d0-9b37-21eaf53dd60c",
+          "customIcon": "",
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "",
+          "text": "",
+          "statText": "Quality outcome",
+          "skillText": "",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkillType",
+              "name": "",
+              "opposite": false,
+              "requirement": { "type": "artisan" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "quality_outcome",
+              "name": "Quality outcome",
+              "type": "qualityOutcome",
+              "isPercent": false,
+              "value": 3,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "cba75998-98d7-470d-bf29-33028d4e1c47",
+          "customIcon": "",
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "",
+          "text": "",
+          "statText": "Work efficiency",
+          "skillText": "",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkillType",
+              "name": "",
+              "opposite": false,
+              "requirement": { "type": "artisan" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "work_efficiency",
+              "name": "Work efficiency",
+              "type": "workEfficiency",
+              "isPercent": true,
+              "value": 0.06,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "dbf7674b-fd14-4eb5-8d34-58ec59d8cdd7",
+          "customIcon": "",
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "",
+          "text": "",
+          "statText": "Double rewards",
+          "skillText": "",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkillType",
+              "name": "",
+              "opposite": false,
+              "requirement": { "type": "artisan" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "double_rewards",
+              "name": "Double rewards",
+              "type": "doubleRewards",
+              "isPercent": true,
+              "value": 0.005,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "549d4f2e-e3d6-4d2b-8204-65f1b0102e26",
+          "customIcon": "",
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "",
+          "text": "",
+          "statText": "Bonus experience",
+          "skillText": "",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkillType",
+              "name": "",
+              "opposite": false,
+              "requirement": { "type": "artisan" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "bonus_experience",
+              "name": "Bonus experience",
+              "type": "bonusExperience",
+              "isPercent": true,
+              "value": 0.01,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "28b18b43-5f10-4b44-abc1-23cf033a8581",
+          "customIcon": "",
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "",
+          "text": "",
+          "statText": "No materials consumed",
+          "skillText": "",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkillType",
+              "name": "",
+              "opposite": false,
+              "requirement": { "type": "artisan" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "no_materials_consumed",
+              "name": "No materials consumed",
+              "type": "noMaterialsConsumed",
+              "isPercent": true,
+              "value": 0.01,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "3094eeaf-3e58-4b39-91fb-200fd455e299",
+          "customIcon": "assets/icons/text/stats/skilling/find_ecto.png",
+          "customTextLocalizationKey": "attributes.singulars.custom.findEcto.text",
+          "customText": "Chance to find <hl>1</hl> ectoplasm",
+          "textLocalizationKey": "attributes.singulars.custom.findEcto.text",
+          "text": "Chance to find <hl>1</hl> ectoplasm",
+          "statText": "Roll special table",
+          "skillText": "",
+          "tables": [
+            {
+              "isPrimary": false,
+              "type": [],
+              "rollAmount": 1,
+              "tables": ["find_ectoplasm_drop"]
+            }
+          ],
+          "requirements": [
+            {
+              "type": "mainSkillType",
+              "name": "",
+              "opposite": false,
+              "requirement": { "type": "artisan" }
+            },
+            {
+              "type": "locationHasKeywords",
+              "name": "",
+              "opposite": false,
+              "requirement": { "keywords": ["spectral"] }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "roll_special_table",
+              "name": "Roll special table",
+              "type": "rollSpecialTable",
+              "isPercent": true,
+              "value": 0.02,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "quality": "legendary",
+      "attributes": [
+        {
+          "id": "80cbabf5-c114-4aab-a9ed-6a7580a0e354",
+          "customIcon": "",
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "",
+          "text": "",
+          "statText": "Quality outcome",
+          "skillText": "",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkillType",
+              "name": "",
+              "opposite": false,
+              "requirement": { "type": "artisan" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "quality_outcome",
+              "name": "Quality outcome",
+              "type": "qualityOutcome",
+              "isPercent": false,
+              "value": 3,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "ede5cc5f-85c2-4704-83ea-3b63b2f68e68",
+          "customIcon": "",
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "",
+          "text": "",
+          "statText": "Work efficiency",
+          "skillText": "",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkillType",
+              "name": "",
+              "opposite": false,
+              "requirement": { "type": "artisan" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "work_efficiency",
+              "name": "Work efficiency",
+              "type": "workEfficiency",
+              "isPercent": true,
+              "value": 0.06,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "f1f74ae4-4ecf-466a-8cef-3f861aae467a",
+          "customIcon": "",
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "",
+          "text": "",
+          "statText": "Double rewards",
+          "skillText": "",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkillType",
+              "name": "",
+              "opposite": false,
+              "requirement": { "type": "artisan" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "double_rewards",
+              "name": "Double rewards",
+              "type": "doubleRewards",
+              "isPercent": true,
+              "value": 0.005,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "0fba8e4e-72a6-4c0f-a7bd-b12f4eb1fcb2",
+          "customIcon": "",
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "",
+          "text": "",
+          "statText": "No materials consumed",
+          "skillText": "",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkillType",
+              "name": "",
+              "opposite": false,
+              "requirement": { "type": "artisan" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "no_materials_consumed",
+              "name": "No materials consumed",
+              "type": "noMaterialsConsumed",
+              "isPercent": true,
+              "value": 0.005,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "25b695bc-0f23-4eff-8927-0db1c0da1d58",
+          "customIcon": "",
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "",
+          "text": "",
+          "statText": "Double action",
+          "skillText": "",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkillType",
+              "name": "",
+              "opposite": false,
+              "requirement": { "type": "artisan" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "double_action",
+              "name": "Double action",
+              "type": "doubleAction",
+              "isPercent": true,
+              "value": 0.015,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "6734ef5e-cf08-4ce3-9f49-f105381cfb02",
+          "customIcon": "",
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "",
+          "text": "",
+          "statText": "Bonus experience",
+          "skillText": "",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkillType",
+              "name": "",
+              "opposite": false,
+              "requirement": { "type": "artisan" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "bonus_experience",
+              "name": "Bonus experience",
+              "type": "bonusExperience",
+              "isPercent": true,
+              "value": 0.01,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "65470671-3784-4bac-a64b-ca693c277e6a",
+          "customIcon": "assets/icons/text/stats/skilling/find_ecto.png",
+          "customTextLocalizationKey": "attributes.singulars.custom.findEcto.text",
+          "customText": "Chance to find <hl>1</hl> ectoplasm",
+          "textLocalizationKey": "attributes.singulars.custom.findEcto.text",
+          "text": "Chance to find <hl>1</hl> ectoplasm",
+          "statText": "Roll special table",
+          "skillText": "",
+          "tables": [
+            {
+              "isPrimary": false,
+              "type": [],
+              "rollAmount": 1,
+              "tables": ["find_ectoplasm_drop"]
+            }
+          ],
+          "requirements": [
+            {
+              "type": "mainSkillType",
+              "name": "",
+              "opposite": false,
+              "requirement": { "type": "artisan" }
+            },
+            {
+              "type": "locationHasKeywords",
+              "name": "",
+              "opposite": false,
+              "requirement": { "keywords": ["spectral"] }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "roll_special_table",
+              "name": "Roll special table",
+              "type": "rollSpecialTable",
+              "isPercent": true,
+              "value": 0.025,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "quality": "ethereal",
+      "attributes": [
+        {
+          "id": "4b598562-f5fe-4629-bc45-3c959a615d5f",
+          "customIcon": "",
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "",
+          "text": "",
+          "statText": "Quality outcome",
+          "skillText": "",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkillType",
+              "name": "",
+              "opposite": false,
+              "requirement": { "type": "artisan" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "quality_outcome",
+              "name": "Quality outcome",
+              "type": "qualityOutcome",
+              "isPercent": false,
+              "value": 3,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "e08615cf-f8b3-47ed-9dcc-b6bfe302ab0f",
+          "customIcon": "",
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "",
+          "text": "",
+          "statText": "Work efficiency",
+          "skillText": "",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkillType",
+              "name": "",
+              "opposite": false,
+              "requirement": { "type": "artisan" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "work_efficiency",
+              "name": "Work efficiency",
+              "type": "workEfficiency",
+              "isPercent": true,
+              "value": 0.06,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "cf598e06-1353-44d3-b08a-a260b30678c6",
+          "customIcon": "",
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "",
+          "text": "",
+          "statText": "Double rewards",
+          "skillText": "",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkillType",
+              "name": "",
+              "opposite": false,
+              "requirement": { "type": "artisan" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "double_rewards",
+              "name": "Double rewards",
+              "type": "doubleRewards",
+              "isPercent": true,
+              "value": 0.005,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "bb48b771-c7c4-4cf9-9261-7782454ab71f",
+          "customIcon": "",
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "",
+          "text": "",
+          "statText": "No materials consumed",
+          "skillText": "",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkillType",
+              "name": "",
+              "opposite": false,
+              "requirement": { "type": "artisan" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "no_materials_consumed",
+              "name": "No materials consumed",
+              "type": "noMaterialsConsumed",
+              "isPercent": true,
+              "value": 0.005,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "e2924ae6-52db-4f2d-84c2-a49e5680ecd0",
+          "customIcon": "",
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "",
+          "text": "",
+          "statText": "Double action",
+          "skillText": "",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkillType",
+              "name": "",
+              "opposite": false,
+              "requirement": { "type": "artisan" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "double_action",
+              "name": "Double action",
+              "type": "doubleAction",
+              "isPercent": true,
+              "value": 0.015,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "cdff60e7-52ad-4692-ad4f-62a88bd0d1bd",
+          "customIcon": "",
+          "customTextLocalizationKey": "",
+          "customText": "",
+          "textLocalizationKey": "",
+          "text": "",
+          "statText": "Bonus experience",
+          "skillText": "",
+          "tables": null,
+          "requirements": [
+            {
+              "type": "mainSkillType",
+              "name": "",
+              "opposite": false,
+              "requirement": { "type": "artisan" }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "bonus_experience",
+              "name": "Bonus experience",
+              "type": "bonusExperience",
+              "isPercent": true,
+              "value": 0.01,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        },
+        {
+          "id": "ca2a0a73-d6ba-4fa9-84ba-7db1da3eb3dd",
+          "customIcon": "assets/icons/text/stats/skilling/find_ecto.png",
+          "customTextLocalizationKey": "attributes.singulars.custom.findEcto.text",
+          "customText": "Chance to find <hl>1</hl> ectoplasm",
+          "textLocalizationKey": "attributes.singulars.custom.findEcto.text",
+          "text": "Chance to find <hl>1</hl> ectoplasm",
+          "statText": "Roll special table",
+          "skillText": "",
+          "tables": [
+            {
+              "isPrimary": false,
+              "type": [],
+              "rollAmount": 1,
+              "tables": ["find_ectoplasm_drop"]
+            }
+          ],
+          "requirements": [
+            {
+              "type": "mainSkillType",
+              "name": "",
+              "opposite": false,
+              "requirement": { "type": "artisan" }
+            },
+            {
+              "type": "locationHasKeywords",
+              "name": "",
+              "opposite": false,
+              "requirement": { "keywords": ["spectral"] }
+            }
+          ],
+          "stats": [
+            {
+              "stat": "roll_special_table",
+              "name": "Roll special table",
+              "type": "rollSpecialTable",
+              "isPercent": true,
+              "value": 0.03,
+              "isNegative": false,
+              "isMultiplicative": true
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "itemValue": "high",
+  "itemValueModifier": 1,
+  "canBeFine": true,
+  "icon": "assets/icons/items/gear/spectral_vest.png"
+}
