@@ -55,7 +55,6 @@ const statActive = computed(() => {
 
 const skill = computed(() => {
   if (props.stat.skill) {
-    console.log(playerStore.skillsMap[props.stat.skill]);
     return playerStore.skillsMap[props.stat.skill];
   }
   return null;
