@@ -8,6 +8,7 @@ export type ActivitySummary = {
   id: string;
   name: string;
   relatedSkillsList: string[];
+  requirements?: Requirement[];
   icon: string;
 };
 
@@ -64,7 +65,6 @@ export type ActivityDetail = ActivitySummary & {
   xpRewardsMap: Record<string, number>;
   workRequired: number;
   maxWorkEfficiency: number;
-  requirements: Requirement[];
   tables: LootTableRef[];
   rewards: ActivityReward[];
   options?: ActivityOption[] | null;

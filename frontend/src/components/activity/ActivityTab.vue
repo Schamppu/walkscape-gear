@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import { ref, computed } from "vue";
 import { useActivityStore } from "@/store/activity";
 import { usePlayerStore } from "@/store/player";
 import { useUrlStore } from "@/store/url";
@@ -20,51 +20,58 @@ const playerStore = usePlayerStore();
 const urlStore = useUrlStore();
 const gearStore = useGearStore();
 
-const isLoading = ref(true);
 const loadingActivity = ref(false);
 const useComparisonView = ref(false);
 
-const activitiesBySkill = ref([]);
-const recipesBySkill = ref([]);
+const isLoading = computed(() => !activityStore.isLoaded);
 
-onMounted(async () => {
-  const noneActivity = activityStore.activities
+const noneActivity = computed(() =>
+  activityStore.activities
     .filter(({ id }) => id === "none")
-    .map((item) => {
-      return { ...item, value: item.name, items: [] };
-    })[0];
+    .map((item) => ({ ...item, value: item.name, items: [] }))[0],
+);
 
-  const categorize = (source) =>
-    playerStore.skills
-      .map((skill) => {
-        const { id, name: value } = skill;
-        return {
-          ...skill,
-          value,
-          items: source
-            .filter((item) => {
-              const skillsList =
-                item.relatedSkillsList ?? item.relatedSkills ?? [];
-              return skillsList.length && skillsList[0] === id;
-            })
-            .map((item) => {
-              return {
-                ...item,
-                value: item.name,
-              };
-            })
-            .sort((a, b) => a.name.localeCompare(b.name)),
-        };
-      })
-      .filter(({ items }) => items.length > 0);
+const categorize = (source) =>
+  playerStore.skills
+    .map((skill) => {
+      const { id, name: value } = skill;
+      return {
+        ...skill,
+        value,
+        items: source
+          .filter((item) => {
+            const skillsList =
+              item.relatedSkillsList ?? item.relatedSkills ?? [];
+            return skillsList.length && skillsList[0] === id;
+          })
+          .filter((item) => {
+            const skillLevelReqs = (item.requirements ?? []).filter(
+              (r) => r.type === "skillLevel",
+            );
+            return skillLevelReqs.every((req) => {
+              const playerLevel =
+                playerStore.skillLevels[req.requirement.skill] ?? 1;
+              const meetsLevel = playerLevel >= req.requirement.level;
+              return req.opposite ? !meetsLevel : meetsLevel;
+            });
+          })
+          .map((item) => ({ ...item, value: item.name }))
+          .sort((a, b) => a.name.localeCompare(b.name)),
+      };
+    })
+    .filter(({ items }) => items.length > 0);
 
-  activitiesBySkill.value = [
-    noneActivity,
-    ...categorize(activityStore.activities),
-  ];
-  recipesBySkill.value = [noneActivity, ...categorize(activityStore.recipes)];
-  isLoading.value = false;
-});
+const activitiesBySkill = computed(() =>
+  noneActivity.value
+    ? [noneActivity.value, ...categorize(activityStore.activities)]
+    : categorize(activityStore.activities),
+);
+
+const recipesBySkill = computed(() =>
+  noneActivity.value
+    ? [noneActivity.value, ...categorize(activityStore.recipes)]
+    : categorize(activityStore.recipes),
+);
 
 const selectedActivity = computed({
   get: () => activityStore.activity,

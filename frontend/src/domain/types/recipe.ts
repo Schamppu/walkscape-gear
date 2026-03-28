@@ -8,6 +8,7 @@ export type RecipeSummary = {
   id: string;
   name: string;
   relatedSkills: string[];
+  requirements: Requirement[];
   icon: string;
 };
 
@@ -28,5 +29,4 @@ export type RecipeDetail = RecipeSummary & {
   itemRewards: Record<string, number>;
   tables: LootTableRef[];
   xpRewards: Record<string, number>;
-  requirements: Requirement[];
 };

@@ -25,6 +25,7 @@ import type { ActivityDetail, ActivitySummary } from "@/domain/types/activity";
 import type { RecipeDetail, RecipeSummary } from "@/domain/types/recipe";
 import type { ServiceDetail } from "@/domain/types/service";
 import type { Requirement } from "@/domain/types/common";
+import type { SkillLevelRequirement } from "@/domain/types/requirement";
 import type { LocationDetail } from "@/domain/types/location";
 import { useNotificationStore } from "@/store/notifications";
 import { executeCommand, initializeHistoryTracking } from "@/store/utils/historyUtils";
@@ -41,7 +42,9 @@ import { executeCommand, initializeHistoryTracking } from "@/store/utils/history
 // Types
 // ---------------------------------------------------------------------------
 
-export type ActivityMapEntry = Pick<ActivitySummary, "name" | "icon">;
+export type ActivityMapEntry = Pick<ActivitySummary, "name" | "icon"> & {
+  skillLevelRequirements: { skill: string; level: number }[];
+};
 
 // ---------------------------------------------------------------------------
 // Store
@@ -83,7 +86,16 @@ export const useActivityStore = defineStore("activityStore", {
 
       this.activities = activities;
       this.activitiesMap = Object.fromEntries(
-        activities.map(({ id, name, icon }) => [id, { name, icon }]),
+        activities.map(({ id, name, icon, requirements }) => [
+          id,
+          {
+            name,
+            icon,
+            skillLevelRequirements: (requirements ?? [])
+              .filter((r): r is SkillLevelRequirement => r.type === "skillLevel")
+              .map(({ requirement }) => requirement),
+          },
+        ]),
       );
       this.embargoedActivities = new Set(
         activities.filter((item) => "embargo" in item).map(({ id }) => id),
