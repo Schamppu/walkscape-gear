@@ -36,7 +36,10 @@ import type {
 // Types
 // ---------------------------------------------------------------------------
 
-export type SettingsGroupName = "gearSettings" | "activitySettings" | "toolSettings";
+export type SettingsGroupName =
+  | "gearSettings"
+  | "activitySettings"
+  | "toolSettings";
 export type SettingsRecord = Record<string, Setting>;
 
 /** Snapshot of the original persisted value for a setting, used to detect reverts. */
@@ -63,6 +66,7 @@ export const GEAR_SETTING_KEYS = [
 export const ACTIVITY_SETTING_KEYS = [
   "showCombined",
   "hideOwnedCollectibles",
+  "hideUnmetLevelActivities",
   "shownDropRate",
   "thousandSeparator",
   "decimalSeparator",
@@ -88,7 +92,11 @@ export const DEBUG_SETTING_KEYS = [
 // ---------------------------------------------------------------------------
 
 /** A plain boolean toggle (checkbox only, no display dropdown). */
-function makeBoolSetting(label: string, value: boolean, display = 0): Setting<boolean> {
+function makeBoolSetting(
+  label: string,
+  value: boolean,
+  display = 0,
+): Setting<boolean> {
   return { label, display, value };
 }
 
@@ -170,9 +178,10 @@ export const useSettingsStore = defineStore("settingsStore", {
         this.isLoaded = true;
       } catch (error) {
         notificationStore.error("Failed to fetch settings from backend");
-        void notificationStore.debug("Settings: fetch error - falling back to defaults", [
-          error instanceof Error ? error.message : String(error),
-        ]);
+        void notificationStore.debug(
+          "Settings: fetch error - falling back to defaults",
+          [error instanceof Error ? error.message : String(error)],
+        );
         console.error("Failed to fetch settings from backend:", error);
         const defaultSettings = this.defaultSettingsData();
         this.gearSettings = defaultSettings.gearSettings;
@@ -217,9 +226,12 @@ export const useSettingsStore = defineStore("settingsStore", {
     async saveSettings(): Promise<void> {
       const notificationStore = useNotificationStore();
       try {
-        const changedSettingsArray = this.convertChangedSettingsToBackendFormat();
+        const changedSettingsArray =
+          this.convertChangedSettingsToBackendFormat();
         if (changedSettingsArray.length === 0) {
-          void notificationStore.debug("Settings: save triggered but no changes detected");
+          void notificationStore.debug(
+            "Settings: save triggered but no changes detected",
+          );
           return;
         }
 
@@ -316,11 +328,13 @@ export const useSettingsStore = defineStore("settingsStore", {
       } else {
         void notificationStore.debug(
           `Settings: "${String(settingKey)}" changed`,
-          [{
-            group: String(settingGroup),
-            display: updated.display,
-            value: updated.value,
-          }],
+          [
+            {
+              group: String(settingGroup),
+              display: updated.display,
+              value: updated.value,
+            },
+          ],
         );
       }
 
@@ -359,40 +373,93 @@ export const useSettingsStore = defineStore("settingsStore", {
     defaultSettingsData(): Record<SettingsGroupName, SettingsRecord> {
       return {
         gearSettings: Object.fromEntries([
-          ["showOwned",                 makeBoolSetting("Show only owned items",                 true,  1)],
-          ["showUseful",                makeBoolSetting("Show items with applicable stats",      true,  1)],
-          ["openStatRequirements",      makeDebugSetting("Open stat requirements by default")],
-          ["showUnmetRequirements",     makeDebugSetting("Show items with unmet requirements")],
-          ["hideInventoryAttr",         makeDebugSetting("Hide items with only inventory space")],
-          ["undoRedo",                  makeDisplaySetting("Show undo/redo buttons",             undoRedoOptions,             2, true)],
-          ["activityOptimiserPriority", makeDisplaySetting("Activity optimiser priority",        activityOptimiserPriorities, 0, true)],
-          ["recipeOptimiserPriority",   makeDisplaySetting("Recipe optimiser priority",          recipeOptimiserPriorities,   0, true)],
+          ["showOwned", makeBoolSetting("Show only owned items", true, 1)],
+          [
+            "showUseful",
+            makeBoolSetting("Show items with applicable stats", true, 1),
+          ],
+          [
+            "openStatRequirements",
+            makeDebugSetting("Open stat requirements by default"),
+          ],
+          [
+            "showUnmetRequirements",
+            makeDebugSetting("Show items with unmet requirements"),
+          ],
+          [
+            "hideInventoryAttr",
+            makeDebugSetting("Hide items with only inventory space"),
+          ],
+          [
+            "undoRedo",
+            makeDisplaySetting(
+              "Show undo/redo buttons",
+              undoRedoOptions,
+              2,
+              true,
+            ),
+          ],
+          [
+            "activityOptimiserPriority",
+            makeDisplaySetting(
+              "Activity optimiser priority",
+              activityOptimiserPriorities,
+              0,
+              true,
+            ),
+          ],
+          [
+            "recipeOptimiserPriority",
+            makeDisplaySetting(
+              "Recipe optimiser priority",
+              recipeOptimiserPriorities,
+              0,
+              true,
+            ),
+          ],
         ]),
 
         activitySettings: Object.fromEntries([
-          ["showCombined",          makeBoolSetting("Show combined drops",      true,  1)],
-          ["hideOwnedCollectibles", makeBoolSetting("Hide owned collectibles",  true,  1)],
-          ["shownDropRate",         makeDisplaySetting("Shown Drop Rate",       shownDropRateOptions)],
-          ["thousandSeparator",     makeDisplaySetting("Thousand separator",    thousandSeparators)],
-          ["decimalSeparator",      makeDisplaySetting("Decimal separator",     decimalSeparators)],
+          ["showCombined", makeBoolSetting("Show combined drops", true, 1)],
+          [
+            "hideOwnedCollectibles",
+            makeBoolSetting("Hide owned collectibles", true, 1),
+          ],
+          [
+            "hideUnmetLevelActivities",
+            makeDebugSetting("Hide activities with unmet level requirements"),
+          ],
+          [
+            "shownDropRate",
+            makeDisplaySetting("Shown Drop Rate", shownDropRateOptions),
+          ],
+          [
+            "thousandSeparator",
+            makeDisplaySetting("Thousand separator", thousandSeparators),
+          ],
+          [
+            "decimalSeparator",
+            makeDisplaySetting("Decimal separator", decimalSeparators),
+          ],
         ]),
 
         toolSettings: Object.fromEntries(
-          ([
-            ["debugActivity", "Activity, recipe & location selection"],
-            ["debugData",     "Abilities, keywords & loot tables"],
-            ["debugGear",     "Item loading & gear slot changes"],
-            ["debugGearSet",  "Gear set loading & saving"],
-            ["debugHistory",  "Undo / redo operations"],
-            ["debugIcon",     "Icon loading & caching"],
-            ["debugItems",    "Owned items & inventory sync"],
-            ["debugPlayer",   "Player stats & faction data"],
-            ["debugRoute",    "Route calculation"],
-            ["debugSettings", "Settings state changes"],
-            ["debugURL",      "URL encoding & decoding"],
-            ["debugOptimiser", "Optimiser operations"],
-          ] as [string, string][])
-            .map(([key, label]) => [key, makeDebugSetting(label)])
+          (
+            [
+              ["debugActivity", "Activity, recipe & location selection"],
+              ["debugData", "Abilities, keywords & loot tables"],
+              ["debugGear", "Item loading & gear slot changes"],
+              ["debugGearSet", "Gear set loading & saving"],
+              ["debugHistory", "Undo / redo operations"],
+              ["debugIcon", "Icon loading & caching"],
+              ["debugItems", "Owned items & inventory sync"],
+              ["debugPlayer", "Player stats & faction data"],
+              ["debugRoute", "Route calculation"],
+              ["debugSettings", "Settings state changes"],
+              ["debugURL", "URL encoding & decoding"],
+              ["debugOptimiser", "Optimiser operations"],
+            ] as [string, string][]
+          ).map(([key, label]) => [key, makeDebugSetting(label)]),
         ),
       };
     },

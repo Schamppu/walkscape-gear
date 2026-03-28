@@ -4,6 +4,7 @@ import { useActivityStore } from "@/store/activity";
 import { usePlayerStore } from "@/store/player";
 import { useUrlStore } from "@/store/url";
 import { useGearStore } from "@/store/gear";
+import { useSettingsStore } from "@/store/settings";
 import TabContentWrapper from "@/components/common/TabContentWrapper.vue";
 import NestedDropdown from "@/components/common/dropdowns/NestedDropdown.vue";
 import ActivityInfo from "./Info/ActivityInfo.vue";
@@ -19,6 +20,7 @@ const activityStore = useActivityStore();
 const playerStore = usePlayerStore();
 const urlStore = useUrlStore();
 const gearStore = useGearStore();
+const settingsStore = useSettingsStore();
 
 const loadingActivity = ref(false);
 const useComparisonView = ref(false);
@@ -45,6 +47,8 @@ const categorize = (source) =>
             return skillsList.length && skillsList[0] === id;
           })
           .filter((item) => {
+            if (!settingsStore.activitySettings.hideUnmetLevelActivities?.value)
+              return true;
             const skillLevelReqs = (item.requirements ?? []).filter(
               (r) => r.type === "skillLevel",
             );

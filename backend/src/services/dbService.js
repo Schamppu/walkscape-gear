@@ -55,6 +55,7 @@ const ALLOWED_SETTINGS = new Set([
   "recipeOptimiserPriority",
   "showCombined",
   "hideOwnedCollectibles",
+  "hideUnmetLevelActivities",
   "shownDropRate",
   "thousandSeparator",
   "decimalSeparator",
