@@ -225,22 +225,24 @@ const rewardCount = computed(() => {
             :text="`${levelRequirement.level}`"
             :tooltip-text="`Requires ${levelRequirement.level} ${levelRequirement.skill}`"
           />
-          <skill-bubble
-            v-for="item in xpRewardItems"
-            :key="`xp-${item.skill}`"
-            label="XP"
-            :skill="item.skill"
-            :text="item.text"
-            :tooltip-text="item.tooltipText"
-          />
-          <skill-bubble
-            v-for="item in xpPerStepItems"
-            :key="`xpstep-${item.skill}`"
-            label="XP / Step"
-            :skill="item.skill"
-            :text="item.text"
-            :tooltip-text="item.tooltipText"
-          />
+          <template v-if="xpRewardItems.length <= 1">
+            <skill-bubble
+              v-for="item in xpRewardItems"
+              :key="`xp-${item.skill}`"
+              label="XP"
+              :skill="item.skill"
+              :text="item.text"
+              :tooltip-text="item.tooltipText"
+            />
+            <skill-bubble
+              v-for="item in xpPerStepItems"
+              :key="`xpstep-${item.skill}`"
+              label="XP / Step"
+              :skill="item.skill"
+              :text="item.text"
+              :tooltip-text="item.tooltipText"
+            />
+          </template>
           <info-bubble
             label="Crafts / Mat"
             :text="`${n(stats.craftsPerMaterial)}`"
@@ -249,6 +251,32 @@ const rewardCount = computed(() => {
           />
         </div>
       </div>
+      <template v-if="xpRewardItems.length > 1">
+        <div class="info-section">
+          <ws-label label="XP rewards (current / base)" />
+          <div class="info-row">
+            <skill-bubble
+              v-for="item in xpRewardItems"
+              :key="`xp-${item.skill}`"
+              :skill="item.skill"
+              :text="item.text"
+              :tooltip-text="item.tooltipText"
+            />
+          </div>
+        </div>
+        <div class="info-section">
+          <ws-label label="XP per step (real / displayed)" />
+          <div class="info-row">
+            <skill-bubble
+              v-for="item in xpPerStepItems"
+              :key="`xpstep-${item.skill}`"
+              :skill="item.skill"
+              :text="item.text"
+              :tooltip-text="item.tooltipText"
+            />
+          </div>
+        </div>
+      </template>
       <div
         v-for="section in sections"
         class="info-section"
