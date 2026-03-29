@@ -12,23 +12,6 @@ export function categorizeItems(data) {
     pets,
     ...sourceInfo
   } = data;
-  console.log(
-    Object.entries({
-      collectibles,
-      crafted,
-      loot,
-      containers,
-      consumables,
-      chestItems,
-      allRecipes,
-      pets,
-    })
-      .map(
-        ([name, items]) =>
-          `${name}: ${Array.isArray(items) ? items.length : Object.keys(items).length}`,
-      )
-      .join("\n"),
-  );
 
   const {
     craftingRecipes,
