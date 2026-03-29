@@ -5,7 +5,6 @@ import { useActivityStore } from "@/store/activity";
 import {
   injectRequirements,
   injectSkillModifiers,
-  injectFineMaterials,
 } from "@/composables/context/injectShared";
 import WsLabel from "@/components/primitives/WsLabel.vue";
 import { getOutcomeOdds } from "@/domain/quality/qualityOutcomeOdds";
@@ -19,7 +18,6 @@ const activityStore = useActivityStore();
 const { recipe } = storeToRefs(activityStore);
 const { getLevelRequirementsMap } = injectRequirements();
 const { qualityOutcome } = injectSkillModifiers();
-const { canUseFineMaterials } = injectFineMaterials();
 
 const craftingOdds = computed(() => {
   const levelMap = getLevelRequirementsMap(recipe.value.requirements);
@@ -43,7 +41,7 @@ const craftingOdds = computed(() => {
 <template>
   <div class="wrapper">
     <ws-label label="Expected outcomes" />
-    <label v-if="canUseFineMaterials">
+    <label>
       <input type="checkbox" v-model="activityStore.useFineMaterials" />
       Fine Materials
     </label>

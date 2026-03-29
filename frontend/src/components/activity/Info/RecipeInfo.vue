@@ -26,7 +26,7 @@ const itemsStore = useItemsStore();
 
 const { recipe } = storeToRefs(activityStore);
 const ctx = injectBaseContext();
-const { xpRewardsMultiplier, canUseFineMaterials, useFine } =
+const { xpRewardsMultiplier, useFine } =
   injectFineMaterials();
 
 const sharedModifiers = injectSkillModifiers();
@@ -119,6 +119,7 @@ const materials = computed(() => {
           itemsStore.allGearItems[item] || itemsStore.materials[item];
         const { name, icon } = fullItem;
         return {
+          id: item,
           name,
           icon,
           amount,
@@ -146,7 +147,7 @@ const rewardCount = computed(() => {
     <section :class="['recipe-info', borderClass]">
       <div class="info-section" :key="recipe">
         <div class="info-row">
-          <label v-if="canUseFineMaterials">
+          <label>
             <input type="checkbox" v-model="activityStore.useFineMaterials" />
             Fine Materials
           </label>
@@ -160,7 +161,7 @@ const rewardCount = computed(() => {
             class="material-group"
           >
             <template
-              v-for="({ name, icon, amount }, index) in materialGroup"
+              v-for="({ id, name, icon, amount }, index) in materialGroup"
               :key="name"
             >
               <p v-if="index > 0">or</p>
@@ -168,7 +169,7 @@ const rewardCount = computed(() => {
                 :text="`${amount}`"
                 :tooltip="`${amount}x ${name}`"
                 :iconPath="icon"
-                :border-class="useFine ? 'border-fine' : ''"
+                :border-class="useFine && itemsStore.fineMaterials[id] ? 'border-fine' : ''"
               />
             </template>
           </div>

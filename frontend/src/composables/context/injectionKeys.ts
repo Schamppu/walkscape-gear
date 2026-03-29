@@ -88,7 +88,6 @@ export type SharedLootTables = {
 };
 
 export type SharedFineMaterials = {
-  canUseFineMaterials: ComputedRef<boolean>;
   xpRewardsMultiplier: ComputedRef<number>;
   useFine: ComputedRef<boolean>;
 };
