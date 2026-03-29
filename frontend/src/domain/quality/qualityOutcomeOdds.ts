@@ -123,12 +123,12 @@ export function getOutcomeOdds(
         })
       : normalized;
 
-  return base.map(({ qualityValue, name, weight }, i) => ({
+  return base.map(({ qualityValue, name }, i) => ({
     qualityValue,
     name,
     value: adjusted[i],
-    crafts: totalWeight / weight,
+    crafts: 1 / adjusted[i],
     odds: adjusted[i] * 100,
-    materialsNeeded: totalWeight / weight / craftsPerMaterial,
+    materialsNeeded: 1 / adjusted[i] / craftsPerMaterial,
   }));
 }
