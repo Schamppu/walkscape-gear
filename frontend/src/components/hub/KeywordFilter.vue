@@ -200,6 +200,7 @@ function toggleItem(data: ToggleItemPayload) {
 .select-wrapper {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: $xxs;
   flex-wrap: wrap;
 }
