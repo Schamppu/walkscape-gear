@@ -88,6 +88,8 @@ const petLevelOptions = computed(() =>
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
+  box-sizing: border-box;
   background-color: $bgPrimary;
   border-radius: $sm $sm $lg $lg;
   border: 2px solid $boxDarkOutline;

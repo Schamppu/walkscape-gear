@@ -170,11 +170,15 @@ ul {
   border-radius: $md;
   background-color: $boxPrimaryBackground;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  max-height: 60vh;
 
   .dropdown-search {
     width: 100%;
     padding: $sm;
     border-bottom: 1px solid $boxPrimaryOutline;
+    flex-shrink: 0;
 
     &:focus {
       outline: 1px solid $chipOutline;
@@ -182,6 +186,8 @@ ul {
   }
 
   .category-list {
+    overflow-y: auto;
+
     .category-li {
       border-bottom: 1px solid $boxPrimaryOutline;
     }

@@ -24,27 +24,37 @@ const craftingOdds = computed(() => {
 
 <template>
   <ws-label label="Crafting Odds" />
-  <table class="quality-odds-table">
-    <thead>
-      <tr>
-        <th>Quality</th>
-        <th>Chance</th>
-        <th>Avg. Crafts</th>
-        <th>Avg. Materials Needed</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="(item, index) in craftingOdds" :key="`${item.name}-${index}`">
-        <td :class="`color-${item.qualityValue}`">{{ item.name }}</td>
-        <td>{{ `${n(item.odds, 2)}%` }}</td>
-        <td>{{ n(item.crafts, 1) }}</td>
-        <td>{{ n(item.materialsNeeded, 1) }}</td>
-      </tr>
-    </tbody>
-  </table>
+  <div class="table-scroll-wrapper">
+    <table class="quality-odds-table">
+      <thead>
+        <tr>
+          <th>Quality</th>
+          <th>Chance</th>
+          <th>Avg. Crafts</th>
+          <th>Avg. Materials Needed</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          v-for="(item, index) in craftingOdds"
+          :key="`${item.name}-${index}`"
+        >
+          <td :class="`color-${item.qualityValue}`">{{ item.name }}</td>
+          <td>{{ `${n(item.odds, 2)}%` }}</td>
+          <td>{{ n(item.crafts, 1) }}</td>
+          <td>{{ n(item.materialsNeeded, 1) }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </template>
 
 <style lang="scss" scoped>
+.table-scroll-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
 .quality-odds-table {
   width: 100%;
   border-collapse: collapse;

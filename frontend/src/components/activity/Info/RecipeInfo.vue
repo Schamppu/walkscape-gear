@@ -319,6 +319,7 @@ const rewardCount = computed(() => {
 }
 
 .info-section {
+  width: 100%;
   display: flex;
   flex-direction: column;
   gap: $sm;
