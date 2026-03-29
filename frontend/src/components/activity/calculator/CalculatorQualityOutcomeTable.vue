@@ -5,6 +5,7 @@ import { useActivityStore } from "@/store/activity";
 import {
   injectRequirements,
   injectSkillModifiers,
+  injectFineMaterials,
 } from "@/composables/context/injectShared";
 import WsLabel from "@/components/primitives/WsLabel.vue";
 import { getOutcomeOdds } from "@/domain/quality/qualityOutcomeOdds";
@@ -18,6 +19,7 @@ const activityStore = useActivityStore();
 const { recipe } = storeToRefs(activityStore);
 const { getLevelRequirementsMap } = injectRequirements();
 const { qualityOutcome } = injectSkillModifiers();
+const { fineMode } = injectFineMaterials();
 
 const craftingOdds = computed(() => {
   const levelMap = getLevelRequirementsMap(recipe.value.requirements);
@@ -26,7 +28,7 @@ const craftingOdds = computed(() => {
   const odds = getOutcomeOdds(
     level,
     qualityOutcome.value,
-    activityStore.useFineMaterials,
+    fineMode.value,
   );
   return odds.map((item) => {
     return {

@@ -8,6 +8,7 @@
 
 import type { EffectiveAttrEntry } from "@/domain/effectiveAttrs";
 import type { SkillModifiersSource } from "@/domain/skillModifiers";
+import type { FineMaterialsMode } from "@/domain/quality/qualityOutcomeOdds";
 import type { OptimiserItem } from "@/domain/optimiser/types";
 import type { LocationSummary } from "@/domain/types/location";
 
@@ -93,7 +94,7 @@ export type OptimiserJobData = {
   activitySelected: boolean;
   recipeQualityContext: {
     levelReq: number;
-    useFineMaterials: boolean;
+    fineMode: FineMaterialsMode;
   } | null;
   prio: string;
   /** Default location for gear sets that don't have an explicit location set. */

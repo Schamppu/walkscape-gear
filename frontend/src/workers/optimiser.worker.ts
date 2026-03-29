@@ -234,7 +234,7 @@ function extractScore(
     const odds = getOutcomeOdds(
       recipeQualityContext.levelReq,
       result.qualityOutcome,
-      recipeQualityContext.useFineMaterials,
+      recipeQualityContext.fineMode,
       result.craftsPerMaterial,
     );
     return odds[odds.length - 1]?.materialsNeeded ?? Infinity;

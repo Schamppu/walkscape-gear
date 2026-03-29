@@ -37,7 +37,7 @@ const gs2Ctx = useGearContext(1, {
   service: gs2Service,
 });
 
-const { xpRewardsMultiplier, useFine } =
+const { xpRewardsMultiplier, fineMode, useFine } =
   useFineMaterials(gs1Ctx);
 
 const borderClass = computed(
@@ -261,7 +261,7 @@ const editableRows = computed(() => {
   </comparison-table-shell>
   <crafting-quality-comparison
     v-if="resultHasCO"
-    :use-fine-materials="useFine"
+    :fine-mode="fineMode"
     :gs1Ctx="gs1Ctx"
     :gs2Ctx="gs2Ctx"
     :border-class="borderClass"

@@ -26,7 +26,7 @@ const itemsStore = useItemsStore();
 
 const { recipe } = storeToRefs(activityStore);
 const ctx = injectBaseContext();
-const { xpRewardsMultiplier, useFine } =
+const { xpRewardsMultiplier, fineMode, useFine } =
   injectFineMaterials();
 
 const sharedModifiers = injectSkillModifiers();
@@ -295,7 +295,7 @@ const rewardCount = computed(() => {
       </div>
       <div v-if="resultHasCO" class="info-section">
         <quality-outcome-table
-          :use-fine-materials="useFine"
+          :fine-mode="fineMode"
           :level-requirement="levelRequirement"
           :quality-outcome="stats.qualityOutcome"
           :crafts-per-material="stats.craftsPerMaterial"

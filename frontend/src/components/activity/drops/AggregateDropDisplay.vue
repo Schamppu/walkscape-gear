@@ -54,7 +54,7 @@ const {
 } = props.context
   ? useSkillModifiers(props.context as SkillModifiersContext)
   : injectSkillModifiers();
-const { useFine } = props.context
+const { useFine, fineMode } = props.context
   ? useFineMaterials(props.context as FineMaterialsContext)
   : injectFineMaterials();
 
@@ -66,7 +66,7 @@ const recipeParams = computed((): RecipeValueParams | undefined => {
   const recipe = ctx.recipe.value as RecipeDetail;
   const levelMap = getLevelRequirementsMap(recipe.requirements);
   const level = Object.values(levelMap)[0];
-  const craftingOdds = getOutcomeOdds(level, qualityOutcome.value, useFine.value);
+  const craftingOdds = getOutcomeOdds(level, qualityOutcome.value, fineMode.value);
 
   return {
     materials,

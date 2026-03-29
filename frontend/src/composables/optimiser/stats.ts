@@ -20,7 +20,7 @@ import {
   type SkillModifiersResult,
   type SkillModifiersSource,
 } from "@/domain/skillModifiers";
-import { getOutcomeOdds } from "@/domain/quality/qualityOutcomeOdds";
+import { getOutcomeOdds, type FineMaterialsMode } from "@/domain/quality/qualityOutcomeOdds";
 import { getLevelRequirementsMap } from "@/domain/requirements/requirementUtils";
 import type { GearSet, OptimiserItem, GearOptions, Candidate } from "@/domain/optimiser/types";
 import type { ItemDetail } from "@/domain/types/item";
@@ -38,7 +38,7 @@ import type {
 
 type RecipeQualityContext = {
   levelReq: number;
-  useFineMaterials: boolean;
+  fineMode: FineMaterialsMode;
 };
 
 // ---------------------------------------------------------------------------
@@ -62,7 +62,7 @@ const extractScore = (
     const odds = getOutcomeOdds(
       recipeQualityContext.levelReq,
       result.qualityOutcome,
-      recipeQualityContext.useFineMaterials,
+      recipeQualityContext.fineMode,
       result.craftsPerMaterial,
     );
     return odds[odds.length - 1]?.materialsNeeded ?? Infinity;
@@ -105,7 +105,7 @@ const makeScorer = (): ((set: GearSet) => number) => {
   const source = baseCtx.source.value as SkillModifiersSource | null;
   const activitySelected = baseCtx.activitySelected.value;
   const recipeDetail = baseCtx.recipe.value as RecipeDetail | null;
-  const { useFine } = useFineMaterials(baseCtx as unknown as FineMaterialsContext);
+  const { fineMode } = useFineMaterials(baseCtx as unknown as FineMaterialsContext);
   const recipeLevelReq = (() => {
     if (activitySelected || !recipeDetail) return 0;
     const levelMap = getLevelRequirementsMap(recipeDetail.requirements);
@@ -115,7 +115,7 @@ const makeScorer = (): ((set: GearSet) => number) => {
     ? null
     : {
         levelReq: recipeLevelReq,
-        useFineMaterials: useFine.value,
+        fineMode: fineMode.value,
       };
 
   // Resolve collectibles once — they don't change during a run.
@@ -229,7 +229,7 @@ export const buildWorkerJob = (
 
   const source = baseCtx.source.value as SkillModifiersSource | null;
   const activitySelected = baseCtx.activitySelected.value;
-  const { useFine } = useFineMaterials(baseCtx as unknown as FineMaterialsContext);
+  const { fineMode } = useFineMaterials(baseCtx as unknown as FineMaterialsContext);
   const prio = priorityValue();
 
   // Static entries: collectibles + level bonuses + service (same as makeScorer).
@@ -254,7 +254,7 @@ export const buildWorkerJob = (
     ? null
     : {
         levelReq: recipeLevelReq,
-        useFineMaterials: useFine.value,
+        fineMode: fineMode.value,
       };
   const location = baseCtx.location.value;
 
@@ -351,7 +351,7 @@ export const getGearSetStats = (set: GearSet): number => {
 
   const stats = useSkillModifiers(gearCtx);
   const prio = priorityValue();
-  const { useFine } = useFineMaterials(baseCtx as unknown as FineMaterialsContext);
+  const { fineMode } = useFineMaterials(baseCtx as unknown as FineMaterialsContext);
   const recipeDetail = baseCtx.recipe.value as RecipeDetail | null;
   const recipeLevelReq = recipeDetail
     ? Object.values(getLevelRequirementsMap(recipeDetail.requirements))[0] ?? 1
@@ -360,7 +360,7 @@ export const getGearSetStats = (set: GearSet): number => {
     ? null
     : {
         levelReq: recipeLevelReq,
-        useFineMaterials: useFine.value,
+        fineMode: fineMode.value,
       };
 
   if (prio === "stepsPerRewardRoll") return stats.stepsPerRewardRoll.value;
@@ -379,7 +379,7 @@ export const getGearSetStats = (set: GearSet): number => {
     const odds = getOutcomeOdds(
       recipeQualityContext.levelReq,
       stats.qualityOutcome.value,
-      recipeQualityContext.useFineMaterials,
+      recipeQualityContext.fineMode,
       stats.craftsPerMaterial.value,
     );
     return odds[odds.length - 1]?.materialsNeeded ?? Infinity;

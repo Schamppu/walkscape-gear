@@ -8,7 +8,7 @@ import { n } from "@/utils/number";
 import ComparisonValueRow from "./table/ComparisonValueRow.vue";
 
 const props = defineProps({
-  useFineMaterials: Boolean,
+  fineMode: String,
   borderClass: String,
   gs1Ctx: Object,
   gs2Ctx: Object,
@@ -33,13 +33,13 @@ const craftingOdds = computed(() => {
   const stats1 = getOutcomeOdds(
     levelReq,
     qo1.value,
-    props.useFineMaterials,
+    props.fineMode,
     cpm1.value,
   );
   const stats2 = getOutcomeOdds(
     levelReq,
     qo2.value,
-    props.useFineMaterials,
+    props.fineMode,
     cpm2.value,
   );
 

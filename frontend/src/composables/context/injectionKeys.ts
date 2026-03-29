@@ -14,6 +14,7 @@ import type {
 } from "@/composables/useRequirements";
 import type { Requirement } from "@/domain/types/common";
 import type { XpReward, XpPerStep } from "@/domain/skillModifiers";
+import type { FineMaterialsMode } from "@/domain/quality/qualityOutcomeOdds";
 
 // ---------------------------------------------------------------------------
 // Shared return types (mirrors composable return types without importing them)
@@ -88,6 +89,7 @@ export type SharedLootTables = {
 };
 
 export type SharedFineMaterials = {
+  fineMode: ComputedRef<FineMaterialsMode>;
   xpRewardsMultiplier: ComputedRef<number>;
   useFine: ComputedRef<boolean>;
 };

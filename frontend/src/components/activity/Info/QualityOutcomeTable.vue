@@ -6,7 +6,7 @@ import { n } from "@/utils/number";
 
 const props = defineProps({
   levelRequirement: Object,
-  useFineMaterials: Boolean,
+  fineMode: String,
   qualityOutcome: Number,
   craftsPerMaterial: Number,
 });
@@ -16,7 +16,7 @@ const craftingOdds = computed(() => {
   return getOutcomeOdds(
     levelReq,
     props.qualityOutcome,
-    props.useFineMaterials,
+    props.fineMode,
     props.craftsPerMaterial,
   );
 });

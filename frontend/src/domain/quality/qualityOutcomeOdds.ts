@@ -13,6 +13,8 @@
 
 import { craftingQualityOptions } from "@/domain/constants/quality";
 
+export type FineMaterialsMode = "none" | "partial" | "all";
+
 export type QualityOutcomeResult = {
   qualityValue: string;
   name: string;
@@ -28,13 +30,16 @@ export type QualityOutcomeResult = {
  *
  * @param levelReq      The level requirement for the recipe.
  * @param qualityOutcome A numerical value representing the crafting quality outcome stat.
- * @param useFineMaterials Whether fine materials are used (shifts all tiers up by one).
+ * @param fineMode      Fine materials mode:
+ *   - "none":    No fine materials; each tier is floored at the tier above.
+ *   - "partial": Some materials are fine; 30% of each tier bleeds into the next.
+ *   - "all":     All materials are fine; all tiers shift up by one, lowest becomes 0.
  * @returns An array of quality outcome results ordered from lowest to highest tier.
  */
 export function getOutcomeOdds(
   levelReq: number,
   qualityOutcome: number,
-  useFineMaterials: boolean,
+  fineMode: FineMaterialsMode,
   craftsPerMaterial = 1
 ): QualityOutcomeResult[] {
   const weights: [number, number][] = [
@@ -87,11 +92,12 @@ export function getOutcomeOdds(
       };
     });
 
-  if (!useFineMaterials) {
+  if (fineMode === "none" || fineMode === "partial") {
     for (let i = base.length - 2; i >= 0; i--) {
       base[i].weight = Math.max(base[i].weight, base[i + 1].weight);
     }
   } else {
+    // "all": shift every tier up by one; lowest becomes 0, highest absorbs second-highest.
     for (let i = 0; i < base.length - 1; i++) {
       base[i].name = base[i + 1].name;
       base[i].qualityValue = base[i + 1].qualityValue;
@@ -105,12 +111,24 @@ export function getOutcomeOdds(
   }
 
   const totalWeight = base.reduce((acc, item) => acc + item.weight, 0);
-  return base.map(({ qualityValue, name, weight }) => ({
+  const normalized = base.map((b) => b.weight / totalWeight);
+
+  // For "partial": 30% of each tier's odds bleed into the tier above it.
+  const adjusted =
+    fineMode === "partial"
+      ? normalized.map((v, i) => {
+          const bleedIn = i > 0 ? 0.3 * normalized[i - 1] : 0;
+          const bleedOut = i < normalized.length - 1 ? 0.3 * v : 0;
+          return v - bleedOut + bleedIn;
+        })
+      : normalized;
+
+  return base.map(({ qualityValue, name, weight }, i) => ({
     qualityValue,
     name,
-    value: weight / totalWeight,
+    value: adjusted[i],
     crafts: totalWeight / weight,
-    odds: (weight / totalWeight) * 100,
-    materialsNeeded: (totalWeight / weight) / craftsPerMaterial,
+    odds: adjusted[i] * 100,
+    materialsNeeded: totalWeight / weight / craftsPerMaterial,
   }));
 }
