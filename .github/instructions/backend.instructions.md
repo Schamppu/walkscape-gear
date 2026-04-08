@@ -1,6 +1,6 @@
 ---
-applyTo: "frontend/src"
-description: "Vue.js Frontend-specific guidelines"
+applyTo: "backend/src"
+description: "Node.js Backend-specific guidelines"
 ---
 
 Backend Architecture (Node.js + Express)
