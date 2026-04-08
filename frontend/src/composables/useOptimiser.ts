@@ -221,7 +221,8 @@ export function useOptimiser() {
       const toolbeltSize = slotMax("tool", playerStore.level);
       const activeSlots = gearSlots.filter((slot) => {
         const toolMatch = slot.match(/^tool(\d+)$/);
-        return toolMatch ? Number(toolMatch[1]) <= toolbeltSize : true;
+        if (toolMatch && Number(toolMatch[1]) > toolbeltSize) return false;
+        return !gearStore.isSlotLocked(slot);
       }) as readonly GearSlot[];
 
       const t0 = performance.now();

@@ -57,6 +57,8 @@ export const useGearStore = defineStore("gearStore", {
     gearSetIndex: 0,
     // Cache for fetched items to avoid refetching
     itemCache: new Map<string, EquippedItem>(),
+    // Locked slots per gear set - items in locked slots are skipped by the optimiser and unequip all
+    lockedSlots: [[] as GearSlot[], [] as GearSlot[]],
   }),
   getters: {
     selectedGearset(state): EquippedGearSet {
@@ -82,6 +84,8 @@ export const useGearStore = defineStore("gearStore", {
         Boolean(item)
       ) as [string, EquippedItem][];
     },
+    isSlotLocked: (state) => (slot: GearSlot): boolean =>
+      state.lockedSlots[state.gearSetIndex]?.includes(slot) ?? false,
     gearset: (state) => (index: number): EquippedGearSet =>
       state.gearSlots[index] as EquippedGearSet,
     equippedGearByIndex: (state) => (index: number): EquippedItem[] =>
@@ -329,6 +333,11 @@ export const useGearStore = defineStore("gearStore", {
       const finalGearSlots: Record<string, EquippedItem | null> = {};
 
       for (const [slot, item] of Object.entries(gearSetData)) {
+        if (this.isSlotLocked(slot as GearSlot)) {
+          finalGearSlots[slot] = this.selectedGearset[slot as GearSlot];
+          continue;
+        }
+
         if (!item || !item.id) {
           finalGearSlots[slot] = null;
           continue;
@@ -390,6 +399,17 @@ export const useGearStore = defineStore("gearStore", {
       }
 
       return finalGearSlots;
+    },
+
+    toggleSlotLock(slot: GearSlot): void {
+      const locked = this.lockedSlots[this.gearSetIndex];
+      if (!locked) return;
+      const idx = locked.indexOf(slot);
+      if (idx === -1) {
+        locked.push(slot);
+      } else {
+        locked.splice(idx, 1);
+      }
     },
 
     // Method to clear the item cache if needed
