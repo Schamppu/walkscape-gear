@@ -1,4 +1,4 @@
-import { PrismaClient } from "../src/generated/prisma/client.js";
+import { PrismaClient } from "../src/generated/prisma/client";
 import * as dbService from "../src/services/dbService.js";
 import {
   skillService,

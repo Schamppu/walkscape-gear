@@ -1,4 +1,4 @@
-import { PrismaClient } from "../generated/prisma/client.js";
+import { PrismaClient } from "../generated/prisma/client";
 import { validTags } from "../../prisma/tag-data.js";
 
 const prisma = new PrismaClient({ datasourceUrl: process.env.DATABASE_URL });

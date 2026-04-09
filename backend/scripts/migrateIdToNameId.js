@@ -1,4 +1,4 @@
-import { PrismaClient } from "../src/generated/prisma/client.js";
+import { PrismaClient } from "../src/generated/prisma/client";
 import { itemService } from "../src/services/index.js";
 const prisma = new PrismaClient({ datasourceUrl: process.env.DATABASE_URL });
 

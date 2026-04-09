@@ -1,4 +1,4 @@
-import { PrismaClient } from "../src/generated/prisma/client.js";
+import { PrismaClient } from "../src/generated/prisma/client";
 const prisma = new PrismaClient({ datasourceUrl: process.env.DATABASE_URL });
 
 async function migrate() {
