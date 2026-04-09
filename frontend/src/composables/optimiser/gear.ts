@@ -80,7 +80,7 @@ const mapItemToStats = (
 
   if (item.gearType === "ring") {
     const owned = ctx.ownedItems.value[item.id];
-    const q2 = owned?.quality2;
+    const q2 = owned?.craftedTier2;
     return [
       base,
       {
@@ -235,18 +235,33 @@ const getScoredItemsForSlot = (
   });
 
   const qualityItems: QualityItem[] = items.map((item) => {
-    if (
-      (!["crafted", "consumable"].includes(item.type) && slot !== "pet") ||
-      !(item.id in baseCtx.ownedItems.value)
-    ) {
+    if (!(item.id in baseCtx.ownedItems.value)) {
       return item;
     }
     const owned = baseCtx.ownedItems.value[item.id];
-    return {
-      ...item,
-      quality: owned.quality ?? item.quality,
-      quality2: owned.quality2,
-    };
+
+    if (item.type === "crafted") {
+      return {
+        ...item,
+        quality: owned.craftedTier ?? item.quality,
+        quality2: owned.craftedTier2,
+      };
+    }
+    if (item.type === "consumable") {
+      const quality = owned.consumableFine
+        ? "consumableFine"
+        : owned.consumableCommon
+          ? "consumableCommon"
+          : item.quality;
+      return { ...item, quality };
+    }
+    if (slot === "pet") {
+      return {
+        ...item,
+        quality: String(owned.petLevel ?? 0),
+      };
+    }
+    return item;
   });
 
   const filteredItems = filterItems(qualityItems);
