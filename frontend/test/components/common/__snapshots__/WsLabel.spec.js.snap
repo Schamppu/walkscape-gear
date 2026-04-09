@@ -1,5 +1,5 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`WsLabel > with labelFor prop > snapshot 1`] = `"<label data-v-3c4caffe="" for="test-input" class="typography-label clickable">Test Label</label>"`;
+exports[`WsLabel > with labelFor prop > snapshot 1`] = `"<label data-v-b67e9d1f="" for="test-input" class="typography-label clickable">Test Label</label>"`;
 
-exports[`WsLabel > without labelFor prop > snapshot 1`] = `"<label data-v-3c4caffe="" class="typography-label">Test Label</label>"`;
+exports[`WsLabel > without labelFor prop > snapshot 1`] = `"<label data-v-b67e9d1f="" class="typography-label">Test Label</label>"`;
