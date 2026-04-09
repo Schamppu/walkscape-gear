@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { PrismaClient } from "../src/generated/prisma/index.js";
+import { PrismaClient } from "../src/generated/prisma/client.js";
 import { allTags } from "../prisma/tag-data.js";
 import { PrismaPg } from "@prisma/adapter-pg";
 
