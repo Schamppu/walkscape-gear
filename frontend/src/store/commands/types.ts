@@ -73,6 +73,7 @@ export interface IGearStore {
   _equipMultipleDirect(gearSetData: GearSlots): Promise<void>;
   _processGearSetData(gearSetData: GearSetMapping): Promise<GearSlots>;
   _batchUpdateGearState(gearSlots: GearSlots): Promise<void>;
+  isSlotLocked(slot: string): boolean;
 }
 
 /** Minimal interface for gear set store methods used by gear commands. */

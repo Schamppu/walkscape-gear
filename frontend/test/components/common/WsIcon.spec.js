@@ -109,6 +109,7 @@ describe("WsIcon", () => {
     const wrapper = mount(WsIcon, {
       props: {
         iconPath: "test-icon.png",
+        decorative: false,
       },
     });
 
@@ -123,7 +124,7 @@ describe("WsIcon", () => {
     const img = wrapper.find("img");
     expect(img.exists()).toBe(true);
     expect(img.attributes("src")).toBe(mockUrl);
-    expect(img.attributes("alt")).toBe("test-icon.png");
+    expect(img.attributes("alt")).toBe("Icon");
   });
 
   test("applies outline class when provided", async () => {

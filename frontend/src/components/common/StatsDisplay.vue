@@ -30,6 +30,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  hideWikiButton: {
+    type: Boolean,
+    default: false,
+  }
 });
 
 const dataStore = useDataStore();
@@ -72,7 +76,7 @@ const attrs = computed(() => mapAttrs(props.quality));
   <div class="stats-display">
     <div class="header">
       <slot></slot>
-      <wiki-button :name="item.name" />
+      <wiki-button v-if="!props.hideWikiButton" :name="item.name" />
     </div>
     <div class="keywords">
       <keyword-display

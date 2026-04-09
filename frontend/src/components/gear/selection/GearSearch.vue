@@ -153,27 +153,30 @@ const filteredItems = computed(() => {
       const isRing = gearType === "ring";
 
       const owned = id in ctx.ownedItems.value;
-      const hidden = owned ? ctx.ownedItems.value[id].hidden : false;
+      const entry = owned ? ctx.ownedItems.value[id] : null;
+      const hidden = entry?.hidden ?? false;
       let quality = item.quality;
       let quality2 = null;
 
-      if (owned) {
-        if (isCrafted || isPet) {
-          quality = ctx.ownedItems.value[id].quality;
-        }
-        quality2 = ctx.ownedItems.value[id].quality2;
-      }
-
       if (isConsumable) {
         if (showOwned) {
-          quality = owned ? ctx.ownedItems.value[id].quality : null;
-          quality2 = owned ? ctx.ownedItems.value[id].quality2 : null;
+          quality = entry?.consumableCommon ? "consumableCommon" : null;
+          quality2 = entry?.consumableFine ? "consumableFine" : null;
         } else {
           quality = consumableQualityOptions[0].value;
           quality2 = consumableQualityOptions[1].value;
         }
-      } else if (isRing) {
-        quality2 = owned ? ctx.ownedItems.value[id].quality2 : item.quality2;
+      } else if (isPet) {
+        if (owned) {
+          quality = String(entry.petLevel ?? 0);
+        }
+      } else if (isCrafted) {
+        if (owned) {
+          quality = entry.craftedTier ?? item.quality;
+        }
+        if (isRing) {
+          quality2 = entry?.craftedTier2 ?? null;
+        }
       }
 
       const attrs =

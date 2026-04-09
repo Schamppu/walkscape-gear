@@ -1,6 +1,6 @@
 import { mount } from "@vue/test-utils";
 import { describe, test, expect, beforeEach } from "vitest";
-import WsButton from "@/components/common/WsButton.vue";
+import WsButton from "@/components/primitives/WsButton.vue";
 
 describe("WsButton", () => {
   describe("text only button", () => {

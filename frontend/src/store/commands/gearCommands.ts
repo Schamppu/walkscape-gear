@@ -47,7 +47,13 @@ export class UnequipAllCommand implements Command {
   }
 
   async execute(): Promise<void> {
-    this.gearStore._setAllGearSlotsDirect({});
+    const preservedSlots: GearSlots = {};
+    for (const [slot, item] of Object.entries(this.previousGearSlots)) {
+      if (this.gearStore.isSlotLocked(slot) && item !== null) {
+        preservedSlots[slot] = item;
+      }
+    }
+    this.gearStore._setAllGearSlotsDirect(preservedSlots);
   }
 
   async undo(): Promise<void> {

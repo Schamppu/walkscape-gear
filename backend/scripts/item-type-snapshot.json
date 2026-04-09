@@ -1,0 +1,2498 @@
+{
+  "western_continent_boat_pass": {
+    "type": "collectible",
+    "gearType": null
+  },
+  "99_year_old_wine": {
+    "type": "collectible",
+    "gearType": null
+  },
+  "ancient_ankh": {
+    "type": "collectible",
+    "gearType": null
+  },
+  "ancient_trident": {
+    "type": "collectible",
+    "gearType": null
+  },
+  "anglerfish_mask": {
+    "type": "collectible",
+    "gearType": null
+  },
+  "artificial_snowflake": {
+    "type": "collectible",
+    "gearType": null
+  },
+  "blue_lotus_butterfly": {
+    "type": "collectible",
+    "gearType": null
+  },
+  "brilliant_emerald_dragonfly": {
+    "type": "collectible",
+    "gearType": null
+  },
+  "cold_embrace": {
+    "type": "collectible",
+    "gearType": null
+  },
+  "dinglehopper": {
+    "type": "collectible",
+    "gearType": null
+  },
+  "easter_egg": {
+    "type": "collectible",
+    "gearType": null
+  },
+  "essence_of_the_swamp": {
+    "type": "collectible",
+    "gearType": null
+  },
+  "expedition_journal": {
+    "type": "collectible",
+    "gearType": null
+  },
+  "flame_of_azura": {
+    "type": "collectible",
+    "gearType": null
+  },
+  "floating_coral": {
+    "type": "collectible",
+    "gearType": null
+  },
+  "halfmaw_venom": {
+    "type": "collectible",
+    "gearType": null
+  },
+  "haunted_teddy_bear": {
+    "type": "collectible",
+    "gearType": null
+  },
+  "jar_of_dirt": {
+    "type": "collectible",
+    "gearType": null
+  },
+  "jarvonian_crossword_puzzle": {
+    "type": "collectible",
+    "gearType": null
+  },
+  "letter_from_a._a.": {
+    "type": "collectible",
+    "gearType": null
+  },
+  "lost_timmys_sand_shovel": {
+    "type": "collectible",
+    "gearType": null
+  },
+  "meteorite_fragment": {
+    "type": "collectible",
+    "gearType": null
+  },
+  "old_war_sword": {
+    "type": "collectible",
+    "gearType": null
+  },
+  "petrified_branch": {
+    "type": "collectible",
+    "gearType": null
+  },
+  "rose_quartz": {
+    "type": "collectible",
+    "gearType": null
+  },
+  "seahorse_fossil": {
+    "type": "collectible",
+    "gearType": null
+  },
+  "shiny_broken_skydisc": {
+    "type": "collectible",
+    "gearType": null
+  },
+  "silver_pocket_watch": {
+    "type": "collectible",
+    "gearType": null
+  },
+  "soup_kitchen_badge": {
+    "type": "collectible",
+    "gearType": null
+  },
+  "swampman_article": {
+    "type": "collectible",
+    "gearType": null
+  },
+  "swordfish_sword_fossil": {
+    "type": "collectible",
+    "gearType": null
+  },
+  "terrifying_fossil": {
+    "type": "collectible",
+    "gearType": null
+  },
+  "tiny_swan_ice_sculpture": {
+    "type": "collectible",
+    "gearType": null
+  },
+  "treasure_hunter_token": {
+    "type": "collectible",
+    "gearType": null
+  },
+  "very_shiny_stone": {
+    "type": "collectible",
+    "gearType": null
+  },
+  "walrus_tusk": {
+    "type": "collectible",
+    "gearType": null
+  },
+  "weeping_willow_tear": {
+    "type": "collectible",
+    "gearType": null
+  },
+  "wooden_carved_bear_figurine": {
+    "type": "collectible",
+    "gearType": null
+  },
+  "mark_of_the_deep_one": {
+    "type": "collectible",
+    "gearType": null
+  },
+  "mark_of_the_serpent": {
+    "type": "collectible",
+    "gearType": null
+  },
+  "mark_of_the_trident": {
+    "type": "collectible",
+    "gearType": null
+  },
+  "sigil_of_the_ordained": {
+    "type": "collectible",
+    "gearType": null
+  },
+  "black_eye_peak_wilderness_permit": {
+    "type": "collectible",
+    "gearType": null
+  },
+  "charter_of_the_drowned": {
+    "type": "collectible",
+    "gearType": null
+  },
+  "jarvonian_letter_of_passage": {
+    "type": "collectible",
+    "gearType": null
+  },
+  "mysterious_northern_map": {
+    "type": "collectible",
+    "gearType": null
+  },
+  "underwater_map": {
+    "type": "collectible",
+    "gearType": null
+  },
+  "bagel": {
+    "type": "consumable",
+    "gearType": null
+  },
+  "jelly_sandwich": {
+    "type": "consumable",
+    "gearType": null
+  },
+  "tasty_breakfast": {
+    "type": "consumable",
+    "gearType": null
+  },
+  "chocolate_milk": {
+    "type": "consumable",
+    "gearType": null
+  },
+  "cooked_jellyfish": {
+    "type": "consumable",
+    "gearType": null
+  },
+  "fried_noodles": {
+    "type": "consumable",
+    "gearType": null
+  },
+  "nettle_tea": {
+    "type": "consumable",
+    "gearType": null
+  },
+  "nut_mix": {
+    "type": "consumable",
+    "gearType": null
+  },
+  "cooked_shrimp": {
+    "type": "consumable",
+    "gearType": null
+  },
+  "cooked_trout": {
+    "type": "consumable",
+    "gearType": null
+  },
+  "fruit_cake": {
+    "type": "consumable",
+    "gearType": null
+  },
+  "underwater_salad": {
+    "type": "consumable",
+    "gearType": null
+  },
+  "cooked_lobster": {
+    "type": "consumable",
+    "gearType": null
+  },
+  "cooked_perch": {
+    "type": "consumable",
+    "gearType": null
+  },
+  "pickles": {
+    "type": "consumable",
+    "gearType": null
+  },
+  "bug_bait": {
+    "type": "consumable",
+    "gearType": null
+  },
+  "cooked_stingray": {
+    "type": "consumable",
+    "gearType": null
+  },
+  "dried_fruit": {
+    "type": "consumable",
+    "gearType": null
+  },
+  "fried_fish_sandwich": {
+    "type": "consumable",
+    "gearType": null
+  },
+  "frozen_bait": {
+    "type": "consumable",
+    "gearType": null
+  },
+  "jellied_stream_eel": {
+    "type": "consumable",
+    "gearType": null
+  },
+  "trout_soup": {
+    "type": "consumable",
+    "gearType": null
+  },
+  "crab_rolls": {
+    "type": "consumable",
+    "gearType": null
+  },
+  "kelp_rolls": {
+    "type": "consumable",
+    "gearType": null
+  },
+  "mushroom_curry": {
+    "type": "consumable",
+    "gearType": null
+  },
+  "porridge": {
+    "type": "consumable",
+    "gearType": null
+  },
+  "veggie_soup": {
+    "type": "consumable",
+    "gearType": null
+  },
+  "beef_stew": {
+    "type": "consumable",
+    "gearType": null
+  },
+  "beer": {
+    "type": "consumable",
+    "gearType": null
+  },
+  "cooked_meat": {
+    "type": "consumable",
+    "gearType": null
+  },
+  "fireball_wine": {
+    "type": "consumable",
+    "gearType": null
+  },
+  "fortified_wine": {
+    "type": "consumable",
+    "gearType": null
+  },
+  "moonshine": {
+    "type": "consumable",
+    "gearType": null
+  },
+  "mud_pie": {
+    "type": "consumable",
+    "gearType": null
+  },
+  "roasted_bell_pepper": {
+    "type": "consumable",
+    "gearType": null
+  },
+  "spicy_moray": {
+    "type": "consumable",
+    "gearType": null
+  },
+  "sweet_carrot_pie": {
+    "type": "consumable",
+    "gearType": null
+  },
+  "wine": {
+    "type": "consumable",
+    "gearType": null
+  },
+  "jerky": {
+    "type": "consumable",
+    "gearType": null
+  },
+  "cooked_anglerfish": {
+    "type": "consumable",
+    "gearType": null
+  },
+  "dynamite": {
+    "type": "consumable",
+    "gearType": null
+  },
+  "jarvonian_pastry": {
+    "type": "consumable",
+    "gearType": null
+  },
+  "pancake": {
+    "type": "consumable",
+    "gearType": null
+  },
+  "cooked_pike": {
+    "type": "consumable",
+    "gearType": null
+  },
+  "cooked_salmon": {
+    "type": "consumable",
+    "gearType": null
+  },
+  "saltrum": {
+    "type": "consumable",
+    "gearType": null
+  },
+  "spicy_pumpkin_juice": {
+    "type": "consumable",
+    "gearType": null
+  },
+  "bacon_weave": {
+    "type": "consumable",
+    "gearType": null
+  },
+  "bread": {
+    "type": "consumable",
+    "gearType": null
+  },
+  "cooked_squid": {
+    "type": "consumable",
+    "gearType": null
+  },
+  "cooked_largemouth_bass": {
+    "type": "consumable",
+    "gearType": null
+  },
+  "creme_brulee": {
+    "type": "consumable",
+    "gearType": null
+  },
+  "cooked_carp": {
+    "type": "consumable",
+    "gearType": null
+  },
+  "cooked_shark": {
+    "type": "consumable",
+    "gearType": null
+  },
+  "cooked_swordfish": {
+    "type": "consumable",
+    "gearType": null
+  },
+  "salmon_pie": {
+    "type": "consumable",
+    "gearType": null
+  },
+  "schnitzel": {
+    "type": "consumable",
+    "gearType": null
+  },
+  "absorbing_amulet": {
+    "type": "loot",
+    "gearType": "neck"
+  },
+  "adoring_fan_statue": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "boots_of_speed": {
+    "type": "loot",
+    "gearType": "feet"
+  },
+  "cape_of_achiever": {
+    "type": "loot",
+    "gearType": "cape"
+  },
+  "cape_of_half_achiever": {
+    "type": "loot",
+    "gearType": "cape"
+  },
+  "conservationist_boots": {
+    "type": "loot",
+    "gearType": "feet"
+  },
+  "conservationist_hat": {
+    "type": "loot",
+    "gearType": "head"
+  },
+  "conservationist_shirt": {
+    "type": "loot",
+    "gearType": "chest"
+  },
+  "conservationist_shorts": {
+    "type": "loot",
+    "gearType": "legs"
+  },
+  "greedy_piggy_bank": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "juggling_balls": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "omni_tool": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "pants_of_haste": {
+    "type": "loot",
+    "gearType": "legs"
+  },
+  "pathfinder": {
+    "type": "loot",
+    "gearType": "neck"
+  },
+  "ring_of_homesickness": {
+    "type": "loot",
+    "gearType": "ring"
+  },
+  "running_visor": {
+    "type": "loot",
+    "gearType": "head"
+  },
+  "rusty_spyglass": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "trash_grabber": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "travelers_kit": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "treasure_grabber": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "treasure_hunter_hat": {
+    "type": "loot",
+    "gearType": "head"
+  },
+  "treasure_hunter_jacket": {
+    "type": "loot",
+    "gearType": "chest"
+  },
+  "treasure_hunter_pants": {
+    "type": "loot",
+    "gearType": "legs"
+  },
+  "trekking_poles": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "fine_pearl_ring": {
+    "type": "loot",
+    "gearType": "ring"
+  },
+  "gem_bracelet": {
+    "type": "loot",
+    "gearType": "hands"
+  },
+  "ghost_trap_pack": {
+    "type": "loot",
+    "gearType": "back"
+  },
+  "petal_finder": {
+    "type": "loot",
+    "gearType": "ring"
+  },
+  "rock_star_amulet": {
+    "type": "loot",
+    "gearType": "neck"
+  },
+  "shiny_ring": {
+    "type": "loot",
+    "gearType": "ring"
+  },
+  "tiny_backpack": {
+    "type": "loot",
+    "gearType": "back"
+  },
+  "alien_squeaky_toy": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "birch_skis": {
+    "type": "loot",
+    "gearType": "feet"
+  },
+  "blue_ice_sickle": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "carving_knife": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "clay_skydisc": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "crustacean_call": {
+    "type": "loot",
+    "gearType": "ring"
+  },
+  "dragonfly_catching_net": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "eberhart_corkscrew": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "eye_patch": {
+    "type": "loot",
+    "gearType": "head"
+  },
+  "feather_boots": {
+    "type": "loot",
+    "gearType": "feet"
+  },
+  "feather_cape": {
+    "type": "loot",
+    "gearType": "cape"
+  },
+  "fireflies_in_a_jar": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "fishing_stringer": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "fishnet_shirt": {
+    "type": "loot",
+    "gearType": "chest"
+  },
+  "flatpack_shark": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "flippers": {
+    "type": "loot",
+    "gearType": "feet"
+  },
+  "flowy_trousers": {
+    "type": "loot",
+    "gearType": "legs"
+  },
+  "glowstick": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "ice_cutter": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "iron_thermos": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "life_vest": {
+    "type": "loot",
+    "gearType": "chest"
+  },
+  "merfolk_dress": {
+    "type": "loot",
+    "gearType": "chest"
+  },
+  "mountaineering_guidebook": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "old_copper_ring": {
+    "type": "loot",
+    "gearType": "ring"
+  },
+  "old_gold_ring": {
+    "type": "loot",
+    "gearType": "ring"
+  },
+  "old_silver_ring": {
+    "type": "loot",
+    "gearType": "ring"
+  },
+  "parkour_gloves": {
+    "type": "loot",
+    "gearType": "hands"
+  },
+  "pirate_hat": {
+    "type": "loot",
+    "gearType": "head"
+  },
+  "rabbit_ears": {
+    "type": "loot",
+    "gearType": "head"
+  },
+  "red_skydisc": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "ring_of_pandemonium": {
+    "type": "loot",
+    "gearType": "ring"
+  },
+  "sailors_hat": {
+    "type": "loot",
+    "gearType": "head"
+  },
+  "simple_amulet": {
+    "type": "loot",
+    "gearType": "neck"
+  },
+  "simple_bug_catching_net": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "simple_chisel": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "simple_gold_pan": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "simple_hammer": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "simple_life_vest": {
+    "type": "loot",
+    "gearType": "chest"
+  },
+  "simple_magnet": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "simple_pan": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "simple_ring": {
+    "type": "loot",
+    "gearType": "ring"
+  },
+  "simple_rope": {
+    "type": "loot",
+    "gearType": "back"
+  },
+  "simple_saw": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "simple_sewing_needle": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "simple_torch": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "simple_wrench": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "smelly_socks": {
+    "type": "loot",
+    "gearType": "feet"
+  },
+  "sticky_finger_shorts": {
+    "type": "loot",
+    "gearType": "legs"
+  },
+  "swift_sight_goggles": {
+    "type": "loot",
+    "gearType": "head"
+  },
+  "tree_scaling_claws": {
+    "type": "loot",
+    "gearType": "hands"
+  },
+  "weighted_vest": {
+    "type": "loot",
+    "gearType": "chest"
+  },
+  "wire_saw": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "lava_cooking_pan": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "shell_snatcher": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "tentacle_crown": {
+    "type": "loot",
+    "gearType": "head"
+  },
+  "fin_gloves": {
+    "type": "loot",
+    "gearType": "hands"
+  },
+  "ice_axe": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "mosquito_net_hat": {
+    "type": "loot",
+    "gearType": "head"
+  },
+  "oxygen_tank": {
+    "type": "loot",
+    "gearType": "back"
+  },
+  "proper_boots": {
+    "type": "loot",
+    "gearType": "feet"
+  },
+  "proper_cape": {
+    "type": "loot",
+    "gearType": "cape"
+  },
+  "proper_hat": {
+    "type": "loot",
+    "gearType": "head"
+  },
+  "proper_pants": {
+    "type": "loot",
+    "gearType": "legs"
+  },
+  "proper_shirt": {
+    "type": "loot",
+    "gearType": "chest"
+  },
+  "trusty_tent": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "warm_beanie": {
+    "type": "loot",
+    "gearType": "head"
+  },
+  "warm_jacket": {
+    "type": "loot",
+    "gearType": "chest"
+  },
+  "zippy_kicksled": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "baby_penguin_ice_lure": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "backpack": {
+    "type": "loot",
+    "gearType": "back"
+  },
+  "berts_super_skis": {
+    "type": "loot",
+    "gearType": "feet"
+  },
+  "bolstered_quiver": {
+    "type": "loot",
+    "gearType": "back"
+  },
+  "cape_of_the_trailblazer": {
+    "type": "loot",
+    "gearType": "cape"
+  },
+  "dull_machete": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "fishing_lure": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "golden_skydisc": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "herberts_boots": {
+    "type": "loot",
+    "gearType": "feet"
+  },
+  "herberts_cape": {
+    "type": "loot",
+    "gearType": "cape"
+  },
+  "herberts_hat": {
+    "type": "loot",
+    "gearType": "head"
+  },
+  "herberts_pants": {
+    "type": "loot",
+    "gearType": "legs"
+  },
+  "herberts_shirt": {
+    "type": "loot",
+    "gearType": "chest"
+  },
+  "ice_netrod": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "keen_eye_lenses": {
+    "type": "loot",
+    "gearType": "head"
+  },
+  "lumberjack_boots": {
+    "type": "loot",
+    "gearType": "feet"
+  },
+  "map_of_arenum": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "oak_skis": {
+    "type": "loot",
+    "gearType": "feet"
+  },
+  "pine_skis": {
+    "type": "loot",
+    "gearType": "feet"
+  },
+  "quaint_quiver": {
+    "type": "loot",
+    "gearType": "back"
+  },
+  "rusty_diving_helmet": {
+    "type": "loot",
+    "gearType": "head"
+  },
+  "rusty_diving_torso": {
+    "type": "loot",
+    "gearType": "chest"
+  },
+  "seths_swamp_compass": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "sharp_knife": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "sharp_machete": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "small_sack": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "spice_rackpack": {
+    "type": "loot",
+    "gearType": "back"
+  },
+  "swashbuckler_sword": {
+    "type": "loot",
+    "gearType": "primary"
+  },
+  "tough_rope": {
+    "type": "loot",
+    "gearType": "back"
+  },
+  "woodpucker": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "adventuring_amulet": {
+    "type": "loot",
+    "gearType": "neck"
+  },
+  "adventuring_fishing_pole": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "adventuring_frying_pan": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "adventuring_hammer": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "adventuring_hatchet": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "adventuring_hunting_bow": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "adventuring_pickaxe": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "adventuring_ring": {
+    "type": "loot",
+    "gearType": "ring"
+  },
+  "adventuring_sander": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "adventuring_saw": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "adventuring_sewing_needle": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "adventuring_sickle": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "adventuring_wrench": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "axe_of_destruction": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "shoes_of_escape": {
+    "type": "loot",
+    "gearType": "feet"
+  },
+  "exercise_headband": {
+    "type": "loot",
+    "gearType": "head"
+  },
+  "grappling_hook": {
+    "type": "loot",
+    "gearType": "back"
+  },
+  "medieval_sneakers": {
+    "type": "loot",
+    "gearType": "feet"
+  },
+  "running_shirt": {
+    "type": "loot",
+    "gearType": "chest"
+  },
+  "running_shorts": {
+    "type": "loot",
+    "gearType": "legs"
+  },
+  "stepring": {
+    "type": "loot",
+    "gearType": "ring"
+  },
+  "toe_shoes": {
+    "type": "loot",
+    "gearType": "feet"
+  },
+  "walking_stick": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "water_bottle": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "carpenters_clogs": {
+    "type": "loot",
+    "gearType": "feet"
+  },
+  "compressed_charcoal": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "flimsy_ruler": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "handsaw": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "hookhat": {
+    "type": "loot",
+    "gearType": "head"
+  },
+  "precise_ruler": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "protective_gloves": {
+    "type": "loot",
+    "gearType": "hands"
+  },
+  "protective_pants": {
+    "type": "loot",
+    "gearType": "legs"
+  },
+  "protective_shirt": {
+    "type": "loot",
+    "gearType": "chest"
+  },
+  "protractor": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "woodworking_glasses": {
+    "type": "loot",
+    "gearType": "head"
+  },
+  "chrome_wool": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "flowing_pocketwatch": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "ink_pen": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "loose_change_pouch": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "makeup_set": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "map_of_erdwise": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "royal_troubadour_boots": {
+    "type": "loot",
+    "gearType": "feet"
+  },
+  "royal_troubadour_capesuit": {
+    "type": "loot",
+    "gearType": "chest"
+  },
+  "royal_troubadour_gloves": {
+    "type": "loot",
+    "gearType": "hands"
+  },
+  "royal_troubadour_hat": {
+    "type": "loot",
+    "gearType": "head"
+  },
+  "royal_troubadour_pantaloons": {
+    "type": "loot",
+    "gearType": "legs"
+  },
+  "frost_touched_boots": {
+    "type": "loot",
+    "gearType": "feet"
+  },
+  "frost_touched_gauntlets": {
+    "type": "loot",
+    "gearType": "hands"
+  },
+  "frost_touched_helm": {
+    "type": "loot",
+    "gearType": "head"
+  },
+  "frost_touched_leggings": {
+    "type": "loot",
+    "gearType": "legs"
+  },
+  "frost_touched_torso": {
+    "type": "loot",
+    "gearType": "chest"
+  },
+  "hand_warming_pack": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "knitted_mittens": {
+    "type": "loot",
+    "gearType": "hands"
+  },
+  "map_of_jarvonia": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "perfect_snowballs": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "ring_of_ash": {
+    "type": "loot",
+    "gearType": "ring"
+  },
+  "wintry_pan": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "algae_ring": {
+    "type": "loot",
+    "gearType": "ring"
+  },
+  "bubble_bauble": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "map_of_syrenthia": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "merfolk_dance_bracers": {
+    "type": "loot",
+    "gearType": "hands"
+  },
+  "merfolk_dance_circlet": {
+    "type": "loot",
+    "gearType": "head"
+  },
+  "merfolk_dance_corslet": {
+    "type": "loot",
+    "gearType": "chest"
+  },
+  "merfolk_dance_leglets": {
+    "type": "loot",
+    "gearType": "feet"
+  },
+  "merfolk_dance_skirt": {
+    "type": "loot",
+    "gearType": "legs"
+  },
+  "merfolk_shell_coverings": {
+    "type": "loot",
+    "gearType": "chest"
+  },
+  "pearl_bracelet": {
+    "type": "loot",
+    "gearType": "hands"
+  },
+  "tidal_lure": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "bogwood_bandana": {
+    "type": "loot",
+    "gearType": "head"
+  },
+  "bogwood_boots": {
+    "type": "loot",
+    "gearType": "feet"
+  },
+  "bogwood_gloves": {
+    "type": "loot",
+    "gearType": "hands"
+  },
+  "bogwood_shorts": {
+    "type": "loot",
+    "gearType": "legs"
+  },
+  "bogwood_vest": {
+    "type": "loot",
+    "gearType": "chest"
+  },
+  "fingersaw": {
+    "type": "loot",
+    "gearType": "ring"
+  },
+  "lil_stool": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "lily_pad_rope": {
+    "type": "loot",
+    "gearType": "back"
+  },
+  "map_of_halfling_rebels": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "moss_chewie": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "wholly_ring": {
+    "type": "loot",
+    "gearType": "ring"
+  },
+  "bug_attracting_incense": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "bug_repelling_incense": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "firestarter": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "fungal_backpack": {
+    "type": "loot",
+    "gearType": "back"
+  },
+  "linden_leaf_boots": {
+    "type": "loot",
+    "gearType": "feet"
+  },
+  "linden_leaf_gloves": {
+    "type": "loot",
+    "gearType": "hands"
+  },
+  "linden_leaf_hat": {
+    "type": "loot",
+    "gearType": "head"
+  },
+  "linden_leaf_shorts": {
+    "type": "loot",
+    "gearType": "legs"
+  },
+  "linden_leaf_vest": {
+    "type": "loot",
+    "gearType": "chest"
+  },
+  "map_of_trellin": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "trellin_beaver": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "chefs_apron": {
+    "type": "loot",
+    "gearType": "chest"
+  },
+  "chefs_hat": {
+    "type": "loot",
+    "gearType": "head"
+  },
+  "chefs_leg_apron": {
+    "type": "loot",
+    "gearType": "legs"
+  },
+  "cutting_board": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "dull_knife": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "flippy_spatula": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "floras_silver_spoon": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "large_pot": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "meat_cleaver": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "non_slip_shoes": {
+    "type": "loot",
+    "gearType": "feet"
+  },
+  "oven_mittens": {
+    "type": "loot",
+    "gearType": "hands"
+  },
+  "recipe_book": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "sturdy_whisk": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "coral_cape": {
+    "type": "loot",
+    "gearType": "cape"
+  },
+  "adjustable_wrench": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "candlehat": {
+    "type": "loot",
+    "gearType": "head"
+  },
+  "crafting_boots": {
+    "type": "loot",
+    "gearType": "feet"
+  },
+  "crafting_guidebook": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "crafting_pants": {
+    "type": "loot",
+    "gearType": "legs"
+  },
+  "crafting_shirt": {
+    "type": "loot",
+    "gearType": "chest"
+  },
+  "grippy_gloves": {
+    "type": "loot",
+    "gearType": "hands"
+  },
+  "modified_platform_shoes": {
+    "type": "loot",
+    "gearType": "feet"
+  },
+  "protective_glasses": {
+    "type": "loot",
+    "gearType": "head"
+  },
+  "screwdriver": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "slipstick": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "angler_gloves": {
+    "type": "loot",
+    "gearType": "hands"
+  },
+  "breezy_shirt": {
+    "type": "loot",
+    "gearType": "chest"
+  },
+  "catch_bucket": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "cool_sunglasses": {
+    "type": "loot",
+    "gearType": "head"
+  },
+  "fishermans_hat": {
+    "type": "loot",
+    "gearType": "head"
+  },
+  "fishermans_trousers": {
+    "type": "loot",
+    "gearType": "legs"
+  },
+  "fishing_guidebook": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "squishy_flip_flops": {
+    "type": "loot",
+    "gearType": "feet"
+  },
+  "sturdy_fishing_rod_rest": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "wading_shoes": {
+    "type": "loot",
+    "gearType": "feet"
+  },
+  "big_basket": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "foraging_shirt": {
+    "type": "loot",
+    "gearType": "chest"
+  },
+  "foraging_shorts": {
+    "type": "loot",
+    "gearType": "legs"
+  },
+  "gardening_gloves": {
+    "type": "loot",
+    "gearType": "hands"
+  },
+  "halflings_feet_slippers": {
+    "type": "loot",
+    "gearType": "feet"
+  },
+  "hat_with_a_feather": {
+    "type": "loot",
+    "gearType": "head"
+  },
+  "leaf_cape": {
+    "type": "loot",
+    "gearType": "cape"
+  },
+  "long_spade": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "non_waterproof_boots": {
+    "type": "loot",
+    "gearType": "feet"
+  },
+  "pickers_gloves": {
+    "type": "loot",
+    "gearType": "hands"
+  },
+  "pointy_shears": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "waterproof_boots": {
+    "type": "loot",
+    "gearType": "feet"
+  },
+  "wilderness_guidebook": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "wilderness_pants": {
+    "type": "loot",
+    "gearType": "legs"
+  },
+  "wilderness_shirt": {
+    "type": "loot",
+    "gearType": "chest"
+  },
+  "camo_boots": {
+    "type": "loot",
+    "gearType": "feet"
+  },
+  "camo_face_paint": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "camo_pants": {
+    "type": "loot",
+    "gearType": "legs"
+  },
+  "camo_shirt": {
+    "type": "loot",
+    "gearType": "chest"
+  },
+  "duck_decoy": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "flashy_field_knife": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "hunting_bestiary": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "hunting_trip_pack": {
+    "type": "loot",
+    "gearType": "back"
+  },
+  "scent_masking_spray": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "skinny_field_knife": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "trappers_cape": {
+    "type": "loot",
+    "gearType": "cape"
+  },
+  "fingerpick": {
+    "type": "loot",
+    "gearType": "ring"
+  },
+  "hand_lantern": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "heavy_pick_handle": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "light_mining_shovel": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "miners_beard": {
+    "type": "loot",
+    "gearType": "neck"
+  },
+  "miners_magnet": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "miners_pants": {
+    "type": "loot",
+    "gearType": "legs"
+  },
+  "miners_shirt": {
+    "type": "loot",
+    "gearType": "chest"
+  },
+  "mining_cartpack": {
+    "type": "loot",
+    "gearType": "back"
+  },
+  "mining_helmet": {
+    "type": "loot",
+    "gearType": "head"
+  },
+  "shovel_axe": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "rusty_fishing_net": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "rusty_fishing_rod": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "rusty_hatchet": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "rusty_hunting_bow": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "rusty_pickaxe": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "rusty_sickle": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "blacksmithing_guidebook": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "fire_resistant_cloak": {
+    "type": "loot",
+    "gearType": "cape"
+  },
+  "forge_bellows": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "jarvonian_poker": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "jarvonian_smiths_hammer": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "meltdown_mask": {
+    "type": "loot",
+    "gearType": "head"
+  },
+  "metalworking_gloves": {
+    "type": "loot",
+    "gearType": "hands"
+  },
+  "smelting_goggles": {
+    "type": "loot",
+    "gearType": "head"
+  },
+  "smiths_apron": {
+    "type": "loot",
+    "gearType": "chest"
+  },
+  "smiths_pants": {
+    "type": "loot",
+    "gearType": "legs"
+  },
+  "steel_toe_boots": {
+    "type": "loot",
+    "gearType": "feet"
+  },
+  "wolf_jaw_tongs": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "gold_pan": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "northern_spices": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "rusty_diving_leggings": {
+    "type": "loot",
+    "gearType": "legs"
+  },
+  "shiny_spinner": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "clingy_measuring_tape": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "durable_fabric_cutting_mat": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "marking_chalk": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "never_ending_needlecase": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "pincushion_beret": {
+    "type": "loot",
+    "gearType": "head"
+  },
+  "practice_pins": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "precision_pins": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "safety_scissors": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "sewing_guidebook": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "silver_scissors": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "tailors_moccasins": {
+    "type": "loot",
+    "gearType": "feet"
+  },
+  "auto_adjusting_mandrel": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "dar_witts_monocle": {
+    "type": "loot",
+    "gearType": "head"
+  },
+  "dull_chisel": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "gem_tipped_tweezers": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "gemistry_guidebook": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "golden_chisel": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "handy_hand_file": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "magnifying_lens": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "pretty_pliers": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "rough_sandpaper": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "sharp_chisel": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "zip_pouch": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "foresters_boots": {
+    "type": "loot",
+    "gearType": "feet"
+  },
+  "foresters_flannel_shirt": {
+    "type": "loot",
+    "gearType": "chest"
+  },
+  "foresters_hat": {
+    "type": "loot",
+    "gearType": "head"
+  },
+  "foresters_pants": {
+    "type": "loot",
+    "gearType": "legs"
+  },
+  "heavy_axe_handle": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "log_basket": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "log_splitter": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "lumberjack_hat": {
+    "type": "loot",
+    "gearType": "head"
+  },
+  "lumberjack_pants": {
+    "type": "loot",
+    "gearType": "legs"
+  },
+  "lumberjack_sandals": {
+    "type": "loot",
+    "gearType": "feet"
+  },
+  "lumberjack_shirt": {
+    "type": "loot",
+    "gearType": "chest"
+  },
+  "woodcutting_guidebook": {
+    "type": "loot",
+    "gearType": "tool"
+  },
+  "amulet_of_bat": {
+    "type": "crafted",
+    "gearType": "neck"
+  },
+  "amulet_of_beaver": {
+    "type": "crafted",
+    "gearType": "neck"
+  },
+  "amulet_of_circular_root": {
+    "type": "crafted",
+    "gearType": "neck"
+  },
+  "amulet_of_cooling_ice": {
+    "type": "crafted",
+    "gearType": "neck"
+  },
+  "amulet_of_eel": {
+    "type": "crafted",
+    "gearType": "neck"
+  },
+  "amulet_of_finding": {
+    "type": "crafted",
+    "gearType": "neck"
+  },
+  "amulet_of_heron": {
+    "type": "crafted",
+    "gearType": "neck"
+  },
+  "amulet_of_lucky_rabbits_foot": {
+    "type": "crafted",
+    "gearType": "neck"
+  },
+  "amulet_of_measuring_spoon": {
+    "type": "crafted",
+    "gearType": "neck"
+  },
+  "amulet_of_pink_pearl": {
+    "type": "crafted",
+    "gearType": "neck"
+  },
+  "amulet_of_shark_tooth": {
+    "type": "crafted",
+    "gearType": "neck"
+  },
+  "amulet_of_shrimp": {
+    "type": "crafted",
+    "gearType": "neck"
+  },
+  "amulet_of_spider": {
+    "type": "crafted",
+    "gearType": "neck"
+  },
+  "amulet_of_the_animal_kingdom": {
+    "type": "crafted",
+    "gearType": "neck"
+  },
+  "jarvonian_flower_necklace": {
+    "type": "crafted",
+    "gearType": "neck"
+  },
+  "wraithwater_flower_necklace": {
+    "type": "crafted",
+    "gearType": "neck"
+  },
+  "aerofibril_plastron": {
+    "type": "crafted",
+    "gearType": "chest"
+  },
+  "apprentice_vest": {
+    "type": "crafted",
+    "gearType": "chest"
+  },
+  "elderhide_tunic": {
+    "type": "crafted",
+    "gearType": "chest"
+  },
+  "grassknot_tunic": {
+    "type": "crafted",
+    "gearType": "chest"
+  },
+  "hydrilium_diving_torso": {
+    "type": "crafted",
+    "gearType": "chest"
+  },
+  "journeyman_vest": {
+    "type": "crafted",
+    "gearType": "chest"
+  },
+  "kelp_diving_shirt": {
+    "type": "crafted",
+    "gearType": "chest"
+  },
+  "rootweave_tunic": {
+    "type": "crafted",
+    "gearType": "chest"
+  },
+  "shadowquill_plastron": {
+    "type": "crafted",
+    "gearType": "chest"
+  },
+  "spectral_vest": {
+    "type": "crafted",
+    "gearType": "chest"
+  },
+  "spikescale_tunic": {
+    "type": "crafted",
+    "gearType": "chest"
+  },
+  "tatty_garb": {
+    "type": "crafted",
+    "gearType": "chest"
+  },
+  "bronze_chisel": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "spectral_chisel": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "topaz_tipped_chisel": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "hydrilium_diving_helm": {
+    "type": "crafted",
+    "gearType": "head"
+  },
+  "hydrilium_diving_leggings": {
+    "type": "crafted",
+    "gearType": "legs"
+  },
+  "kelp_diving_mask": {
+    "type": "crafted",
+    "gearType": "head"
+  },
+  "kelp_diving_pants": {
+    "type": "crafted",
+    "gearType": "legs"
+  },
+  "basic_fishing_net": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "coral_fishing_spear": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "fishing_spear": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "large_fishing_net": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "lobster_pot": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "oak_fishing_rod": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "pine_fishing_rod": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "spectral_fishing_cagespear": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "spectral_fishing_rod": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "willow_fishing_rod": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "wooden_fishing_pole": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "aerofibril_bracers": {
+    "type": "crafted",
+    "gearType": "hands"
+  },
+  "apprentice_handwear": {
+    "type": "crafted",
+    "gearType": "hands"
+  },
+  "elderhide_mitts": {
+    "type": "crafted",
+    "gearType": "hands"
+  },
+  "grassknot_mitts": {
+    "type": "crafted",
+    "gearType": "hands"
+  },
+  "journeyman_handwear": {
+    "type": "crafted",
+    "gearType": "hands"
+  },
+  "rootweave_mitts": {
+    "type": "crafted",
+    "gearType": "hands"
+  },
+  "shadowquill_bracers": {
+    "type": "crafted",
+    "gearType": "hands"
+  },
+  "spectral_handwear": {
+    "type": "crafted",
+    "gearType": "hands"
+  },
+  "spikescale_mitts": {
+    "type": "crafted",
+    "gearType": "hands"
+  },
+  "tatty_handwraps": {
+    "type": "crafted",
+    "gearType": "hands"
+  },
+  "bronze_hammer": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "spectral_hammer": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "tarsilium_hammer": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "adamant_hatchet": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "basic_hatchet": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "bronze_hatchet": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "copper_hatchet": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "farganite_hatchet": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "hydrilium_hatchet": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "iron_hatchet": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "spectral_hatchet": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "steel_hatchet": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "tarsilium_hatchet": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "violite_hatchet": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "bamboo_hunting_bow": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "birch_hunting_bow": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "oak_hunting_bow": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "spectral_hunting_bow": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "bronze_pan": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "jade_tipped_steel_pan": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "spectral_pan": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "aerofibril_shorts": {
+    "type": "crafted",
+    "gearType": "legs"
+  },
+  "apprentice_breeches": {
+    "type": "crafted",
+    "gearType": "legs"
+  },
+  "elderhide_chaps": {
+    "type": "crafted",
+    "gearType": "legs"
+  },
+  "extra_crafty_pants": {
+    "type": "crafted",
+    "gearType": "legs"
+  },
+  "grassknot_chaps": {
+    "type": "crafted",
+    "gearType": "legs"
+  },
+  "journeyman_breeches": {
+    "type": "crafted",
+    "gearType": "legs"
+  },
+  "rootweave_chaps": {
+    "type": "crafted",
+    "gearType": "legs"
+  },
+  "shadowquill_shorts": {
+    "type": "crafted",
+    "gearType": "legs"
+  },
+  "spectral_breeches": {
+    "type": "crafted",
+    "gearType": "legs"
+  },
+  "spikescale_chaps": {
+    "type": "crafted",
+    "gearType": "legs"
+  },
+  "tatty_skirt": {
+    "type": "crafted",
+    "gearType": "legs"
+  },
+  "adamant_pickaxe": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "basic_pickaxe": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "bronze_pickaxe": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "copper_pickaxe": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "farganite_pickaxe": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "hydrilium_pickaxe": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "iron_pickaxe": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "spectral_pickaxe": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "steel_pickaxe": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "tarsilium_pickaxe": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "violite_pickaxe": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "gold_ethernite_ring": {
+    "type": "crafted",
+    "gearType": "ring"
+  },
+  "gold_jade_ring": {
+    "type": "crafted",
+    "gearType": "ring"
+  },
+  "gold_opal_ring": {
+    "type": "crafted",
+    "gearType": "ring"
+  },
+  "gold_ring": {
+    "type": "crafted",
+    "gearType": "ring"
+  },
+  "gold_ruby_ring": {
+    "type": "crafted",
+    "gearType": "ring"
+  },
+  "gold_star_pearl_ring": {
+    "type": "crafted",
+    "gearType": "ring"
+  },
+  "gold_sun_stone_ring": {
+    "type": "crafted",
+    "gearType": "ring"
+  },
+  "gold_topaz_ring": {
+    "type": "crafted",
+    "gearType": "ring"
+  },
+  "gold_wrentmarine_ring": {
+    "type": "crafted",
+    "gearType": "ring"
+  },
+  "silver_ethernite_ring": {
+    "type": "crafted",
+    "gearType": "ring"
+  },
+  "silver_jade_ring": {
+    "type": "crafted",
+    "gearType": "ring"
+  },
+  "silver_opal_ring": {
+    "type": "crafted",
+    "gearType": "ring"
+  },
+  "silver_ring": {
+    "type": "crafted",
+    "gearType": "ring"
+  },
+  "silver_ruby_ring": {
+    "type": "crafted",
+    "gearType": "ring"
+  },
+  "silver_star_pearl_ring": {
+    "type": "crafted",
+    "gearType": "ring"
+  },
+  "silver_sun_stone_ring": {
+    "type": "crafted",
+    "gearType": "ring"
+  },
+  "silver_topaz_ring": {
+    "type": "crafted",
+    "gearType": "ring"
+  },
+  "silver_wrentmarine_ring": {
+    "type": "crafted",
+    "gearType": "ring"
+  },
+  "bronze_saw": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "spectral_saw": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "tarsilium_saw": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "bronze_shield": {
+    "type": "crafted",
+    "gearType": "secondary"
+  },
+  "copper_shield": {
+    "type": "crafted",
+    "gearType": "secondary"
+  },
+  "farganite_shield": {
+    "type": "crafted",
+    "gearType": "secondary"
+  },
+  "gem_shield": {
+    "type": "crafted",
+    "gearType": "secondary"
+  },
+  "iron_shield": {
+    "type": "crafted",
+    "gearType": "secondary"
+  },
+  "steel_shield": {
+    "type": "crafted",
+    "gearType": "secondary"
+  },
+  "tarsilium_shield": {
+    "type": "crafted",
+    "gearType": "secondary"
+  },
+  "wooden_shield": {
+    "type": "crafted",
+    "gearType": "secondary"
+  },
+  "basic_sickle": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "copper_sickle": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "hydrilium_sickle": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "iron_sickle": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "spectral_sickle": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "steel_sickle": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "violite_sickle": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "bamboo_toolbox": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "pine_toolbox": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "bronze_sword": {
+    "type": "crafted",
+    "gearType": "primary"
+  },
+  "copper_sword": {
+    "type": "crafted",
+    "gearType": "primary"
+  },
+  "farganite_sword": {
+    "type": "crafted",
+    "gearType": "primary"
+  },
+  "iron_sword": {
+    "type": "crafted",
+    "gearType": "primary"
+  },
+  "steel_sword": {
+    "type": "crafted",
+    "gearType": "primary"
+  },
+  "tarsilium_sword": {
+    "type": "crafted",
+    "gearType": "primary"
+  },
+  "wooden_sword": {
+    "type": "crafted",
+    "gearType": "primary"
+  },
+  "bronze_wrench": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "hydrilium_wrench": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "spectral_wrench": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "bag_of_rocks": {
+    "type": "crafted",
+    "gearType": "back"
+  },
+  "comfy_fishing_chair": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "jellyfishing_net": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "spectral_sewing_needle": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "triple_rod_rest": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "bright_camo_face_paint": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "gem_tipped_pliers": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "golden_cutting_mat": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "golden_sewing_needle": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "hydrilium_log_splitter": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "hydrilium_magnet": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "iron_chefs_hat": {
+    "type": "crafted",
+    "gearType": "head"
+  },
+  "mangrove_basket": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "reinforced_bellows": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "silver_sewing_needle": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "tarsilium_toed_boots": {
+    "type": "crafted",
+    "gearType": "feet"
+  },
+  "tinted_woodworking_glasses": {
+    "type": "crafted",
+    "gearType": "head"
+  },
+  "wanderlust_walking_stick": {
+    "type": "crafted",
+    "gearType": "tool"
+  },
+  "camel": {
+    "type": "pet",
+    "gearType": null
+  },
+  "chicken": {
+    "type": "pet",
+    "gearType": null
+  },
+  "dolphin": {
+    "type": "pet",
+    "gearType": null
+  },
+  "mummy": {
+    "type": "pet",
+    "gearType": null
+  },
+  "reindeer": {
+    "type": "pet",
+    "gearType": null
+  },
+  "tiger": {
+    "type": "pet",
+    "gearType": null
+  },
+  "tortoise": {
+    "type": "pet",
+    "gearType": null
+  }
+}

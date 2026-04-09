@@ -1,19 +1,19 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`WsButton > snapshots > icon and text button 1`] = `
-"<button data-v-78380267="" class="button">
-  <div data-v-78380267="" data-testid="ws-icon" data-icon-path="assets/icons/save.png" data-size="md">Icon</div> Save
+"<button data-v-2856bc65="" class="button" type="button" aria-label="Save">
+  <div data-v-2856bc65="" data-testid="ws-icon" data-icon-path="assets/icons/save.png" data-size="md">Icon</div>Save
 </button>"
 `;
 
 exports[`WsButton > snapshots > icon only button 1`] = `
-"<button data-v-78380267="" class="button">
-  <div data-v-78380267="" data-testid="ws-icon" data-icon-path="assets/icons/menu.png" data-size="sm">Icon</div>
+"<button data-v-2856bc65="" class="button" type="button">
+  <div data-v-2856bc65="" data-testid="ws-icon" data-icon-path="assets/icons/menu.png" data-size="sm">Icon</div>
 </button>"
 `;
 
 exports[`WsButton > snapshots > text only button 1`] = `
-"<button data-v-78380267="" class="button">
-  <!--v-if--> Save
+"<button data-v-2856bc65="" class="button" type="button" aria-label="Save">
+  <!--v-if-->Save
 </button>"
 `;

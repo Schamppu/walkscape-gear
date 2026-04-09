@@ -18,8 +18,13 @@ import fixtureData from "../../fixtures/characterImport.json";
 const emptyEntry = (): OwnedItemEntry => ({
   owned: false,
   hidden: false,
-  quality: "common",
-  quality2: null,
+  quantity: 0,
+  craftedTier: null,
+  craftedTier2: null,
+  consumableCommon: false,
+  consumableFine: false,
+  petLevel: null,
+  petRarity: null,
 });
 
 /**
@@ -172,11 +177,11 @@ describe("Character Import Functionality", () => {
       false,
     );
 
-    // amulet_of_the_animal_kingdom_rare is in gear → quality should be "rare"
-    expect(result["amulet_of_the_animal_kingdom"]?.quality).toBe("rare");
+    // amulet_of_the_animal_kingdom_rare is in gear → craftedTier should be "rare"
+    expect(result["amulet_of_the_animal_kingdom"]?.craftedTier).toBe("rare");
 
-    // farganite_pickaxe_ethereal is in bank → quality should be "ethereal"
-    expect(result["farganite_pickaxe"]?.quality).toBe("ethereal");
+    // farganite_pickaxe_ethereal is in bank → craftedTier should be "ethereal"
+    expect(result["farganite_pickaxe"]?.craftedTier).toBe("ethereal");
   });
 
   it("should reset owned status of items not present in the import when reset=true", () => {
@@ -189,10 +194,8 @@ describe("Character Import Functionality", () => {
 
     const currentOwned: Record<string, OwnedItemEntry> = {
       artificial_snowflake: {
+        ...emptyEntry(),
         owned: true,
-        hidden: false,
-        quality: "common",
-        quality2: null,
       },
     };
 
@@ -210,10 +213,9 @@ describe("Character Import Functionality", () => {
 
     const currentOwned: Record<string, OwnedItemEntry> = {
       artificial_snowflake: {
+        ...emptyEntry(),
         owned: true,
         hidden: true,
-        quality: "common",
-        quality2: null,
       },
     };
 
@@ -248,8 +250,8 @@ describe("Character Import Functionality", () => {
 
     // pets.pet: reindeer level=3, species is single word → common
     expect(result["reindeer"]?.owned).toBe(true);
-    expect(result["reindeer"]?.quality).toBe("3");
-    expect(result["reindeer"]?.quality2).toBe("common");
+    expect(result["reindeer"]?.petLevel).toBe(3);
+    expect(result["reindeer"]?.petRarity).toBe("common");
 
     // pets.egg: lovestruck_chicken level=0, variant species → rare; baseId=chicken
     // available_pets also has chicken level=4 common which should win by level
@@ -266,13 +268,13 @@ describe("Character Import Functionality", () => {
 
     // camel: available_pets level=2, common
     expect(result["camel"]?.owned).toBe(true);
-    expect(result["camel"]?.quality).toBe("2");
-    expect(result["camel"]?.quality2).toBe("common");
+    expect(result["camel"]?.petLevel).toBe(2);
+    expect(result["camel"]?.petRarity).toBe("common");
 
     // tiger: available_eggs level=0, common
     expect(result["tiger"]?.owned).toBe(true);
-    expect(result["tiger"]?.quality).toBe("0");
-    expect(result["tiger"]?.quality2).toBe("common");
+    expect(result["tiger"]?.petLevel).toBe(0);
+    expect(result["tiger"]?.petRarity).toBe("common");
   });
 
   it("should keep only the highest-level instance when duplicates exist", () => {
@@ -283,8 +285,8 @@ describe("Character Import Functionality", () => {
     // Fixture has two dolphins: level=2 and level=3 (both common)
     const result = parseOwnedItems(fixtureData, {}, currentOwned, fixturePetsMap, false);
 
-    expect(result["dolphin"]?.quality).toBe("3");
-    expect(result["dolphin"]?.quality2).toBe("common");
+    expect(result["dolphin"]?.petLevel).toBe(3);
+    expect(result["dolphin"]?.petRarity).toBe("common");
   });
 
   it("should detect rare quality for variant species (prefix_species pattern)", () => {
@@ -295,12 +297,12 @@ describe("Character Import Functionality", () => {
 
     // precious_tortoise (level=4, rare) beats tortoise (level=1, common)
     const result = parseOwnedItems(fixtureData, {}, currentOwned, fixturePetsMap, false);
-    expect(result["tortoise"]?.quality).toBe("4");
-    expect(result["tortoise"]?.quality2).toBe("rare");
+    expect(result["tortoise"]?.petLevel).toBe(4);
+    expect(result["tortoise"]?.petRarity).toBe("rare");
 
     // chicken (level=4, common) beats lovestruck_chicken (level=0, rare)
-    expect(result["chicken"]?.quality).toBe("4");
-    expect(result["chicken"]?.quality2).toBe("common");
+    expect(result["chicken"]?.petLevel).toBe(4);
+    expect(result["chicken"]?.petRarity).toBe("common");
   });
 
   it("should prefer the highest level across different sources (cross-source priority)", () => {
@@ -310,7 +312,7 @@ describe("Character Import Functionality", () => {
 
     // reindeer: pets.pet level=3 vs available_eggs level=0 → level=3 wins
     const result = parseOwnedItems(fixtureData, {}, currentOwned, fixturePetsMap, false);
-    expect(result["reindeer"]?.quality).toBe("3");
+    expect(result["reindeer"]?.petLevel).toBe(3);
   });
 
   it("should skip pet species not present in petsMap", () => {
@@ -325,7 +327,7 @@ describe("Character Import Functionality", () => {
 
   it("should preserve hidden flag for pets when reset=true", () => {
     const currentOwned: Record<string, OwnedItemEntry> = {
-      reindeer: { owned: true, hidden: true, quality: "1", quality2: "common" },
+      reindeer: { ...emptyEntry(), owned: true, hidden: true, petLevel: 1, petRarity: "common" },
     };
 
     const result = parseOwnedItems(fixtureData, {}, currentOwned, fixturePetsMap, true);

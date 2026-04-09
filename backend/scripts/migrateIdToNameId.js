@@ -1,6 +1,12 @@
-import { PrismaClient } from "../src/generated/prisma/index.js";
+import "dotenv/config";
+import { PrismaClient } from "../src/generated/prisma/client.js";
 import { itemService } from "../src/services/index.js";
-const prisma = new PrismaClient();
+import { PrismaPg } from "@prisma/adapter-pg";
+
+const adapter = new PrismaPg({
+  connectionString: process.env.DATABASE_URL,
+});
+export const prisma = new PrismaClient({ adapter });
 
 // Helper function to add delay between requests
 function delay(ms) {

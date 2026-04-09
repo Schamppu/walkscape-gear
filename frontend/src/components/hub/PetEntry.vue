@@ -40,8 +40,8 @@ onMounted(() => {
   } else {
     isOwned.value = entry.owned;
     isHidden.value = entry.hidden;
-    level.value = entry.quality ? Number(entry.quality) : 0;
-    rarity.value = entry.quality2 ?? normal;
+    level.value = entry.petLevel ?? 0;
+    rarity.value = entry.petRarity ?? normal;
   }
 });
 
@@ -50,8 +50,8 @@ function emitChange(overrides = {}) {
     itemId: props.pet.id,
     owned: isOwned.value,
     hidden: isHidden.value,
-    quality: `${level.value}`,
-    quality2: rarity.value,
+    petLevel: level.value,
+    petRarity: rarity.value,
     ...overrides,
   });
 }
