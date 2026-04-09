@@ -397,6 +397,18 @@ export function parseOwnedItems(
     groups[baseId].totalCount += count;
   }
 
+  const emptyEntry = (hidden = false): OwnedItemEntry => ({
+    owned: false,
+    hidden,
+    quantity: 0,
+    craftedTier: null,
+    craftedTier2: null,
+    consumableCommon: false,
+    consumableFine: false,
+    petLevel: null,
+    petRarity: null,
+  });
+
   // Start from a shallow copy of the current owned items
   const result: Record<string, OwnedItemEntry> = { ...currentOwnedItems };
 
@@ -405,44 +417,46 @@ export function parseOwnedItems(
     for (const id of Object.keys(result)) {
       const isPet = id in petsMap;
       result[id] = {
-        ...result[id],
-        owned: false,
-        quality: isPet ? "0" : "common",
-        quality2: isPet ? "common" : null,
+        ...emptyEntry(result[id].hidden),
+        ...(isPet ? { petLevel: 0, petRarity: "common" } : {}),
       };
     }
   }
 
-  // Apply resolved qualities for each encountered item
-  for (const [baseId, { qualities }] of Object.entries(groups)) {
+  // Apply resolved data for each encountered item
+  for (const [baseId, { qualities, totalCount }] of Object.entries(groups)) {
     const itemData = knownItems[baseId];
     if (!itemData) continue;
 
     const hidden = currentOwnedItems[baseId]?.hidden ?? false;
 
     if (itemData.type === "consumable") {
-      const quality = qualities.includes("common") ? "consumableCommon" : null;
-      const quality2 = qualities.includes("consumableFine")
-        ? "consumableFine"
-        : null;
+      const hasCommon = qualities.includes("common");
+      const hasFine = qualities.includes("consumableFine");
       result[baseId] = {
-        owned: quality !== null || quality2 !== null,
-        hidden,
-        quality,
-        quality2,
+        ...emptyEntry(hidden),
+        owned: hasCommon || hasFine,
+        quantity: totalCount,
+        consumableCommon: hasCommon,
+        consumableFine: hasFine,
       };
     } else if (itemData.type === "crafted") {
       const { quality, quality2 } = resolveQualities(
         qualities,
         itemData.gearType === "ring",
       );
-      result[baseId] = { owned: true, hidden, quality, quality2 };
+      result[baseId] = {
+        ...emptyEntry(hidden),
+        owned: true,
+        quantity: totalCount,
+        craftedTier: quality,
+        craftedTier2: quality2,
+      };
     } else {
       result[baseId] = {
+        ...emptyEntry(hidden),
         owned: true,
-        hidden,
-        quality: itemData.quality ?? "common",
-        quality2: null,
+        quantity: totalCount,
       };
     }
   }
@@ -458,10 +472,11 @@ export function parseOwnedItems(
     if (!(baseId in petsMap)) continue;
     const hidden = currentOwnedItems[baseId]?.hidden ?? false;
     result[baseId] = {
+      ...emptyEntry(hidden),
       owned: true,
-      hidden,
-      quality: String(level),
-      quality2: rarity,
+      quantity: 1,
+      petLevel: level,
+      petRarity: rarity,
     };
   }
 

@@ -58,8 +58,13 @@ const minimalItems: Record<string, { type: string; quality?: string; gearType?: 
 const emptyOwnedEntry = (): OwnedItemEntry => ({
   owned: false,
   hidden: false,
-  quality: "common",
-  quality2: null,
+  quantity: 0,
+  craftedTier: null,
+  craftedTier2: null,
+  consumableCommon: false,
+  consumableFine: false,
+  petLevel: null,
+  petRarity: null,
 });
 
 /** Populates player and items stores with enough data to run the composable. */
@@ -173,8 +178,8 @@ describe("useCharacterImport", () => {
       const { importCharacter } = useCharacterImport();
       importCharacter(JSON.stringify(fixtureData), false);
 
-      expect(itemsStore.ownedItems["amulet_of_the_animal_kingdom"]?.quality).toBe("rare");
-      expect(itemsStore.ownedItems["farganite_pickaxe"]?.quality).toBe("ethereal");
+      expect(itemsStore.ownedItems["amulet_of_the_animal_kingdom"]?.craftedTier).toBe("rare");
+      expect(itemsStore.ownedItems["farganite_pickaxe"]?.craftedTier).toBe("ethereal");
     });
 
     it("shows a success notification listing updated sections", () => {
