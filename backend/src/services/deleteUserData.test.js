@@ -43,7 +43,7 @@ const mockPrisma = vi.hoisted(() => ({
   $transaction: vi.fn().mockResolvedValue(undefined),
 }));
 
-vi.mock("../generated/prisma/client.js", () => ({
+vi.mock("../generated/prisma/index.js", () => ({
   // Must be a regular function (not arrow) so `new PrismaClient()` works.
   // Returning an object from a constructor returns that object instead of `this`.
   PrismaClient: vi.fn(function () {
