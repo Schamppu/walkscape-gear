@@ -39,8 +39,19 @@ const adapter = new PrismaPg({
 });
 export const prisma = new PrismaClient({ adapter });
 
+// Items that were renamed since the last release.
+// Old DB rows reference the old name; the snapshot uses the new name.
+const RENAMED_ITEMS = {
+  camouflage_cape: "leaf_cape",
+  simple_ruler: "flimsy_ruler",
+};
+
+// Items that were split/removed — skip these rows, the new items exist separately.
+const SKIP_ITEMS = new Set(["map_of_gdte"]);
+
 function migrateRow(row) {
-  const itemInfo = itemTypes[row.itemId];
+  const renamed = RENAMED_ITEMS[row.itemId];
+  const itemInfo = itemTypes[renamed ?? row.itemId];
   const type = itemInfo?.type ?? "loot"; // fallback for unknown items
 
   const update = {
