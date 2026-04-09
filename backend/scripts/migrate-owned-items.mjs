@@ -130,9 +130,11 @@ async function main() {
     const update = migrateRow(row);
 
     if (DRY_RUN) {
-      const itemInfo = itemTypes[row.itemId];
+      const renamed = RENAMED_ITEMS[row.itemId];
+      const itemInfo = itemTypes[renamed ?? row.itemId];
+      const type = itemInfo?.type ?? "loot"; // fallback for unknown items
       console.log(
-        `  ${row.itemId} (${itemInfo?.type ?? "unknown"})`,
+        `  ${row.itemId} (${type})`,
         `q=${row.quality} q2=${row.quality2}`,
         `->`,
         JSON.stringify(update),
