@@ -215,7 +215,7 @@ export const useGearStore = defineStore("gearStore", {
           const loadFn = isPet ? getPet : getItem;
           const { data } = await loadFn({ id });
           const icon = isPet
-            ? getPetIcon(data as unknown as Parameters<typeof getPetIcon>[0], quality as unknown as number)
+            ? getPetIcon(data as unknown as Parameters<typeof getPetIcon>[0], Number(quality) || 0)
             : (data as ItemDetail).icon;
 
           if (data) {
@@ -261,7 +261,7 @@ export const useGearStore = defineStore("gearStore", {
         const loadFn = isPet ? getPet : getItem;
         const { data } = await loadFn({ id });
         const icon = isPet
-          ? getPetIcon(data as unknown as Parameters<typeof getPetIcon>[0], quality as unknown as number)
+          ? getPetIcon(data as unknown as Parameters<typeof getPetIcon>[0], Number(quality) || 0)
           : (data as ItemDetail).icon;
 
         if (data) {
