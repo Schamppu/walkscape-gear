@@ -53,8 +53,13 @@ export type ItemCatalogEntry = {
 export type OwnedItemEntry = {
   owned: boolean;
   hidden: boolean;
-  quality: string | null;
-  quality2: string | null;
+  quantity: number;
+  craftedTier: string | null;
+  craftedTier2: string | null;
+  consumableCommon: boolean;
+  consumableFine: boolean;
+  petLevel: number | null;
+  petRarity: string | null;
 };
 
 /**
