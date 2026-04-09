@@ -35,12 +35,17 @@ model PlayerStat {
 }
 
 model OwnedItem {
-  userUuid String
-  itemId   String
-  owned    Boolean
-  hidden   Boolean @default(false)
-  quality  String?
-  quality2 String?
+  userUuid         String
+  itemId           String
+  owned            Boolean
+  hidden           Boolean @default(false)
+  quantity         Int     @default(0)
+  craftedTier      String?
+  craftedTier2     String?
+  consumableCommon Boolean @default(false)
+  consumableFine   Boolean @default(false)
+  petLevel         Int?
+  petRarity        String?
 
   user User @relation(fields: [userUuid], references: [userUuid])
 
