@@ -35,8 +35,13 @@ export type ToggleItemPayload = {
   itemId: string;
   owned?: boolean;
   hidden?: boolean;
-  quality?: string | null;
-  quality2?: string | null;
+  quantity?: number;
+  craftedTier?: string | null;
+  craftedTier2?: string | null;
+  consumableCommon?: boolean;
+  consumableFine?: boolean;
+  petLevel?: number | null;
+  petRarity?: string | null;
 };
 
 export const useItemsStore = defineStore("itemStore", {
@@ -120,11 +125,27 @@ export const useItemsStore = defineStore("itemStore", {
       itemId,
       owned = true,
       hidden = false,
-      quality = null,
-      quality2 = null,
+      quantity = 0,
+      craftedTier = null,
+      craftedTier2 = null,
+      consumableCommon = false,
+      consumableFine = false,
+      petLevel = null,
+      petRarity = null,
     }: ToggleItemPayload): void {
-      this.ownedItems[itemId] = { owned, hidden, quality, quality2 };
-      this.changedOwnedItems[itemId] = { owned, hidden, quality, quality2 };
+      const entry = {
+        owned,
+        hidden,
+        quantity,
+        craftedTier,
+        craftedTier2,
+        consumableCommon,
+        consumableFine,
+        petLevel,
+        petRarity,
+      };
+      this.ownedItems[itemId] = entry;
+      this.changedOwnedItems[itemId] = entry;
       this.scheduleOwnedItemsFlush();
     },
     async flushChangedOwnedItems(): Promise<void> {

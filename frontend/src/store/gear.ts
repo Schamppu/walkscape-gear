@@ -142,10 +142,23 @@ export const useGearStore = defineStore("gearStore", {
           ? itemsStore.allGearItems[id].quality
           : "common";
       const entry = itemsStore.ownedItems[id];
-      let quality = "common";
-      if (entry.quality) quality = entry.quality;
-      if (q2 && entry.quality2) quality = entry.quality2;
-      return quality;
+      const itemData = itemsStore.allGearItems[id];
+      const type = itemData?.type;
+
+      if (type === "crafted") {
+        if (q2 && entry.craftedTier2) return entry.craftedTier2;
+        return entry.craftedTier ?? itemData?.quality ?? "common";
+      }
+      if (type === "consumable") {
+        if (entry.consumableFine) return "consumableFine";
+        if (entry.consumableCommon) return "consumableCommon";
+        return "consumableCommon";
+      }
+      if (id in itemsStore.petsMap) {
+        return String(entry.petLevel ?? 0);
+      }
+      // loot / other — quality is static from catalog
+      return itemData?.quality ?? "common";
     },
 
     _getCacheKey(id: string, quality: string | null): string {
