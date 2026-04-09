@@ -15,6 +15,7 @@
   "author": "Juhana Autti",
   "license": "ISC",
   "dependencies": {
+    "@prisma/adapter-pg": "^7.7.0",
     "@prisma/client": "^7.7.0",
     "axios": "^1.9.0",
     "cors": "^2.8.5",
