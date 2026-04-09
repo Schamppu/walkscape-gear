@@ -25,14 +25,8 @@ const isOpen = ref(false);
 function updateOwnedFromStore() {
   const entry = itemsStore.ownedItems[props.item.id];
   isEmbargo.value = ctx.embargoedItems.value.has(props.item.id);
-  normalOwned.value = !!(
-    entry &&
-    (entry.quality === normal || entry.quality2 === normal)
-  );
-  fineOwned.value = !!(
-    entry &&
-    (entry.quality === fine || entry.quality2 === fine)
-  );
+  normalOwned.value = !!(entry && entry.consumableCommon);
+  fineOwned.value = !!(entry && entry.consumableFine);
   isHidden.value = entry?.hidden ?? false;
 }
 
@@ -47,26 +41,12 @@ watch(
 );
 
 watch([normalOwned, fineOwned, isHidden], () => {
-  let owned = normalOwned.value || fineOwned.value;
-  let hidden = isHidden.value;
-  let quality = null;
-  let quality2 = null;
-  if (owned) {
-    if (normalOwned.value && fineOwned.value) {
-      quality = normal;
-      quality2 = fine;
-    } else if (normalOwned.value) {
-      quality = normal;
-    } else if (fineOwned.value) {
-      quality = fine;
-    }
-  }
   emit("change", {
     itemId: props.item.id,
-    owned,
-    hidden,
-    quality,
-    quality2,
+    owned: normalOwned.value || fineOwned.value,
+    hidden: isHidden.value,
+    consumableCommon: normalOwned.value,
+    consumableFine: fineOwned.value,
   });
 });
 
@@ -154,6 +134,7 @@ const hideEmbargo = computed(() => {
         :quality="fine"
         show-quality-border
         hide-keywords
+        hide-wiki-button
       />
     </section>
   </section>

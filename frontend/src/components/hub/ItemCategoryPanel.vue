@@ -54,26 +54,21 @@ const toggleAllConsumables = (e) => {
     const newSet = new Set();
     items.forEach((item) => {
       newSet.add(item.id);
-      const data = {
+      itemsStore.toggleItem({
         itemId: item.id,
         owned: true,
         hidden: false,
-        quality: consumableQualityOptions[0].value,
-        quality2: null,
-      };
-      itemsStore.toggleItem(data);
+        consumableCommon: true,
+      });
     });
     selectedItems.value = newSet;
   } else {
     items.forEach((item) => {
-      const data = {
+      itemsStore.toggleItem({
         itemId: item.id,
         owned: false,
         hidden: false,
-        quality: null,
-        quality2: null,
-      };
-      itemsStore.toggleItem(data);
+      });
     });
     selectedItems.value = new Set();
   }
@@ -85,27 +80,21 @@ const toggleAll = (e) => {
     items.forEach((item) => {
       if (!ctx.embargoedItems.value.has(item.id)) {
         newSet.add(item.id);
-        const data = {
+        itemsStore.toggleItem({
           itemId: item.id,
           owned: true,
           hidden: false,
-          quality: item.quality,
-          quality2: item.quality2,
-        };
-        itemsStore.toggleItem(data);
+        });
       }
     });
     selectedItems.value = newSet;
   } else {
     items.forEach((item) => {
-      const data = {
+      itemsStore.toggleItem({
         itemId: item.id,
         owned: false,
         hidden: false,
-        quality: item.quality,
-        quality2: item.quality2,
-      };
-      itemsStore.toggleItem(data);
+      });
     });
     selectedItems.value = new Set();
   }

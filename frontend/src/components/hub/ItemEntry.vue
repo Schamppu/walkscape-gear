@@ -43,10 +43,10 @@ onMounted(() => {
     isOwned.value = entry.owned;
     isHidden.value = entry.hidden;
     quality.value = isCrafted
-      ? entry.quality
+      ? (entry.craftedTier ?? defaultQuality)
       : (props.item?.quality ?? defaultQuality);
     quality2.value =
-      props.qualities < 2 ? null : (entry.quality2 ?? defaultQuality);
+      props.qualities < 2 ? null : (entry.craftedTier2 ?? defaultQuality);
   }
 });
 
@@ -75,8 +75,8 @@ function emitChange(overrides = {}) {
     itemId: props.item.id,
     owned: isOwned.value,
     hidden: isHidden.value,
-    quality: quality.value,
-    quality2: quality2.value,
+    craftedTier: quality.value,
+    craftedTier2: quality2.value,
     ...overrides,
   });
 }
@@ -191,6 +191,7 @@ const toggleChecked = (e) => {
         :quality="quality2"
         show-quality-border
         hide-keywords
+        hide-wiki-button
       />
       <abilities-display
         v-if="props.item.abilities"
