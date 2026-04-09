@@ -85,21 +85,29 @@ async function seedTestData(userUuid) {
   const itemCategories = await itemService.getCategorizedItems();
   const items = itemCategories.flatMap(({ categories }) => {
     return categories.flatMap(({ items, qualities }) => {
-      return items.map(({ id, quality: itemQuality, consumableType }) => {
-        const defaultQuality = !consumableType
-          ? itemQuality
-          : "consumableCommon";
-
-        const quality = qualities ? "legendary" : defaultQuality;
-        const quality2 = qualities && qualities === 2 ? "epic" : "common";
-
-        return {
+      return items.map(({ id, quality: itemQuality, consumableType, type }) => {
+        const entry = {
           itemId: id,
           owned: true,
           hidden: false,
-          quality,
-          quality2,
+          quantity: 1,
+          craftedTier: null,
+          craftedTier2: null,
+          consumableCommon: false,
+          consumableFine: false,
+          petLevel: null,
+          petRarity: null,
         };
+
+        if (type === "consumable") {
+          entry.consumableCommon = true;
+        } else if (type === "crafted") {
+          entry.craftedTier = "legendary";
+          entry.craftedTier2 = qualities === 2 ? "epic" : null;
+          entry.quantity = qualities === 2 ? 2 : 1;
+        }
+
+        return entry;
       });
     });
   });

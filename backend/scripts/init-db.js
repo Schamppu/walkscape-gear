@@ -6,4 +6,5 @@ if (process.env.NODE_ENV === "development") {
   });
 } else {
   execSync("npx prisma migrate deploy", { stdio: "inherit" });
+  execSync("npx prisma generate", { stdio: "inherit" });
 }
