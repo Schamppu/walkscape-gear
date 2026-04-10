@@ -35,6 +35,14 @@ export const tokenValues: TokenValuesMap = {
     common: 20,
     fine: 100,
   },
+  halfmaw_scales: {
+    common: 1,
+    fine: 5,
+  },
+  halfmaw_teeth: {
+    common: 3,
+    fine: 15,
+  },
 };
 
 export default tokenValues;
