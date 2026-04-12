@@ -71,7 +71,7 @@ export interface IGearStore {
   _setGearSlotDirect(slot: string, item: unknown): void;
   _setAllGearSlotsDirect(slots: GearSlots): void;
   _equipMultipleDirect(gearSetData: GearSlots): Promise<void>;
-  _processGearSetData(gearSetData: GearSetMapping): Promise<GearSlots>;
+  _processGearSetData(gearSetData: GearSetMapping, useQuality?: boolean): Promise<GearSlots>;
   _batchUpdateGearState(gearSlots: GearSlots): Promise<void>;
   isSlotLocked(slot: string): boolean;
 }

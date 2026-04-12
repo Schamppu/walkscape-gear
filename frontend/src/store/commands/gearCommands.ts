@@ -131,7 +131,7 @@ export class LoadGearSetCommand implements Command {
     }
 
     if (this.gearSetMapping && Object.keys(this.gearSetMapping).length > 0) {
-      const processedGearSlots = await this.gearStore._processGearSetData(this.gearSetMapping);
+      const processedGearSlots = await this.gearStore._processGearSetData(this.gearSetMapping, true);
       await this.gearStore._batchUpdateGearState(processedGearSlots);
     } else {
       await this.gearStore._batchUpdateGearState({});
