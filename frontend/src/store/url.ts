@@ -114,7 +114,7 @@ export const useUrlStore = defineStore("url", {
       const ringId = decodedLoadout["ring1"];
 
       Object.entries(decodedLoadout).forEach(([slot, id]) => {
-        if (!id) return;
+        if (!id || slot === "consumableQuality") return;
 
         if (slot === "activity") {
           activityPromises.push(activityStore.loadActivity(id));
@@ -122,8 +122,13 @@ export const useUrlStore = defineStore("url", {
         } else if (slot === "recipe") {
           activityPromises.push(activityStore.loadRecipe(id));
         } else {
-          const useQ2 = slot === "ring2" && ringId === id;
-          const quality = gearStore.determineQuality(id, useQ2);
+          let quality: string;
+          if (slot === "consumable" && decodedLoadout["consumableQuality"]) {
+            quality = decodedLoadout["consumableQuality"];
+          } else {
+            const useQ2 = slot === "ring2" && ringId === id;
+            quality = gearStore.determineQuality(id, useQ2);
+          }
           gearData[slot] = { id, quality };
         }
       });
