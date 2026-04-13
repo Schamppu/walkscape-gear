@@ -184,4 +184,42 @@ describe("encodeGearLoadout / decodeGearLoadout", () => {
     expect(decoded["ring1"]).toBe("copper_ring");
     expect(decoded["ring2"]).toBe("copper_ring");
   });
+
+  it("consumable with consumableFine quality encodes and decodes with quality", () => {
+    const loadout = {
+      consumable: { id: "bread", quality: "consumableFine" },
+    };
+    const encoded = encodeGearLoadout(SLOT_ORDER, loadout, reverseMapping);
+    const decoded = decodeGearLoadout(encoded, SLOT_ORDER, mapping);
+    expect(decoded["consumable"]).toBe("bread");
+    expect(decoded["consumableQuality"]).toBe("consumableFine");
+  });
+
+  it("consumable with consumableCommon quality decodes without fine flag", () => {
+    const loadout = {
+      consumable: { id: "bread", quality: "consumableCommon" },
+    };
+    const encoded = encodeGearLoadout(SLOT_ORDER, loadout, reverseMapping);
+    const decoded = decodeGearLoadout(encoded, SLOT_ORDER, mapping);
+    expect(decoded["consumable"]).toBe("bread");
+    expect(decoded["consumableQuality"]).toBe("consumableCommon");
+  });
+
+  it("consumable without quality defaults to consumableCommon on decode", () => {
+    const loadout = {
+      consumable: { id: "bread" },
+    };
+    const encoded = encodeGearLoadout(SLOT_ORDER, loadout, reverseMapping);
+    const decoded = decodeGearLoadout(encoded, SLOT_ORDER, mapping);
+    expect(decoded["consumable"]).toBe("bread");
+    expect(decoded["consumableQuality"]).toBe("consumableCommon");
+  });
+
+  it("empty consumable slot does not produce a quality entry", () => {
+    const loadout = { consumable: null };
+    const encoded = encodeGearLoadout(SLOT_ORDER, loadout, reverseMapping);
+    const decoded = decodeGearLoadout(encoded, SLOT_ORDER, mapping);
+    expect(decoded["consumable"]).toBeNull();
+    expect(decoded["consumableQuality"]).toBeUndefined();
+  });
 });

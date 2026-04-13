@@ -35,7 +35,7 @@ export type ReverseMapping = Record<string, Record<string, number>>;
  * Minimal shape required from each loadout entry during encoding.
  * Items only need to expose their `id`; gear stores carry extra fields.
  */
-export type LoadoutEntry = { id?: string | null } | null;
+export type LoadoutEntry = { id?: string | null; quality?: string | null } | null;
 
 /** Decoded output: slot key → item ID or null (absent / index 0). */
 export type DecodedLoadout = Record<string, string | null>;
@@ -99,6 +99,9 @@ export function decodeLoadout(
 
 const BITS_PER_ITEM = 9;
 
+/** Bit flag within the consumable slot index that marks "fine" quality. */
+const CONSUMABLE_FINE_BIT = 1 << 8; // 256
+
 /**
  * Encode a gear/activity loadout into a compact base64 string.
  *
@@ -112,9 +115,14 @@ export function encodeGearLoadout(
   reverseMapping: ReverseMapping,
 ): string {
   const indices = Object.entries(slotOrder).map(([slot, slotName]) => {
-    const itemId = loadout[slot]?.id ?? null;
+    const entry = loadout[slot];
+    const itemId = entry?.id ?? null;
     if (!itemId) return 0;
-    return reverseMapping[slotName]?.[itemId] ?? 0;
+    let index = reverseMapping[slotName]?.[itemId] ?? 0;
+    if (slot === "consumable" && index > 0 && entry?.quality === "consumableFine") {
+      index |= CONSUMABLE_FINE_BIT;
+    }
+    return index;
   });
 
   return encodeLoadout(indices, BITS_PER_ITEM);
@@ -138,12 +146,21 @@ export function decodeGearLoadout(
   const result: DecodedLoadout = {};
 
   Object.entries(slotOrder).forEach(([slot, slotName], i) => {
-    const chunk = numbers[i];
+    let chunk = numbers[i];
     if (chunk === 0) {
       result[slot] = null;
       return;
     }
-    result[slot] = mapping[slotName]?.[chunk] ?? null;
+    if (slot === "consumable") {
+      const isFine = (chunk & CONSUMABLE_FINE_BIT) !== 0;
+      chunk &= ~CONSUMABLE_FINE_BIT;
+      result[slot] = mapping[slotName]?.[chunk] ?? null;
+      if (result[slot]) {
+        result["consumableQuality"] = isFine ? "consumableFine" : "consumableCommon";
+      }
+    } else {
+      result[slot] = mapping[slotName]?.[chunk] ?? null;
+    }
   });
 
   return result;

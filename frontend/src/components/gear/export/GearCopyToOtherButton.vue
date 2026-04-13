@@ -19,7 +19,7 @@ const changeTab = () => {
 const copyToOther = () => {
   const set = gearStore.selectedGearset;
   changeTab();
-  gearStore.equipMultiple(set);
+  gearStore.equipMultiple(set, true);
 
   notificationStore.success("Copied set");
 };

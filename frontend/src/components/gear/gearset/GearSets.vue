@@ -23,7 +23,7 @@ const currentSetTags = computed({
 });
 
 const getSetItems = () => {
-  const excluded = ["consumable", "potion", "service"];
+  const excluded = ["potion", "service"];
   return Object.entries(gearStore.selectedGearset)
     .filter(([slot, item]) => !excluded.includes(slot) && item)
     .map(([slot, item]) => {

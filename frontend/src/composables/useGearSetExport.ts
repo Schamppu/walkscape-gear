@@ -35,7 +35,7 @@ export function useGearSetExport(ctx: GearSetExportContext): {
   importCode: (code: string) => ImportResult;
   exportStoredGearSets: () => Promise<EncodedGearSetExport[]>;
 } {
-  const excluded = new Set<GearSlotType>(["consumable", "potion", "service"]);
+  const excluded = new Set<GearSlotType>(["potion", "service"]);
 
   const toSlotName = (slotType: GearSlotType, slotIndex: number): string => {
     const indexedSlotTypes = new Set<GearSlotType>(["ring", "tool"]);
