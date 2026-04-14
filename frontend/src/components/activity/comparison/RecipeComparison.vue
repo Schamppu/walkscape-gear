@@ -1,10 +1,9 @@
 <script setup>
-import { computed, ref } from "vue";
+import { computed, ref, onMounted } from "vue";
 import { useActivityStore } from "@/store/activity";
 import { useItemsStore } from "@/store/items";
 import ComparisonTableShell from "./table/ComparisonTableShell.vue";
 import EmitLocationBubble from "@/components/common/EmitLocationBubble.vue";
-import { useGearContext } from "@/composables/context/useGearContext";
 import { useSkillModifiers } from "@/composables/useSkillModifiers";
 import { useFineMaterials } from "@/composables/useFineMaterialsCalculations";
 import { n } from "@/utils/number";
@@ -13,47 +12,69 @@ import ComparisonValueRow from "./table/ComparisonValueRow.vue";
 import EditableComparisonRow from "./table/EditableComparisonRow.vue";
 import CraftingQualityComparison from "./CraftingQualityComparison.vue";
 
+const props = defineProps({
+  gs1Ctx: { type: Object, required: true },
+  gs2Ctx: { type: Object, required: true },
+});
+
+const emit = defineEmits([
+  "update:gs1Service",
+  "update:gs2Service",
+  "update:gs1Location",
+  "update:gs2Location",
+]);
+
 const activityStore = useActivityStore();
 const itemsStore = useItemsStore();
 
-const gs1Location = ref(null);
-const gs2Location = ref(null);
 const gs1Locations = ref(null);
 const gs2Locations = ref(null);
+
+const findIdx = (list, id) =>
+  Math.max(0, list?.findIndex((item) => item.id === id) ?? 0);
+
+const gs1ServiceIdx = ref(
+  findIdx(activityStore.services, props.gs1Ctx.service.value?.id),
+);
+const gs2ServiceIdx = ref(
+  findIdx(activityStore.services, props.gs2Ctx.service.value?.id),
+);
 const gs1LocationIdx = ref(0);
 const gs2LocationIdx = ref(0);
 
-const gs1Service = ref(null);
-const gs2Service = ref(null);
-const gs1ServiceIdx = ref(0);
-const gs2ServiceIdx = ref(0);
-
-const gs1Ctx = useGearContext(0, {
-  location: gs1Location,
-  service: gs1Service,
+onMounted(async () => {
+  const [locs1, locs2] = await Promise.all([
+    props.gs1Ctx.service.value
+      ? activityStore.loadServiceLocations(props.gs1Ctx.service.value.id, true)
+      : Promise.resolve(activityStore.locations),
+    props.gs2Ctx.service.value
+      ? activityStore.loadServiceLocations(props.gs2Ctx.service.value.id, true)
+      : Promise.resolve(activityStore.locations),
+  ]);
+  gs1Locations.value = locs1;
+  gs2Locations.value = locs2;
+  gs1LocationIdx.value = findIdx(locs1, props.gs1Ctx.location.value?.id);
+  gs2LocationIdx.value = findIdx(locs2, props.gs2Ctx.location.value?.id);
 });
-const gs2Ctx = useGearContext(1, {
-  location: gs2Location,
-  service: gs2Service,
-});
 
-const { xpRewardsMultiplier, fineMode, useFine } =
-  useFineMaterials(gs1Ctx);
+const { xpRewardsMultiplier, fineMode, useFine } = useFineMaterials(
+  props.gs1Ctx,
+);
 
 const borderClass = computed(
-  () => `border-${gs1Ctx.recipe.value?.relatedSkills[0]}`,
+  () => `border-${props.gs1Ctx.recipe.value?.relatedSkills[0]}`,
 );
 
 const rewardCount = computed(() => {
-  const { itemRewards } = gs1Ctx.recipe.value;
+  const { itemRewards } = props.gs1Ctx.recipe.value;
   return Object.values(itemRewards)[0];
 });
 
-const sm1 = useSkillModifiers(gs1Ctx);
-const sm2 = useSkillModifiers(gs2Ctx);
+const sm1 = useSkillModifiers(props.gs1Ctx);
+const sm2 = useSkillModifiers(props.gs2Ctx);
 
 const resultHasCO = computed(() => {
-  const [itemId] = Object.keys(gs1Ctx.recipe.value.itemRewards);
+  const [itemId] = Object.keys(props.gs1Ctx.recipe.value.itemRewards);
   return (
     itemId in itemsStore.allGearItems &&
     itemsStore.allGearItems[itemId].type === "crafted"
@@ -132,47 +153,39 @@ const tableRows = computed(() => {
 const updateLocation = ({ location, index, gearSetIndex }) => {
   if (gearSetIndex === 0) {
     gs1LocationIdx.value = index;
-    gs1Location.value = location;
+    emit("update:gs1Location", location);
   }
   if (gearSetIndex === 1) {
     gs2LocationIdx.value = index;
-    gs2Location.value = location;
+    emit("update:gs2Location", location);
   }
 };
 
 const updateService = async ({ service, index, gearSetIndex }) => {
   if (gearSetIndex === 0) {
     gs1ServiceIdx.value = index;
-    gs1Service.value = service;
-
-    if (!gs2Locations.value) {
-      gs2Locations.value = activityStore.locations;
-      updateLocation({
-        location: gs2Locations.value[0],
-        index: 0,
-        gearSetIndex: 1,
-      });
-    }
+    emit("update:gs1Service", service);
 
     await activityStore.loadServiceLocations(service.id, true).then((locs) => {
       gs1Locations.value = locs;
     });
+    updateLocation({
+      location: gs1Locations.value[0],
+      index: 0,
+      gearSetIndex: 0,
+    });
   }
   if (gearSetIndex === 1) {
     gs2ServiceIdx.value = index;
-    gs2Service.value = service;
-
-    if (!gs1Locations.value) {
-      gs1Locations.value = activityStore.locations;
-      updateLocation({
-        location: gs1Locations.value[0],
-        index: 0,
-        gearSetIndex: 0,
-      });
-    }
+    emit("update:gs2Service", service);
 
     await activityStore.loadServiceLocations(service.id, true).then((locs) => {
       gs2Locations.value = locs;
+    });
+    updateLocation({
+      location: gs2Locations.value[0],
+      index: 0,
+      gearSetIndex: 1,
     });
   }
 };
@@ -262,8 +275,8 @@ const editableRows = computed(() => {
   <crafting-quality-comparison
     v-if="resultHasCO"
     :fine-mode="fineMode"
-    :gs1Ctx="gs1Ctx"
-    :gs2Ctx="gs2Ctx"
+    :gs1Ctx="props.gs1Ctx"
+    :gs2Ctx="props.gs2Ctx"
     :border-class="borderClass"
   />
 </template>

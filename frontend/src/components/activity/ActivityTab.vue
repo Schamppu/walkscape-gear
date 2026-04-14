@@ -1,10 +1,11 @@
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import { useActivityStore } from "@/store/activity";
 import { usePlayerStore } from "@/store/player";
 import { useUrlStore } from "@/store/url";
 import { useGearStore } from "@/store/gear";
 import { useSettingsStore } from "@/store/settings";
+import { useGearContext } from "@/composables/context/useGearContext";
 import TabContentWrapper from "@/components/common/TabContentWrapper.vue";
 import NestedDropdown from "@/components/common/dropdowns/NestedDropdown.vue";
 import ActivityInfo from "./Info/ActivityInfo.vue";
@@ -24,6 +25,27 @@ const settingsStore = useSettingsStore();
 
 const loadingActivity = ref(false);
 const useComparisonView = ref(false);
+
+// Shared comparison contexts — lifted here so RecipeComparison and DropsComparison
+// react to the same service/location overrides.
+const gs1Service = ref(null);
+const gs2Service = ref(null);
+const gs1Location = ref(null);
+const gs2Location = ref(null);
+
+// When the comparison view is first opened, seed the overrides from the current store values
+// so the view starts in sync with whatever the user had already selected.
+watch(useComparisonView, (open) => {
+  if (open) {
+    gs1Service.value ??= activityStore.service;
+    gs2Service.value ??= activityStore.service;
+    gs1Location.value ??= activityStore.location;
+    gs2Location.value ??= activityStore.location;
+  }
+});
+
+const gs1Ctx = useGearContext(0, { service: gs1Service, location: gs1Location });
+const gs2Ctx = useGearContext(1, { service: gs2Service, location: gs2Location });
 
 const isLoading = computed(() => !activityStore.isLoaded);
 
@@ -171,9 +193,19 @@ const recipeSelected = computed(
     <template v-if="gearStore.bothSetsActive && useComparisonView">
       <div v-if="travellingSelected">Travel comparison not supported</div>
       <activity-comparison v-else-if="activitySelected" />
-      <recipe-comparison v-if="recipeSelected" />
+      <recipe-comparison
+        v-if="recipeSelected"
+        :gs1Ctx="gs1Ctx"
+        :gs2Ctx="gs2Ctx"
+        @update:gs1Service="gs1Service = $event"
+        @update:gs2Service="gs2Service = $event"
+        @update:gs1Location="gs1Location = $event"
+        @update:gs2Location="gs2Location = $event"
+      />
       <drops-comparison
         v-if="(activitySelected || recipeSelected) && !travellingSelected"
+        :gs1Ctx="gs1Ctx"
+        :gs2Ctx="gs2Ctx"
       />
     </template>
     <template v-else>
