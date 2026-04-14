@@ -3,28 +3,36 @@ import { computed, ref } from "vue";
 import { useActivityStore } from "@/store/activity";
 import ComparisonTableShell from "./table/ComparisonTableShell.vue";
 import EmitLocationBubble from "@/components/common/EmitLocationBubble.vue";
-import { useGearContext } from "@/composables/context/useGearContext";
 import { useSkillModifiers } from "@/composables/useSkillModifiers";
 import { n } from "@/utils/number";
 import ComparisonValueRow from "./table/ComparisonValueRow.vue";
 import EditableComparisonRow from "./table/EditableComparisonRow.vue";
 
+const props = defineProps({
+  gs1Ctx: { type: Object, required: true },
+  gs2Ctx: { type: Object, required: true },
+});
+
+const emit = defineEmits(["update:gs1Location", "update:gs2Location"]);
+
 const activityStore = useActivityStore();
 
-const gs1Location = ref(null);
-const gs2Location = ref(null);
-const gs1LocationIdx = ref(0);
-const gs2LocationIdx = ref(0);
+const findIdx = (list, id) =>
+  Math.max(0, list?.findIndex((item) => item.id === id) ?? 0);
 
-const gs1Ctx = useGearContext(0, { location: gs1Location });
-const gs2Ctx = useGearContext(1, { location: gs2Location });
-
-const borderClass = computed(
-  () => `border-${gs1Ctx.activity.value?.relatedSkillsList[0]}`,
+const gs1LocationIdx = ref(
+  findIdx(activityStore.locations, props.gs1Ctx.location.value?.id),
+);
+const gs2LocationIdx = ref(
+  findIdx(activityStore.locations, props.gs2Ctx.location.value?.id),
 );
 
-const sm1 = useSkillModifiers(gs1Ctx);
-const sm2 = useSkillModifiers(gs2Ctx);
+const borderClass = computed(
+  () => `border-${props.gs1Ctx.activity.value?.relatedSkillsList[0]}`,
+);
+
+const sm1 = useSkillModifiers(props.gs1Ctx);
+const sm2 = useSkillModifiers(props.gs2Ctx);
 
 const tableRows = computed(() => {
   const getBothValues = (key, isPercent = false, negative = false) => {
@@ -73,11 +81,11 @@ const tableRows = computed(() => {
 const updateLocation = ({ location, index, gearSetIndex }) => {
   if (gearSetIndex === 0) {
     gs1LocationIdx.value = index;
-    gs1Location.value = location;
+    emit("update:gs1Location", location);
   }
   if (gearSetIndex === 1) {
     gs2LocationIdx.value = index;
-    gs2Location.value = location;
+    emit("update:gs2Location", location);
   }
 };
 
@@ -86,7 +94,7 @@ const onRowChange = (info) => {
 };
 
 const editableRows = computed(() => {
-  const { id } = gs1Ctx.activity.value;
+  const { id } = props.gs1Ctx.activity.value;
   const isTravel = id === "travelling";
   const locationsRow = {
     title: "Location",

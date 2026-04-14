@@ -192,7 +192,13 @@ const recipeSelected = computed(
     /></label>
     <template v-if="gearStore.bothSetsActive && useComparisonView">
       <div v-if="travellingSelected">Travel comparison not supported</div>
-      <activity-comparison v-else-if="activitySelected" />
+      <activity-comparison
+        v-else-if="activitySelected"
+        :gs1Ctx="gs1Ctx"
+        :gs2Ctx="gs2Ctx"
+        @update:gs1Location="gs1Location = $event"
+        @update:gs2Location="gs2Location = $event"
+      />
       <recipe-comparison
         v-if="recipeSelected"
         :gs1Ctx="gs1Ctx"
