@@ -81,10 +81,16 @@ export const filterDirectUpgrades = (
     }
 
     // Condition 2 – at least one of a's stats must be strictly greater.
-    return [...b._stats].some(([key, bValue]) => {
+    const strictlyGreater = [...b._stats].some(([key, bValue]) => {
       const aValue = a._stats.get(key)!;
       return Math.abs(aValue) > Math.abs(bValue);
     });
+    const atLeastEqual = [...b._stats].every(([key, bValue]) => {
+      const aValue = a._stats.get(key)!;
+      return Math.abs(aValue) >= Math.abs(bValue);
+    });
+    const hasAdditionalStats = a._stats.size > b._stats.size; // edge case: b has no stats, or a has extra stats
+    return strictlyGreater || (atLeastEqual && hasAdditionalStats);
   }
 
   const normalized: NormalizedItem[] = items.map((item) => ({
@@ -95,7 +101,7 @@ export const filterDirectUpgrades = (
   return normalized
     .filter(
       (item, i) =>
-        !normalized.some((other, j) => i !== j && dominates(other, item))
+        !normalized.some((other, j) => i !== j && dominates(other, item)),
     )
     .map(
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
