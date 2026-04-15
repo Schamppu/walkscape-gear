@@ -2,11 +2,13 @@
 import WsIcon from "@/components/primitives/WsIcon.vue";
 import { useRouteStore } from "@/store/route";
 import { useDataStore } from "@/store/data";
+import { useItemsStore } from "@/store/items";
 import { getDataIdMapping } from "@/utils/stringTokenizer";
 
-const props = defineProps({ objectId: String, data: Array });
+const props = defineProps({ objectId: String, data: [Array, Object] });
 const { locationsMap } = useRouteStore();
 const { keywordsMap } = useDataStore();
+const { materials } = useItemsStore();
 
 const getObjectType = (objectId) => {
   if (objectId in locationsMap) {
@@ -14,6 +16,9 @@ const getObjectType = (objectId) => {
   }
   if (objectId in keywordsMap) {
     return { type: "keyword", object: keywordsMap[objectId] };
+  }
+  if (objectId in materials) {
+    return { type: "material", object: materials[objectId] };
   }
   return { type: "unknown", object: {} };
 };
@@ -25,7 +30,7 @@ const getColor = (type, object) => {
   return "";
 };
 
-const idMap = props.data.length ? getDataIdMapping(props.data) : null;
+const idMap = props.data ? getDataIdMapping(props.data) : null;
 const typeParam =
   idMap && props.objectId in idMap ? idMap[props.objectId] : props.objectId;
 const { type, object } = getObjectType(typeParam);
