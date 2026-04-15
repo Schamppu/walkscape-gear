@@ -4,7 +4,6 @@ import { useDataStore } from "@/store/data";
 const props = defineProps({ stat: String, text: String });
 const { statsMap } = useDataStore();
 
-
 const statObj = statsMap[props.stat];
 </script>
 

@@ -115,6 +115,16 @@ export function getMainSkillRequirement(
   return mainSkillReq ? mainSkillReq.requirement.skill : null;
 }
 
+export function getDistinctKeywordItemsEquippedRequirement(
+  requirements: Requirement[] | null | undefined,
+): { quantity: number; keywords: string[] } | null {
+  if (!requirements) return null;
+  const req = requirements.find(
+    (r) => r.type === "distinctKeywordItemsEquipped",
+  ) as DistinctKeywordItemsEquippedRequirement | undefined;
+  return req ? req.requirement : null;
+}
+
 /**
  * Collapse duplicate requirements of the same type using built-in merge
  * strategies. Requirements whose type has no strategy are kept as-is.

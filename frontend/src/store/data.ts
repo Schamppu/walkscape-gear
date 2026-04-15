@@ -42,6 +42,14 @@ import { GlobalVariable } from "@/domain/types/global_variable";
 /** Subset of StatDefinition stored in the lookup map (display fields only). */
 type StatEntry = Pick<StatDefinition, "name" | "icon">;
 
+/**
+ * Maps legacy/alias stat type keys to their canonical equivalents.
+ * Entries here are duplicated into statsMap so lookups by either key succeed.
+ */
+const STAT_REDIRECTS: Record<string, string> = {
+  craftingOutcome: "qualityOutcome",
+};
+
 // ---------------------------------------------------------------------------
 // Store
 // ---------------------------------------------------------------------------
@@ -140,6 +148,11 @@ export const useDataStore = defineStore("dataStore", {
       this.statsMap = Object.fromEntries(
         statList.map(({ type, name, icon }) => [type, { name, icon }]),
       );
+      for (const [alias, canonical] of Object.entries(STAT_REDIRECTS)) {
+        if (canonical in this.statsMap) {
+          this.statsMap[alias] = this.statsMap[canonical];
+        }
+      }
 
       this.lootTables = lootTables;
       this.itemValues = itemValues;
