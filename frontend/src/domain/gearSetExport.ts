@@ -132,12 +132,13 @@ export function decodeGearSet(code: string): ImportResult {
   } catch (error) {
     console.error(error);
 
+    const errorStr = String(error);
     let errorMessage = "Failed to import gear set";
-    if ((error as string).includes("Invalid character")) {
+    if (errorStr.includes("Invalid character")) {
       errorMessage += ": Invalid base64 format";
-    } else if ((error as string).includes("incorrect header check")) {
+    } else if (errorStr.includes("incorrect header check")) {
       errorMessage += ": Invalid compression format";
-    } else if ((error as string).includes("Unexpected token")) {
+    } else if (errorStr.includes("Unexpected token")) {
       errorMessage += ": Invalid JSON format";
     } else {
       errorMessage += `: ${error}`;
