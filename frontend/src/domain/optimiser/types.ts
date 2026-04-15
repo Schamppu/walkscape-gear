@@ -28,7 +28,7 @@ export type MappedItem = ItemDetail & {
   stats: Stat[];
   usefulStats: Stat[];
   level?: number;
-  abilities?: (string | { ability: string; unlockLevel: string })[];
+  abilities?: (string | { ability: string; unlockLevel: number })[];
 };
 
 /**

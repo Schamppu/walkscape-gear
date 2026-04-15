@@ -270,9 +270,18 @@ const getScoredItemsForSlot = (
   });
 
   const filteredItems = filterItems(qualityItems);
-  const mappedItems: MappedItem[] = filteredItems.flatMap((item) =>
+  const rawMappedItems: MappedItem[] = filteredItems.flatMap((item) =>
     mapItemToStats(item, baseCtx),
   );
+  // For pets, mapItemToStats derives `level` from equipment requirements.
+  // Override it with the owner's actual pet level so ability unlock checks work.
+  const mappedItems: MappedItem[] =
+    slot === "pet"
+      ? rawMappedItems.map((item) => ({
+          ...item,
+          level: baseCtx.ownedItems.value[item.id]?.petLevel ?? 0,
+        }))
+      : rawMappedItems;
   const scoredItems: OptimiserItem[] = getItemScores(
     slot,
     mappedItems,

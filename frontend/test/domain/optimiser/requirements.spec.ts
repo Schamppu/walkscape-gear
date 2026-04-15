@@ -167,25 +167,20 @@ describe("contributesToReq", () => {
       ).toBe(0);
     });
 
-    // TODO: check implementation. 
-    // How are pet levels stored? does comparison work as intended? 
-    // unlockLevel should be integer comparison against quality, but is currently string comparison
-    it("returns 1 when item has the ability as an object with met quality threshold", () => {
-      // Uses string comparison: "rare" > "common" alphabetically ✓
+    it("returns 1 when item has the ability as an object with met level threshold", () => {
       const item = makeOptimiserItem("a", [], {
-        quality: "rare",
-        abilities: [{ ability: "haste", unlockLevel: "common" }],
+        level: 3,
+        abilities: [{ ability: "haste", unlockLevel: 1 }],
       } as Partial<OptimiserItem>);
       expect(
         contributesToReq(item, { ability: "haste", quantity: 1, level: 1 }),
       ).toBe(1);
     });
 
-    it("returns 0 when item has the ability but quality is below the unlock level", () => {
-      // "common" < "rare" alphabetically → threshold not met
+    it("returns 0 when item has the ability but level is below the unlock level", () => {
       const item = makeOptimiserItem("a", [], {
-        quality: "common",
-        abilities: [{ ability: "haste", unlockLevel: "rare" }],
+        level: 1,
+        abilities: [{ ability: "haste", unlockLevel: 3 }],
       } as Partial<OptimiserItem>);
       expect(
         contributesToReq(item, { ability: "haste", quantity: 1, level: 1 }),

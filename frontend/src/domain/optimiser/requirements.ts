@@ -108,7 +108,7 @@ export function contributesToReq(
     const hasAbility = item.abilities.some((a) => {
       if (typeof a === "string") return a === req.ability;
       const { ability, unlockLevel } = a;
-      return ability === req.ability && (item.quality ?? "common") >= unlockLevel;
+      return ability === req.ability && (item.level ?? 0) >= unlockLevel;
     });
     return hasAbility ? 1 : 0;
   }
@@ -130,9 +130,8 @@ export const filterItemsForReq = (req: Req, items: OptimiserItem[]): OptimiserIt
       const itemAbilityNames = item.abilities
         .flatMap((abilityVal) => {
           if (typeof abilityVal === "string") return abilityVal;
-          const { quality } = item;
           const { ability, unlockLevel } = abilityVal;
-          return quality >= unlockLevel ? ability : null;
+          return (item.level ?? 0) >= unlockLevel ? ability : null;
         })
         .filter((value): value is string => value !== null);
       return itemAbilityNames.includes(req.ability);

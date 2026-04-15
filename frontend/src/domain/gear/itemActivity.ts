@@ -21,13 +21,14 @@ import type { Attribute } from "@/domain/quality/qualityAttrs";
 // Types
 // ---------------------------------------------------------------------------
 
-export type ActivityAbility = string | { ability: string; unlockLevel: string };
+export type ActivityAbility = string | { ability: string; unlockLevel: number };
 
 /** Minimal item shape needed for activity-relevance filtering. */
 export type ItemForActivity = {
   abilities?: ActivityAbility[];
   keywords?: string[];
   quality: string | null;
+  level?: number;
 };
 
 /** Minimal source (activity or recipe) shape needed for ability/keyword/attr filtering. */
@@ -91,7 +92,7 @@ export function filterUsefulAbilities(
     .flatMap((abilityVal) => {
       if (typeof abilityVal === "string") return abilityVal;
       const { ability, unlockLevel } = abilityVal;
-      return (item.quality ?? "") >= unlockLevel ? ability : null;
+      return (item.level ?? 0) >= unlockLevel ? ability : null;
     })
     .filter((value): value is string => value !== null);
 
