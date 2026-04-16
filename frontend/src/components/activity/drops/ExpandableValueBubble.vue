@@ -1,24 +1,32 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, useSlots } from "vue";
 import WsIcon from "@/components/primitives/WsIcon.vue";
 import type { BreakdownLine } from "@/domain/drops/aggregateDropValue";
 import { n } from "@/utils/number";
 import { snakeToTitle } from "@/utils/string";
+import { icons } from "@/constants/iconPaths";
 
-const props = defineProps<{
-  text: string;
-  iconPath?: string;
-  tooltip?: string;
-  breakdown: BreakdownLine[];
-}>();
-
-const expanded = ref(false);
-
-const visibleBreakdown = computed(() =>
-  props.breakdown.filter((line) => Math.abs(line.value) >= 0.005),
+const props = withDefaults(
+  defineProps<{
+    text: string;
+    iconPath?: string;
+    tooltip?: string;
+    label?: string;
+    breakdown?: BreakdownLine[];
+    breakdownType?: "value" | "steps";
+  }>(),
+  { breakdown: () => [], breakdownType: "value" },
 );
 
-const hasBreakdown = computed(() => visibleBreakdown.value.length > 0);
+const slots = useSlots();
+const expanded = ref(false);
+
+const visibleBreakdown = computed(() => {
+  if (props.breakdownType === "steps") return props.breakdown;
+  return props.breakdown.filter((line) => Math.abs(line.value) >= 0.005);
+});
+
+const hasBreakdown = computed(() => visibleBreakdown.value.length > 0 || !!slots.breakdown);
 
 function toggle() {
   if (hasBreakdown.value) expanded.value = !expanded.value;
@@ -39,6 +47,7 @@ function close() {
     >
       <ws-icon v-if="iconPath" :icon-path="iconPath" size="sm" />
       <p class="text">{{ text }}</p>
+      <span v-if="label" class="label">{{ label }}</span>
       <span v-if="hasBreakdown" class="chevron" :class="{ open: expanded }">
         ▾
       </span>
@@ -46,20 +55,27 @@ function close() {
 
     <Transition name="breakdown">
       <div v-if="expanded && hasBreakdown" class="breakdown">
-        <div
-          v-for="line in visibleBreakdown"
-          :key="line.label"
-          class="breakdown-line"
-          :title="snakeToTitle(line.label)"
-        >
-          <ws-icon v-if="line.icon" :icon-path="line.icon" size="xs" />
-          <span v-else class="line-icon-placeholder" />
-          <span
-            :class="['line-value', line.value < 0 ? 'negative' : 'positive']"
+        <slot name="breakdown">
+          <div
+            v-for="line in visibleBreakdown"
+            :key="line.label"
+            class="breakdown-line"
+            :title="snakeToTitle(line.label)"
           >
-            {{ line.value < 0 ? "-" : "+" }}{{ n(Math.abs(line.value), 2) }}
-          </span>
-        </div>
+            <ws-icon v-if="line.icon" :icon-path="line.icon" size="xs" />
+            <span v-else class="line-icon-placeholder" />
+            <span v-if="breakdownType === 'steps'" class="line-steps">
+              {{ n(line.value, 0) }}
+              <ws-icon :icon-path="icons.steps" size="xs" />
+            </span>
+            <span
+              v-else
+              :class="['line-value', line.value < 0 ? 'negative' : 'positive']"
+            >
+              {{ line.value < 0 ? "-" : "+" }}{{ n(Math.abs(line.value), 2) }}
+            </span>
+          </div>
+        </slot>
       </div>
     </Transition>
   </div>
@@ -95,6 +111,10 @@ function close() {
 
 .text {
   margin: 0;
+}
+
+.label {
+  font-size: 0.75rem;
 }
 
 .chevron {
@@ -138,6 +158,14 @@ function close() {
   width: $xs;
   height: $xs;
   flex-shrink: 0;
+}
+
+.line-steps {
+  display: flex;
+  align-items: center;
+  gap: $xxxxs;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
 }
 
 .line-value {
