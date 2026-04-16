@@ -93,6 +93,7 @@ enum GearSlotType {
   consumable
   service
   pet
+  activityInput
 }
 
 model GearSetItem {

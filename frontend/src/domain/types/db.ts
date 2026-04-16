@@ -67,7 +67,8 @@ export type GearSlotType =
   | "potion"
   | "consumable"
   | "service"
-  | "pet";
+  | "pet"
+  | "activityInput";
 
 export type DbGearSetItem = {
   id: number;

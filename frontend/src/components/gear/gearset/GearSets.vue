@@ -37,7 +37,7 @@ const getSetItems = () => {
         slotType,
         slotIndex,
         itemId: item?.id || null,
-        quality: item?.quality || null,
+        quality: item?.quality || "common",
       };
     });
 };

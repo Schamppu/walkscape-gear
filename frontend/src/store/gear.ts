@@ -356,6 +356,12 @@ export const useGearStore = defineStore("gearStore", {
           continue;
         }
 
+        // activityInput items are materials, not gear items
+        if (slot === "activityInput") {
+          finalGearSlots[slot] = itemsStore.materials[item.id] ?? null;
+          continue;
+        }
+
         // Skip if item doesn't exist in allItems
         if (!(item.id in itemsStore.allGearItems)) {
           finalGearSlots[slot] = null;
