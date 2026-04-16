@@ -20,10 +20,8 @@ import { useXpDisplay } from "@/composables/useXpDisplay";
 import { isEmpty } from "@/utils/isEmpty";
 import { n } from "@/utils/number";
 import { icons } from "@/constants/iconPaths";
-import type {
-  ActivityDetail,
-  ActivityInputOption,
-} from "@/domain/types/activity";
+import { resolveActivityInputs } from "@/domain/activity/activityInputs";
+import type { ActivityDetail } from "@/domain/types/activity";
 import type { Requirement } from "@/domain/types/common";
 
 // Shape of a faction-based activity reward
@@ -78,48 +76,11 @@ const sections = computed(() => {
   const isTravel = id === "travelling";
   const showRewards = rewards && rewards.length > 0;
 
-  const inputs =
-    options
-      ?.filter(
-        (opt): opt is ActivityInputOption => opt?.type === "inputActivity",
-      )
-      .flatMap(({ inputs }) => inputs)
-      .map((input) => {
-        if (input.type === "keyword") {
-          const kw = dataStore.getKeywordById(input.keyword);
-          if (!kw) {
-            console.warn("Keyword not found:", input.keyword);
-            return null;
-          }
-          const { name, icon } = kw;
-          const canBeFine = Object.values(ctx.materials.value)
-            .filter((m) => m.keywords?.includes(input.keyword))
-            .every(({ id }) => id in itemsStore.fineMaterials);
-          return {
-            name,
-            icon,
-            quantity: undefined as number | undefined,
-            canBeFine,
-          };
-        } else if (input.type === "specific") {
-          const itemObj = ctx.materials.value[input.item];
-          if (!itemObj) return null;
-          const { name, icon } = itemObj;
-          const canBeFine = input.item in itemsStore.fineMaterials;
-          return { name, icon, quantity: input.quantity, canBeFine };
-        }
-        return null;
-      })
-      .filter(
-        (
-          x,
-        ): x is {
-          name: string;
-          icon: string;
-          quantity: number | undefined;
-          canBeFine: boolean;
-        } => x !== null,
-      ) ?? [];
+  const inputs = resolveActivityInputs(options, {
+    getKeyword: (id) => dataStore.getKeywordById(id),
+    materialsById: ctx.materials.value,
+    fineMaterialIds: itemsStore.fineMaterials,
+  });
 
   const hasFineInputs =
     inputs.length > 0 && inputs.every(({ canBeFine }) => canBeFine);
