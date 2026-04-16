@@ -2,8 +2,7 @@
 import { computed } from "vue";
 import { useDataStore } from "@/store/data";
 import { toDeepRaw } from "@/utils/rawData";
-import { usedAttrs } from "@/domain/quality/qualityAttrs";
-import { stripHtmlTags } from "@/utils/stripHtmlTags";
+import { resolveDisplayAttrs } from "@/domain/stats/itemStatDisplay";
 import WikiButton from "@/components/common/WikiButton.vue";
 import StatRequirementDisplay from "./StatRequirementDisplay.vue";
 import KeywordDisplay from "@/components/common/KeywordDisplay.vue";
@@ -45,35 +44,9 @@ const keywords =
         .map((keyword) => dataStore.getKeywordById(keyword))
         .filter((k) => k?.icon);
 
-const mapAttrs = (quality) => {
-  const itemCopy = toDeepRaw(props.item);
-  const baseAttrs = usedAttrs(itemCopy, quality);
-
-  return baseAttrs
-    .flatMap((obj) => {
-      const { customText, stats, requirements } = obj;
-      return stats.flatMap((stat) => {
-        if (stat.stat === "roll_special_table") {
-          stat.name = customText;
-          stat.customIcon = obj.customIcon;
-        }
-        const data = {
-          requirements,
-          stats,
-        };
-
-        return { stat, requirements: requirements || [], data };
-      });
-    })
-    .filter(({ stat }) => {
-      if (props.filterStat) {
-        return stat.type === props.filterStat;
-      }
-      return true;
-    });
-};
-
-const attrs = computed(() => mapAttrs(props.quality));
+const attrs = computed(() =>
+  resolveDisplayAttrs(toDeepRaw(props.item), props.quality, props.filterStat),
+);
 </script>
 
 <template>

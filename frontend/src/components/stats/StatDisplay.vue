@@ -4,6 +4,10 @@ import { injectEffectiveAttrs } from "@/composables/context/injectShared";
 import WsIcon from "@/components/primitives/WsIcon.vue";
 import WsText from "@/components/common/text/WsText.vue";
 import StatSourceDisplay from "@/components/stats/StatSourceDisplay.vue";
+import {
+  sumStatValues,
+  computeApplicableTotal,
+} from "@/domain/stats/statAggregation";
 
 const props = defineProps({
   stat: {
@@ -21,10 +25,6 @@ const isOpen = ref(false);
 
 const { allAttrs, totalsByStat } = injectEffectiveAttrs();
 
-const sumStats = (stats) => {
-  return stats.reduce((a, { value: b }) => a + b, 0);
-};
-
 const filterStat = (attr) => {
   const { stat: statId, isPercent: percent } = attr.stats[0];
   return statId == props.stat.id && percent === props.isPercent;
@@ -32,7 +32,7 @@ const filterStat = (attr) => {
 
 const sumTotal = computed(() => {
   const statAttrs = allAttrs.value.filter(filterStat);
-  const total = sumStats(statAttrs.map((attr) => attr.stats[0]));
+  const total = sumStatValues(statAttrs.map((attr) => attr.stats[0]));
   const roundedValue =
     Math.round(props.isPercent ? 10000 * total : 100 * total) / 100;
   const value = roundedValue <= 0 ? roundedValue : `+${roundedValue}`;
@@ -40,18 +40,11 @@ const sumTotal = computed(() => {
 });
 
 const sumApplicable = computed(() => {
-  const key = props.isPercent ? "percent" : "flat";
-  const type = props.stat.type;
-
-  const empty = { sum: 0, positive: 0, negative: 0 };
-  const totalObj = !(type in totalsByStat.value)
-    ? empty
-    : !(key in totalsByStat.value[type])
-      ? empty
-      : totalsByStat.value[type][key];
-
-  const { sum, positive, negative } = totalObj;
-
+  const { sum, positive, negative } = computeApplicableTotal(
+    totalsByStat.value,
+    props.stat.type,
+    props.isPercent,
+  );
   const isNegative = Math.abs(negative) > Math.abs(positive);
   const roundedVal =
     Math.round(props.isPercent ? 10000 * sum : 100 * sum) / 100;

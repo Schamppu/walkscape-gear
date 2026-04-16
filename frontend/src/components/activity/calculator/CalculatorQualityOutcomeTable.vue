@@ -9,6 +9,7 @@ import {
 } from "@/composables/context/injectShared";
 import WsLabel from "@/components/primitives/WsLabel.vue";
 import { getOutcomeOdds } from "@/domain/quality/qualityOutcomeOdds";
+import { chanceOfAtLeastOne } from "@/domain/quality/expectedOutcomes";
 import { n } from "@/utils/number";
 
 const props = defineProps({
@@ -30,13 +31,11 @@ const craftingOdds = computed(() => {
     qualityOutcome.value,
     fineMode.value,
   );
-  return odds.map((item) => {
-    return {
-      ...item,
-      odds1: 1 - (1 - item.value) ** props.crafts,
-      avg: props.crafts * item.value,
-    };
-  });
+  return odds.map((item) => ({
+    ...item,
+    odds1: chanceOfAtLeastOne(item.value, props.crafts),
+    avg: props.crafts * item.value,
+  }));
 });
 </script>
 

@@ -2,6 +2,7 @@
 import { ref, computed } from "vue";
 import ComparisonTableShell from "./table/ComparisonTableShell.vue";
 import { getOutcomeOdds } from "@/domain/quality/qualityOutcomeOdds";
+import { buildCraftingOddsComparison } from "@/domain/comparison/craftingQualityComparison";
 import { useRequirements } from "@/composables/useRequirements";
 import { useSkillModifiers } from "@/composables/useSkillModifiers";
 import { n } from "@/utils/number";
@@ -43,13 +44,7 @@ const craftingOdds = computed(() => {
     cpm2.value,
   );
 
-  const out = stats1.map((value, index) => ({
-    gs1: value,
-    gs2: stats2[index],
-    oddsComp: value.value - stats2[index].value,
-    matsComp: stats2[index].materialsNeeded - value.materialsNeeded,
-  }));
-  return out;
+  return buildCraftingOddsComparison(stats1, stats2);
 });
 </script>
 

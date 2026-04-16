@@ -7,6 +7,7 @@ import { icons } from "@/constants/iconPaths";
 import { snakeToTitle } from "@/utils/string";
 import AggregateDrops from "../drops/AggregateDrops.vue";
 import DropStepColumn from "./table/DropStepColumn.vue";
+import { partitionDropKeys } from "@/domain/comparison/dropsComparison";
 
 const props = defineProps({
   gs1Ctx: { type: Object, required: true },
@@ -20,25 +21,7 @@ const dropsMap = computed(() => {
   const A = drops1.value;
   const B = drops2.value;
 
-  const both = [];
-  const onlyA = [];
-  const onlyB = [];
-
-  // Walk A once
-  for (const key in A) {
-    if (key in B) {
-      both.push(key);
-    } else {
-      onlyA.push(key);
-    }
-  }
-
-  // Walk B once
-  for (const key in B) {
-    if (!(key in A)) {
-      onlyB.push(key);
-    }
-  }
+  const { both, onlyA, onlyB } = partitionDropKeys(A, B);
 
   const getItemInfo = (source, key) => {
     const info = source[key];
