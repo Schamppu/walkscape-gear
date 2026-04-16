@@ -6,7 +6,7 @@ import { useLootTables, type LootTablesContext } from "@/composables/useLootTabl
 import type { DropItemInfo } from "@/domain/lootTables/dropInfo";
 import { icons } from "@/constants/iconPaths";
 import { snakeToTitle } from "@/utils/string";
-import AggregateDrops from "../drops/AggregateDrops.vue";
+import AggregateDrops from "../drops/aggregate/AggregateDrops.vue";
 import DropStepColumn from "./table/DropStepColumn.vue";
 import { partitionDropKeys } from "@/domain/comparison/dropsComparison";
 import type { BaseContext } from "@/composables/context/useBaseContext";
