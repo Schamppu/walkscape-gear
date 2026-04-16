@@ -137,6 +137,11 @@ const selectedRecipe = computed({
 const selectRecipe = async (recipe) => {
   loadingActivity.value = true;
   await activityStore.loadRecipe(recipe.id);
+  // Reset comparison overrides so RecipeComparison remounts with the new recipe's defaults
+  gs1Service.value = null;
+  gs2Service.value = null;
+  gs1Location.value = null;
+  gs2Location.value = null;
   loadingActivity.value = false;
 };
 
