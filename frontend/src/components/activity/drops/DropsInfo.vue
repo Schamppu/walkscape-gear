@@ -10,7 +10,7 @@ import {
 import { useChestLootTables } from "@/composables/useChestLootTables";
 import DropItemDisplay from "./DropItemDisplay.vue";
 import LootTableDisplay from "./LootTableDisplay.vue";
-import AggregateDrops from "./AggregateDrops.vue";
+import AggregateDrops from "./aggregate/AggregateDrops.vue";
 import ChestLootTableSection from "./ChestLootTableSection.vue";
 
 const ctx = injectBaseContext();
@@ -59,7 +59,7 @@ const visibleLootTables = computed(() => {
           Hide owned collectibles
         </label>
       </div>
-      <aggregate-drops />
+      <aggregate-drops :chest-loot-tables="chestLootTables" />
       <section class="drops-info">
         <template v-if="activitySettings.showCombined.value">
           <drop-item-display

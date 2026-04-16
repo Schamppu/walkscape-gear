@@ -25,6 +25,11 @@ import type { DropItemInfo } from "@/domain/lootTables/dropInfo";
 export const CHEST_ROLLS = 4;
 export const CHEST_FINE_CHANCE = 1 / 100;
 
+/** Per-roll probability that the main table is used. */
+export const CHEST_MAIN_CHANCE = 0.5;
+/** Per-roll probability that a sub-table is selected. */
+export const CHEST_SUB_CHANCE = 0.5;
+
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
@@ -139,12 +144,16 @@ function processRows(
 /**
  * Builds a `Record<itemId, DropItemInfo>` for the items inside a chest.
  *
- * Processes both the main `tableRows` and any `subTables`:
- * - Main rows: per-roll probability = (1 - noDropChance) × (rowWeight / tableWeight)
- * - Sub-table rows: per-roll probability = subTable.weight × (rowWeight / tableWeight)
+ * Each roll has a hardcoded CHEST_MAIN_CHANCE (50%) chance of hitting the main
+ * table and a CHEST_SUB_CHANCE (50%) chance of picking a sub-table. Which
+ * sub-table is selected is determined by normalising its weight against the
+ * total weight of all sub-tables. If the selected sub-table has no rows (e.g.
+ * an ethereal placeholder) the roll falls back to the main table.
+ *
+ * When there are no sub-tables the main table receives all rolls (factor = 1).
  *
  * Fine handling uses a fixed CHEST_FINE_CHANCE (not the player's stat).
- * Items appearing in multiple tables have their drop rates combined.
+ * Items appearing in multiple tables have their drop rates combined harmonically.
  *
  * @param stepsPerChest    Steps to obtain the chest from the activity.
  * @param chestTables      Full LootTableDetail entries from the chest item.
@@ -158,24 +167,33 @@ export function buildChestDropInfoMap(
   const out = new Map<string, DropItemInfo>();
 
   for (const table of chestTables) {
-    // The main table's per-roll probability is the remaining weight after all
-    // non-empty sub-tables have taken their share. Sub-tables with no rows
-    // (e.g. ethereal placeholders) are ignored so their weight stays in the
-    // main table's share.
-    const subTableWeightSum = (table.subTables ?? [])
-      .filter((sub) => sub.tableRows?.length > 0)
-      .reduce((sum, sub) => sum + sub.weight, 0);
-    const mainTableFactor = 1 - subTableWeightSum;
+    const allSubs = table.subTables ?? [];
+    const totalSubWeight = allSubs.reduce((sum, sub) => sum + sub.weight, 0);
 
-    // Main table rows
+    let mainTableFactor: number;
+
+    if (totalSubWeight === 0) {
+      // No sub-tables (or all weight zero): every roll goes to the main table.
+      mainTableFactor = 1;
+    } else {
+      // Empty sub-tables (no rows) fall back to the main table, adding their
+      // share of the 50% sub-table probability back to the main table.
+      const emptySubWeight = allSubs
+        .filter((sub) => !sub.tableRows?.length)
+        .reduce((sum, sub) => sum + sub.weight, 0);
+      mainTableFactor = CHEST_MAIN_CHANCE + CHEST_SUB_CHANCE * (emptySubWeight / totalSubWeight);
+    }
+
     if (table.tableRows.length > 0 && mainTableFactor > 0) {
       processRows(table.tableRows, mainTableFactor, stepsPerChest, fineMaterialIds, out);
     }
 
-    // Sub-tables (quality-tiered gear, money, etc.)
-    for (const sub of table.subTables ?? []) {
-      if (!sub.tableRows?.length || sub.weight <= 0) continue;
-      processRows(sub.tableRows, sub.weight, stepsPerChest, fineMaterialIds, out);
+    if (totalSubWeight > 0) {
+      for (const sub of allSubs) {
+        if (!sub.tableRows?.length || sub.weight <= 0) continue;
+        const subFactor = CHEST_SUB_CHANCE * (sub.weight / totalSubWeight);
+        processRows(sub.tableRows, subFactor, stepsPerChest, fineMaterialIds, out);
+      }
     }
   }
 
