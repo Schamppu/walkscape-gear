@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { computed, shallowRef, watch } from "vue";
 import WsIcon from "@/components/primitives/WsIcon.vue";
 import WsLabel from "@/components/primitives/WsLabel.vue";
@@ -6,39 +6,44 @@ import InfoBubble from "@/components/common/InfoBubble.vue";
 import NestedDropdown from "@/components/common/dropdowns/NestedDropdown.vue";
 import TravelRequirementsList from "./TravelRequirementsList.vue";
 import { usePlayerStore } from "@/store/player";
-import { useRouteStore } from "@/store/route";
-import { useRoutes } from "@/composables/useRoutes";
+import { useRouteStore, type RouteSegment } from "@/store/route";
+import { useRoutes, type PathfindResult } from "@/composables/useRoutes";
 import {
   injectBaseContext,
   injectRequirements,
 } from "@/composables/context/injectShared";
+import type { SkillModifiersContext } from "@/composables/useSkillModifiers";
+import type { RequirementContext } from "@/composables/useRequirements";
 import { icons } from "@/constants/iconPaths";
 import { n } from "@/utils/number";
 import { calculateRouteStepSummary } from "@/domain/travel/routeStepSummary";
+import type { LocationSummary } from "@/domain/types/location";
 
 const playerStore = usePlayerStore();
 const routeStore = useRouteStore();
 const ctx = injectBaseContext();
-const { getRoute, averageStepsPerRoute, stepsPerNode } = useRoutes(ctx);
+const { getRoute, averageStepsPerRoute, stepsPerNode } = useRoutes(ctx as unknown as SkillModifiersContext);
 const { checkRequirements, mapRequirementsText, mergeRequirements } =
   injectRequirements();
 
-const route = shallowRef(null);
+type LocationItem = LocationSummary & { value: string };
 
-const start = computed({
-  get: () => routeStore.start,
+const route = shallowRef<PathfindResult<RouteSegment> | undefined>(undefined);
+
+const start = computed<LocationItem | null>({
+  get: () => routeStore.start as unknown as LocationItem | null,
   set: (val) => {
-    if (val !== routeStore.start) {
-      routeStore.setStart(val);
+    if ((val as unknown) !== routeStore.start) {
+      routeStore.setStart(val as unknown as string | null);
     }
   },
 });
 
-const end = computed({
-  get: () => routeStore.end,
+const end = computed<LocationItem | null>({
+  get: () => routeStore.end as unknown as LocationItem | null,
   set: (val) => {
-    if (val !== routeStore.end) {
-      routeStore.setEnd(val);
+    if ((val as unknown) !== routeStore.end) {
+      routeStore.setEnd(val as unknown as string | null);
     }
   },
 });
@@ -87,7 +92,7 @@ const routeStepSummary = computed(() =>
   calculateRouteStepSummary(segments.value),
 );
 
-const stats = (segment) => {
+const stats = (segment: RouteSegment) => {
   const {
     uncappedWorkEfficiency,
     workEfficiency,
@@ -129,7 +134,7 @@ const statsRow = computed(() => {
   const segmentsDA = segmentStats.map(({ doubleAction }) => doubleAction);
   const daRange = [Math.min(...segmentsDA), Math.max(...segmentsDA)];
 
-  const getRangeText = (range, isPercent = true) => {
+  const getRangeText = (range: number[], isPercent = true) => {
     const multi = isPercent ? 100 : 1;
     return range[0] !== range[1]
       ? `${n(range[0] * multi)} - ${n(range[1] * multi)}${isPercent ? "%" : ""}`
@@ -176,7 +181,7 @@ const reqs = computed(() => {
   );
   const requirementsActive = segmentRequirements.map(
     ({ requirements, context }) =>
-      requirements.map((reqs) => checkRequirements([reqs], context)),
+      requirements.map((reqs) => checkRequirements([reqs], context as RequirementContext)),
   );
 
   return segmentRequirements.map(({ requirements }, idx) => {
@@ -193,14 +198,14 @@ const missingRequirements = computed(() => {
   return mapRequirementsText(mergedReqs, [false]);
 });
 
-const updateStart = (location) => {
+const updateStart = (location: { value: string } & Record<string, unknown>) => {
   if (location.value === "None") start.value = null;
-  else start.value = location;
+  else start.value = location as unknown as LocationItem;
 };
 
-const updateEnd = (location) => {
+const updateEnd = (location: { value: string } & Record<string, unknown>) => {
   if (location.value === "None") end.value = null;
-  else end.value = location;
+  else end.value = location as unknown as LocationItem;
 };
 </script>
 
@@ -213,7 +218,8 @@ const updateEnd = (location) => {
         <nested-dropdown
           label="Start"
           :data="locationsByFaction"
-          v-model="start"
+          :model-value="(start as any)"
+          @update:modelValue="start = $event"
           default-text="start location"
           @select="updateStart"
         />
@@ -221,7 +227,8 @@ const updateEnd = (location) => {
         <nested-dropdown
           label="End"
           :data="locationsByFaction"
-          v-model="end"
+          :model-value="(end as any)"
+          @update:modelValue="end = $event"
           default-text="end location"
           @select="updateEnd"
         />
@@ -254,7 +261,7 @@ const updateEnd = (location) => {
       </div>
 
       <div v-if="segments.length" class="routes">
-        <div v-for="(route, idx) in segments" :key="route[0]" class="segment">
+        <div v-for="(route, idx) in segments" :key="idx" class="segment">
           <p class="route-text">
             <ws-icon :icon-path="route.from.icon" size="xs" />
             <span

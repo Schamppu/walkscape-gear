@@ -41,7 +41,7 @@ const props = withDefaults(
 // shared app-level instances for the default base context.
 const ctx = props.context || injectBaseContext();
 const { dropItemInfoMap } = props.context
-  ? useLootTables(props.context as LootTablesContext)
+  ? useLootTables(props.context as unknown as LootTablesContext)
   : injectLootTables();
 
 const dataStore = useDataStore();
@@ -52,7 +52,7 @@ const {
   noMaterialsConsumed,
   qualityOutcome,
 } = props.context
-  ? useSkillModifiers(props.context as SkillModifiersContext)
+  ? useSkillModifiers(props.context as unknown as SkillModifiersContext)
   : injectSkillModifiers();
 const { useFine, fineMode } = props.context
   ? useFineMaterials(props.context as FineMaterialsContext)

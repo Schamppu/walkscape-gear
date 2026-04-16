@@ -1,21 +1,23 @@
-<script setup>
+<script setup lang="ts">
 import { computed } from "vue";
 import ComparisonTableShell from "./table/ComparisonTableShell.vue";
 import WsIcon from "@/components/primitives/WsIcon.vue";
-import { useLootTables } from "@/composables/useLootTables";
+import { useLootTables, type LootTablesContext } from "@/composables/useLootTables";
+import type { DropItemInfo } from "@/domain/lootTables/dropInfo";
 import { icons } from "@/constants/iconPaths";
 import { snakeToTitle } from "@/utils/string";
 import AggregateDrops from "../drops/AggregateDrops.vue";
 import DropStepColumn from "./table/DropStepColumn.vue";
 import { partitionDropKeys } from "@/domain/comparison/dropsComparison";
+import type { BaseContext } from "@/composables/context/useBaseContext";
 
-const props = defineProps({
-  gs1Ctx: { type: Object, required: true },
-  gs2Ctx: { type: Object, required: true },
-});
+const props = defineProps<{
+  gs1Ctx: BaseContext;
+  gs2Ctx: BaseContext;
+}>();
 
-const { dropItemInfoMap: drops1 } = useLootTables(props.gs1Ctx);
-const { dropItemInfoMap: drops2 } = useLootTables(props.gs2Ctx);
+const { dropItemInfoMap: drops1 } = useLootTables(props.gs1Ctx as unknown as LootTablesContext);
+const { dropItemInfoMap: drops2 } = useLootTables(props.gs2Ctx as unknown as LootTablesContext);
 
 const dropsMap = computed(() => {
   const A = drops1.value;
@@ -23,7 +25,7 @@ const dropsMap = computed(() => {
 
   const { both, onlyA, onlyB } = partitionDropKeys(A, B);
 
-  const getItemInfo = (source, key) => {
+  const getItemInfo = (source: Record<string, DropItemInfo>, key: string) => {
     const info = source[key];
     return {
       name: snakeToTitle(info.id),

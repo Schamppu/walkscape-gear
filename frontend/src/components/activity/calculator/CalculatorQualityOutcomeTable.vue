@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { computed } from "vue";
 import { storeToRefs } from "pinia";
 import { useActivityStore } from "@/store/activity";
@@ -11,10 +11,9 @@ import WsLabel from "@/components/primitives/WsLabel.vue";
 import { getOutcomeOdds } from "@/domain/quality/qualityOutcomeOdds";
 import { chanceOfAtLeastOne } from "@/domain/quality/expectedOutcomes";
 import { n } from "@/utils/number";
+import type { RecipeDetail } from "@/domain/types/recipe";
 
-const props = defineProps({
-  crafts: Number,
-});
+const props = defineProps<{ crafts: number }>();
 
 const activityStore = useActivityStore();
 const { recipe } = storeToRefs(activityStore);
@@ -23,7 +22,7 @@ const { qualityOutcome } = injectSkillModifiers();
 const { fineMode } = injectFineMaterials();
 
 const craftingOdds = computed(() => {
-  const levelMap = getLevelRequirementsMap(recipe.value.requirements);
+  const levelMap = getLevelRequirementsMap((recipe.value as RecipeDetail).requirements);
   const level = Object.values(levelMap)[0];
 
   const odds = getOutcomeOdds(

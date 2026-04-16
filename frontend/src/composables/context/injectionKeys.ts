@@ -65,7 +65,7 @@ export type SharedRequirements = {
   ) => boolean;
   mapRequirementsText: (
     reqs: Requirement[],
-    fulfilled?: boolean[],
+    requirementsActive: boolean[],
     displayType?: RequirementDisplayType,
   ) => RequirementDisplay[];
   mergeRequirements: typeof import("@/domain/requirements/requirementUtils").mergeRequirements;

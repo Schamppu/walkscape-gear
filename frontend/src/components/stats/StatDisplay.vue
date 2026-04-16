@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { computed, ref } from "vue";
 import { injectEffectiveAttrs } from "@/composables/context/injectShared";
 import WsIcon from "@/components/primitives/WsIcon.vue";
@@ -8,24 +8,19 @@ import {
   sumStatValues,
   computeApplicableTotal,
 } from "@/domain/stats/statAggregation";
+import type { StatDefinition } from "@/domain/types/stat";
 
-const props = defineProps({
-  stat: {
-    type: Object,
-    required: true,
-  },
-  data: {
-    type: Object,
-    default: () => ({}),
-  },
-  isPercent: Boolean,
-});
+const props = defineProps<{
+  stat: StatDefinition;
+  data?: Record<string, unknown>;
+  isPercent?: boolean;
+}>();
 
 const isOpen = ref(false);
 
 const { allAttrs, totalsByStat } = injectEffectiveAttrs();
 
-const filterStat = (attr) => {
+const filterStat = (attr: { stats: Array<{ stat: string; isPercent: boolean }> }) => {
   const { stat: statId, isPercent: percent } = attr.stats[0];
   return statId == props.stat.id && percent === props.isPercent;
 };

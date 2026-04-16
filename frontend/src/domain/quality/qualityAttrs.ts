@@ -186,8 +186,10 @@ export function usedAttrs(item: Item, quality: string): Attribute[] {
       return item.levels[levelIndex]?.attributes ?? [];
     } else if ("materialAttrs" in item) {
       return item.materialAttrs ?? [];
+    } else if ("itemAttrs" in item) {
+      return (item as GearItem).itemAttrs ?? [];
     } else {
-      return item.itemAttrs ?? [];
+      return []; // ConsumableItem — buffs handled via sumBuffAttrs
     }
   };
 

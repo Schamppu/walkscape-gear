@@ -1,34 +1,35 @@
-<script setup>
+<script setup lang="ts">
 import { ref, computed } from "vue";
 import ComparisonTableShell from "./table/ComparisonTableShell.vue";
 import { getOutcomeOdds } from "@/domain/quality/qualityOutcomeOdds";
 import { buildCraftingOddsComparison } from "@/domain/comparison/craftingQualityComparison";
-import { useRequirements } from "@/composables/useRequirements";
-import { useSkillModifiers } from "@/composables/useSkillModifiers";
+import { getLevelRequirementsMap } from "@/domain/requirements/requirementUtils";
+import { useSkillModifiers, type SkillModifiersContext } from "@/composables/useSkillModifiers";
 import { n } from "@/utils/number";
+import type { FineMaterialsMode } from "@/domain/quality/qualityOutcomeOdds";
+import type { BaseContext } from "@/composables/context/useBaseContext";
+import type { RecipeDetail } from "@/domain/types/recipe";
 import ComparisonValueRow from "./table/ComparisonValueRow.vue";
 
-const props = defineProps({
-  fineMode: String,
-  borderClass: String,
-  gs1Ctx: Object,
-  gs2Ctx: Object,
-});
-
-const { getLevelRequirementsMap } = useRequirements();
+const props = defineProps<{
+  fineMode: FineMaterialsMode;
+  borderClass?: string;
+  gs1Ctx: BaseContext;
+  gs2Ctx: BaseContext;
+}>();
 
 const selectedComparison = ref(0);
-const changeComp = (index) => (selectedComparison.value = index);
+const changeComp = (index: number) => (selectedComparison.value = index);
 
 const craftingOdds = computed(() => {
-  const lReqs = getLevelRequirementsMap(props.gs1Ctx.recipe.value.requirements);
+  const lReqs = getLevelRequirementsMap((props.gs1Ctx.recipe.value as RecipeDetail).requirements);
   const levelReq = Object.values(lReqs)[0];
 
   const { qualityOutcome: qo1, craftsPerMaterial: cpm1 } = useSkillModifiers(
-    props.gs1Ctx,
+    props.gs1Ctx as unknown as SkillModifiersContext,
   );
   const { qualityOutcome: qo2, craftsPerMaterial: cpm2 } = useSkillModifiers(
-    props.gs2Ctx,
+    props.gs2Ctx as unknown as SkillModifiersContext,
   );
 
   const stats1 = getOutcomeOdds(

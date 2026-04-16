@@ -1,24 +1,36 @@
-<script setup>
+<script setup lang="ts">
 import { computed, ref } from "vue";
 import { useActivityStore } from "@/store/activity";
 import ComparisonTableShell from "./table/ComparisonTableShell.vue";
 import EmitLocationBubble from "@/components/common/EmitLocationBubble.vue";
-import { useSkillModifiers } from "@/composables/useSkillModifiers";
+import { useSkillModifiers, type SkillModifiersContext } from "@/composables/useSkillModifiers";
 import { useComparisonRows } from "@/composables/useComparisonRows";
 import { n } from "@/utils/number";
+import type { ComputedRef } from "vue";
+import type { BaseContext } from "@/composables/context/useBaseContext";
+import type { LocationDetail } from "@/domain/types/location";
 import ComparisonValueRow from "./table/ComparisonValueRow.vue";
 import EditableComparisonRow from "./table/EditableComparisonRow.vue";
 
-const props = defineProps({
-  gs1Ctx: { type: Object, required: true },
-  gs2Ctx: { type: Object, required: true },
-});
+const props = defineProps<{
+  gs1Ctx: BaseContext;
+  gs2Ctx: BaseContext;
+}>();
 
-const emit = defineEmits(["update:gs1Location", "update:gs2Location"]);
+const emit = defineEmits<{
+  "update:gs1Location": [location: LocationDetail | null];
+  "update:gs2Location": [location: LocationDetail | null];
+}>();
+
+type LocationChangeInfo = {
+  location: LocationDetail;
+  index: number;
+  gearSetIndex: number;
+};
 
 const activityStore = useActivityStore();
 
-const findIdx = (list, id) =>
+const findIdx = (list: { id: string }[] | null | undefined, id: string | undefined): number =>
   Math.max(0, list?.findIndex((item) => item.id === id) ?? 0);
 
 const gs1LocationIdx = ref(
@@ -32,10 +44,10 @@ const borderClass = computed(
   () => `border-${props.gs1Ctx.activity.value?.relatedSkillsList[0]}`,
 );
 
-const sm1 = useSkillModifiers(props.gs1Ctx);
-const sm2 = useSkillModifiers(props.gs2Ctx);
+const sm1 = useSkillModifiers(props.gs1Ctx as unknown as SkillModifiersContext);
+const sm2 = useSkillModifiers(props.gs2Ctx as unknown as SkillModifiersContext);
 
-const basicRows = useComparisonRows(sm1, sm2, [
+const basicRows = useComparisonRows(sm1 as unknown as Record<string, ComputedRef<number>>, sm2 as unknown as Record<string, ComputedRef<number>>, [
   {
     title: "Work Efficiency",
     key: "workEfficiency",
@@ -61,7 +73,7 @@ const xpPerStepRows = computed(() =>
 
 const tableRows = computed(() => [...basicRows.value, ...xpPerStepRows.value]);
 
-const updateLocation = ({ location, index, gearSetIndex }) => {
+const updateLocation = ({ location, index, gearSetIndex }: LocationChangeInfo) => {
   if (gearSetIndex === 0) {
     gs1LocationIdx.value = index;
     emit("update:gs1Location", location);
@@ -72,12 +84,12 @@ const updateLocation = ({ location, index, gearSetIndex }) => {
   }
 };
 
-const onRowChange = (info) => {
+const onRowChange = (info: LocationChangeInfo) => {
   if ("location" in info) updateLocation(info);
 };
 
 const editableRows = computed(() => {
-  const { id } = props.gs1Ctx.activity.value;
+  const { id } = props.gs1Ctx.activity.value ?? { id: "" };
   const isTravel = id === "travelling";
   const locationsRow = {
     title: "Location",
@@ -85,7 +97,7 @@ const editableRows = computed(() => {
     columns: [
       {
         items: !isTravel ? activityStore.locations : [],
-        itemProps: (item, index) => ({
+        itemProps: (item: unknown, index: number) => ({
           location: item,
           index,
           selected: gs1LocationIdx.value === index,
@@ -93,7 +105,7 @@ const editableRows = computed(() => {
       },
       {
         items: !isTravel ? activityStore.locations : [],
-        itemProps: (item, index) => ({
+        itemProps: (item: unknown, index: number) => ({
           location: item,
           index,
           selected: gs2LocationIdx.value === index,

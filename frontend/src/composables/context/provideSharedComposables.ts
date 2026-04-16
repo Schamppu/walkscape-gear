@@ -1,8 +1,8 @@
 import { provide } from "vue";
 import useBaseContext from "./useBaseContext";
-import { useEffectiveAttrs } from "../useEffectiveAttrs";
+import { useEffectiveAttrs, type EffectiveAttrsContext } from "../useEffectiveAttrs";
 import { useSkillModifiers, type SkillModifiersContext } from "../useSkillModifiers";
-import { useRequirements } from "../useRequirements";
+import { useRequirements, type RequirementContext } from "../useRequirements";
 import { useLootTables, type LootTablesContext } from "../useLootTables";
 import { useFineMaterials } from "../useFineMaterialsCalculations";
 import {
@@ -27,16 +27,16 @@ export function provideSharedComposables(): void {
   const ctx = useBaseContext();
   provide(BaseContextKey, ctx);
 
-  const effectiveAttrs = useEffectiveAttrs(ctx);
+  // BaseContext structurally satisfies these context types at runtime;
+  // the narrow discriminated-union on `source` / missing `inputItem` requires a cast.
+  const effectiveAttrs = useEffectiveAttrs(ctx as unknown as EffectiveAttrsContext);
   provide(EffectiveAttrsKey, effectiveAttrs);
 
-  // BaseContext structurally satisfies these context types at runtime;
-  // the narrow discriminated-union on `source` requires a cast.
   const skillModifiers = useSkillModifiers(ctx as unknown as SkillModifiersContext);
   provide(SkillModifiersKey, skillModifiers);
 
-  const requirements = useRequirements(ctx);
-  provide(RequirementsKey, requirements as any);
+  const requirements = useRequirements(ctx as unknown as RequirementContext);
+  provide(RequirementsKey, requirements);
 
   const lootTables = useLootTables(ctx as unknown as LootTablesContext);
   provide(LootTablesKey, lootTables);

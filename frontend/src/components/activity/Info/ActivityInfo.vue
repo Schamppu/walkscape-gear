@@ -171,7 +171,7 @@ const sections = computed(() => {
     itemProps: (item) => ({ ...item }),
   };
 
-  const otherReqs: Requirement[] = requirements.filter(
+  const otherReqs: Requirement[] = (requirements ?? []).filter(
     ({ type }) => type !== "skillLevel",
   );
 

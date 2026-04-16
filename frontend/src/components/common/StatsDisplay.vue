@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { computed } from "vue";
 import { useDataStore } from "@/store/data";
 import { toDeepRaw } from "@/utils/rawData";
@@ -6,34 +6,18 @@ import { resolveDisplayAttrs } from "@/domain/stats/itemStatDisplay";
 import WikiButton from "@/components/common/WikiButton.vue";
 import StatRequirementDisplay from "./StatRequirementDisplay.vue";
 import KeywordDisplay from "@/components/common/KeywordDisplay.vue";
+import type { ItemDetail } from "@/domain/types/item";
+import type { Keyword } from "@/domain/types/keyword";
 
-const props = defineProps({
-  item: {
-    type: Object,
-    required: true,
-  },
-  quality: String,
-  showQualityBorder: {
-    type: Boolean,
-    default: false,
-  },
-  hideKeywords: {
-    type: Boolean,
-    default: false,
-  },
-  filterStat: {
-    type: String,
-    default: "",
-  },
-  showActiveColors: {
-    type: Boolean,
-    default: false,
-  },
-  hideWikiButton: {
-    type: Boolean,
-    default: false,
-  },
-});
+const props = defineProps<{
+  item: ItemDetail;
+  quality?: string;
+  showQualityBorder?: boolean;
+  hideKeywords?: boolean;
+  filterStat?: string;
+  showActiveColors?: boolean;
+  hideWikiButton?: boolean;
+}>();
 
 const dataStore = useDataStore();
 
@@ -42,10 +26,10 @@ const keywords =
     ? []
     : props.item.keywords
         .map((keyword) => dataStore.getKeywordById(keyword))
-        .filter((k) => k?.icon);
+        .filter((k): k is Keyword => !!k?.icon);
 
 const attrs = computed(() =>
-  resolveDisplayAttrs(toDeepRaw(props.item), props.quality, props.filterStat),
+  resolveDisplayAttrs(toDeepRaw(props.item), props.quality ?? "", props.filterStat),
 );
 </script>
 
