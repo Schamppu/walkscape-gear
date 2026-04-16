@@ -80,6 +80,7 @@ const toggle = () => {
       class="stat-wrapper"
       :class="stat.isNegative ? 'negative' : 'positive'"
     >
+      <span>Global </span>
       <span class="stat-value">{{ displayValue }}</span>
       <ws-icon :iconPath="iconPath" size="sm" />
       <span class="stat-name"><ws-text :text="stat.name" :data="data" /></span>
