@@ -1,0 +1,57 @@
+{
+  "id": "bear_hunting",
+  "name": "Bear hunting",
+  "relatedSkillsList": ["hunting"],
+  "xpRewardsMap": { "hunting": 398 },
+  "workRequired": 482,
+  "maxWorkEfficiency": 1.7,
+  "requirements": [
+    {
+      "type": "skillLevel",
+      "name": "",
+      "opposite": false,
+      "requirement": { "level": 45, "skill": "hunting" }
+    },
+    {
+      "type": "keywordEquipped",
+      "name": "",
+      "opposite": false,
+      "requirement": { "keyword": "hunting_bow" }
+    }
+  ],
+  "tables": [
+    {
+      "isPrimary": true,
+      "type": [],
+      "rollAmount": 2,
+      "tables": ["bear_hunting"]
+    },
+    {
+      "isPrimary": false,
+      "type": ["chestTable"],
+      "rollAmount": 1,
+      "tables": ["hunting_activity_chest"]
+    }
+  ],
+  "rewards": [],
+  "options": [
+    {
+      "type": "inputActivity",
+      "inputs": [
+        {
+          "keyword": "arrows",
+          "type": "keyword",
+          "requirements": [
+            {
+              "type": "inputKeywordWithLevel",
+              "name": "",
+              "opposite": false,
+              "requirement": { "skill": "hunting", "level": 20 }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "icon": "assets/icons/activities/hunting/bear.png"
+}

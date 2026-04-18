@@ -1,0 +1,64 @@
+{
+  "id": "repair_the_bank",
+  "name": "Repair the bank",
+  "keywords": [],
+  "relatedSkillsList": ["carpentry"],
+  "xpRewardsMap": { "carpentry": 30000 },
+  "workRequired": 6000,
+  "maxWorkEfficiency": 2,
+  "requirements": [
+    {
+      "type": "skillLevel",
+      "name": "",
+      "opposite": false,
+      "requirement": { "level": 58, "skill": "carpentry" }
+    },
+    {
+      "type": "historyData",
+      "name": "requirements.singulars.uniques.wraithwaterBankRebuild",
+      "opposite": true,
+      "requirement": {
+        "category": "actionCompleted",
+        "data": "repair_the_bank",
+        "value": 1,
+        "distinct": false
+      }
+    },
+    {
+      "type": "itemEquipped",
+      "name": "",
+      "opposite": false,
+      "requirement": { "item": "spectral_saw" }
+    }
+  ],
+  "tables": [
+    {
+      "isPrimary": false,
+      "type": ["chestTable"],
+      "rollAmount": 1,
+      "tables": ["carpentry_activity_chest"]
+    }
+  ],
+  "rewards": [],
+  "options": [
+    {
+      "type": "inputActivity",
+      "inputs": [
+        {
+          "item": "ectoplasm",
+          "type": "specific",
+          "quantity": 50,
+          "quality": null,
+          "isOptional": false
+        }
+      ],
+      "enableAttributes": false,
+      "enableTierBenefit": false,
+      "enableQualityBenefit": false,
+      "enableFineBenefit": false,
+      "requireFine": false
+    },
+    { "type": "limitedActivity", "maxCompletions": 1 }
+  ],
+  "icon": "assets/icons/activities/repair_bank.png"
+}

@@ -1,0 +1,76 @@
+{
+  "id": "underwater_aqueduct_construction",
+  "name": "Underwater aqueduct construction",
+  "keywords": [],
+  "relatedSkillsList": ["carpentry"],
+  "requiredKeywords": [{ "id": "carpentry_tool", "keyword": "carpentryTool" }],
+  "xpRewardsMap": { "carpentry": 70, "agility": 70 },
+  "workRequired": 150,
+  "maxWorkEfficiency": 1.9,
+  "requirements": [
+    {
+      "type": "distinctKeywordItemsEquipped",
+      "name": "",
+      "opposite": false,
+      "requirement": { "quantity": 2, "keywords": ["light_source"] }
+    },
+    {
+      "type": "distinctKeywordItemsEquipped",
+      "name": "",
+      "opposite": false,
+      "requirement": { "quantity": 3, "keywords": ["advanced_diving_gear"] }
+    },
+    {
+      "type": "skillLevel",
+      "name": "",
+      "opposite": false,
+      "requirement": { "level": 40, "skill": "carpentry" }
+    },
+    {
+      "type": "skillLevel",
+      "name": "",
+      "opposite": false,
+      "requirement": { "level": 40, "skill": "agility" }
+    },
+    {
+      "type": "keywordEquipped",
+      "name": "",
+      "opposite": false,
+      "requirement": { "keyword": "carpentry_tool" }
+    }
+  ],
+  "tables": [
+    {
+      "isPrimary": true,
+      "type": [],
+      "rollAmount": 1,
+      "tables": ["underwater_aqueduct_construction"]
+    },
+    {
+      "isPrimary": false,
+      "type": ["chestTable"],
+      "rollAmount": 1,
+      "tables": ["carpentry_activity_chest"]
+    },
+    {
+      "isPrimary": false,
+      "type": ["chestTable"],
+      "rollAmount": 1,
+      "tables": ["agility_activity_chest"]
+    },
+    {
+      "isPrimary": false,
+      "type": ["gem"],
+      "rollAmount": 1,
+      "tables": ["gdte_gem_table"]
+    }
+  ],
+  "rewards": [
+    {
+      "runtimeType": "factionReputation",
+      "faction": "halfling_rebels",
+      "amount": 0.01
+    }
+  ],
+  "icon": "assets/icons/activities/underwater_aqueduct_construction.png"
+}

@@ -1,0 +1,40 @@
+{
+  "id": "branch_trimming",
+  "name": "Branch trimming",
+  "keywords": [],
+  "relatedSkillsList": ["woodcutting"],
+  "requiredKeywords": [],
+  "xpRewardsMap": { "woodcutting": 9 },
+  "workRequired": 50,
+  "maxWorkEfficiency": 1.7,
+  "requirements": [
+    {
+      "type": "skillLevel",
+      "name": "",
+      "opposite": false,
+      "requirement": { "level": 1, "skill": "woodcutting" }
+    }
+  ],
+  "tables": [
+    {
+      "isPrimary": true,
+      "type": [],
+      "rollAmount": 2,
+      "tables": ["branch_trimming"]
+    },
+    {
+      "isPrimary": false,
+      "type": ["chestTable"],
+      "rollAmount": 1,
+      "tables": ["woodcutting_activity_chest"]
+    },
+    {
+      "isPrimary": false,
+      "type": ["birdNest"],
+      "rollAmount": 1,
+      "tables": ["woodcutting_bird_nest"]
+    }
+  ],
+  "rewards": [],
+  "icon": "assets/icons/activities/woodcutting/branch_trimming.png"
+}

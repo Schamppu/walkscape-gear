@@ -1,0 +1,61 @@
+{
+  "id": "mine_adamant_ore",
+  "name": "Mine adamant ore",
+  "keywords": ["mining_ores"],
+  "relatedSkillsList": ["mining"],
+  "xpRewardsMap": { "mining": 108 },
+  "workRequired": 163,
+  "maxWorkEfficiency": 2.5,
+  "requirements": [
+    {
+      "type": "skillLevel",
+      "name": "",
+      "opposite": false,
+      "requirement": { "level": 60, "skill": "mining" }
+    },
+    {
+      "type": "keywordWithLevelEquipped",
+      "name": "",
+      "opposite": false,
+      "requirement": { "keyword": "pickaxe", "skill": "mining", "level": 50 }
+    },
+    {
+      "type": "abilityAvailable",
+      "name": "",
+      "opposite": false,
+      "requirement": {
+        "ability": "navigate_desert",
+        "scanEquippedItems": false
+      }
+    }
+  ],
+  "tables": [
+    {
+      "isPrimary": true,
+      "type": [],
+      "rollAmount": 1,
+      "tables": ["mine_adamant_ore"]
+    },
+    {
+      "isPrimary": false,
+      "type": ["chestTable"],
+      "rollAmount": 1,
+      "tables": ["mining_activity_chest"]
+    },
+    {
+      "isPrimary": false,
+      "type": ["gem"],
+      "rollAmount": 1,
+      "tables": ["wrentmark_gem_table"]
+    },
+    {
+      "isPrimary": false,
+      "type": ["petEgg"],
+      "rollAmount": 1,
+      "tables": ["mine_adamant_ore_camel_egg"]
+    }
+  ],
+  "rewards": [],
+  "options": null,
+  "icon": "assets/icons/activities/mining/adamant.png"
+}

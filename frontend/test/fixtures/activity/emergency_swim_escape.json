@@ -1,0 +1,22 @@
+{
+  "id": "emergency_swim_escape",
+  "name": "Emergency swim escape",
+  "keywords": [],
+  "relatedSkillsList": ["agility"],
+  "requiredKeywords": [],
+  "xpRewardsMap": { "agility": 10 },
+  "workRequired": 10000,
+  "maxWorkEfficiency": 1,
+  "requirements": [
+    {
+      "type": "skillLevel",
+      "name": "",
+      "opposite": false,
+      "requirement": { "level": 1, "skill": "agility" }
+    }
+  ],
+  "tables": [],
+  "rewards": [],
+  "abilities": ["emergency_swim_escape!"],
+  "icon": "assets/icons/activities/emergency_escape_global.png"
+}

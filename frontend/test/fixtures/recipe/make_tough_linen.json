@@ -1,0 +1,40 @@
+{
+  "icon": "assets/icons/items/materials/tough_linen.png",
+  "id": "make_tough_linen",
+  "name": "Make tough linen",
+  "relatedSkills": ["tailoring"],
+  "workRequired": 150,
+  "maxWorkEfficiency": 2.5,
+  "materials": [
+    {
+      "options": [
+        { "item": "ironweed", "amount": 2 },
+        { "item": "cattail", "amount": 2 }
+      ]
+    }
+  ],
+  "itemRewards": { "tough_linen_cloth": 1 },
+  "tables": [
+    {
+      "isPrimary": false,
+      "type": ["chestTable"],
+      "rollAmount": 1,
+      "tables": ["tailoring_activity_chest"]
+    }
+  ],
+  "xpRewards": { "tailoring": 35 },
+  "requirements": [
+    {
+      "type": "service",
+      "name": "",
+      "opposite": false,
+      "requirement": { "serviceKeyword": "loom", "tier": "advanced" }
+    },
+    {
+      "type": "skillLevel",
+      "name": "",
+      "opposite": false,
+      "requirement": { "level": 60, "skill": "tailoring" }
+    }
+  ]
+}

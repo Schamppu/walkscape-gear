@@ -1,0 +1,40 @@
+{
+  "icon": "assets/icons/items/materials/misc/wood_scrap.png",
+  "id": "upcycle_trash",
+  "name": "Upcycle trash",
+  "keywords": [],
+  "relatedSkills": ["crafting"],
+  "workRequired": 40,
+  "maxWorkEfficiency": 1.6,
+  "materials": [{ "options": [{ "item": "trash", "amount": 1 }] }],
+  "itemRewards": { "wood_scrap": 1 },
+  "tables": [
+    {
+      "isPrimary": false,
+      "type": ["chestTable"],
+      "rollAmount": 1,
+      "tables": ["crafting_activity_chest"]
+    },
+    {
+      "isPrimary": true,
+      "type": [],
+      "rollAmount": 1,
+      "tables": ["trash_transform"]
+    }
+  ],
+  "xpRewards": { "crafting": 19 },
+  "requirements": [
+    {
+      "type": "skillLevel",
+      "name": "",
+      "opposite": false,
+      "requirement": { "level": 10, "skill": "crafting" }
+    },
+    {
+      "type": "service",
+      "name": "",
+      "opposite": false,
+      "requirement": { "serviceKeyword": "workshop", "tier": "basic" }
+    }
+  ]
+}

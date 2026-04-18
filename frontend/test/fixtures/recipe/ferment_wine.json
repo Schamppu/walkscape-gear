@@ -1,0 +1,34 @@
+{
+  "icon": "assets/icons/items/materials/food/wine.png",
+  "id": "ferment_wine",
+  "name": "Ferment wine",
+  "keywords": ["cooking_recipe"],
+  "relatedSkills": ["cooking"],
+  "workRequired": 455,
+  "maxWorkEfficiency": 1.8,
+  "materials": [{ "options": [{ "item": "berries", "amount": 15 }] }],
+  "itemRewards": { "wine": 5 },
+  "tables": [
+    {
+      "isPrimary": false,
+      "type": ["chestTable"],
+      "rollAmount": 1,
+      "tables": ["cooking_activity_chest"]
+    }
+  ],
+  "xpRewards": { "cooking": 265 },
+  "requirements": [
+    {
+      "type": "skillLevel",
+      "name": "",
+      "opposite": false,
+      "requirement": { "level": 21, "skill": "cooking" }
+    },
+    {
+      "type": "service",
+      "name": "",
+      "opposite": false,
+      "requirement": { "serviceKeyword": "kitchen", "tier": "basic" }
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "icon": "assets/icons/items/gear/neck/wraithwater_flower_necklace.png",
+  "id": "create_a_wraithwater_flower_necklace",
+  "name": "Create a Wraithwater flower necklace",
+  "keywords": [],
+  "relatedSkills": ["trinketry"],
+  "workRequired": 125,
+  "maxWorkEfficiency": 1.8,
+  "materials": [
+    { "options": [{ "item": "widows_kiss", "amount": 2 }] },
+    { "options": [{ "item": "bones", "amount": 2 }] }
+  ],
+  "itemRewards": { "wraithwater_flower_necklace": 1 },
+  "tables": [
+    {
+      "isPrimary": false,
+      "type": ["chestTable"],
+      "rollAmount": 1,
+      "tables": ["trinketry_activity_chest"]
+    }
+  ],
+  "xpRewards": { "trinketry": 80 },
+  "requirements": [
+    {
+      "type": "skillLevel",
+      "name": "",
+      "opposite": false,
+      "requirement": { "level": 55, "skill": "trinketry" }
+    }
+  ]
+}

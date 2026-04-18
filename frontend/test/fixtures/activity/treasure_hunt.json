@@ -1,0 +1,81 @@
+{
+  "id": "treasure_hunt",
+  "name": "Treasure hunt",
+  "keywords": [],
+  "relatedSkillsList": ["foraging"],
+  "requiredKeywords": [],
+  "xpRewardsMap": {
+    "fishing": 10,
+    "woodcutting": 10,
+    "agility": 10,
+    "foraging": 10
+  },
+  "workRequired": 100,
+  "maxWorkEfficiency": 1.2,
+  "requirements": [
+    {
+      "type": "skillLevel",
+      "name": "",
+      "opposite": false,
+      "requirement": { "level": 20, "skill": "foraging" }
+    }
+  ],
+  "tables": [
+    {
+      "isPrimary": false,
+      "type": ["collectible"],
+      "rollAmount": 0,
+      "tables": ["horn_of_respite_treasure_hunt"]
+    },
+    {
+      "isPrimary": false,
+      "type": ["chestTable"],
+      "rollAmount": 1,
+      "tables": ["foraging_activity_chest"]
+    },
+    {
+      "isPrimary": false,
+      "type": [],
+      "rollAmount": 1,
+      "tables": ["treasure_hunt_enamel_pin_table"]
+    },
+    {
+      "isPrimary": false,
+      "type": ["collectible"],
+      "rollAmount": 1,
+      "tables": ["treasure_hunt_petrified_branch"]
+    },
+    {
+      "isPrimary": false,
+      "type": ["collectible"],
+      "rollAmount": 1,
+      "tables": ["treasure_hunt_floating_coral"]
+    },
+    {
+      "isPrimary": false,
+      "type": ["collectible"],
+      "rollAmount": 1,
+      "tables": ["treasure_hunt_easter_egg"]
+    },
+    {
+      "isPrimary": false,
+      "type": ["collectible"],
+      "rollAmount": 1,
+      "tables": ["treasure_hunt_treasure_hunter_token"]
+    },
+    {
+      "isPrimary": false,
+      "type": ["collectible"],
+      "rollAmount": 1,
+      "tables": ["treasure_hunt_artificial_snowflake"]
+    },
+    {
+      "isPrimary": false,
+      "type": ["petEgg"],
+      "rollAmount": 1,
+      "tables": ["treasure_hunt_reindeer_egg"]
+    }
+  ],
+  "rewards": [],
+  "icon": "assets/icons/activities/foraging/treasure_hunting.png"
+}
