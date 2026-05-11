@@ -1,50 +1,35 @@
-import api from "./api.js";
+import cachedApi from "./cachedApi.js";
 
 export default class BaseService {
   constructor(resourceName) {
     this.resourceName = resourceName;
-    this.cache = {
-      data: null,
-      expiry: 0,
-    };
-    this.CACHE_DURATION_MS = 10 * 60 * 1000;
   }
 
   async list() {
-    const now = Date.now();
-    if (this.cache.data && this.cache.expiry > now) {
-      return this.cache.data;
-    }
-
-    const response = await api.get(`/${this.resourceName}`);
-    this.cache = {
-      data: response.data,
-      expiry: now + this.CACHE_DURATION_MS,
-    };
+    const response = await cachedApi.get(`/${this.resourceName}`);
     return response.data;
   }
 
   async getById(id) {
-    const response = await api.get(`/${this.resourceName}/${id}`);
+    const response = await cachedApi.get(`/${this.resourceName}/${id}`);
     return response.data;
   }
 
   async getMultiple(ids) {
-    const data = await Promise.all(ids.map((id) => this.getById(id)));
-    return data;
+    return Promise.all(ids.map((id) => this.getById(id)));
   }
 
   async getIds(ids, target) {
-    const response = await api.post(
+    const response = await cachedApi.post(
       `/${this.resourceName}/ids`,
       { ids, target },
-      { responseType: "json" }
+      { responseType: "json" },
     );
     return response.data;
   }
 
   async search(params) {
-    const response = await api.get(`/${this.resourceName}/search`, { params });
+    const response = await cachedApi.get(`/${this.resourceName}/search`, { params });
     return response.data;
   }
 }

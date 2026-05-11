@@ -6,6 +6,7 @@ import helmet from "helmet";
 
 import { registerRoutes } from "./routes/index.js";
 import { errorHandler } from "./middleware/errorHandler.js";
+import { warmCache } from "./services/warmCache.js";
 
 const app = express();
 const PORT = process.env.BACKEND_PORT || 3001;
@@ -24,4 +25,7 @@ registerRoutes(app);
 
 app.listen(PORT, () => {
   console.log(`Backend server running on http://localhost:${PORT}`);
+  warmCache().catch((error) => {
+    console.error("[warmCache] unexpected failure:", error);
+  });
 });

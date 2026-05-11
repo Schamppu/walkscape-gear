@@ -1,18 +1,18 @@
-import api from "./api.js";
+import cachedApi from "./cachedApi.js";
 
 export default class IconService {
   async getIcon(iconPath) {
-    const response = await api.get(`/icons/${iconPath}`, {
+    const response = await cachedApi.get(`/icons/${iconPath}`, {
       responseType: "arraybuffer",
     });
     return response;
   }
 
   async getIconsBatch(iconPaths) {
-    const response = await api.post(
+    const response = await cachedApi.post(
       "/icons/batch",
       { iconPaths },
-      { responseType: "json" }
+      { responseType: "json" },
     );
     return response.data;
   }
