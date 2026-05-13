@@ -66,9 +66,8 @@ const filteredData = computed(() => {
 });
 
 const labelText = computed(() => {
-  return selected.value?.id !== "none"
-    ? selected.value.value || selected.value.name
-    : props.defaultText;
+  if (!selected.value || selected.value?.id === "none") return props.defaultText;
+  return selected.value.value || selected.value.name;
 });
 
 watch(
@@ -90,7 +89,7 @@ const selectItem = (item, update = true) => {
     <div class="header">
       <ws-label :label="label" label-for="dropdown-trigger" />
       <button class="dropdown-trigger" @click="toggle">
-        <label-with-icon :text="labelText" :icon="selected.icon" />
+        <label-with-icon :text="labelText" :icon="selected?.icon" />
         <span class="chevron" :class="{ isOpen }">▼</span>
       </button>
     </div>
