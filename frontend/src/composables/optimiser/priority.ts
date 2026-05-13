@@ -10,17 +10,19 @@ import { useItemsStore } from "@/store/items";
 import useBaseContext from "@/composables/context/useBaseContext";
 import { RecipeDetail } from "@/domain/types";
 
+const getFromList = (list: SettingOption[], index: number): SettingOption =>
+  list[index] ?? list[0];
+
 export const selectedPriority = (): SettingOption => {
   const baseCtx = useBaseContext();
   const settingsStore = useSettingsStore();
   const itemsStore = useItemsStore();
   const { gearSettings } = storeToRefs(settingsStore);
 
+  const s = gearSettings.value;
   const isRecipe = baseCtx.recipeSelected.value;
   if (!isRecipe) {
-    return activityOptimiserPriorities[
-      gearSettings.value.activityOptimiserPriority.display
-    ];
+    return getFromList(activityOptimiserPriorities, s.activityOptimiserPriority.display);
   }
 
   const recipe = baseCtx.source.value as RecipeDetail;
@@ -29,12 +31,8 @@ export const selectedPriority = (): SettingOption => {
   );
 
   return isQoRecipe
-    ? qoRecipeOptimiserPriorities[
-        gearSettings.value.qoRecipeOptimiserPriority.display
-      ]
-    : recipeOptimiserPriorities[
-        gearSettings.value.recipeOptimiserPriority.display
-      ];
+    ? getFromList(qoRecipeOptimiserPriorities, s.qoRecipeOptimiserPriority.display)
+    : getFromList(recipeOptimiserPriorities, s.recipeOptimiserPriority.display);
 };
 
 export const priorityValue = (): string => selectedPriority().value;
