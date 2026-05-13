@@ -20,11 +20,18 @@ export const activityOptimiserPriorities: SettingOption[] = [
 export const recipeOptimiserPriorities: SettingOption[] = [
   { value: "balancedRecipe", name: "Balanced" },
   { value: "craftsPerMaterial", name: "Crafts per Material" },
+  { value: "xpPerStep", name: "XP per step" },
+];
+
+export const qoRecipeOptimiserPriorities: SettingOption[] = [
+  { value: "balancedRecipe", name: "Balanced" },
   { value: "averageEternalCrafts", name: "Average Eternal Mats" },
+  { value: "craftsPerMaterial", name: "Crafts per Material" },
   { value: "xpPerStep", name: "XP per step" },
 ];
 
 export default {
   activityOptimiserPriorities,
   recipeOptimiserPriorities,
+  qoRecipeOptimiserPriorities,
 };

@@ -8,6 +8,7 @@ import {
   decimalSeparators,
   undoRedoOptions,
   shownDropRateOptions,
+  qoRecipeOptimiserPriorities,
 } from "@/constants/settings";
 import type { Setting, SettingOption } from "@/constants/settings";
 import type {
@@ -61,6 +62,7 @@ export const GEAR_SETTING_KEYS = [
   "undoRedo",
   "activityOptimiserPriority",
   "recipeOptimiserPriority",
+  "qoRecipeOptimiserPriority",
 ] as const;
 
 export const ACTIVITY_SETTING_KEYS = [
@@ -403,7 +405,7 @@ export const useSettingsStore = defineStore("settingsStore", {
           [
             "activityOptimiserPriority",
             makeDisplaySetting(
-              "Activity optimiser priority",
+              "Activity priority",
               activityOptimiserPriorities,
               0,
               true,
@@ -412,12 +414,21 @@ export const useSettingsStore = defineStore("settingsStore", {
           [
             "recipeOptimiserPriority",
             makeDisplaySetting(
-              "Recipe optimiser priority",
+              "Recipe priority",
               recipeOptimiserPriorities,
               0,
               true,
             ),
           ],
+          [
+            "qoRecipeOptimiserPriority",
+            makeDisplaySetting(
+              "QO recipe priority",
+              qoRecipeOptimiserPriorities,
+              0,
+              true,
+            ),
+          ]
         ]),
 
         activitySettings: Object.fromEntries([

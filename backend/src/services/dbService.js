@@ -58,6 +58,7 @@ const ALLOWED_SETTINGS = new Set([
   "undoRedo",
   "activityOptimiserPriority",
   "recipeOptimiserPriority",
+  "qoRecipeOptimiserPriority",
   "showCombined",
   "hideOwnedCollectibles",
   "hideUnmetLevelActivities",
