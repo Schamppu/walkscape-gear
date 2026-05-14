@@ -1,12 +1,3 @@
-import { qualityOptions } from "./qualityOptions.js";
-import { price } from "./ItemValue.js";
-
-const token_items = [
-  "adventurers_enamel_pin",
-  "name_tag",
-  "unidentified_remains",
-];
-
 export const createItemValueMap = (
   crafted,
   loot,
@@ -15,38 +6,30 @@ export const createItemValueMap = (
   containers,
   chestTables,
 ) => {
-  const getLootvalue = (items, qualityValues = null) =>
-    items.map(({ id, itemValue, itemValueModifier, quality }) => [
-      id,
-      Object.fromEntries(
-        (qualityValues || [quality]).map((quality) => [
-          quality,
-          price(itemValue, itemValueModifier, quality),
-        ]),
-      ),
-    ]);
-
-  const getItemValue = (items) =>
-    items.map(({ id, itemValue, itemValueModifier, canBeFine }) => {
-      const options = canBeFine ? ["common", "fine"] : ["common"];
-      return [
-        id,
-        Object.fromEntries(
-          options.map((quality) => [
-            quality,
-            price(itemValue, itemValueModifier, "common", quality === "fine"),
-          ]),
-        ),
-      ];
-    });
-
+  // Crafted items have all qualities pre-calculated in itemValue.value
   const craftedValues = Object.fromEntries(
-    getLootvalue(crafted, qualityOptions),
+    crafted.map(({ id, itemValue }) => [id, itemValue.value]),
   );
-  const lootValues = Object.fromEntries(getLootvalue(loot));
-  const consumableValues = Object.fromEntries(getItemValue(consumables));
+
+  // Loot items are stored with their specific quality only
+  const lootValues = Object.fromEntries(
+    loot
+      .filter(({ itemValue }) => itemValue.currency === "money")
+      .map(({ id, itemValue, quality }) => {
+        return [id, { [quality]: itemValue.value[quality] }];
+      }),
+  );
+
+  // Consumables and materials use pre-calculated values; skip non-money items (tokens)
+  const consumableValues = Object.fromEntries(
+    consumables
+      .filter(({ itemValue }) => itemValue.currency === "money")
+      .map(({ id, itemValue }) => [id, itemValue.value]),
+  );
   const materialValues = Object.fromEntries(
-    getItemValue(materials).filter(([id]) => !token_items.includes(id)),
+    materials
+      .filter(({ itemValue }) => itemValue.currency === "money")
+      .map(({ id, itemValue }) => [id, itemValue.value]),
   );
   const chestValues = resolveChestValues(
     containers,
@@ -72,8 +55,8 @@ const resolveChestValues = (
   consumableValues,
   materialValues,
 ) => {
-  const bird_nest = { common: 80.8 };
-  const gem_pouch = { common: 136.6 };
+  const bird_nest = { common: 61.9801992 };
+  const gem_pouch = { common: 140.449358 };
 
   const itemValues = {
     ...lootValues,
@@ -107,7 +90,7 @@ const resolveChestValues = (
           const price = Object.values(item)[0];
           return amount * chance * price;
         } else {
-          console.log("???", rowItemID);
+          // console.log("???", rowItemID);
           return 0;
         }
       },
