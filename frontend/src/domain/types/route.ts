@@ -18,6 +18,5 @@ export type RouteSummary = {
   name: string;
   locations: string[];
   distance: number;
-  distanceModifier: number;
   options?: RouteOption[];
 };

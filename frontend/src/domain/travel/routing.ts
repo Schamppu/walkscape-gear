@@ -82,7 +82,6 @@ export function buildGraph(
   routes: {
     locations: string[];
     distance: number;
-    distanceModifier: number;
     options?: RouteOption[];
   }[],
   terrainModifiersMap: Record<string, Omit<TerrainModifier, "id">>,
@@ -106,9 +105,9 @@ export function buildGraph(
 
   for (const { id } of locations) ensureLocation(id);
 
-  for (const { locations: locs, distance, distanceModifier, options } of routes) {
+  for (const { locations: locs, distance, options } of routes) {
     const [from, to] = locs;
-    const dist = Math.floor(distance * distanceModifier);
+    const dist = distance;
     const opts = options ?? [];
     addEdge(from, to, dist, resolveTerrainModifiers(from, opts, terrainModifiersMap));
     addEdge(to, from, dist, resolveTerrainModifiers(to, opts, terrainModifiersMap));
