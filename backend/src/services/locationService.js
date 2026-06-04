@@ -9,7 +9,7 @@ class LocationService extends BaseService {
     const defaults = {
       jarvonia: "kallaheim",
       herberts_guiding_grounds: "disenchanted_forest",
-      erdwise: "blackspell_port",
+      erdwise: "blackspell_harbour",
       grand_duchy_of_trellin_erdwise: "salsfirth",
       halfling_rebels: "halfling_campgrounds",
       syrenthia: "vastalume",

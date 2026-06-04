@@ -22,16 +22,23 @@ export const selectedPriority = (): SettingOption => {
   const s = gearSettings.value;
   const isRecipe = baseCtx.recipeSelected.value;
   if (!isRecipe) {
-    return getFromList(activityOptimiserPriorities, s.activityOptimiserPriority.display);
+    return getFromList(
+      activityOptimiserPriorities,
+      s.activityOptimiserPriority.display,
+    );
   }
 
   const recipe = baseCtx.source.value as RecipeDetail;
-  const isQoRecipe = Object.keys(recipe.itemRewards).some(
-    (item) => !(item in itemsStore.materials),
-  );
+  const recipeItemIds = Object.keys(recipe.itemRewards);
+  const mainId = recipeItemIds[0];
+  const { type } = itemsStore.allGearItems[mainId];
+  const isQoRecipe = type === "crafted";
 
   return isQoRecipe
-    ? getFromList(qoRecipeOptimiserPriorities, s.qoRecipeOptimiserPriority.display)
+    ? getFromList(
+        qoRecipeOptimiserPriorities,
+        s.qoRecipeOptimiserPriority.display,
+      )
     : getFromList(recipeOptimiserPriorities, s.recipeOptimiserPriority.display);
 };
 
