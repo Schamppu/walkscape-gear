@@ -62,6 +62,8 @@ export const icons: IconMap = {
     steps: "steps.png",
     show: "show.png",
     switch: "switch_gear_set.png",
+    locked: "locked.png",
+    unlocked: "unlocked.png",
   }),
   ...withBase("button", {
     deposit: "deposit.png",
