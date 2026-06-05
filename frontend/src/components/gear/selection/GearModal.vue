@@ -1,9 +1,12 @@
 <script setup>
+import { computed } from "vue";
 import BaseModal from "@/components/common/BaseModal.vue";
 import { useGearStore } from "@/store/gear";
 import { useUrlStore } from "@/store/url";
 import GearPreview from "./GearPreview.vue";
 import GearSearch from "./GearSearch.vue";
+import WsButton from "@/components/primitives/WsButton.vue";
+import { icons } from "@/constants/iconPaths";
 
 const props = defineProps({
   gearType: {
@@ -20,6 +23,8 @@ const emit = defineEmits(["update:visible"]);
 
 const gearStore = useGearStore();
 const urlStore = useUrlStore();
+
+const isLocked = computed(() => gearStore.isSlotLocked(props.slotName));
 
 const closeDialog = () => {
   emit("update:visible", false);
@@ -61,7 +66,11 @@ const slotTitle = (slotName) => {
     @close="closeDialog"
   >
     <template #header>
-      <div class="spacer"></div>
+      <ws-button
+        class="lock-button"
+        :icon-path="isLocked ? icons.locked : icons.unlocked"
+        @click="gearStore.toggleSlotLock(slotName)"
+      />
       <h2 class="title">{{ slotTitle(slotName) }}</h2>
       <button class="close-button" @click="closeDialog">x</button>
     </template>
@@ -106,6 +115,20 @@ const slotTitle = (slotName) => {
   color: $txPrimary;
   width: 48px;
   flex-shrink: 0;
+  border-left: $bgPrimary solid 1px;
+
+  &:hover,
+  &:focus {
+    background-color: $boxDarkOutline;
+  }
+}
+
+.lock-button {
+  width: 48px;
+  padding: $base $base $xs;
+  border: none;
+  border-radius: 0;
+  border-right: $bgPrimary solid 1px;
 
   &:hover,
   &:focus {

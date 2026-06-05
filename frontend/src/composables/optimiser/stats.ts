@@ -9,6 +9,8 @@ import { useRequirements, type RequirementContext } from "@/composables/useRequi
 import { useLevelBonus, type LevelBonusContext } from "@/composables/useLevelBonus";
 import { usePlayerStore } from "@/store/player";
 import { useDataStore } from "@/store/data";
+import { useGearStore } from "@/store/gear";
+import { gearSlots } from "@/domain/constants/gear";
 import { toDeepRaw } from "@/utils/rawData";
 import {
   resolveItemAttrs,
@@ -222,6 +224,7 @@ export const buildWorkerJob = (
   const baseCtx = useBaseContext();
   const playerStore = usePlayerStore();
   const dataStore = useDataStore();
+  const gearStore = useGearStore();
 
   const { workEfficiencyBonus, qualityOutcomeBonus } = useLevelBonus(
     baseCtx as unknown as LevelBonusContext,
@@ -308,6 +311,19 @@ export const buildWorkerJob = (
     ),
   };
 
+  // Locked slots are excluded from activeSlots and never enter the worker's
+  // gear set, but their keywords must still inform filterMultislot's banned-
+  // keyword check for sibling slots. Collect them grouped by slot key.
+  const lockedMultislotKeywords: Record<string, string[]> = {};
+  for (const slot of gearSlots) {
+    if (!gearStore.isSlotLocked(slot)) continue;
+    const item = gearStore.selectedGearset[slot];
+    const keywords = (item as { keywords?: string[] } | null)?.keywords;
+    if (!keywords?.length) continue;
+    const slotKey = slot.replace(/\d+$/, "");
+    (lockedMultislotKeywords[slotKey] ??= []).push(...keywords);
+  }
+
   return toDeepRaw({
     staticEntries,
     source,
@@ -321,6 +337,7 @@ export const buildWorkerJob = (
     activeSlots: [...activeSlots],
     playerLevel: playerStore.level,
     keywordsMap: dataStore.keywordsMap,
+    lockedMultislotKeywords,
   }) as OptimiserJobData;
 };
 

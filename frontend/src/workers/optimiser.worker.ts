@@ -309,6 +309,7 @@ function filterMultislot(
   slotKey: string,
   slotName: string,
   keywordsMap: Record<string, { bannedKeywords: string[] }>,
+  lockedKeywords: string[] = [],
 ): WorkerItem[] {
   const previousSlots = Object.entries(gearSet)
     .filter(([slot]) => slot.includes(slotKey))
@@ -327,7 +328,9 @@ function filterMultislot(
       .filter(([slot, v]) => v && slot !== slotName && slot.includes(slotKey))
       .map(([, v]) => v as WorkerItem);
 
-    const equippedKeywords = otherSlotItems.flatMap((si) => si.keywords ?? []);
+    const equippedKeywords = otherSlotItems
+      .flatMap((si) => si.keywords ?? [])
+      .concat(lockedKeywords);
     const bannedKeywords = equippedKeywords.flatMap(
       (kw) => keywordsMap[kw]?.bannedKeywords ?? [],
     );
@@ -355,6 +358,7 @@ function beamSearch(
   score: (set: WorkerGearSet) => number,
   prio: string,
   keywordsMap: Record<string, { bannedKeywords: string[] }>,
+  lockedMultislotKeywords: Record<string, string[]>,
 ): WorkerCandidate[] {
   const BEAM_WIDTH = 3;
   let candidates: WorkerCandidate[] = [baseCandidate];
@@ -390,7 +394,14 @@ function beamSearch(
     for (const { gearSet, slotCounts } of candidates) {
       const filteredOptions =
         slotKey === "ring" || slotKey === "tool"
-          ? filterMultislot(gearSet, options, slotKey, slotName, keywordsMap)
+          ? filterMultislot(
+              gearSet,
+              options,
+              slotKey,
+              slotName,
+              keywordsMap,
+              lockedMultislotKeywords[slotKey] ?? [],
+            )
           : options;
 
       for (const item of filteredOptions) {
@@ -422,7 +433,15 @@ function gearFill(
   data: OptimiserJobData,
   score: (set: WorkerGearSet) => number,
 ): WorkerCandidate[] {
-  const { reqSets, gearOptions, activeSlots, playerLevel, prio, keywordsMap } = data;
+  const {
+    reqSets,
+    gearOptions,
+    activeSlots,
+    playerLevel,
+    prio,
+    keywordsMap,
+    lockedMultislotKeywords,
+  } = data;
 
   let candidates: WorkerCandidate[] = reqSets.length
     ? reqSets
@@ -451,7 +470,7 @@ function gearFill(
         },
       };
 
-      const searchResult = beamSearch(usedCandidate, activeSlots, remainingPrimary, score, prio, keywordsMap);
+      const searchResult = beamSearch(usedCandidate, activeSlots, remainingPrimary, score, prio, keywordsMap, lockedMultislotKeywords);
       candidates = candidates.concat(searchResult);
     });
   });
@@ -470,7 +489,7 @@ function fallbackFill(
   baseCandidates: WorkerCandidate[],
   score: (set: WorkerGearSet) => number,
 ): WorkerCandidate[] {
-  const { gearOptions, activeSlots, keywordsMap, prio } = data;
+  const { gearOptions, activeSlots, keywordsMap, prio, lockedMultislotKeywords } = data;
 
   return baseCandidates.map((candidate) => {
     let { gearSet, slotCounts } = candidate;
@@ -484,7 +503,14 @@ function fallbackFill(
 
       const filteredItems =
         slotKey === "ring" || slotKey === "tool"
-          ? filterMultislot(gearSet, fallbackItems, slotKey, slotName, keywordsMap)
+          ? filterMultislot(
+              gearSet,
+              fallbackItems,
+              slotKey,
+              slotName,
+              keywordsMap,
+              lockedMultislotKeywords[slotKey] ?? [],
+            )
           : fallbackItems;
 
       if (!filteredItems.length) continue;

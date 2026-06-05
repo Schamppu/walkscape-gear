@@ -22,8 +22,6 @@ defineEmits(["unequip", "close"]);
 
 const gearStore = useGearStore();
 
-const isLocked = computed(() => gearStore.isSlotLocked(props.slotName));
-
 const item = computed(() => gearStore.selectedGearset[props.slotName]);
 const type = computed(() => ("egg" in item.value ? "pet" : item.value.type));
 const icon = computed(() => {
@@ -63,12 +61,7 @@ const petLevelOptions = computed(() =>
           {{ item.name }}
         </p>
       </div>
-      <button
-        class="lock"
-        :class="{ locked: isLocked }"
-        @click="gearStore.toggleSlotLock(slotName)"
-      >{{ isLocked ? 'Locked' : 'Lock' }}</button>
-      <button class="unequip" :disabled="isLocked" @click="$emit('unequip')">Unequip</button>
+      <button class="unequip" @click="$emit('unequip')">Unequip</button>
     </div>
     <quality-selection
       :type="type"
@@ -142,11 +135,6 @@ const petLevelOptions = computed(() =>
 
   &:hover {
     background: $boxDarkOutline;
-  }
-
-  &.locked {
-    border-color: $txWarning;
-    color: $txWarning;
   }
 }
 
