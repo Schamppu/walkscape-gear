@@ -110,6 +110,13 @@ export type OptimiserJobData = {
   activeSlots: string[];
   playerLevel: number;
   keywordsMap: Record<string, { bannedKeywords: string[] }>;
+  /**
+   * Keywords of locked items, grouped by slot key (e.g. `"tool"`, `"ring"`).
+   * Locked items are excluded from `activeSlots` and never enter the worker's
+   * gear set, so their keywords must be supplied separately for `filterMultislot`
+   * to apply their `bannedKeywords` when filling sibling multi-slot slots.
+   */
+  lockedMultislotKeywords: Record<string, string[]>;
 };
 
 export type OptimiserJobResult = {

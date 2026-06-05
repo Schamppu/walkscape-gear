@@ -14,7 +14,11 @@ import {
   getFallbackGearOptions,
   getItemOptions,
 } from "@/composables/optimiser/gear";
-import { getGearSetStats, installScorer, buildWorkerJob } from "@/composables/optimiser/stats";
+import {
+  getGearSetStats,
+  installScorer,
+  buildWorkerJob,
+} from "@/composables/optimiser/stats";
 import type { OptimiserJobResult } from "@/workers/optimiserWorkerTypes";
 import { startScore, compareScore } from "@/composables/optimiser/score";
 import { priorityName } from "@/composables/optimiser/priority";
@@ -74,8 +78,11 @@ export function useOptimiser() {
     const source = baseCtx.source.value as {
       requirements: Parameters<typeof isHandledRequirement>[0][];
     } | null;
-    const serviceReqs = (activityStore.service?.requirements ?? []) as Parameters<typeof isHandledRequirement>[0][];
-    const reqs = (source?.requirements ?? []).concat(serviceReqs).filter(isHandledRequirement);
+    const serviceReqs = (activityStore.service?.requirements ??
+      []) as Parameters<typeof isHandledRequirement>[0][];
+    const reqs = (source?.requirements ?? [])
+      .concat(serviceReqs)
+      .filter(isHandledRequirement);
 
     let candidates: Candidate[] = [
       { gearSet: {}, score: startScore(), slotCounts: {} },
@@ -186,7 +193,11 @@ export function useOptimiser() {
         );
       } catch (err) {
         worker.terminate();
-        reject(new Error(`Optimiser worker payload serialization failed: ${String(err)}`));
+        reject(
+          new Error(
+            `Optimiser worker payload serialization failed: ${String(err)}`,
+          ),
+        );
         return;
       }
       worker.onmessage = (e: MessageEvent<OptimiserJobResult>) => {
@@ -200,7 +211,9 @@ export function useOptimiser() {
       try {
         worker.postMessage(jobData);
       } catch (err) {
-        reject(new Error(`Optimiser worker postMessage failed: ${String(err)}`));
+        reject(
+          new Error(`Optimiser worker postMessage failed: ${String(err)}`),
+        );
         worker.terminate();
       }
     });
@@ -226,12 +239,16 @@ export function useOptimiser() {
       }) as readonly GearSlot[];
 
       const t0 = performance.now();
-      const ts = (since: number) => `${(performance.now() - since).toFixed(1)}ms`;
+      const ts = (since: number) =>
+        `${(performance.now() - since).toFixed(1)}ms`;
 
       // Phase 1: build required options for all slots, then fill requirements.
       let t = performance.now();
       const reqOptions = getRequiredGearOptions();
-      await notificationStore.debug(`Optimiser: [${ts(t)}] Generated required gear options`, [reqOptions]);
+      await notificationStore.debug(
+        `Optimiser: [${ts(t)}] Generated required gear options`,
+        [reqOptions],
+      );
 
       t = performance.now();
       const reqSets = requirementsFill(reqOptions);
@@ -244,26 +261,44 @@ export function useOptimiser() {
       t = performance.now();
       const emptyAfterReq = getEmptySlotKeys(reqSets, activeSlots);
       const primaryOptions = getPrimaryGearOptions(emptyAfterReq);
-      await notificationStore.debug(`Optimiser: [${ts(t)}] Generated primary gear options`, [primaryOptions]);
+      await notificationStore.debug(
+        `Optimiser: [${ts(t)}] Generated primary gear options`,
+        [primaryOptions],
+      );
 
       // Phase 3: build fallback options for the same slot set — emptyAfterPrimary
       // is unknown until the worker runs, so emptyAfterReq is used conservatively.
       t = performance.now();
       const nonFallbackSlots = ["consumable"];
-      const fallBackEmpty = new Set([...emptyAfterReq].filter((slot) => !nonFallbackSlots.includes(slot)));
+      const fallBackEmpty = new Set(
+        [...emptyAfterReq].filter((slot) => !nonFallbackSlots.includes(slot)),
+      );
       const fallbackOptions = getFallbackGearOptions(fallBackEmpty);
-      await notificationStore.debug(`Optimiser: [${ts(t)}] Generated fallback gear options`, [fallbackOptions]);
+      await notificationStore.debug(
+        `Optimiser: [${ts(t)}] Generated fallback gear options`,
+        [fallbackOptions],
+      );
 
       // Worker phase: primary beam-search + fallback fill off the main thread.
       t = performance.now();
-      const usedSet = await runWorkerJob(reqSets, primaryOptions, fallbackOptions, activeSlots);
-      await notificationStore.debug(`Optimiser: [${ts(t)}] Worker completed beam search + fallback`, [usedSet]);
+      const usedSet = await runWorkerJob(
+        reqSets,
+        primaryOptions,
+        fallbackOptions,
+        activeSlots,
+      );
+      await notificationStore.debug(
+        `Optimiser: [${ts(t)}] Worker completed beam search + fallback`,
+        [usedSet],
+      );
 
       await notificationStore.debug(`Optimiser: [total: ${ts(t0)}] Done`);
 
       if (usedSet.gearSet.location) {
         const location = usedSet.gearSet.location as LocationSummary;
-        await activityStore.setLocation(location as unknown as import("@/domain/types/location").LocationDetail);
+        await activityStore.setLocation(
+          location as unknown as import("@/domain/types/location").LocationDetail,
+        );
         await notificationStore.debug(
           `Optimiser: Selected location ${location?.name}`,
           [location],
@@ -276,14 +311,16 @@ export function useOptimiser() {
             | { id?: string; quality?: string | null }
             | null
             | undefined;
-          return [slot, item && item.id ? { id: item.id, quality: item.quality ?? null } : null];
+          return [
+            slot,
+            item && item.id
+              ? { id: item.id, quality: item.quality ?? null }
+              : null,
+          ];
         }),
       ) as Record<string, { id?: string; quality?: string | null } | null>;
 
-      await gearStore.equipMultiple(
-        equipPayload,
-        true,
-      );
+      await gearStore.equipMultiple(equipPayload, true);
       await notificationStore.debug("Optimiser: Equipped gear set", [usedSet]);
     } catch (e) {
       notificationStore.error("Error duing gear set creation");

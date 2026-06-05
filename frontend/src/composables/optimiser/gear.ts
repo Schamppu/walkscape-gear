@@ -1,4 +1,5 @@
 import { useActivityStore } from "@/store/activity";
+import { useGearStore, type EquippedItem } from "@/store/gear";
 import { useDataStore } from "@/store/data";
 import { useSettingsStore } from "@/store/settings";
 import useBaseContext from "@/composables/context/useBaseContext";
@@ -7,12 +8,13 @@ import { useRequirements } from "@/composables/useRequirements";
 import { type LootTablesContext } from "@/composables/useLootTables";
 import { type RequirementContext } from "@/composables/useRequirements";
 import { usedAttrs } from "@/domain/quality/qualityAttrs";
-import { gearTypes } from "@/domain/constants/gear";
+import { gearSlots, gearTypes } from "@/domain/constants/gear";
 import { filterLocations, filterDirectUpgrades } from "@/domain/optimiser/gear";
 import { getLevelRequirementsMap } from "@/domain/requirements/requirementUtils";
 import type { Stat } from "@/domain/types/item";
 import type { ItemDetail } from "@/domain/types/item";
 import type { Requirement } from "@/domain/types/common";
+import { type GearSlot } from "@/domain/constants/gear";
 
 import { getGearSetStats } from "./stats";
 import { filterUsefulStats } from "@/domain/optimiser/scoring";
@@ -165,6 +167,7 @@ type ActivitySourceCompat = {
 const makeGearCtx = () => {
   const activityStore = useActivityStore();
   const settingsStore = useSettingsStore();
+  const gearStore = useGearStore();
   const baseCtx = useBaseContext();
   const { canBeEquipped } = useRequirements(
     baseCtx as unknown as RequirementContext,
@@ -175,6 +178,17 @@ const makeGearCtx = () => {
   const baseScore = getGearSetStats({});
   const activitySource = baseCtx.source
     .value as unknown as ActivitySourceCompat | null;
+
+  const lockedSlots = gearSlots.filter((slot) =>
+    gearStore.isSlotLocked(slot),
+  ) as readonly GearSlot[];
+  const lockedItems = lockedSlots.map(
+    (slot) => gearStore.selectedGearset[slot],
+  );
+
+  const filterLocked = (item: ItemDetail): boolean => {
+    return !lockedItems.some((locked) => locked?.id === item.id);
+  };
 
   const filterOwned = (item: ItemDetail): boolean =>
     item.id in baseCtx.ownedItems.value;
@@ -189,6 +203,7 @@ const makeGearCtx = () => {
     items.filter(
       (item) =>
         filterOwned(item) &&
+        filterLocked(item) &&
         itemPassesRequirements(item) &&
         showItemForActivity(item as unknown as DisplayableItem),
     );
@@ -198,6 +213,7 @@ const makeGearCtx = () => {
     items.filter(
       (item) =>
         filterOwned(item) &&
+        filterLocked(item) &&
         itemPassesRequirements(item) &&
         !showItemForActivity(item as unknown as DisplayableItem),
     );
@@ -347,7 +363,6 @@ export const getRequiredGearOptions = (): GearOptions => {
       if (slot === "location") {
         return [slot, { required: [], primary: [], fallback: [] }];
       }
-
       const { scoredItems } = getScoredItemsForSlot(slot, ctx);
 
       const keywordItems = scoredItems.filter(
