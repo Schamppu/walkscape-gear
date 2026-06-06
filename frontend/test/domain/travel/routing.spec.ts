@@ -26,7 +26,7 @@ describe("buildGraph", () => {
   it("adds bidirectional edges for each route", () => {
     const graph = buildGraph(
       [{ id: "A" }, { id: "B" }],
-      [{ locations: ["A", "B"], distance: 100, distanceModifier: 1 }],
+      [{ locations: ["A", "B"], distance: 100 }],
       {},
     );
     const aEdges = graph.get("A")!;
@@ -35,33 +35,10 @@ describe("buildGraph", () => {
     expect(bEdges.some((e) => e.to === "A")).toBe(true);
   });
 
-  it("floors distance * distanceModifier to an integer", () => {
-    const graph = buildGraph(
-      [{ id: "A" }, { id: "B" }],
-      [{ locations: ["A", "B"], distance: 100, distanceModifier: 0.7 }],
-      {},
-    );
-    const edge = graph.get("A")!.find((e) => e.to === "B")!;
-    expect(edge.distance).toBe(70);
-    expect(Number.isInteger(edge.distance)).toBe(true);
-  });
-
-  it("applies distanceModifier consistently to both directions", () => {
-    const graph = buildGraph(
-      [{ id: "A" }, { id: "B" }],
-      [{ locations: ["A", "B"], distance: 200, distanceModifier: 1.5 }],
-      {},
-    );
-    const abDist = graph.get("A")!.find((e) => e.to === "B")!.distance;
-    const baDist = graph.get("B")!.find((e) => e.to === "A")!.distance;
-    expect(abDist).toBe(300);
-    expect(baDist).toBe(300);
-  });
-
   it("creates nodes for route locations even if not listed in locations array", () => {
     const graph = buildGraph(
       [],
-      [{ locations: ["X", "Y"], distance: 50, distanceModifier: 1 }],
+      [{ locations: ["X", "Y"], distance: 50 }],
       {},
     );
     expect(graph.has("X")).toBe(true);
@@ -199,7 +176,7 @@ describe("pathfind", () => {
   it("finds a direct path between two connected nodes", () => {
     const graph = buildGraph(
       [{ id: "A" }, { id: "B" }],
-      [{ locations: ["A", "B"], distance: 1000, distanceModifier: 1 }],
+      [{ locations: ["A", "B"], distance: 1000 }],
       {},
     );
     const result = pathfind(graph, "A", "B", buildSegment, allMet)!;
@@ -213,9 +190,9 @@ describe("pathfind", () => {
     const graph = buildGraph(
       [{ id: "A" }, { id: "B" }, { id: "C" }],
       [
-        { locations: ["A", "B"], distance: 10000, distanceModifier: 1 },
-        { locations: ["A", "C"], distance: 3000, distanceModifier: 1 },
-        { locations: ["C", "B"], distance: 3000, distanceModifier: 1 },
+        { locations: ["A", "B"], distance: 10000 },
+        { locations: ["A", "C"], distance: 3000 },
+        { locations: ["C", "B"], distance: 3000 },
       ],
       {},
     );
@@ -232,7 +209,7 @@ describe("pathfind", () => {
     };
     const graph = buildGraph(
       [{ id: "A" }, { id: "B" }],
-      [{ locations: ["A", "B"], distance: 1000, distanceModifier: 1 }],
+      [{ locations: ["A", "B"], distance: 1000 }],
       {},
     );
     const result = pathfind(
@@ -256,7 +233,7 @@ describe("pathfind", () => {
     };
     const graph = buildGraph(
       [{ id: "A" }, { id: "B" }],
-      [{ locations: ["A", "B"], distance: 1000, distanceModifier: 1 }],
+      [{ locations: ["A", "B"], distance: 1000 }],
       {},
     );
     const result = pathfind(
