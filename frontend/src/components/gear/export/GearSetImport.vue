@@ -49,7 +49,7 @@ async function handleImportData(data) {
       }),
     );
 
-    await gearStore.equipMultiple(newGearSet, false);
+    await gearStore.equipMultiple(newGearSet, true);
     urlStore.encodeAndPushToUrl();
 
     notificationStore.success("Gear set imported successfully");
