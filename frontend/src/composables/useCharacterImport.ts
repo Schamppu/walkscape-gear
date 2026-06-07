@@ -122,7 +122,8 @@ export function useCharacterImport() {
       );
       if (changedReputations.length > 0) {
         const merged: Record<string, number> = { ...factionReputation };
-        for (const [key, val] of changedReputations) merged[key] = val;
+        for (const [key, val] of changedReputations)  
+          if (key) merged[key] = val;
         playerStore.setFactionReputations(merged);
         upsertFactionReputations({ reputations: playerStore.factionReputation });
         updatedSections.push("faction reputation");
