@@ -369,7 +369,8 @@ export const useGearStore = defineStore("gearStore", {
         }
 
         const quality = useQuality ? item.quality ?? null : null;
-        const resolvedQuality = quality || this.determineQuality(item.id);
+        const isQ2 = slot === "ring2";
+        const resolvedQuality = quality || this.determineQuality(item.id, isQ2);
 
         // Check if this item is already equipped with the same quality
         const currentItem = this.selectedGearset[slot as GearSlot];
