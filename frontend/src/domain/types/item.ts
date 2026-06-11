@@ -61,7 +61,10 @@ export type BuffData = {
 };
 
 export type Buff = {
-  id: string;
+  duration: {
+    steps: number | null;
+    actions: number | null;
+  };
   data: BuffData[];
 };
 
