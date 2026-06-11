@@ -108,10 +108,6 @@ const steps = computed(() => {
     }
     case "consumableSteps":
       return value / (1 + doubleAction.value);
-    case "consumableCount": {
-      const d = consumableDurationSteps.value;
-      return d ? (value * d) / (1 + doubleAction.value) : 0;
-    }
     default:
       return 0;
   }
@@ -153,8 +149,10 @@ const getConsumableSteps = () =>
   isAnchor("consumableSteps")
     ? anchor.value.value
     : steps.value * (1 + doubleAction.value);
+// Count is always derived: how many consumables the consumable-steps cover.
+// Editing it sets a consumableSteps anchor (val * duration) so it never needs
+// the duration to recover the underlying steps.
 const getConsumableCount = () => {
-  if (isAnchor("consumableCount")) return anchor.value.value;
   const d = consumableDurationSteps.value;
   return d ? Math.ceil(getConsumableSteps() / d) : 0;
 };
@@ -191,13 +189,11 @@ watchEffect(() => {
   }
 });
 
-// If the consumable (and thus its step duration) goes away while it's anchored,
-// fall back to anchoring on steps so the calculator doesn't reset to zero.
+// When the consumable goes away while it's the anchor, re-anchor on steps so
+// the anchor type reflects reality. A consumableSteps anchor converts to steps
+// independently of the consumable, so this preserves the value (no reset).
 watchEffect(() => {
-  const isConsumableAnchor =
-    anchor.value.type === "consumableSteps" ||
-    anchor.value.type === "consumableCount";
-  if (isConsumableAnchor && !showConsumable.value) {
+  if (anchor.value.type === "consumableSteps" && !showConsumable.value) {
     anchor.value = { type: "steps", value: steps.value, skill: null };
   }
 });
@@ -286,7 +282,10 @@ watchEffect(() => {
               :max="1000000"
               :getValue="() => getConsumableCount()"
               :setValue="() => {}"
-              @input="(val) => setAnchor('consumableCount', val)"
+              @input="
+                (val) =>
+                  setAnchor('consumableSteps', val * (consumableDurationSteps ?? 0))
+              "
             />
           </div>
         </div>
