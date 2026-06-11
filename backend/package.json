@@ -8,7 +8,7 @@
     "reset-db-dev": "npx prisma migrate reset --force",
     "dev": "nodemon src/index.js",
     "seed": "node prisma/seed.js",
-    "serve": "node scripts/init-db.js && npm run seed && node ./src/index.js",
+    "serve": "node scripts/init-db.js && node ./src/index.js",
     "test": "vitest run"
   },
   "keywords": [],
