@@ -22,6 +22,7 @@ export const shownDropRateOptions: SettingOption[] = [
 
 export const gearLayoutOptions: SettingOption[] = [
   { value: "original", name: "Original" },
+  { value: "cozy", name: "Cozy" },
   { value: "compact", name: "Compact" },
   { value: "verticalTools", name: "Vertical tools" },
 ];
