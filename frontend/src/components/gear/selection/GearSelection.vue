@@ -16,11 +16,11 @@ const ctx = injectBaseContext();
 
 const settingsStore = useSettingsStore();
 
-// gearLayout dropdown: 0 = Original, 1 = Compact, 2 = Vertical tools.
+// gearLayout dropdown: 0 = Original, 1 = Cozy, 2 = Compact, 3 = Vertical tools.
 // "vertical" inherits the compact tightening and adds a vertical tool column.
 const layoutClass = computed(() => {
   const idx = settingsStore.gearSettings.gearLayout?.display ?? 0;
-  return { compact: idx >= 1, vertical: idx === 2 };
+  return { cozy: idx === 1, compact: idx >= 2, vertical: idx === 3 };
 });
 
 const hasKeywordInput = computed(() => {
@@ -183,8 +183,7 @@ const updateVisible = (visibility) => {
 
 // --- Compact: same paper-doll silhouette, smaller slots and tighter spacing.
 // Also the base for the "vertical tools" mode below.
-.tab-content.compact {
-  --gear-slot-size: 60px;
+.tab-content.compact, .tab-content.cozy {
   gap: $base;
 
   .equip {
@@ -213,11 +212,16 @@ const updateVisible = (visibility) => {
 
   .tools {
     row-gap: $sm;
+    width: 70%;
   }
 
   .row {
     gap: $base;
   }
+}
+
+.tab-content.compact {
+  --gear-slot-size: 60px;
 }
 
 // --- Vertical tools: compact equipment with the 6 tool slots stacked in a

@@ -1,4 +1,5 @@
 import "dotenv/config";
+import { pathToFileURL } from "url";
 import { PrismaClient } from "../src/generated/prisma/client.js";
 import { PrismaPg } from "@prisma/adapter-pg";
 import * as dbService from "../src/services/dbService.js";
@@ -22,40 +23,63 @@ export const prisma = new PrismaClient({ adapter });
 async function seedSkillTags() {
   console.log("🌱 Seeding default tags...");
 
-  skillTags.forEach(async ({ name, id }) => {
-    const icon = `assets/icons/text/skill_icons/${id}.png`;
-    await prisma.tag.upsert({
-      where: { id },
-      update: { name, category: "skill", icon },
-      create: { id, name, category: "skill", icon },
-    });
-  });
-
-  attributeTags.forEach(async ({ name, id }) => {
-    const icon = `assets/icons/text/stats/skilling/${id}.png`;
-    await prisma.tag.upsert({
-      where: { id },
-      update: { name, category: "attribute", icon },
-      create: { id, name, category: "attribute", icon },
-    });
-  });
-
-  factionTags.forEach(async ({ name, id }) => {
-    const icon = `assets/icons/text/coatofarms/${id}.png`;
-    await prisma.tag.upsert({
-      where: { id },
-      update: { name, category: "faction", icon },
-      create: { id, name, category: "faction", icon },
-    });
-  });
-
-  otherTags.forEach(async ({ name, id, icon }) => {
-    await prisma.tag.upsert({
-      where: { id },
-      update: { name, category: "other", icon },
-      create: { id, name, category: "other", icon },
-    });
-  });
+  await Promise.all([
+    ...skillTags.map(({ name, id }) =>
+      prisma.tag.upsert({
+        where: { id },
+        update: {
+          name,
+          category: "skill",
+          icon: `assets/icons/text/skill_icons/${id}.png`,
+        },
+        create: {
+          id,
+          name,
+          category: "skill",
+          icon: `assets/icons/text/skill_icons/${id}.png`,
+        },
+      })
+    ),
+    ...attributeTags.map(({ name, id }) =>
+      prisma.tag.upsert({
+        where: { id },
+        update: {
+          name,
+          category: "attribute",
+          icon: `assets/icons/text/stats/skilling/${id}.png`,
+        },
+        create: {
+          id,
+          name,
+          category: "attribute",
+          icon: `assets/icons/text/stats/skilling/${id}.png`,
+        },
+      })
+    ),
+    ...factionTags.map(({ name, id }) =>
+      prisma.tag.upsert({
+        where: { id },
+        update: {
+          name,
+          category: "faction",
+          icon: `assets/icons/text/coatofarms/${id}.png`,
+        },
+        create: {
+          id,
+          name,
+          category: "faction",
+          icon: `assets/icons/text/coatofarms/${id}.png`,
+        },
+      })
+    ),
+    ...otherTags.map(({ name, id, icon }) =>
+      prisma.tag.upsert({
+        where: { id },
+        update: { name, category: "other", icon },
+        create: { id, name, category: "other", icon },
+      })
+    ),
+  ]);
 
   console.log("✅ Tag seed complete.");
 }
@@ -122,20 +146,29 @@ async function seedTestData(userUuid) {
   console.log("Finished seeding test data for user:", userUuid);
 }
 
-async function main() {
-  seedSkillTags();
+const TEST_USER_UUID = "";
 
-  const testUserUuid = "";
-  if (testUserUuid) {
-    await seedTestData(testUserUuid);
+/**
+ * Seeds default tags (and optional test data) and disconnects the
+ * Prisma client used for seeding. Safe to call from the server at
+ * startup — it uses its own client, separate from the request handlers.
+ */
+export async function runSeed() {
+  try {
+    await seedSkillTags();
+    if (TEST_USER_UUID) {
+      await seedTestData(TEST_USER_UUID);
+    }
+  } finally {
+    await prisma.$disconnect();
   }
 }
 
-main()
-  .catch((e) => {
+// Run automatically when invoked directly (e.g. `npm run seed`),
+// but not when this module is imported by the server.
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  runSeed().catch((e) => {
     console.error(e);
     process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
   });
+}
