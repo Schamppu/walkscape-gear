@@ -9,6 +9,7 @@ import {
   undoRedoOptions,
   shownDropRateOptions,
   qoRecipeOptimiserPriorities,
+  gearLayoutOptions,
 } from "@/constants/settings";
 import type { Setting, SettingOption } from "@/constants/settings";
 import type {
@@ -63,6 +64,7 @@ export const GEAR_SETTING_KEYS = [
   "activityOptimiserPriority",
   "recipeOptimiserPriority",
   "qoRecipeOptimiserPriority",
+  "gearLayout",
 ] as const;
 
 export const ACTIVITY_SETTING_KEYS = [
@@ -428,7 +430,11 @@ export const useSettingsStore = defineStore("settingsStore", {
               0,
               true,
             ),
-          ]
+          ],
+          [
+            "gearLayout",
+            makeDisplaySetting("Gear layout", gearLayoutOptions, 0, true),
+          ],
         ]),
 
         activitySettings: Object.fromEntries([
