@@ -107,7 +107,7 @@ const steps = computed(() => {
       return ps ? Math.max(0, targetXp - startXp(skill)) / ps : 0;
     }
     case "consumableSteps":
-      return value / (1 + doubleAction.value);
+      return value * (1 + doubleAction.value);
     default:
       return 0;
   }
@@ -144,11 +144,11 @@ const getEndLvl = (skill) =>
     ? anchor.value.value
     : skillLevelFromXp(getTargetXp(skill));
 
-// Consumable steps = active steps scaled up by the double-action chance.
+// Consumable steps = active steps scaled down by the double-action chance.
 const getConsumableSteps = () =>
   isAnchor("consumableSteps")
     ? anchor.value.value
-    : steps.value * (1 + doubleAction.value);
+    : steps.value / (1 + doubleAction.value);
 // Count is always derived: how many consumables the consumable-steps cover.
 // Editing it sets a consumableSteps anchor (val * duration) so it never needs
 // the duration to recover the underlying steps.
