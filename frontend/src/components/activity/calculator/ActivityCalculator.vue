@@ -4,6 +4,7 @@ import { storeToRefs } from "pinia";
 import { useActivityStore } from "@/store/activity";
 import { usePlayerStore } from "@/store/player";
 import { useItemsStore } from "@/store/items";
+import { useGearStore } from "@/store/gear";
 import IconInputBubble from "@/components/common/IconInputBubble.vue";
 import {
   injectSkillModifiers,
@@ -14,11 +15,17 @@ import WsLabel from "@/components/primitives/WsLabel.vue";
 import CalculatorQualityOutcomeTable from "./CalculatorQualityOutcomeTable.vue";
 import { skillLevelFromXp, xpToSkillLevel } from "@/domain/character";
 
-const { stepsPerAction, xpPerStep, noMaterialsConsumed, doubleRewards } =
-  injectSkillModifiers();
+const {
+  stepsPerAction,
+  xpPerStep,
+  noMaterialsConsumed,
+  doubleRewards,
+  doubleAction,
+} = injectSkillModifiers();
 const { xpRewardsMultiplier } = injectFineMaterials();
 const playerStore = usePlayerStore();
 const itemsStore = useItemsStore();
+const gearStore = useGearStore();
 
 const activityStore = useActivityStore();
 const { activity, recipe, activitySelected, recipeSelected } =
@@ -33,6 +40,15 @@ const skillList = computed(() =>
     ? Object.keys(source.value.xpRewardsMap)
     : Object.keys(source.value.xpRewards),
 );
+
+// Consumable equipped in the active gear set. The section is only shown when
+// the consumable carries a buff with a step-based duration.
+const consumable = computed(() => gearStore.selectedGearset.consumable);
+const consumableDurationSteps = computed(() => {
+  const buff = consumable.value?.buffs?.find((b) => b.duration?.steps != null);
+  return buff ? buff.duration.steps : null;
+});
+const showConsumable = computed(() => consumableDurationSteps.value != null);
 
 // XP gained per step for a skill, scaled by the fine-materials multiplier.
 const perStep = (skill) => {
@@ -90,6 +106,12 @@ const steps = computed(() => {
       const targetXp = xpToSkillLevel(value);
       return ps ? Math.max(0, targetXp - startXp(skill)) / ps : 0;
     }
+    case "consumableSteps":
+      return value / (1 + doubleAction.value);
+    case "consumableCount": {
+      const d = consumableDurationSteps.value;
+      return d ? (value * d) / (1 + doubleAction.value) : 0;
+    }
     default:
       return 0;
   }
@@ -126,6 +148,17 @@ const getEndLvl = (skill) =>
     ? anchor.value.value
     : skillLevelFromXp(getTargetXp(skill));
 
+// Consumable steps = active steps scaled up by the double-action chance.
+const getConsumableSteps = () =>
+  isAnchor("consumableSteps")
+    ? anchor.value.value
+    : steps.value * (1 + doubleAction.value);
+const getConsumableCount = () => {
+  if (isAnchor("consumableCount")) return anchor.value.value;
+  const d = consumableDurationSteps.value;
+  return d ? Math.ceil(getConsumableSteps() / d) : 0;
+};
+
 const resultHasCO = computed(() => {
   if (recipeSelected.value) {
     const [itemId] = Object.keys(recipe.value.itemRewards);
@@ -155,6 +188,17 @@ watchEffect(() => {
 
   if (anchor.value.skill && !list.includes(anchor.value.skill)) {
     anchor.value = { type: "steps", value: 0, skill: null };
+  }
+});
+
+// If the consumable (and thus its step duration) goes away while it's anchored,
+// fall back to anchoring on steps so the calculator doesn't reset to zero.
+watchEffect(() => {
+  const isConsumableAnchor =
+    anchor.value.type === "consumableSteps" ||
+    anchor.value.type === "consumableCount";
+  if (isConsumableAnchor && !showConsumable.value) {
+    anchor.value = { type: "steps", value: steps.value, skill: null };
   }
 });
 </script>
@@ -217,6 +261,34 @@ watchEffect(() => {
             v-if="resultHasCO"
             :crafts="getCrafts()"
           />
+        </div>
+      </template>
+
+      <!-- Consumable (only when the equipped consumable has a step duration) -->
+      <template v-if="showConsumable">
+        <hr class="divider" />
+        <div class="group">
+          <p class="group-title"><ws-label label="consumable" /></p>
+          <div class="info-row">
+            <icon-input-bubble
+              label="steps"
+              key="consumable-steps"
+              id="consumable-steps"
+              :max="99999999"
+              :getValue="() => getConsumableSteps()"
+              :setValue="() => {}"
+              @input="(val) => setAnchor('consumableSteps', val)"
+            />
+            <icon-input-bubble
+              label="count"
+              key="consumable-count"
+              id="consumable-count"
+              :max="1000000"
+              :getValue="() => getConsumableCount()"
+              :setValue="() => {}"
+              @input="(val) => setAnchor('consumableCount', val)"
+            />
+          </div>
         </div>
       </template>
 
