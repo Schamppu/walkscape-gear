@@ -72,8 +72,8 @@ const handleClick = () => emit("select", props.gearType, storeKey);
   flex-direction: column;
   align-content: center;
 
-  width: 72px;
-  height: 72px;
+  width: var(--gear-slot-size, 72px);
+  height: var(--gear-slot-size, 72px);
   border: 1px solid $boxPrimaryOutline;
   border-radius: $md;
 

@@ -20,7 +20,14 @@ export const shownDropRateOptions: SettingOption[] = [
   { value: "stepsPerNormal", name: "Steps per Normal" },
 ];
 
+export const gearLayoutOptions: SettingOption[] = [
+  { value: "original", name: "Original" },
+  { value: "compact", name: "Compact" },
+  { value: "verticalTools", name: "Vertical tools" },
+];
+
 export default {
   undoRedoOptions,
   shownDropRateOptions,
+  gearLayoutOptions,
 };
