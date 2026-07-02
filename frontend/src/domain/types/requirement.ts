@@ -147,6 +147,11 @@ export type AbilityAvailableRequirement = RequirementBase & {
   requirement: { ability: string; scanEquippedItems: boolean };
 };
 
+export type CollectiblesOwnedRequirement = RequirementBase & {
+  type: "collectiblesOwned";
+  requirement: { amount: number; };
+};
+
 // ---------------------------------------------------------------------------
 // Union
 // ---------------------------------------------------------------------------
@@ -175,4 +180,5 @@ export type Requirement =
   | KeywordEquippedRequirement
   | KeywordWithLevelEquippedRequirement
   | ItemEquippedRequirement
-  | AbilityAvailableRequirement;
+  | AbilityAvailableRequirement
+  | CollectiblesOwnedRequirement;
