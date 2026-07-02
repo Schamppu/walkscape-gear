@@ -375,6 +375,14 @@ export function useRequirements(ctx: RequirementContext) {
         break;
       }
 
+      
+      case "collectiblesOwned": {
+        const { amount } = req.requirement;
+        const ownedCollectibles = itemsStore.ownedItemsByCategory("collectible");
+        value = ownedCollectibles.length >= amount;
+        break;
+      }
+
       default:
         console.error("unhandled requirement", req);
     }
@@ -678,6 +686,17 @@ export function useRequirements(ctx: RequirementContext) {
               icon: ability.icon,
             };
           }
+          break;
+        }
+
+        case "collectiblesOwned": {        
+          const ownedCollectibles = itemsStore.ownedItemsByCategory("collectible");
+          const { amount } = req.requirement;
+          out = {
+            prefix: "Obtain",
+            text: `collectibles (${Math.min(ownedCollectibles.length, amount)}/${amount})`,
+            icon: icons.collectible,
+          };
           break;
         }
       }
