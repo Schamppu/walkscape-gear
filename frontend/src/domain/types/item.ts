@@ -36,6 +36,12 @@ export type Attribute = {
   tables: unknown | null;
   requirements: Requirement[];
   stats: Stat[];
+  /**
+   * Optional override for the stat-source shown in aggregation. Used when an
+   * attribute originates from a source other than the item carrying it (e.g. a
+   * pet ability, which should be attributed to the ability, not the pet).
+   */
+  sourceItem?: { id: string; name: string; icon: string };
 };
 
 export type QualityAttr = {
@@ -115,6 +121,13 @@ export type PetItem = {
   looks: PetLook[];
   rareLooks: PetLook[];
   levels: PetLevel[];
+  /**
+   * Resolved attributes from the pet's unlocked abilities, attached by the
+   * composable layer (which has store access) before the item reaches
+   * `usedAttrs`. Passive abilities are always present; active abilities only
+   * when enabled. Each attribute carries a `sourceItem` pointing to the ability.
+   */
+  abilityAttrs?: Attribute[];
 };
 
 // ---------------------------------------------------------------------------
