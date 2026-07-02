@@ -103,7 +103,9 @@ export function buildAllAttrEntries(
           : makePseudoStat(attr);
       return {
         ...stat,
-        item,
+        // Attributes may carry their own source (e.g. pet ability attributes,
+        // attributed to the ability rather than the pet carrying them).
+        item: attr.sourceItem ?? item,
         customText: attr.customText,
         statText: attr.statText,
         skillText: attr.skillText,

@@ -61,9 +61,19 @@ export function resolveDisplayAttrs(
   quality: string,
   filterStat?: string,
 ): DisplayAttrEntry[] {
-  const baseAttrs: Attribute[] = usedAttrs(item, quality);
+  return attrsToDisplayEntries(usedAttrs(item, quality), filterStat);
+}
 
-  return baseAttrs
+/**
+ * Maps a list of attributes into flat display entries. Shared by
+ * `resolveDisplayAttrs` (item attributes) and any other source of attributes
+ * that needs to render via `StatRequirementDisplay` (e.g. ability attributes).
+ */
+export function attrsToDisplayEntries(
+  attrs: Attribute[],
+  filterStat?: string,
+): DisplayAttrEntry[] {
+  return attrs
     .flatMap((obj) => {
       const { customText, stats, requirements } = obj;
       return stats.flatMap((stat): DisplayAttrEntry => {
