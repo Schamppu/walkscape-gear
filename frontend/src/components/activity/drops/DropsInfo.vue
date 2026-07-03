@@ -8,10 +8,12 @@ import {
   injectLootTables,
 } from "@/composables/context/injectShared";
 import { useChestLootTables } from "@/composables/useChestLootTables";
+import { useAbilityLootTables } from "@/composables/useAbilityLootTables";
 import DropItemDisplay from "./DropItemDisplay.vue";
 import LootTableDisplay from "./LootTableDisplay.vue";
 import AggregateDrops from "./aggregate/AggregateDrops.vue";
 import ChestLootTableSection from "./ChestLootTableSection.vue";
+import AbilityLootTableSection from "./AbilityLootTableSection.vue";
 
 const ctx = injectBaseContext();
 
@@ -21,6 +23,7 @@ const { groupedLootTables, dropItemInfoMap } = injectLootTables();
 
 const itemsStore = useItemsStore();
 const chestLootTables = useChestLootTables(dropItemInfoMap);
+const abilityLootTables = useAbilityLootTables(ctx);
 
 const showChests = computed(() => activitySettings.value.showChestLootTables?.value === true);
 
@@ -83,6 +86,13 @@ const visibleLootTables = computed(() => {
           :chest-info="chestInfo"
         />
       </section>
+      <section v-if="abilityLootTables.length > 0" class="ability-sections">
+        <ability-loot-table-section
+          v-for="abilityInfo in abilityLootTables"
+          :key="abilityInfo.abilityId"
+          :section="abilityInfo"
+        />
+      </section>
     </div>
   </details>
 </template>
@@ -112,7 +122,8 @@ const visibleLootTables = computed(() => {
   border: 1px solid $boxDarkOutline;
 }
 
-.chest-sections {
+.chest-sections,
+.ability-sections {
   display: flex;
   flex-direction: column;
   gap: $sm;

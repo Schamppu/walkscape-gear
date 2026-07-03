@@ -17,6 +17,9 @@ import {
   buildAllAttrEntries,
   calculateStatTotals,
 } from "@/domain/effectiveAttrs";
+import { attachPetAbilityAttrs } from "@/domain/abilities/petAbilityAttrs";
+import type { AbilityAttrContext } from "@/domain/abilities/petAbilityAttrs";
+import { buildAbilityAttrContext } from "@/composables/useAbilityAttrContext";
 import {
   calculateSkillModifiers,
   type SkillModifiersResult,
@@ -86,6 +89,16 @@ const extractScore = (
 const makeRef = <T>(value: T): Ref<T> => ({ value }) as Ref<T>;
 
 /**
+ * Attaches resolved ability attributes to any pets in `items` so that the pet
+ * slot occupant contributes its abilities' stats (passive always, active unless
+ * toggled off). Non-pets pass through unchanged.
+ */
+const enrichPets = (
+  items: ItemDetail[],
+  abilityCtx: AbilityAttrContext,
+): ItemDetail[] => items.map((it) => attachPetAbilityAttrs(it, abilityCtx));
+
+/**
  * Builds a fast scorer for one optimise run.
  *
  * Calls all composables once and captures everything that stays constant for
@@ -131,6 +144,10 @@ const makeScorer = (): ((set: GearSet) => number) => {
     service,
   );
 
+  // Snapshot ability context once for the run; the pet slot is variable, so
+  // its ability entries are computed per candidate set below.
+  const abilityCtx = buildAbilityAttrContext();
+
   return (set: GearSet): number => {
     const { location, ...items } = set;
     const gearItems = toDeepRaw(
@@ -140,7 +157,12 @@ const makeScorer = (): ((set: GearSet) => number) => {
     );
 
     // Only resolve the variable gear items; static entries are pre-built.
-    const gearEntries = buildAllAttrEntries(resolveItemAttrs(gearItems), null, null, null);
+    const gearEntries = buildAllAttrEntries(
+      resolveItemAttrs(enrichPets(gearItems, abilityCtx)),
+      null,
+      null,
+      null,
+    );
     const allEntries = [...staticEntries, ...gearEntries];
 
     const reqCtx = {
@@ -189,23 +211,37 @@ export const installScorer = (): (() => void) => {
  * Pre-computes the `EffectiveAttrEntry[]` for a single item so the worker
  * scorer can skip `resolveItemAttrs` + `buildAllAttrEntries` per call.
  */
-const enrichItem = (item: OptimiserItem): WorkerItem => {
-  const raw = toDeepRaw(item as unknown as ItemDetail);
+const enrichItem = (
+  item: OptimiserItem,
+  abilityCtx: AbilityAttrContext,
+): WorkerItem => {
+  const raw = attachPetAbilityAttrs(
+    toDeepRaw(item as unknown as ItemDetail),
+    abilityCtx,
+  );
   return {
     ...(toDeepRaw(item as unknown as Record<string, unknown>) as OptimiserItem),
     _attrEntries: buildAllAttrEntries(resolveItemAttrs([raw]), null, null, null),
   };
 };
 
-const enrichItems = (items: OptimiserItem[]): WorkerItem[] => items.map(enrichItem);
+const enrichItems = (
+  items: OptimiserItem[],
+  abilityCtx: AbilityAttrContext,
+): WorkerItem[] => items.map((item) => enrichItem(item, abilityCtx));
 
-const enrichCandidates = (candidates: Candidate[]): WorkerCandidate[] =>
+const enrichCandidates = (
+  candidates: Candidate[],
+  abilityCtx: AbilityAttrContext,
+): WorkerCandidate[] =>
   candidates.map((c) => ({
     ...c,
     gearSet: Object.fromEntries(
       Object.entries(c.gearSet).map(([slot, item]) => [
         slot,
-        item && "score" in item ? enrichItem(item as OptimiserItem) : item,
+        item && "score" in item
+          ? enrichItem(item as OptimiserItem, abilityCtx)
+          : item,
       ]),
     ),
   }));
@@ -234,6 +270,9 @@ export const buildWorkerJob = (
   const activitySelected = baseCtx.activitySelected.value;
   const { fineMode } = useFineMaterials(baseCtx as unknown as FineMaterialsContext);
   const prio = priorityValue();
+
+  // Ability context snapshot; baked into each candidate pet's _attrEntries.
+  const abilityCtx = buildAbilityAttrContext();
 
   // Static entries: collectibles + level bonuses + service (same as makeScorer).
   const collectibles = toDeepRaw(
@@ -292,7 +331,7 @@ export const buildWorkerJob = (
     required: Object.fromEntries(
       Object.entries(primaryOptions).map(([slot, opts]) => [
         slot,
-        enrichItems(opts.required),
+        enrichItems(opts.required, abilityCtx),
       ]),
     ),
     primary: Object.fromEntries(
@@ -300,13 +339,13 @@ export const buildWorkerJob = (
         slot,
         slot === "location"
           ? (opts.primary as import("@/domain/types/location").LocationSummary[]) // LocationSummary[] — already serialisable
-          : enrichItems(opts.primary as OptimiserItem[]),
+          : enrichItems(opts.primary as OptimiserItem[], abilityCtx),
       ]),
     ),
     fallback: Object.fromEntries(
       Object.entries(fallbackOptions).map(([slot, opts]) => [
         slot,
-        enrichItems(opts.fallback),
+        enrichItems(opts.fallback, abilityCtx),
       ]),
     ),
   };
@@ -332,7 +371,7 @@ export const buildWorkerJob = (
     prio,
     defaultLocation: location,
     reqCtx,
-    reqSets: enrichCandidates(reqSets),
+    reqSets: enrichCandidates(reqSets, abilityCtx),
     gearOptions: workerGearOptions,
     activeSlots: [...activeSlots],
     playerLevel: playerStore.level,

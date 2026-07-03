@@ -2,11 +2,15 @@ import { useGearStore } from "@/store/gear";
 import { useActivityStore } from "@/store/activity";
 import { useNotificationStore } from "@/store/notifications";
 import { usePlayerStore } from "@/store/player";
+import { useItemsStore } from "@/store/items";
+import { useDataStore } from "@/store/data";
 
 import { injectBaseContext } from "@/composables/context/injectShared";
 import { gearSlots, slotMax } from "@/domain/constants/gear";
 import type { GearSlot } from "@/domain/constants/gear";
 import type { LocationSummary } from "@/domain/types/location";
+import { unlockedAbilityIds } from "@/domain/abilities/petAbilityAttrs";
+import type { PetAbility } from "@/domain/types/pet";
 
 import {
   getRequiredGearOptions,
@@ -53,6 +57,27 @@ export function useOptimiser() {
   const activityStore = useActivityStore();
   const notificationStore = useNotificationStore();
   const playerStore = usePlayerStore();
+  const itemsStore = useItemsStore();
+  const dataStore = useDataStore();
+
+  /**
+   * Fetches the ability details for every owned pet's unlocked abilities, so
+   * that candidate pets' ability attributes are available when the (synchronous)
+   * scorer / worker job snapshots the ability context.
+   */
+  const prefetchPetAbilityDetails = async (): Promise<void> => {
+    const ids = new Set<string>();
+    for (const [id, owned] of Object.entries(itemsStore.ownedItems)) {
+      const pet = itemsStore.petsMap[id] as unknown as
+        | { abilities?: PetAbility[] }
+        | undefined;
+      if (!pet?.abilities?.length) continue;
+      for (const aid of unlockedAbilityIds(pet, owned.petLevel ?? 0)) {
+        ids.add(aid);
+      }
+    }
+    if (ids.size) await dataStore.fetchDetailedAbilities([...ids]);
+  };
 
   /**
    * Returns the set of slot *keys* (e.g. `"ring"`, `"tool"`, `"weapon"`) that
@@ -224,6 +249,11 @@ export function useOptimiser() {
       notificationStore.warning("No activity selected");
       return;
     }
+
+    // The pet slot is optimised (swapped), so ensure ability details for all
+    // owned pets' unlocked abilities are fetched before the scorer/worker job
+    // is built — their attributes are baked into candidate pets synchronously.
+    await prefetchPetAbilityDetails();
 
     const uninstallScorer = installScorer();
     try {
