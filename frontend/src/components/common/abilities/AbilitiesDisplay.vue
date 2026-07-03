@@ -54,6 +54,9 @@ watch(
 
 <style lang="scss" scoped>
 .abilities {
+  display: flex;
+  flex-direction: column;
+  gap: $xxxs;
   margin: $xxs 0 $xs $xs;
 }
 </style>

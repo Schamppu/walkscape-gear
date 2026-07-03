@@ -2,7 +2,7 @@
 import { storeToRefs } from "pinia";
 import TabContentWrapper from "@/components/common/TabContentWrapper.vue";
 import Stats from "@/components/stats/StatsList.vue";
-import EquippedPetAbilities from "@/components/gear/EquippedPetAbilities.vue";
+import EquippedAbilities from "@/components/gear/EquippedAbilities.vue";
 import UndoRedoButtons from "@/components/common/UndoRedoButtons.vue";
 import GearSelection from "./selection/GearSelection.vue";
 import GearButtons from "./export/GearButtons.vue";
@@ -56,7 +56,7 @@ onMounted(async () => {
         <gear-buttons />
       </section>
     </details>
-    <equipped-pet-abilities />
+    <equipped-abilities />
     <details open>
       <summary>Skill Modifiers</summary>
       <stats />
