@@ -6,6 +6,8 @@ import { useItemsStore } from "@/store/items";
 import { usePlayerStore } from "@/store/player";
 import { useSkillModifiers, type SkillModifiersContext } from "@/composables/useSkillModifiers";
 import { useRequirements, type RequirementContext } from "@/composables/useRequirements";
+import { useAbilityAttrContext } from "@/composables/useAbilityAttrContext";
+import { attachPetAbilityAttrs } from "@/domain/abilities/petAbilityAttrs";
 import { groupSourcesByStat, resolveLootTableWeights } from "@/domain/lootTables/lootTables";
 import {
   resolveSourceContextTables,
@@ -74,6 +76,7 @@ export function useLootTables(ctx: LootTablesContext): {
   const { activitySettings } = storeToRefs(settingsStore);
 
   const { checkRequirements } = useRequirements(ctx as unknown as RequirementContext);
+  const abilityCtx = useAbilityAttrContext();
   const {
     stepsPerRewardRoll,
     fineMaterialFind,
@@ -83,10 +86,22 @@ export function useLootTables(ctx: LootTablesContext): {
     findBirdNests,
   } = useSkillModifiers(ctx as unknown as SkillModifiersContext);
 
+  // Attach the pet slot occupant's ability attributes so ability-sourced loot
+  // tables (e.g. rollSpecialTable) surface in the drops context.
+  const filledGearSlotsWithAbilities = computed(() =>
+    ctx.filledGearSlots.value.map(
+      ([slot, item]) =>
+        [slot, attachPetAbilityAttrs(item, abilityCtx.value)] as [
+          string,
+          typeof item,
+        ],
+    ),
+  );
+
   const lootTables = computed<ContextLootTable[]>(() => [
     ...resolveSourceContextTables(ctx.source.value),
     ...resolveGearContextTables(
-      ctx.filledGearSlots.value,
+      filledGearSlotsWithAbilities.value,
       (reqs) => checkRequirements(reqs),
     ),
   ]);

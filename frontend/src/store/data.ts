@@ -190,20 +190,25 @@ export const useDataStore = defineStore("dataStore", {
             uncachedIds.forEach((id) => delete this.loadingData[id]);
           });
 
-        validIds.forEach((id) => {
+        // Only track the ids this call is actually fetching; ids already
+        // in-flight from a concurrent call keep their existing promise.
+        uncachedIds.forEach((id) => {
           this.loadingData[id] = batchPromise.then(() => detailedMap[id]);
         });
-
-        return Promise.all(
-          validIds.map((id) =>
-            id in detailedMap
-              ? Promise.resolve(detailedMap[id])
-              : (this.loadingData[id] as Promise<T | undefined>),
-          ),
-        );
       }
 
-      return validIds.map((id) => detailedMap[id]);
+      // Resolve each id from the cache, or await its in-flight fetch (whether
+      // started by this call or a concurrent one) so callers never receive a
+      // premature `undefined` for an id whose fetch is still pending.
+      return Promise.all(
+        validIds.map((id) =>
+          id in detailedMap
+            ? Promise.resolve(detailedMap[id])
+            : id in this.loadingData
+              ? (this.loadingData[id] as Promise<T | undefined>)
+              : Promise.resolve(undefined),
+        ),
+      );
     },
 
     async fetchDetailedLootTables(

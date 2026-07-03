@@ -183,7 +183,11 @@ export function usedAttrs(item: Item, quality: string): Attribute[] {
   const getAttrs = (item: Item) => {
     if ("egg" in item) {
       const levelIndex = Number(quality) - 1;
-      return item.levels[levelIndex]?.attributes ?? [];
+      const levelAttrs = item.levels[levelIndex]?.attributes ?? [];
+      // Ability attributes are attached upstream (composable layer) since the
+      // pure layer has no store access; passive always, active unless toggled.
+      const abilityAttrs = item.abilityAttrs ?? [];
+      return [...levelAttrs, ...abilityAttrs];
     } else if ("materialAttrs" in item) {
       return item.materialAttrs ?? [];
     } else if ("itemAttrs" in item) {

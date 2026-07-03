@@ -11,6 +11,9 @@ import { snakeToTitle } from "@/utils/string";
 const props = defineProps({
   itemId: String,
   dropInfo: Object,
+  // Hide the steps-per-item lines (e.g. for time-based ability rolls, where a
+  // step count doesn't apply — only chance + amount are meaningful).
+  hideSteps: { type: Boolean, default: false },
 });
 
 const settingsStore = useSettingsStore();
@@ -31,7 +34,7 @@ const item = computed(() => props.dropInfo ?? dropItemInfoMap.value[props.itemId
     <ws-icon :icon-path="item.icon" size="md" />
     <span>{{ n(item.totalDropChance, 3) }}%</span>
     <span>{{ item.dropCounts }}</span>
-    <div v-if="item.totalDropChance > 0" class="step-counts">
+    <div v-if="item.totalDropChance > 0 && !hideSteps" class="step-counts">
       <div v-if="item.id === 'gold'" class="steps-line">
         <span>{{ n(item.itemsPerStep, 0) }}</span>
         /
