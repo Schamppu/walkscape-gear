@@ -1,12 +1,42 @@
 <script setup>
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import WsText from "@/components/common/text/WsText.vue";
 import WsIcon from "@/components/primitives/WsIcon.vue";
 import RequirementDisplay from "@/components/activity/Info/RequirementDisplay.vue";
+import StatRequirementDisplay from "@/components/common/StatRequirementDisplay.vue";
 import { icons } from "@/constants/iconPaths";
+import { useAbilityToggleStore } from "@/store/abilityToggles";
+import { abilityAttributes } from "@/domain/abilities/petAbilityAttrs";
+import { attrsToDisplayEntries } from "@/domain/stats/itemStatDisplay";
 
 const props = defineProps({
   ability: Object,
+  // When true, active abilities that grant attributes show an enable/disable
+  // toggle that controls whether their attributes count toward stats.
+  showToggle: { type: Boolean, default: false },
+});
+
+const abilityToggleStore = useAbilityToggleStore();
+
+// All attributes the ability grants (root for passive abilities, nested under
+// effect actions for active abilities).
+const attributes = computed(() => abilityAttributes(props.ability));
+
+// Display-ready entries for StatRequirementDisplay (same shape StatsDisplay uses).
+const displayAttrs = computed(() => attrsToDisplayEntries(attributes.value));
+
+// Active (non-passive) abilities that actually grant stat attributes are the
+// only ones worth toggling; passive abilities are always on.
+const isTogglable = computed(
+  () =>
+    props.showToggle &&
+    props.ability?.type !== "passive" &&
+    attributes.value.length > 0,
+);
+
+const enabled = computed({
+  get: () => abilityToggleStore.isEnabled(props.ability.id),
+  set: (value) => abilityToggleStore.setEnabled(props.ability.id, value),
 });
 
 const isOpen = ref(false);
@@ -41,12 +71,25 @@ const toggleOpenCooldown = () => {
           {{ props.ability.name }}
         </p>
       </div>
+      <label v-if="isTogglable" class="enable-toggle" @click.stop>
+        <input type="checkbox" v-model="enabled" />
+        <span>{{ enabled ? "Enabled" : "Disabled" }}</span>
+      </label>
       <button class="toggle" @click="toggleOpen">
         {{ isOpen ? "▲" : "▼" }}
       </button>
     </div>
     <section v-if="isOpen" class="extra-info">
       <ws-text :text="props.ability.desc" :data="props.ability.data" />
+      <div v-if="displayAttrs.length" class="attributes">
+        <stat-requirement-display
+          v-for="({ stat, requirements, data }, key) in displayAttrs"
+          :key="key"
+          :stat="stat"
+          :data="data"
+          :requirements="requirements"
+        />
+      </div>
       <div v-if="props.ability.requirements.length" class="requirements">
         <div class="openable">
           <p class="info-title">requirements</p>
@@ -146,6 +189,13 @@ const toggleOpenCooldown = () => {
   border-radius: 0 0 $xxxs $xxxs;
   border-top: none;
 
+  .attributes {
+    display: flex;
+    flex-direction: column;
+    gap: $xxxs;
+    margin: $xxxxs $xxxs;
+  }
+
   .requirements,
   .cooldown {
     display: flex;
@@ -198,5 +248,22 @@ const toggleOpenCooldown = () => {
   color: $txPrimary !important;
   background: none;
   border: none;
+}
+
+.enable-toggle {
+  display: flex;
+  align-items: center;
+  gap: $xxxs;
+  margin-left: auto;
+  cursor: pointer;
+
+  span {
+    font-size: 12px;
+    line-height: 16px;
+  }
+
+  input {
+    cursor: pointer;
+  }
 }
 </style>
