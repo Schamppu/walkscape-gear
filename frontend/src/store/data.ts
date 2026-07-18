@@ -140,6 +140,9 @@ export const useDataStore = defineStore("dataStore", {
         "skillLevel",
         "travelingDistance",
         "countsAsKeyword",
+        "countsAsService",
+        "doubleItem",
+        "dropAsFine"
       ]);
       this.stats = statList;
       this.mainStats = statList.filter(
