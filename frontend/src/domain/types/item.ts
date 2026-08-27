@@ -166,7 +166,12 @@ export type ItemDetail = {
   itemAttrs: Attribute[];
   itemQualityAttrs: QualityAttr[];
   materialAttrs?: Attribute[];
-  itemValue: string;
+  itemValue: {
+    value: {
+      [key: string]: number;
+    };
+    currency: string;
+  } | null;
   itemValueModifier: number;
   buffs: Buff[];
   tables: unknown[];
