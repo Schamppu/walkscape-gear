@@ -25,6 +25,7 @@ export const usePlayerStore = defineStore("playerStore", {
     factionsMap: {} as Record<string, FactionInfo>,
     stats: [] as StatDefinition[],
     achievementPoints: 0,
+    totalWealth: 0,
     userUuid: null as string | null,
     isLoaded: false,
   }),
@@ -55,6 +56,7 @@ export const usePlayerStore = defineStore("playerStore", {
         skills.map(({ id }) => [id, playerStats[id] ?? 1]),
       );
       this.setAchievementPoints(playerStats.achievementPoints ?? 0);
+      this.setTotalWealth(playerStats.totalWealth ?? 0);
       this.level = playerStats.level ?? 1;
 
       this.factions = factions.sort((a, b) => a.name.localeCompare(b.name));
@@ -96,6 +98,9 @@ export const usePlayerStore = defineStore("playerStore", {
     },
     setAchievementPoints(value: number): void {
       this.achievementPoints = value;
+    },
+    setTotalWealth(value: number): void {
+      this.totalWealth = value;
     },
     setFactionReputation(reputation: string, value: number): void {
       this.factionReputation[reputation] = value;

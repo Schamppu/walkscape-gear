@@ -11,6 +11,7 @@ import SkillLevelDisplay from "./SkillLevelDisplay.vue";
 import IconInputBubble from "@/components/common/IconInputBubble.vue";
 import CharacterLevelDisplay from "./CharacterLevelDisplay.vue";
 import AchievementPointDisplay from "./AchievementPointDisplay.vue";
+import TotalWealthDisplay from "./TotalWealthDisplay.vue";
 import ItemSelection from "./ItemSelection.vue";
 import ImportButton from "./ImportButton.vue";
 import debounce from "@/utils/debounce";
@@ -113,6 +114,7 @@ const playerSkills = computed(() => {
           <div class="skill-bubbles">
             <character-level-display @input="updatePlayerStats" />
             <achievement-point-display @input="updatePlayerStats" />
+            <total-wealth-display @input="updatePlayerStats" />
           </div>
         </div>
       </div>

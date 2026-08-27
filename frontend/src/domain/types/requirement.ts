@@ -152,6 +152,16 @@ export type CollectiblesOwnedRequirement = RequirementBase & {
   requirement: { amount: number; };
 };
 
+export type TotalWealthRequirement = RequirementBase & {
+  type: "totalWealth";
+  requirement: { amount: number; };
+};
+
+export type ExploreRealmRequirement = RequirementBase & {
+  type: "exploreRealm";
+  requirement: { realm: string; };
+};
+
 // ---------------------------------------------------------------------------
 // Union
 // ---------------------------------------------------------------------------
@@ -181,4 +191,6 @@ export type Requirement =
   | KeywordWithLevelEquippedRequirement
   | ItemEquippedRequirement
   | AbilityAvailableRequirement
-  | CollectiblesOwnedRequirement;
+  | CollectiblesOwnedRequirement
+  | TotalWealthRequirement
+  | ExploreRealmRequirement;

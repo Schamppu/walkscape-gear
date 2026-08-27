@@ -375,11 +375,17 @@ export function useRequirements(ctx: RequirementContext) {
         break;
       }
 
-      
       case "collectiblesOwned": {
         const { amount } = req.requirement;
-        const ownedCollectibles = itemsStore.ownedItemsByCategory("collectible");
+        const ownedCollectibles =
+          itemsStore.ownedItemsByCategory("collectible");
         value = ownedCollectibles.length >= amount;
+        break;
+      }
+
+      case "totalWealth": {
+        const { amount } = req.requirement;
+        value = playerStore.totalWealth >= amount;
         break;
       }
 
@@ -584,7 +590,7 @@ export function useRequirements(ctx: RequirementContext) {
             (a, b) => a + playerStore.skillLevels[b] - 1,
             0,
           );
-          
+
           out = {
             prefix: `Have ${n(target)}% towards maximum`,
             text: `${capitalize(skill.type)} level (${n(Math.min(current / skillIds.length, target))}/${n(target)})`,
@@ -689,13 +695,24 @@ export function useRequirements(ctx: RequirementContext) {
           break;
         }
 
-        case "collectiblesOwned": {        
-          const ownedCollectibles = itemsStore.ownedItemsByCategory("collectible");
+        case "collectiblesOwned": {
+          const ownedCollectibles =
+            itemsStore.ownedItemsByCategory("collectible");
           const { amount } = req.requirement;
           out = {
             prefix: "Obtain",
             text: `collectibles (${Math.min(ownedCollectibles.length, amount)}/${amount})`,
             icon: icons.collectible,
+          };
+          break;
+        }
+
+        case "totalWealth": {
+          const { amount } = req.requirement;
+          out = {
+            prefix: "Have",
+            text: `(${n(Math.min(playerStore.totalWealth, amount))}/${n(amount)}) total wealth`,
+            icon: icons.money,
           };
           break;
         }
