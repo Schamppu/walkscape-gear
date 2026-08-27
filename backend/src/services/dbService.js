@@ -24,6 +24,11 @@ const ALLOWED_STATS = new Set([
   "woodcutting",
   "tailoring",
   "hunting",
+  "wrentmarkLocations",
+  "syrenthiaLocations",
+  "grand_duchy_of_trellin_erdwiseLocations",
+  "wallisiaLocations",
+  "jarvoniaLocations",
 ]);
 
 const ALLOWED_REPUTATIONS = new Set([

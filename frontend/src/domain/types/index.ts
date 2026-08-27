@@ -18,6 +18,7 @@ export * from "./keyword";
 export * from "./location";
 export * from "./lootTable";
 export * from "./pet";
+export * from "./realm";
 export * from "./recipe";
 export * from "./route";
 export * from "./service";

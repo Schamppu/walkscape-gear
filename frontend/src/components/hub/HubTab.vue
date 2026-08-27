@@ -1,22 +1,19 @@
 <script setup>
 import { computed } from "vue";
-import {
-  upsertPlayerStats,
-  upsertFactionReputations,
-} from "@/utils/axios/db_routes";
+import { upsertPlayerStats } from "@/utils/axios/db_routes";
 import { usePlayerStore } from "@/store/player";
 import WsIcon from "@/components/primitives/WsIcon.vue";
 import TabContentWrapper from "@/components/common/TabContentWrapper.vue";
 import SkillLevelDisplay from "./SkillLevelDisplay.vue";
-import IconInputBubble from "@/components/common/IconInputBubble.vue";
 import CharacterLevelDisplay from "./CharacterLevelDisplay.vue";
 import AchievementPointDisplay from "./AchievementPointDisplay.vue";
 import TotalWealthDisplay from "./TotalWealthDisplay.vue";
+import FactionReputations from "./FactionReputations.vue";
+import RealmLocations from "./RealmLocations.vue";
 import ItemSelection from "./ItemSelection.vue";
 import ImportButton from "./ImportButton.vue";
 import debounce from "@/utils/debounce";
 import { capitalize } from "@/utils/string";
-import { argbToRgba } from "@/utils/argbToRgba";
 import { useCharacterImport } from "@/composables/useCharacterImport";
 
 const playerStore = usePlayerStore();
@@ -32,15 +29,6 @@ const postPlayerStats = () => {
 };
 
 const updatePlayerStats = debounce(postPlayerStats, 1000);
-
-const postFactionReputation = () => {
-  const payload = {
-    reputations: playerStore.factionReputation,
-  };
-  upsertFactionReputations(payload);
-};
-
-const updateFactionReputation = debounce(postFactionReputation, 1000);
 
 /**
  * @param {string} data - The character data to import.
@@ -119,30 +107,8 @@ const playerSkills = computed(() => {
         </div>
       </div>
     </details>
-    <details open>
-      <summary class="typography-h4">Faction Reputation</summary>
-      <div class="skill-type">
-        <div class="faction-bubbles">
-          <icon-input-bubble
-            v-for="faction in playerStore.reputationFactions"
-            :key="faction.reputation"
-            :id="faction.reputation"
-            :icon="faction.icon"
-            :get-value="(id) => playerStore.factionReputation[id]"
-            :set-value="
-              (id, value) => {
-                playerStore.setFactionReputation(id, value);
-              }
-            "
-            :min="0"
-            :max="9999"
-            :default-value="0"
-            :border-color="argbToRgba(faction.color)"
-            @input="updateFactionReputation"
-          />
-        </div>
-      </div>
-    </details>
+    <faction-reputations />
+    <realm-locations />
     <item-selection />
   </tab-content-wrapper>
 </template>
@@ -177,15 +143,6 @@ details[open] summary {
 }
 
 .skill-bubbles {
-  display: grid;
-  grid-template-columns: repeat(3, max-content);
-  justify-content: center;
-
-  column-gap: $md;
-  row-gap: $md;
-}
-
-.faction-bubbles {
   display: grid;
   grid-template-columns: repeat(3, max-content);
   justify-content: center;

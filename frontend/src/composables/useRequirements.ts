@@ -389,6 +389,14 @@ export function useRequirements(ctx: RequirementContext) {
         break;
       }
 
+      case "exploreRealm": {
+        const { realm } = req.requirement;
+        value =
+          playerStore.realmLocations[realm] >=
+          (dataStore.realmsMap[realm]?.locationCount ?? 0);
+        break;
+      }
+
       default:
         console.error("unhandled requirement", req);
     }
@@ -714,6 +722,21 @@ export function useRequirements(ctx: RequirementContext) {
             text: `(${n(Math.min(playerStore.totalWealth, amount))}/${n(amount)}) total wealth`,
             icon: icons.money,
           };
+          break;
+        }
+
+        case "exploreRealm": {
+          const { realm } = req.requirement;
+          const realmLocations = playerStore.realmLocations[realm] ?? 0;
+          const realmData = dataStore.realmsMap[realm];
+          if (realmData) {
+            out = {
+              prefix: "Explore",
+              text: `${realmData.name} completely (${Math.min(realmLocations, realmData.locationCount)}/${realmData.locationCount})`,
+              icon: realmData.icon,
+            };
+          }
+
           break;
         }
       }
