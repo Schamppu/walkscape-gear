@@ -11,7 +11,10 @@ export type SkillOption = Skill & { value: string };
 
 export type SkillInfo = Pick<Skill, "icon" | "name" | "type" | "typeIcon">;
 
-export type FactionInfo = Pick<Faction, "icon" | "name" | "color" | "reputation">;
+export type FactionInfo = Pick<
+  Faction,
+  "icon" | "name" | "color" | "reputation"
+>;
 
 export const usePlayerStore = defineStore("playerStore", {
   state: () => ({
@@ -26,6 +29,7 @@ export const usePlayerStore = defineStore("playerStore", {
     stats: [] as StatDefinition[],
     achievementPoints: 0,
     totalWealth: 0,
+    realmLocations: {} as Record<string, number>,
     userUuid: null as string | null,
     isLoaded: false,
   }),
@@ -50,7 +54,10 @@ export const usePlayerStore = defineStore("playerStore", {
         })
         .sort((a, b) => a.name.localeCompare(b.name));
       this.skillsMap = Object.fromEntries(
-        skills.map(({ id, icon, name, type, typeIcon }) => [id, { icon, name, type, typeIcon }]),
+        skills.map(({ id, icon, name, type, typeIcon }) => [
+          id,
+          { icon, name, type, typeIcon },
+        ]),
       );
       this.skillLevels = Object.fromEntries(
         skills.map(({ id }) => [id, playerStats[id] ?? 1]),
@@ -58,6 +65,11 @@ export const usePlayerStore = defineStore("playerStore", {
       this.setAchievementPoints(playerStats.achievementPoints ?? 0);
       this.setTotalWealth(playerStats.totalWealth ?? 0);
       this.level = playerStats.level ?? 1;
+      this.realmLocations = Object.fromEntries(
+        Object.entries(playerStats)
+          .filter(([key]) => key.endsWith("Locations"))
+          .map(([key, value]) => [key.split("Locations")[0], value as number]),
+      );
 
       this.factions = factions.sort((a, b) => a.name.localeCompare(b.name));
       const hiddenReputation = new Set([

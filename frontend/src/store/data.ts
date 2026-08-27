@@ -8,6 +8,8 @@ import {
   getMultipleLootTables,
   getItemValueMap,
   getGlobalVariables,
+  getLocations,
+  getFactions,
 } from "@/utils/axios/api_routes";
 import type { AxiosResponse } from "axios";
 import type { AbilityDetail, AbilitySummary } from "@/domain/types/ability";
@@ -20,6 +22,8 @@ import type {
 import type { ItemValueMap } from "@/domain/types/item";
 import { useNotificationStore } from "@/store/notifications";
 import { GlobalVariable } from "@/domain/types/global_variable";
+import { LocationSummary } from "@/domain/types";
+import { Realm } from "@/domain/types/realm";
 
 /**
  * Centralized store for static game data like abilities, keywords, stats, and loot tables.
@@ -70,6 +74,8 @@ export const useDataStore = defineStore("dataStore", {
     loadingData: {} as Record<string, Promise<unknown>>,
     detailedAbilitiesMap: {} as Record<string, AbilityDetail>,
     detailedLootTablesMap: {} as Record<string, LootTableDetail>,
+    locations: [] as LocationSummary[],
+    realmsMap: {} as Record<string, Realm>,
     itemValues: {} as ItemValueMap,
     selectedStat: "none",
   }),
@@ -108,6 +114,8 @@ export const useDataStore = defineStore("dataStore", {
         { data: statList },
         { data: lootTables },
         { data: itemValues },
+        { data: locations },
+        { data: factions },
         { data: globalVariables },
       ] = await Promise.all([
         getAbilities(),
@@ -115,6 +123,8 @@ export const useDataStore = defineStore("dataStore", {
         getStats(),
         getLootTables(),
         getItemValueMap(),
+        getLocations(),
+        getFactions(),
         getGlobalVariables(),
       ]);
 
@@ -136,13 +146,43 @@ export const useDataStore = defineStore("dataStore", {
         ]),
       );
 
+      this.locations = locations;
+      const locationsByFaction = locations.reduce(
+        (acc, loc) => {
+          if (!acc[loc.faction]) acc[loc.faction] = 0;
+          acc[loc.faction]++;
+          return acc;
+        },
+        {} as Record<string, number>,
+      );
+      const factionsMap: Record<string, Realm> = Object.fromEntries(
+        factions.map(({ id, icon, name, color, reputation }) => [
+          id,
+          {
+            id,
+            icon,
+            name,
+            color,
+            reputation,
+            locationCount: locationsByFaction[id] || 0,
+          },
+        ]),
+      );
+      this.realmsMap = Array.from(
+        new Set(locations.map((loc) => loc.faction)),
+      ).reduce<Record<string, Realm>>((acc, realmId) => {
+        const realm = factionsMap[realmId];
+        if (realm) acc[realmId] = realm;
+        return acc;
+      }, {});
+
       const hiddenStatTypes = new Set([
         "skillLevel",
         "travelingDistance",
         "countsAsKeyword",
         "countsAsService",
         "doubleItem",
-        "dropAsFine"
+        "dropAsFine",
       ]);
       this.stats = statList;
       this.mainStats = statList.filter(
