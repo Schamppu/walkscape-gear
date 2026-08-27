@@ -9,6 +9,7 @@ import CharacterLevelDisplay from "./CharacterLevelDisplay.vue";
 import AchievementPointDisplay from "./AchievementPointDisplay.vue";
 import TotalWealthDisplay from "./TotalWealthDisplay.vue";
 import FactionReputations from "./FactionReputations.vue";
+import RealmLocations from "./RealmLocations.vue";
 import ItemSelection from "./ItemSelection.vue";
 import ImportButton from "./ImportButton.vue";
 import debounce from "@/utils/debounce";
@@ -107,6 +108,7 @@ const playerSkills = computed(() => {
       </div>
     </details>
     <faction-reputations />
+    <realm-locations />
     <item-selection />
   </tab-content-wrapper>
 </template>
