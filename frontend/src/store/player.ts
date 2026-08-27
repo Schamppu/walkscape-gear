@@ -114,6 +114,9 @@ export const usePlayerStore = defineStore("playerStore", {
     setTotalWealth(value: number): void {
       this.totalWealth = value;
     },
+    setRealmLocations(realm: string, value: number): void {
+      this.realmLocations[realm] = value;
+    },
     setFactionReputation(reputation: string, value: number): void {
       this.factionReputation[reputation] = value;
     },
