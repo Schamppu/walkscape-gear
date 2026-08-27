@@ -23,7 +23,10 @@ import {
   upsertPlayerStats,
   upsertFactionReputations,
 } from "@/utils/axios/db_routes";
-import { parseCharacterImport, type OwnedItemEntry } from "@/domain/character/characterImport";
+import {
+  parseCharacterImport,
+  type OwnedItemEntry,
+} from "@/domain/character/characterImport";
 import isEqual from "@/utils/isEqual";
 
 export function useCharacterImport() {
@@ -54,7 +57,11 @@ export function useCharacterImport() {
       return;
     }
 
-    if (!parsedJson || typeof parsedJson !== "object" || Array.isArray(parsedJson)) {
+    if (
+      !parsedJson ||
+      typeof parsedJson !== "object" ||
+      Array.isArray(parsedJson)
+    ) {
       notificationStore.error("Invalid import format: expected a JSON object.");
       return;
     }
@@ -62,14 +69,21 @@ export function useCharacterImport() {
     try {
       // TODO: Remove these casts once the JS stores are migrated to TypeScript
       const skillLevels = playerStore.skillLevels as Record<string, number>;
-      const factionReputation = playerStore.factionReputation as Record<string, number>;
-      const ownedItems = itemsStore.ownedItems as Record<string, OwnedItemEntry>;
+      const factionReputation = playerStore.factionReputation as Record<
+        string,
+        number
+      >;
+      const ownedItems = itemsStore.ownedItems as Record<
+        string,
+        OwnedItemEntry
+      >;
 
       const result = parseCharacterImport(
         parsedJson,
         Object.keys(skillLevels),
         playerStore.factionsMap,
         itemsStore.allGearItems,
+        itemsStore.materials,
         ownedItems,
         itemsStore.petsMap,
         reset,
@@ -79,7 +93,10 @@ export function useCharacterImport() {
       let playerStatsChanged = false;
 
       // --- Character level ---
-      if (result.characterLevel !== null && result.characterLevel !== playerStore.level) {
+      if (
+        result.characterLevel !== null &&
+        result.characterLevel !== playerStore.level
+      ) {
         playerStore.setCharacterLevel(result.characterLevel);
         updatedSections.push("character level");
         playerStatsChanged = true;
@@ -117,28 +134,39 @@ export function useCharacterImport() {
       }
 
       // --- Faction reputations ---
-      const changedReputations = Object.entries(result.factionReputations).filter(
-        ([key, val]) => factionReputation[key] !== val,
-      );
+      const changedReputations = Object.entries(
+        result.factionReputations,
+      ).filter(([key, val]) => factionReputation[key] !== val);
       if (changedReputations.length > 0) {
         const merged: Record<string, number> = { ...factionReputation };
-        for (const [key, val] of changedReputations)  
-          if (key) merged[key] = val;
+        for (const [key, val] of changedReputations) if (key) merged[key] = val;
         playerStore.setFactionReputations(merged);
-        upsertFactionReputations({ reputations: playerStore.factionReputation });
+        upsertFactionReputations({
+          reputations: playerStore.factionReputation,
+        });
         updatedSections.push("faction reputation");
       }
 
       // --- Owned items ---
-      const changedItems = Object.entries(result.ownedItems).filter(([id, data]) => {
-        return !isEqual(ownedItems[id], data);
-      });
+      const changedItems = Object.entries(result.ownedItems).filter(
+        ([id, data]) => {
+          return !isEqual(ownedItems[id], data);
+        },
+      );
       if (changedItems.length > 0) {
         const batchUpdate = Object.fromEntries(changedItems);
         itemsStore.batchUpdateOwnedItems(batchUpdate);
         updatedSections.push("items");
       }
 
+      // --- Total wealth ---
+      const totalWealth = result.totalWealth;
+      if (totalWealth !== playerStore.totalWealth) {
+        playerStore.setTotalWealth(totalWealth);
+        updatedSections.push("total wealth");
+      }
+
+      // --- Notifications ---
       if (updatedSections.length === 0) {
         notificationStore.success("Valid import data, but nothing to update.");
       } else {

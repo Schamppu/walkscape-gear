@@ -30,6 +30,7 @@ import { qualityOptions } from "@/domain/constants/quality";
 export type CharacterImportRaw = {
   steps?: unknown;
   achievement_points?: unknown;
+  coins?: unknown;
   skills?: unknown;
   gear?: unknown;
   consumables?: unknown;
@@ -47,6 +48,12 @@ export type ItemCatalogEntry = {
   type: string;
   gearType?: string | null;
   quality?: string;
+  itemValue?: {
+    value: {
+      [key: string]: number;
+    };
+    currency: string;
+  } | null;
 };
 
 /** Shape of a single owned-item record in the store. */
@@ -77,6 +84,7 @@ export type ParsedCharacterImport = {
   achievementPoints: number | null;
   factionReputations: Record<string, number>;
   ownedItems: Record<string, OwnedItemEntry>;
+  totalWealth: number;
 };
 
 // ---------------------------------------------------------------------------
@@ -274,7 +282,10 @@ type PetGroup = {
  * treated as rare; the last underscore-delimited segment is the base id.
  * Single-word species (e.g. "reindeer") are common.
  */
-function parsePetSpecies(species: string): { baseId: string; rarity: "common" | "rare" } {
+function parsePetSpecies(species: string): {
+  baseId: string;
+  rarity: "common" | "rare";
+} {
   const lastUnderscore = species.lastIndexOf("_");
   if (lastUnderscore > 0) {
     return { baseId: species.slice(lastUnderscore + 1), rarity: "rare" };
@@ -298,7 +309,8 @@ function collectPetData(
   const processEntry = (entry: unknown): void => {
     if (!entry || typeof entry !== "object" || Array.isArray(entry)) return;
     const obj = entry as Record<string, unknown>;
-    const species = typeof obj.species === "string" && obj.species ? obj.species : null;
+    const species =
+      typeof obj.species === "string" && obj.species ? obj.species : null;
     const level = typeof obj.level === "number" ? obj.level : null;
     if (!species || level === null) return;
 
@@ -483,6 +495,50 @@ export function parseOwnedItems(
   return result;
 }
 
+export function parseTotalWealth(
+  coins: Pick<CharacterImportRaw, "coins">["coins"],
+  itemData: Pick<
+    CharacterImportRaw,
+    "collectibles" | "inventory" | "bank" | "consumables" | "gear"
+  >,
+  knownItems: Readonly<Record<string, ItemCatalogEntry>>,
+): number {
+  let total = 0;
+  if (typeof coins === "number" && coins >= 0) {
+    total += coins;
+  }
+
+  const rawCounts = collectRawItems(
+    itemData.collectibles,
+    itemData.inventory,
+    itemData.bank,
+    itemData.consumables,
+    itemData.gear,
+  );
+
+  for (const [itemId, count] of Object.entries(rawCounts)) {
+    const { baseId, quality } = parseItemId(itemId);
+    if (!baseId || !(baseId in knownItems)) continue;
+
+    const itemData = knownItems[baseId];
+    const { itemValue } = itemData;
+    if (!itemValue || itemValue.currency !== "money") continue;
+
+    let value = 0;
+    if (Object.keys(itemValue.value).length === 1) {
+      value = Object.values(itemValue.value)[0];
+    } else if (quality in itemValue.value) {
+      value = itemValue.value[quality];
+    } else if (quality === "consumableFine" && "fine" in itemValue.value) {
+      value = itemValue.value["fine"];
+    }
+
+    total += count * value;
+  }
+
+  return total;
+}
+
 // ---------------------------------------------------------------------------
 // Main entry point
 // ---------------------------------------------------------------------------
@@ -498,33 +554,54 @@ export function parseCharacterImport(
   knownSkillIds: ReadonlyArray<string>,
   factionsMap: Readonly<Record<string, FactionMapEntry>>,
   knownItems: Readonly<Record<string, ItemCatalogEntry>>,
+  materials: Readonly<Record<string, ItemCatalogEntry>>,
   currentOwnedItems: Readonly<Record<string, OwnedItemEntry>>,
   petsMap: Readonly<Record<string, unknown>>,
   reset: boolean,
 ): ParsedCharacterImport {
+  const characterLevel = parseCharacterLevel(importData.steps);
+  const skillLevels = parseSkillLevels(importData.skills, knownSkillIds);
+  const achievementPoints = parseAchievementPoints(
+    importData.achievement_points,
+  );
+  const factionReputations = parseFactionReputations(
+    importData.reputation,
+    factionsMap,
+  );
+  const ownedItems = parseOwnedItems(
+    {
+      collectibles: importData.collectibles,
+      inventory: importData.inventory,
+      bank: importData.bank,
+      consumables: importData.consumables,
+      gear: importData.gear,
+      pets: importData.pets,
+      available_pets: importData.available_pets,
+      available_eggs: importData.available_eggs,
+    },
+    knownItems,
+    currentOwnedItems,
+    petsMap,
+    reset,
+  );
+  const totalWealth = parseTotalWealth(
+    importData.coins,
+    {
+      collectibles: importData.collectibles,
+      inventory: importData.inventory,
+      bank: importData.bank,
+      consumables: importData.consumables,
+      gear: importData.gear,
+    },
+    { ...knownItems, ...materials },
+  );
+
   return {
-    characterLevel: parseCharacterLevel(importData.steps),
-    skillLevels: parseSkillLevels(importData.skills, knownSkillIds),
-    achievementPoints: parseAchievementPoints(importData.achievement_points),
-    factionReputations: parseFactionReputations(
-      importData.reputation,
-      factionsMap,
-    ),
-    ownedItems: parseOwnedItems(
-      {
-        collectibles: importData.collectibles,
-        inventory: importData.inventory,
-        bank: importData.bank,
-        consumables: importData.consumables,
-        gear: importData.gear,
-        pets: importData.pets,
-        available_pets: importData.available_pets,
-        available_eggs: importData.available_eggs,
-      },
-      knownItems,
-      currentOwnedItems,
-      petsMap,
-      reset,
-    ),
+    characterLevel,
+    skillLevels,
+    achievementPoints,
+    factionReputations,
+    ownedItems,
+    totalWealth,
   };
 }

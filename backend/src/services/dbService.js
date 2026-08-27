@@ -11,6 +11,7 @@ export const prisma = new PrismaClient({ adapter });
 const ALLOWED_STATS = new Set([
   "level",
   "achievementPoints",
+  "totalWealth",
   "agility",
   "carpentry",
   "cooking",
