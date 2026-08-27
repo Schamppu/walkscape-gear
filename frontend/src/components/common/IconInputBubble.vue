@@ -81,6 +81,7 @@ function widthClass() {
         :min="min"
         :max="max"
       />
+      <slot name="trailing" />
     </div>
   </div>
 </template>
