@@ -43,6 +43,14 @@ export const tokenValues: TokenValuesMap = {
     common: 3,
     fine: 15,
   },
+  strange_fur: {
+    common: 1,
+    fine: 50,
+  },
+  mysterious_chitin: {
+    common: 10,
+    fine: 50,
+  }
 };
 
 export default tokenValues;
