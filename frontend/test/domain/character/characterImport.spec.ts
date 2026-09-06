@@ -4,6 +4,7 @@ import {
   parseSkillLevels,
   parseFactionReputations,
   parseOwnedItems,
+  parsePetSpecies,
   type ItemCatalogEntry,
   type OwnedItemEntry,
   type FactionMapEntry,
@@ -238,6 +239,8 @@ describe("Character Import Functionality", () => {
     dolphin: {},
     tortoise: {},
     tiger: {},
+    golden_frog: {},
+    pet_rock: {},
   };
 
   it("should parse pets from pets.pet and pets.egg sections", () => {
@@ -303,6 +306,67 @@ describe("Character Import Functionality", () => {
     // chicken (level=4, common) beats lovestruck_chicken (level=0, rare)
     expect(result["chicken"]?.petLevel).toBe(4);
     expect(result["chicken"]?.petRarity).toBe("common");
+  });
+
+  it("should treat multi-word species ids as common when the catalog knows them", () => {
+    const currentOwned: Record<string, OwnedItemEntry> = {
+      golden_frog: emptyEntry(),
+    };
+
+    // golden_frog is a base species id, not a "golden" variant of "frog"
+    const result = parseOwnedItems(fixtureData, {}, currentOwned, fixturePetsMap, false);
+    expect(result["golden_frog"]?.owned).toBe(true);
+    expect(result["golden_frog"]?.petLevel).toBe(2);
+    expect(result["golden_frog"]?.petRarity).toBe("common");
+  });
+
+  it("should detect rare variants of multi-word species ids", () => {
+    const currentOwned: Record<string, OwnedItemEntry> = {
+      pet_rock: emptyEntry(),
+    };
+
+    // gleaming_pet_rock (level=5, rare) beats pet_rock (level=1, common)
+    const result = parseOwnedItems(fixtureData, {}, currentOwned, fixturePetsMap, false);
+    expect(result["pet_rock"]?.owned).toBe(true);
+    expect(result["pet_rock"]?.petLevel).toBe(5);
+    expect(result["pet_rock"]?.petRarity).toBe("rare");
+  });
+
+  describe("parsePetSpecies", () => {
+    const knownSpecies = new Set(Object.keys(fixturePetsMap));
+
+    it("resolves single-word species", () => {
+      expect(parsePetSpecies("dolphin", knownSpecies)).toEqual({
+        baseId: "dolphin",
+        rarity: "common",
+      });
+      expect(parsePetSpecies("trick_dolphin", knownSpecies)).toEqual({
+        baseId: "dolphin",
+        rarity: "rare",
+      });
+    });
+
+    it("resolves multi-word species without splitting the base id", () => {
+      expect(parsePetSpecies("golden_frog", knownSpecies)).toEqual({
+        baseId: "golden_frog",
+        rarity: "common",
+      });
+      expect(parsePetSpecies("pet_rock", knownSpecies)).toEqual({
+        baseId: "pet_rock",
+        rarity: "common",
+      });
+      expect(parsePetSpecies("gleaming_pet_rock", knownSpecies)).toEqual({
+        baseId: "pet_rock",
+        rarity: "rare",
+      });
+    });
+
+    it("returns unknown species unchanged as common", () => {
+      expect(parsePetSpecies("mystery_beast", knownSpecies)).toEqual({
+        baseId: "mystery_beast",
+        rarity: "common",
+      });
+    });
   });
 
   it("should prefer the highest level across different sources (cross-source priority)", () => {

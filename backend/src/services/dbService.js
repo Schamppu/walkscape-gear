@@ -29,6 +29,7 @@ const ALLOWED_STATS = new Set([
   "grand_duchy_of_trellin_erdwiseLocations",
   "wallisiaLocations",
   "jarvoniaLocations",
+  "empire_of_wallisiaLocations",
 ]);
 
 const ALLOWED_REPUTATIONS = new Set([
