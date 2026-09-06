@@ -94,6 +94,27 @@
       "level": 4,
       "xp": 0,
       "stage": "adult"
+    },
+    {
+      "name": "Froggy",
+      "species": "golden_frog",
+      "level": 2,
+      "xp": 1500,
+      "stage": "juvenile"
+    },
+    {
+      "name": "Rocky",
+      "species": "pet_rock",
+      "level": 1,
+      "xp": 300,
+      "stage": "juvenile"
+    },
+    {
+      "name": "Shiny Rocky",
+      "species": "gleaming_pet_rock",
+      "level": 5,
+      "xp": 0,
+      "stage": "adult"
     }
   ],
   "available_eggs": [

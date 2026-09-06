@@ -278,18 +278,40 @@ type PetGroup = {
 
 /**
  * Extracts a base species id and rarity from a raw species string.
- * Species with an underscore prefix variant (e.g. "lovestruck_chicken") are
- * treated as rare; the last underscore-delimited segment is the base id.
- * Single-word species (e.g. "reindeer") are common.
+ *
+ * Rare variants prefix the base species id (e.g. "dolphin" -> "trick_dolphin").
+ * Because base species ids can themselves contain underscores (e.g.
+ * "golden_frog", "pet_rock"), the split cannot be derived from the string
+ * alone: the species is resolved against the known species ids instead.
+ *
+ * - An exact match is the common variant.
+ * - Otherwise leading segments are stripped one at a time (longest remaining
+ *   suffix first) until a known species id is found; that match is the rare
+ *   variant.
+ * - An unrecognised species is returned as-is and treated as common; callers
+ *   filter those out against the pets catalog.
  */
-function parsePetSpecies(species: string): {
+export function parsePetSpecies(
+  species: string,
+  knownSpecies: ReadonlySet<string>,
+): {
   baseId: string;
   rarity: "common" | "rare";
 } {
-  const lastUnderscore = species.lastIndexOf("_");
-  if (lastUnderscore > 0) {
-    return { baseId: species.slice(lastUnderscore + 1), rarity: "rare" };
+  if (knownSpecies.has(species)) {
+    return { baseId: species, rarity: "common" };
   }
+
+  let rest = species;
+  let separator = rest.indexOf("_");
+  while (separator >= 0) {
+    rest = rest.slice(separator + 1);
+    if (knownSpecies.has(rest)) {
+      return { baseId: rest, rarity: "rare" };
+    }
+    separator = rest.indexOf("_");
+  }
+
   return { baseId: species, rarity: "common" };
 }
 
@@ -303,6 +325,7 @@ function collectPetData(
   pets: unknown,
   availablePets: unknown,
   availableEggs: unknown,
+  knownSpecies: ReadonlySet<string>,
 ): Record<string, PetGroup> {
   const groups: Record<string, PetGroup> = {};
 
@@ -314,7 +337,7 @@ function collectPetData(
     const level = typeof obj.level === "number" ? obj.level : null;
     if (!species || level === null) return;
 
-    const { baseId, rarity } = parsePetSpecies(species);
+    const { baseId, rarity } = parsePetSpecies(species, knownSpecies);
     const existing = groups[baseId];
     if (!existing || level > existing.level) {
       groups[baseId] = { level, rarity };
@@ -478,6 +501,7 @@ export function parseOwnedItems(
     importData.pets,
     importData.available_pets,
     importData.available_eggs,
+    new Set(Object.keys(petsMap)),
   );
 
   for (const [baseId, { level, rarity }] of Object.entries(petGroups)) {
