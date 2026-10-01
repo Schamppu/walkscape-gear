@@ -30,6 +30,7 @@ const ALLOWED_STATS = new Set([
   "wallisiaLocations",
   "jarvoniaLocations",
   "empire_of_wallisiaLocations",
+  "totalWealth"
 ]);
 
 const ALLOWED_REPUTATIONS = new Set([
