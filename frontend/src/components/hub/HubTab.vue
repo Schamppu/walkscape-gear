@@ -24,6 +24,7 @@ const postPlayerStats = () => {
     ...playerStore.skillLevels,
     level: playerStore.level,
     achievementPoints: playerStore.achievementPoints,
+    totalWealth: playerStore.totalWealth,
   };
   upsertPlayerStats(payload);
 };
