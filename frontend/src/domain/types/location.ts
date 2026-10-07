@@ -7,7 +7,7 @@ export type LocationSummary = {
   name: string;
   faction: string;
   subFactions: string[];
-  keywords: string[];
+  keywords?: string[];
   icon: string;
 };
 
