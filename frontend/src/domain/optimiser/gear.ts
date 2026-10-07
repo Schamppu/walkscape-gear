@@ -24,7 +24,7 @@ export const filterLocations = (
 ): LocationDetail[] => {
   const seen: Record<string, boolean> = {};
   return locations.filter((cur) => {
-    const key = `${cur.faction}-${cur.keywords.join("-")}`;
+    const key = `${cur.faction}-${(cur.keywords ?? []).join("-")}`;
     if (key in seen) return false;
     seen[key] = true;
     return true;
