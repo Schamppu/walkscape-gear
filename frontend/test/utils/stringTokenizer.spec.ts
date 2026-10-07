@@ -38,6 +38,12 @@ describe("parseGameString", () => {
     ]);
   });
 
+  it("parses an itemTag self-closing tag", () => {
+    expect(parseGameString('<itemTag tag="fine"/>')).toEqual([
+      { type: "itemTag", tag: "fine" },
+    ]);
+  });
+
   it("parses a paired tag", () => {
     expect(parseGameString("<hl>important</hl>")).toEqual([
       { type: "hl", value: "important" },

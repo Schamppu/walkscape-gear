@@ -2,7 +2,7 @@
  * Utility functions for parsing game strings with embedded tokens.
  *
  * Functions:
- * - `parseGameString(str)`: Parses a string containing text, variables (e.g., `{count}`), self-closing tags (e.g., `<skill skill="woodcutting"/>`), and paired tags (e.g., `<hl>...</hl>`), returning an array of token objects with their type and associated data.
+ * - `parseGameString(str)`: Parses a string containing text, variables (e.g., `{count}`), self-closing tags (e.g., `<skill skill="woodcutting"/>`, `<itemTag tag="fine"/>`), and paired tags (e.g., `<hl>...</hl>`), returning an array of token objects with their type and associated data.
  * - `getDataIdMapping(data)`: Generates a mapping of variable names to their corresponding values based on the provided data structure, specifically handling "teleport" and "completeActions" types.
  */
 

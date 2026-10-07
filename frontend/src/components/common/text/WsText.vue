@@ -6,6 +6,7 @@ import SuppTag from "./SuppTag.vue";
 import ObjectTag from "./ObjectTag.vue";
 import TextHighlight from "./TextHighlight.vue";
 import VariableTag from "./VariableTag.vue";
+import ItemTag from "./ItemTag.vue";
 
 const props = defineProps({
   text: String,
@@ -28,6 +29,8 @@ function resolveComponent(token) {
       return ObjectTag;
     case "hl":
       return TextHighlight;
+    case "itemTag":
+      return ItemTag;
     default:
       return "span";
   }
@@ -48,6 +51,9 @@ function getProps(token) {
   }
   if (token.type === "variable") {
     return { variable: token.name, data: props.data };
+  }
+  if (token.type === "itemTag") {
+    return { tag: token.tag };
   }
   return {};
 }
