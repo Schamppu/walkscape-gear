@@ -311,7 +311,7 @@ export const buildWorkerJob = (
     locationFaction: location?.faction ?? null,
     locationSubFactions: location?.subFactions ?? [],
     segments: baseCtx.segments.value.map((s) => ({
-      keywords: s.from.keywords,
+      keywords: s.from.keywords ?? [],
       faction: s.from.faction,
       subFactions: s.from.subFactions,
     })),

@@ -1,12 +1,13 @@
+import type { Faction } from "./faction";
+
 // ---------------------------------------------------------------------------
 // Realms
 // ---------------------------------------------------------------------------
 
-export type Realm = {
-  id: string;
-  name: string;
-  icon: string;
-  color: string;
-  reputation: string | null;
+/**
+ * A faction that owns locations, assembled on the frontend (store/data.ts)
+ * from the faction and location lists.
+ */
+export type Realm = Faction & {
   locationCount: number;
-}
+};

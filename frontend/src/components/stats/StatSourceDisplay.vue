@@ -4,10 +4,10 @@ import { injectEffectiveAttrs } from "@/composables/context/injectShared";
 import WsIcon from "@/components/primitives/WsIcon.vue";
 import { n } from "@/utils/number";
 import { buildStatSourceList } from "@/domain/stats/statSourceList";
-import type { StatDefinition } from "@/domain/types/stat";
+import type { DisplayStat } from "@/domain/types/stat";
 
 const props = defineProps<{
-  stat: StatDefinition;
+  stat: DisplayStat;
   isPercent?: boolean;
 }>();
 

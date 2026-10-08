@@ -59,36 +59,17 @@ export type ConsumableItem = Pick<Schemas["ConsumableItem"], "buffs">;
 // Pet types
 // ---------------------------------------------------------------------------
 
-export type PetSprite = {
-  sprite: string;
-  sheet: string;
-  stage: string;
-};
+type PetDetail = Schemas["PetDetail"];
 
-export type PetLook = {
-  id: string;
-  sprites: PetSprite[];
-};
+export type PetEgg = PetDetail["egg"];
 
-export type PetEgg = {
-  name: string;
-  desc: string;
-  sprite: string;
-  sheet: string;
-};
+export type PetLook = PetDetail["looks"][number];
 
-export type PetLevel = {
-  level: number;
-  xp: number;
-  stage: string;
-  attributes: Attribute[];
-};
+export type PetSprite = PetLook["sprites"][number];
 
-export type PetItem = {
-  egg: PetEgg;
-  looks: PetLook[];
-  rareLooks: PetLook[];
-  levels: PetLevel[];
+export type PetLevel = PetDetail["levels"][number];
+
+export type PetItem = Pick<PetDetail, "egg" | "looks" | "rareLooks" | "levels"> & {
   /**
    * Resolved attributes from the pet's unlocked abilities, attached by the
    * composable layer (which has store access) before the item reaches

@@ -1,6 +1,3 @@
-export type Keyword = {
-  id: string;
-  name: string;
-  bannedKeywords: string[];
-  icon?: string;
-};
+import type { components } from "./generated/api";
+
+export type Keyword = components["schemas"]["KeywordListItem"];

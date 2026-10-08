@@ -81,7 +81,7 @@ export function abilityUsageRequirements(
  * available every `cooldown.actions` completed actions.
  */
 export function abilityStepsPerActivation(
-  cooldown: (AbilityDetail["cooldown"] & { actions?: number | null }) | undefined,
+  cooldown: AbilityDetail["cooldown"],
   stepsPerAction: number,
 ): number | null {
   const actions = cooldown?.actions;

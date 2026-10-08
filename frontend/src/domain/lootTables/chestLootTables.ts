@@ -184,7 +184,7 @@ export function buildChestDropInfoMap(
       mainTableFactor = CHEST_MAIN_CHANCE + CHEST_SUB_CHANCE * (emptySubWeight / totalSubWeight);
     }
 
-    if (table.tableRows.length > 0 && mainTableFactor > 0) {
+    if (table.tableRows?.length && mainTableFactor > 0) {
       processRows(table.tableRows, mainTableFactor, stepsPerChest, fineMaterialIds, out);
     }
 

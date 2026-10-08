@@ -1,49 +1,46 @@
+import type { components } from "./generated/api";
 import type { LootTableRef } from "./common";
 
-export type LootTableSummary = {
-  id: string;
-  name: string;
-};
+type Schemas = components["schemas"];
+
+export type LootTableSummary = Schemas["LootTableListItem"];
 
 /**
- * An inline sub-table within a chest loot table.
- * `weight` is the per-roll probability that this sub-table is triggered.
+ * The spec declares `relatedSkill` as `SkillsEnum & null`, which collapses to
+ * `never`; the API returns a skill id here.
  */
-export type ChestSubTable = {
-  id: string;
-  weight: number;
-  type: string;
-  tableRows: LootTableRow[];
+export type RequirementBonus = Omit<Schemas["RequirementBonus"], "relatedSkill"> & {
+  relatedSkill: Schemas["SkillsEnum"];
 };
 
-export type LootTableDetail = {
-  id: string;
-  category: string;
-  noDropChance: number;
-  subTables: ChestSubTable[];
-  tableRows: LootTableRow[];
-}
+type WithRequirementBonus<T> = Omit<T, "requirementsBonuses"> & {
+  requirementsBonuses: RequirementBonus[] | null;
+};
+
+type ApiLootTableDetail = Schemas["LootTableDetail"];
 
 // ---------------------------------------------------------------------------
 // Loot table row detail
 // ---------------------------------------------------------------------------
 
-export type RequirementBonus = {
-  levelRequirement: number;
-  levelMaxScaling: number;
-  relatedSkill: string;
+export type LootTableRow = WithRequirementBonus<
+  NonNullable<ApiLootTableDetail["tableRows"]>[number]
+>;
+
+/**
+ * An inline sub-table within a chest loot table.
+ * `weight` is the per-roll probability that this sub-table is triggered.
+ */
+export type ChestSubTable = Omit<
+  NonNullable<ApiLootTableDetail["subTables"]>[number],
+  "tableRows"
+> & {
+  tableRows: LootTableRow[] | null;
 };
 
-export type LootTableRow = {
-  rowItemID: string | null;
-  name?: string;
-  rowWeight: number;
-  minWeightScale: number;
-  rowMinimumAmount: number;
-  rowMaximumAmount: number;
-  isMoney?: boolean;
-  icon?: string;
-  requirementsBonuses?: RequirementBonus[];
+export type LootTableDetail = Omit<ApiLootTableDetail, "tableRows" | "subTables"> & {
+  tableRows: LootTableRow[] | null;
+  subTables: ChestSubTable[] | null;
 };
 
 export type DetailedLootTable = {
