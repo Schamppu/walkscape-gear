@@ -2,9 +2,27 @@ import { LRUCache } from "lru-cache";
 import Bottleneck from "bottleneck";
 import api from "./api.js";
 
-const RATE_LIMIT_PER_MINUTE = 120;
-const BOTTLENECK_RESERVOIR = RATE_LIMIT_PER_MINUTE;
-const BOTTLENECK_REFRESH_MS = 60_000;
+const DEFAULT_RATE_LIMIT_PER_MINUTE = 120;
+const DEFAULT_BURST_CAPACITY = DEFAULT_RATE_LIMIT_PER_MINUTE;
+const DEFAULT_MAX_CONCURRENT_UPSTREAM = 8;
+const configuredRateLimit = Number.parseInt(process.env.API_RATE_LIMIT_PER_MINUTE || "", 10);
+const configuredBurstCapacity = Number.parseInt(process.env.API_RATE_LIMIT_BURST || "", 10);
+const configuredMaxConcurrent = Number.parseInt(process.env.API_MAX_CONCURRENT_UPSTREAM || "", 10);
+const RATE_LIMIT_PER_MINUTE =
+  Number.isFinite(configuredRateLimit) && configuredRateLimit > 0
+    ? configuredRateLimit
+    : DEFAULT_RATE_LIMIT_PER_MINUTE;
+const BOTTLENECK_RESERVOIR =
+  Number.isFinite(configuredBurstCapacity) && configuredBurstCapacity > 0
+    ? configuredBurstCapacity
+    : DEFAULT_BURST_CAPACITY;
+const BOTTLENECK_INCREASE_INTERVAL_MS = 1000;
+const BOTTLENECK_INCREASE_AMOUNT = Math.max(1, Math.floor(RATE_LIMIT_PER_MINUTE / 60));
+const BOTTLENECK_INCREASE_MAX = Math.max(BOTTLENECK_RESERVOIR, RATE_LIMIT_PER_MINUTE);
+const BOTTLENECK_MAX_CONCURRENT =
+  Number.isFinite(configuredMaxConcurrent) && configuredMaxConcurrent > 0
+    ? configuredMaxConcurrent
+    : DEFAULT_MAX_CONCURRENT_UPSTREAM;
 const DEFAULT_TTL_MS = 24 * 60 * 60 * 1000;
 const MAX_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 const MAX_RETRIES_429 = 3;
@@ -28,8 +46,10 @@ const iconCache = new LRUCache({
 
 const limiter = new Bottleneck({
   reservoir: BOTTLENECK_RESERVOIR,
-  reservoirRefreshAmount: BOTTLENECK_RESERVOIR,
-  reservoirRefreshInterval: BOTTLENECK_REFRESH_MS,
+  reservoirIncreaseAmount: BOTTLENECK_INCREASE_AMOUNT,
+  reservoirIncreaseInterval: BOTTLENECK_INCREASE_INTERVAL_MS,
+  reservoirIncreaseMaximum: BOTTLENECK_INCREASE_MAX,
+  maxConcurrent: BOTTLENECK_MAX_CONCURRENT,
   minTime: 0,
 });
 
@@ -73,6 +93,13 @@ function cacheKey(method, url, config, body) {
   return `${method.toUpperCase()} ${url}?${params}#${responseType}#${bodyKey}`;
 }
 
+function buildCacheLookup(method, url, config = {}, body) {
+  return {
+    cache: pickCache(config),
+    key: cacheKey(method, url, config, body),
+  };
+}
+
 function parseMaxAgeMs(cacheControl) {
   if (!cacheControl) return null;
   const match = String(cacheControl).match(/(?:^|,\s*)max-age=(\d+)/i);
@@ -104,6 +131,44 @@ function parseRetryAfterMs(headers) {
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function peek(method, url, config = {}, body) {
+  if (config?.cache === false) return null;
+
+  const { cache, key } = buildCacheLookup(method, url, config, body);
+  const entry = cache.get(key);
+
+  if (!entry || entry.expiresAt <= Date.now()) {
+    return null;
+  }
+
+  return {
+    data: entry.data,
+    headers: entry.headers,
+    status: entry.status,
+    fromCache: true,
+  };
+}
+
+function prime(method, url, response, config = {}, body) {
+  if (config?.cache === false || !response) return;
+
+  const cc = response.headers?.["cache-control"];
+  if (cc && /no-store|no-cache/i.test(cc)) {
+    return;
+  }
+
+  const { cache, key } = buildCacheLookup(method, url, config, body);
+  const ttl = computeTtl(response.headers);
+
+  cache.set(key, {
+    data: response.data,
+    headers: response.headers,
+    status: response.status,
+    etag: response.headers?.etag || null,
+    expiresAt: Date.now() + ttl,
+  });
 }
 
 async function performRequest(method, url, config, body) {
@@ -138,18 +203,13 @@ async function performRequest(method, url, config, body) {
 async function fetchWithCache(method, url, config = {}, body) {
   const cacheEnabled = config?.cache !== false;
   const cache = pickCache(config);
-  const key = cacheKey(method, url, config, body);
+  const { key } = buildCacheLookup(method, url, config, body);
 
   if (cacheEnabled) {
-    const entry = cache.get(key);
-    if (entry && entry.expiresAt > Date.now()) {
+    const entry = peek(method, url, config, body);
+    if (entry) {
       stats.hits++;
-      return {
-        data: entry.data,
-        headers: entry.headers,
-        status: entry.status,
-        fromCache: true,
-      };
+      return entry;
     }
   }
 
@@ -196,18 +256,7 @@ async function fetchWithCache(method, url, config = {}, body) {
       }
 
       if (cacheEnabled) {
-        const cc = response.headers?.["cache-control"];
-        const noStore = cc && /no-store|no-cache/i.test(cc);
-        if (!noStore) {
-          const ttl = computeTtl(response.headers);
-          cache.set(key, {
-            data: response.data,
-            headers: response.headers,
-            status: response.status,
-            etag: response.headers?.etag || null,
-            expiresAt: Date.now() + ttl,
-          });
-        }
+        prime(method, url, response, config, body);
       }
 
       return {
@@ -241,6 +290,9 @@ async function getCacheStats() {
     inFlight: inFlight.size,
     limiterCounts: limiter.counts(),
     reservoir: await limiter.currentReservoir(),
+    rateLimitPerMinute: RATE_LIMIT_PER_MINUTE,
+    burstCapacity: BOTTLENECK_RESERVOIR,
+    maxConcurrentUpstream: BOTTLENECK_MAX_CONCURRENT,
   };
 }
 
@@ -258,5 +310,5 @@ function resetStats() {
   stats.upstreamCalls = 0;
 }
 
-export default { get, post, getCacheStats, clearCache, resetStats };
-export { stableStringify, parseMaxAgeMs, parseRetryAfterMs, computeTtl, cacheKey };
+export default { get, post, peek, prime, getCacheStats, clearCache, resetStats };
+export { stableStringify, parseMaxAgeMs, parseRetryAfterMs, computeTtl, cacheKey, peek, prime };

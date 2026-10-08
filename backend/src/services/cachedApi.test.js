@@ -9,7 +9,13 @@ vi.mock("./api.js", () => ({
   default: mockApi,
 }));
 
-const { default: cachedApi, stableStringify, parseMaxAgeMs, parseRetryAfterMs, computeTtl } =
+const {
+  default: cachedApi,
+  stableStringify,
+  parseMaxAgeMs,
+  parseRetryAfterMs,
+  computeTtl,
+} =
   await import("./cachedApi.js");
 
 function jsonResponse(data, headers = {}) {
@@ -266,5 +272,21 @@ describe("stats", () => {
     expect(stats.hits).toBe(1);
     expect(stats.misses).toBe(2);
     expect(stats.upstreamCalls).toBe(2);
+  });
+});
+
+describe("manual cache access", () => {
+  it("can prime and peek a cache entry without going upstream", () => {
+    cachedApi.prime("get", "/items/iron", jsonResponse({ id: 1, name: "iron" }));
+
+    const cached = cachedApi.peek("get", "/items/iron");
+
+    expect(cached).toEqual({
+      data: { id: 1, name: "iron" },
+      headers: { "cache-control": "max-age=3600" },
+      status: 200,
+      fromCache: true,
+    });
+    expect(mockApi.get).not.toHaveBeenCalled();
   });
 });
