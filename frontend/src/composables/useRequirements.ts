@@ -389,6 +389,12 @@ export function useRequirements(ctx: RequirementContext) {
         break;
       }
 
+      case "haveCoins": {
+        const { coins } = req.requirement;
+        value = playerStore.totalWealth >= coins;
+        break;
+      }
+
       case "exploreRealm": {
         const { realm } = req.requirement;
         value =
@@ -544,7 +550,7 @@ export function useRequirements(ctx: RequirementContext) {
 
         case "historyData": {
           const { category, data, value } = req.requirement;
-          const act = activityStore.activitiesMap[data];
+          const act = data ? activityStore.activitiesMap[data] : undefined;
           if (category === "stepsWalkedActivity" && act) {
             out = {
               prefix: `Have taken ${value} steps on the`,
@@ -720,6 +726,16 @@ export function useRequirements(ctx: RequirementContext) {
           out = {
             prefix: "Have",
             text: `(${n(Math.min(playerStore.totalWealth, amount))}/${n(amount)}) total wealth`,
+            icon: icons.money,
+          };
+          break;
+        }
+
+        case "haveCoins": {
+          const { coins } = req.requirement;
+          out = {
+            prefix: "Have",
+            text: `(${n(Math.min(playerStore.totalWealth, coins))}/${n(coins)}) total wealth`,
             icon: icons.money,
           };
           break;

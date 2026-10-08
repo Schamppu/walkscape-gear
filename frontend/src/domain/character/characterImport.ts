@@ -49,9 +49,13 @@ export type ItemCatalogEntry = {
   gearType?: string | null;
   quality?: string;
   itemValue?: {
+    /**
+     * Per-quality values; null when the item cannot be sold, and a plain
+     * number on currency items.
+     */
     value: {
       [key: string]: number;
-    };
+    } | number | null;
     currency: string;
   } | null;
 };
@@ -546,15 +550,16 @@ export function parseTotalWealth(
 
     const itemData = knownItems[baseId];
     const { itemValue } = itemData;
-    if (!itemValue || itemValue.currency !== "money") continue;
+    const values = itemValue?.currency === "money" ? itemValue.value : null;
+    if (!values || typeof values !== "object") continue;
 
     let value = 0;
-    if (Object.keys(itemValue.value).length === 1) {
-      value = Object.values(itemValue.value)[0];
-    } else if (quality in itemValue.value) {
-      value = itemValue.value[quality];
-    } else if (quality === "consumableFine" && "fine" in itemValue.value) {
-      value = itemValue.value["fine"];
+    if (Object.keys(values).length === 1) {
+      value = Object.values(values)[0];
+    } else if (quality in values) {
+      value = values[quality];
+    } else if (quality === "consumableFine" && "fine" in values) {
+      value = values["fine"];
     }
 
     total += count * value;

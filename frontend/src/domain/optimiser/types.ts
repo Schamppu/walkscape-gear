@@ -9,7 +9,7 @@
  * - Contain any logic.
  */
 
-import type { ItemDetail, Stat } from "@/domain/types/item";
+import type { SelectedQualityItem, Stat } from "@/domain/types/item";
 import type { LocationSummary } from "@/domain/types/location";
 
 // ---------------------------------------------------------------------------
@@ -17,14 +17,14 @@ import type { LocationSummary } from "@/domain/types/location";
 // ---------------------------------------------------------------------------
 
 /**
- * An `ItemDetail` enriched with pre-computed attribute lists after
- * `mapItemToStats` runs.
+ * An item (with its selected quality) enriched with pre-computed attribute
+ * lists after `mapItemToStats` runs.
  *
  * `level` and `abilities` are optional runtime properties present on some gear
  * items.  They are not part of the canonical `ItemDetail` domain type but are
  * accessed by `contributesToReq` and `filterItemsForReq` respectively.
  */
-export type MappedItem = ItemDetail & {
+export type MappedItem = SelectedQualityItem & {
   stats: Stat[];
   usefulStats: Stat[];
   level?: number;
