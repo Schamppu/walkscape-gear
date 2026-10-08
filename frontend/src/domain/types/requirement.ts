@@ -4,193 +4,53 @@
  * The `type` field is the discriminant; `requirement` carries only the fields
  * relevant to that variant so callers get full type safety without casts.
  *
+ * Aliases of the generated OpenAPI types (`./generated/api`, regenerate with
+ * `npm run gen:api-types`).
+ *
  * Does NOT:
  * - Import any Vue / reactive APIs.
  * - Contain any logic.
  */
 
-// ---------------------------------------------------------------------------
-// Shared base
-// ---------------------------------------------------------------------------
+import type { components } from "./generated/api";
 
-type RequirementBase = {
-  name: string | null;
-  opposite: boolean;
-};
+type Schemas = components["schemas"];
 
 // ---------------------------------------------------------------------------
 // Individual requirement variants
 // ---------------------------------------------------------------------------
 
-export type MainSkillRequirement = RequirementBase & {
-  type: "mainSkill";
-  requirement: { skill: string };
-};
-
-export type MainSkillTypeRequirement = RequirementBase & {
-  type: "mainSkillType";
-  requirement: { type: string };
-};
-
-export type LocationHasKeywordsRequirement = RequirementBase & {
-  type: "locationHasKeywords";
-  requirement: { keywords: string[] };
-};
-
-export type AchievementPointRequirement = RequirementBase & {
-  type: "achievementPoint";
-  requirement: { isPercentage: boolean; value: number };
-};
-
-export type DistinctKeywordItemsEquippedRequirement = RequirementBase & {
-  type: "distinctKeywordItemsEquipped";
-  requirement: { quantity: number; keywords: string[] };
-};
-
-export type DistinctKeywordItemInInventoryRequirement = RequirementBase & {
-  type: "distinctKeywordItemInInventory";
-  requirement: { keywords: string[], quantity: number };
-}
-
-export type HistoryDataRequirement = RequirementBase & {
-  type: "historyData";
-  requirement: {
-    category: string;
-    data: string;
-    value: number;
-    distinct: boolean;
-  };
-};
-
-export type RealmRequirement = RequirementBase & {
-  type: "realm";
-  requirement: { realm: string };
-};
-
-export type TravelingRequirement = RequirementBase & {
-  type: "traveling";
-  requirement: Record<string, never>;
-};
-
-export type ServiceRequirement = RequirementBase & {
-  type: "service";
-  requirement: { keywords?: string[]; serviceKeyword?: string; tier: string };
-};
-
-export type GameDataRequirement = RequirementBase & {
-  type: "gameData";
-  requirement: { gameDataId: string; data: string };
-};
-
-export type CharacterLevelRequirement = RequirementBase & {
-  type: "characterLevel";
-  requirement: { level: number };
-};
-
-export type SkillLevelRequirement = RequirementBase & {
-  type: "skillLevel";
-  requirement: { skill: string; level: number };
-};
-
-export type SkillTypeLevelRequirement = RequirementBase & {
-  type: "skillTypeLevel";
-  requirement: { type: string; relativeLevel: number };
-};
-
-export type ActivityTypeRequirement = RequirementBase & {
-  type: "activityType";
-  requirement: { keywords: string[]; skill: string | null; activity: string | null };
-};
-
-export type TotalSkillLevelRequirement = RequirementBase & {
-  type: "totalSkillLevel";
-  requirement: { levels: number };
-};
-
-export type TotalSkillLevelUpsRequirement = RequirementBase & {
-  type: "totalSkillLevelUps";
-  requirement: { levels: number };
-};
-
-export type InputKeywordWithLevelRequirement = RequirementBase & {
-  type: "inputKeywordWithLevel";
-  requirement: { skill: string; level: number };
-};
-
-export type ItemAnywhereRequirement = RequirementBase & {
-  type: "itemAnywhere";
-  requirement: { item: string };
-};
-
-export type ItemAnywhereWithYouRequirement = RequirementBase & {
-  type: "itemAnywhereWithYou";
-  requirement: { item: string };
-};
-
-export type KeywordEquippedRequirement = RequirementBase & {
-  type: "keywordEquipped";
-  requirement: { keyword: string };
-};
-
-export type KeywordWithLevelEquippedRequirement = RequirementBase & {
-  type: "keywordWithLevelEquipped";
-  requirement: { keyword: string; skill: string; level: number };
-};
-
-export type ItemEquippedRequirement = RequirementBase & {
-  type: "itemEquipped";
-  requirement: { item: string };
-};
-
-export type AbilityAvailableRequirement = RequirementBase & {
-  type: "abilityAvailable";
-  requirement: { ability: string; scanEquippedItems: boolean };
-};
-
-export type CollectiblesOwnedRequirement = RequirementBase & {
-  type: "collectiblesOwned";
-  requirement: { amount: number; };
-};
-
-export type TotalWealthRequirement = RequirementBase & {
-  type: "totalWealth";
-  requirement: { amount: number; };
-};
-
-export type ExploreRealmRequirement = RequirementBase & {
-  type: "exploreRealm";
-  requirement: { realm: string; };
-};
+export type MainSkillRequirement = Schemas["MainSkillRequirement"];
+export type MainSkillTypeRequirement = Schemas["MainSkillTypeRequirement"];
+export type LocationHasKeywordsRequirement = Schemas["LocationHasKeywordsRequirement"];
+export type AchievementPointRequirement = Schemas["AchievementPointRequirement"];
+export type DistinctKeywordItemsEquippedRequirement = Schemas["DistinctKeywordItemsEquippedRequirement"];
+export type DistinctKeywordItemInInventoryRequirement = Schemas["DistinctKeywordItemInInventoryRequirement"];
+export type HistoryDataRequirement = Schemas["HistoryDataRequirement"];
+export type RealmRequirement = Schemas["RealmRequirement"];
+export type TravelingRequirement = Schemas["TravelingRequirement"];
+export type ServiceRequirement = Schemas["ServiceRequirement"];
+export type GameDataRequirement = Schemas["GameDataRequirement"];
+export type CharacterLevelRequirement = Schemas["CharacterLevelRequirement"];
+export type SkillLevelRequirement = Schemas["SkillLevelRequirement"];
+export type SkillTypeLevelRequirement = Schemas["SkillTypeLevelRequirement"];
+export type ActivityTypeRequirement = Schemas["ActivityTypeRequirement"];
+export type TotalSkillLevelRequirement = Schemas["TotalSkillLevelRequirement"];
+export type TotalSkillLevelUpsRequirement = Schemas["TotalSkillLevelUpsRequirement"];
+export type InputKeywordWithLevelRequirement = Schemas["InputKeywordWithLevelRequirement"];
+export type ItemAnywhereRequirement = Schemas["ItemAnywhereRequirement"];
+export type ItemAnywhereWithYouRequirement = Schemas["ItemAnywhereWithYouRequirement"];
+export type KeywordEquippedRequirement = Schemas["KeywordEquippedRequirement"];
+export type KeywordWithLevelEquippedRequirement = Schemas["KeywordWithLevelEquippedRequirement"];
+export type ItemEquippedRequirement = Schemas["ItemEquippedRequirement"];
+export type AbilityAvailableRequirement = Schemas["AbilityAvailableRequirement"];
+export type HaveCoinsRequirement = Schemas["HaveCoinsRequirement"];
+export type CollectiblesOwnedRequirement = Schemas["CollectiblesOwnedRequirement"];
+export type ExploreRealmRequirement = Schemas["ExploreRealmRequirement"];
+export type TotalWealthRequirement = Schemas["TotalWealthRequirement"];
 
 // ---------------------------------------------------------------------------
 // Union
 // ---------------------------------------------------------------------------
 
-export type Requirement =
-  | MainSkillRequirement
-  | MainSkillTypeRequirement
-  | LocationHasKeywordsRequirement
-  | AchievementPointRequirement
-  | DistinctKeywordItemsEquippedRequirement
-  | DistinctKeywordItemInInventoryRequirement
-  | HistoryDataRequirement
-  | RealmRequirement
-  | TravelingRequirement
-  | ServiceRequirement
-  | GameDataRequirement
-  | CharacterLevelRequirement
-  | SkillLevelRequirement
-  | SkillTypeLevelRequirement
-  | ActivityTypeRequirement
-  | TotalSkillLevelRequirement
-  | TotalSkillLevelUpsRequirement
-  | InputKeywordWithLevelRequirement
-  | ItemAnywhereRequirement
-  | ItemAnywhereWithYouRequirement
-  | KeywordEquippedRequirement
-  | KeywordWithLevelEquippedRequirement
-  | ItemEquippedRequirement
-  | AbilityAvailableRequirement
-  | CollectiblesOwnedRequirement
-  | TotalWealthRequirement
-  | ExploreRealmRequirement;
+export type Requirement = Schemas["Requirement"];

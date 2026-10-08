@@ -2,40 +2,27 @@
  * Purpose:
  * Shared item-related types used across the domain layer.
  *
+ * API response shapes are derived from the generated OpenAPI types
+ * (`./generated/api`, regenerate with `npm run gen:api-types`). Only
+ * frontend-only extensions and endpoints missing from the spec are written
+ * by hand here.
+ *
  * Does NOT:
  * - Import any Vue / reactive APIs.
  * - Contain any logic.
  */
 
-import type { Requirement } from "./common";
+import type { components } from "./generated/api";
+
+type Schemas = components["schemas"];
 
 // ---------------------------------------------------------------------------
 // Attribute / stat types
 // ---------------------------------------------------------------------------
 
-export type Stat = {
-  stat: string;
-  name: string;
-  type: string;
-  skill?: string;
-  isPercent: boolean;
-  value: number;
-  isNegative: boolean;
-  isMultiplicative: boolean;
-};
+export type Stat = NonNullable<Schemas["AttrStat"]>;
 
-export type Attribute = {
-  id: string;
-  customIcon: string | null;
-  customTextLocalizationKey: string | null;
-  customText: string;
-  textLocalizationKey: string;
-  text: string;
-  statText: string;
-  skillText: string;
-  tables: unknown | null;
-  requirements: Requirement[];
-  stats: Stat[];
+export type Attribute = Schemas["Attribute"] & {
   /**
    * Optional override for the stat-source shown in aggregation. Used when an
    * attribute originates from a source other than the item carrying it (e.g. a
@@ -44,48 +31,29 @@ export type Attribute = {
   sourceItem?: { id: string; name: string; icon: string };
 };
 
-export type QualityAttr = {
-  quality: string;
-  attributes: Attribute[];
-};
+export type QualityAttr = NonNullable<Schemas["ItemQualityAttributes"]>[number];
+
+export type ItemQuality = Schemas["ItemQuality"];
+
+export type GearType = Schemas["GearType"];
 
 // ---------------------------------------------------------------------------
 // Buff types
 // ---------------------------------------------------------------------------
 
-export type BuffObj = {
-  id: string;
-  type: string;
-  runtimeType: string;
-  attributes: Attribute[];
-  fineAttributes: Attribute[];
-};
+export type Buff = Schemas["Buff"];
 
-export type BuffData = {
-  type: string;
-  buffs: BuffObj[];
-};
+export type BuffData = Buff["data"][number];
 
-export type Buff = {
-  duration: {
-    steps: number | null;
-    actions: number | null;
-  };
-  data: BuffData[];
-};
+export type BuffObj = BuffData["buffs"][number];
 
 // ---------------------------------------------------------------------------
 // Gear item types
 // ---------------------------------------------------------------------------
 
-export type GearItem = {
-  itemAttrs?: Attribute[];
-  itemQualityAttrs?: QualityAttr[];
-};
+export type GearItem = Pick<Schemas["CraftedItem"], "itemAttrs" | "itemQualityAttrs">;
 
-export type ConsumableItem = {
-  buffs?: Buff[] | null;
-};
+export type ConsumableItem = Pick<Schemas["ConsumableItem"], "buffs">;
 
 // ---------------------------------------------------------------------------
 // Pet types
@@ -134,9 +102,7 @@ export type PetItem = {
 // Material item type
 // ---------------------------------------------------------------------------
 
-export type MaterialItem = {
-  materialAttrs: Attribute[];
-};
+export type MaterialItem = Pick<Schemas["MaterialItem"], "materialAttrs">;
 
 // ---------------------------------------------------------------------------
 // Union
@@ -148,36 +114,25 @@ export type Item = GearItem | ConsumableItem | PetItem | MaterialItem;
 // Item API types
 // ---------------------------------------------------------------------------
 
-export type ItemSummary = {
-  id: string;
-  name: string;
-  icon: string;
-};
+export type ItemSummary = Schemas["ItemListItem"];
 
-export type ItemDetail = {
-  id: string;
-  name: string;
-  keywords: string[];
-  type: string;
-  quality: string;
-  consumableType: string | null;
-  gearType: string | null;
-  requirements: Requirement[];
-  itemAttrs: Attribute[];
-  itemQualityAttrs: QualityAttr[];
-  materialAttrs?: Attribute[];
-  itemValue: {
-    value: {
-      [key: string]: number;
-    };
-    currency: string;
-  } | null;
-  itemValueModifier: number;
-  buffs: Buff[];
-  tables: unknown[];
-  canBeFine: boolean;
-  icon: string;
-};
+/** Discriminated on `type` ("crafted", "consumable", "material", ...). */
+export type ItemDetail = Schemas["ItemDetail"];
+
+type WithSelectedQuality<T> = T extends unknown
+  ? Omit<T, "quality"> & { quality: string }
+  : never;
+
+/**
+ * An `ItemDetail` whose `quality` holds the tier selected on the frontend,
+ * which is wider than the API's quality enum: the owned crafted tier,
+ * "consumableCommon" / "consumableFine", or a pet's level as a string.
+ */
+export type SelectedQualityItem = WithSelectedQuality<ItemDetail>;
+
+// The endpoints below are served by this repo's own backend
+// (backend/src/routes/itemRoutes.js), not the tools API, so their types are
+// written by hand.
 
 export type ItemCategory = {
   title: string;
