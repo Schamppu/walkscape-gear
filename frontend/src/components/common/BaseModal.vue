@@ -59,9 +59,9 @@ function close() {
         class="modal-content"
         :class="{ 'bottom-sheet': bottomSheet, 'no-padding': noPadding }"
         :style="{
-          width: width,
+          '--modal-width': width,
+          '--modal-min-width': minWidth || 'auto',
           maxWidth: maxWidth,
-          minWidth: minWidth || undefined,
           minHeight: minHeight || undefined,
           maxHeight: bottomSheet ? undefined : '80vh',
           height: height || undefined,
@@ -107,6 +107,10 @@ function close() {
 }
 
 .modal-content {
+  // Width comes through CSS variables (not inline width) so the phone
+  // breakpoint below can override it.
+  width: var(--modal-width);
+  min-width: var(--modal-min-width);
   background: $boxDarkBackground;
   border: 1px solid $boxDarkOutline;
   padding: $xxxlg;
@@ -116,6 +120,17 @@ function close() {
 
   &.no-padding {
     padding: 0;
+  }
+
+  @media (max-width: 480px) {
+    &:not(.bottom-sheet) {
+      width: 95%;
+      min-width: 0;
+
+      &:not(.no-padding) {
+        padding: $sm;
+      }
+    }
   }
 
   &.bottom-sheet {
