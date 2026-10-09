@@ -13,6 +13,11 @@ import type { HandledRequirement } from "@/domain/optimiser/requirements";
 import type { LocationSummary } from "@/domain/types/location";
 import type { CombinationRule, Target } from "@/domain/advancedOptimiser/config";
 import type { ExtractionContext } from "@/domain/advancedOptimiser/targets";
+import type {
+  SearchProgress,
+  SearchResult,
+  SearchSettings,
+} from "@/domain/advancedOptimiser/search";
 import type { StaticReqCtx, WorkerGearSet, WorkerItem } from "./optimiserWorkerTypes";
 
 export type AdvancedOptimiserJob = {
@@ -50,3 +55,16 @@ export type AdvancedOptimiserJob = {
    */
   requirementSeeds: WorkerGearSet[];
 };
+
+// ---------------------------------------------------------------------------
+// Messages
+// ---------------------------------------------------------------------------
+
+export type AdvancedOptimiserInbound =
+  | { type: "start"; job: AdvancedOptimiserJob; settings?: Partial<SearchSettings> }
+  | { type: "cancel" };
+
+export type AdvancedOptimiserOutbound =
+  | { type: "progress"; progress: SearchProgress }
+  | { type: "result"; result: SearchResult }
+  | { type: "error"; message: string };
