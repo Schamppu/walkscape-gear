@@ -6635,7 +6635,7 @@ export interface components {
                 rowMinimumAmount: number;
                 /** @description Maximum amount of the item that can drop from this row */
                 rowMaximumAmount: number;
-                minWeightScale: number;
+                minWeightScale: number | null;
                 /** @description List of requirement bonuses that can affect the drop chance of this row */
                 requirementsBonuses: components["schemas"]["RequirementBonus"][] | null;
             }[] | null;
@@ -6669,7 +6669,7 @@ export interface components {
                     rowMinimumAmount: number;
                     /** @description Maximum amount of the item that can drop from this row */
                     rowMaximumAmount: number;
-                    minWeightScale: number;
+                    minWeightScale: number | null;
                     /** @description List of requirement bonuses that can affect the drop chance of this row */
                     requirementsBonuses: components["schemas"]["RequirementBonus"][] | null;
                 }[] | null;
