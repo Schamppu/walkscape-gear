@@ -25,7 +25,7 @@ services:
       - ws-gear
 
   postgres:
-    image: postgres:17.5
+    image: postgres:17.5-trixie
     container_name: walkscape-gear-postgres-${NAME_SUFFIX}
     restart: unless-stopped
     environment:
