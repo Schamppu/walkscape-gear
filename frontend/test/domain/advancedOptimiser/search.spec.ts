@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
   climb,
+  fillFallback,
   DEFAULT_SEARCH_SETTINGS,
   runSearch,
   type SearchSettings,
@@ -51,11 +52,44 @@ describe("climb", () => {
         moves: { slots: job.searchSlots, options: job.options, locations: [], keywordsMap: {}, setKeywords: [] },
         score,
         pairSamples: 10,
+        setMoves: true,
         random: seededRandom(1),
       },
     );
     expect((result.gearSet.head as { id: string }).id).toBe("big_hat");
     expect((result.gearSet.chest as { id: string }).id).toBe("big_chest");
+  });
+});
+
+describe("fillFallback", () => {
+  const score = createSetScorer(job);
+  const start = { gearSet: { head: item("big_hat", [we(0.4)]) }, result: score({}) };
+  start.result = score(start.gearSet);
+
+  it("fills empty slots with the first item that doesn't lower the score", () => {
+    const fallback = {
+      chest: [item("cursed_chest", [we(-0.2)]), makeWorkerItem("inventory_chest", [{ type: "inventorySpace", value: 4, isPercent: false }])],
+    };
+    const filled = fillFallback(start, ["head", "chest"], fallback, {}, score);
+    expect((filled.gearSet.chest as { id: string }).id).toBe("inventory_chest");
+    expect(filled.result.score).toBeCloseTo(start.result.score, 10);
+  });
+
+  it("never replaces filled slots", () => {
+    const fallback = { head: [item("other_hat", [we(0.1)])] };
+    const filled = fillFallback(start, ["head"], fallback, {}, score);
+    expect((filled.gearSet.head as { id: string }).id).toBe("big_hat");
+  });
+
+  it("is applied by runSearch when the job has fallback options", async () => {
+    const withFallback = {
+      ...job,
+      options: { head: job.options.head },
+      searchSlots: ["head", "chest"],
+      fallbackOptions: { chest: [makeWorkerItem("inventory_chest", [{ type: "inventorySpace", value: 4, isPercent: false }])] },
+    };
+    const result = await runSearch(withFallback, settings(), hooks());
+    expect((result.gearSet.chest as { id: string }).id).toBe("inventory_chest");
   });
 });
 

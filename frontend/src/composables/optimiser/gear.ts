@@ -9,7 +9,7 @@ import { type LootTablesContext } from "@/composables/useLootTables";
 import { type RequirementContext } from "@/composables/useRequirements";
 import { usedAttrs } from "@/domain/quality/qualityAttrs";
 import { gearSlots, gearTypes } from "@/domain/constants/gear";
-import { filterLocations, filterDirectUpgrades } from "@/domain/optimiser/gear";
+import { filterDirectUpgrades } from "@/domain/optimiser/gear";
 import { getLevelRequirementsMap } from "@/domain/requirements/requirementUtils";
 import type { Stat } from "@/domain/types/item";
 import type { ItemDetail, SelectedQualityItem } from "@/domain/types/item";
@@ -17,9 +17,7 @@ import type { Requirement } from "@/domain/types/common";
 import { type GearSlot } from "@/domain/constants/gear";
 
 import { getGearSetStats } from "./stats";
-import { filterUsefulStats } from "@/domain/optimiser/scoring";
 import { getItemScores } from "./score";
-import { priorityValue } from "./priority";
 import type {
   MappedItem,
   OptimiserItem,
@@ -390,47 +388,6 @@ export const getRequiredGearOptions = (): GearOptions => {
         },
       ];
     }),
-  ) as GearOptions;
-};
-
-/**
- * Phase 2 — Primary options.
- * Generates items that improve the selected target priority, but only for
- * `emptySlotKeys` — slots not already filled by the requirements phase.
- * Location is always included so `gearFill` can cycle through location options.
- */
-export const getPrimaryGearOptions = (
-  emptySlotKeys: Set<string>,
-): GearOptions => {
-  const ctx = makeGearCtx();
-  const { activityStore } = ctx;
-
-  return Object.fromEntries(
-    gearTypes
-      .filter((slot) => slot === "location" || emptySlotKeys.has(slot))
-      .map((slot): [string, SlotOptions] => {
-        if (slot === "location") {
-          return [
-            slot,
-            {
-              required: [],
-              primary: activityStore.locations
-                ? filterLocations(activityStore.locations)
-                : [],
-              fallback: [],
-            },
-          ];
-        }
-
-        const { scoredItems } = getScoredItemsForSlot(slot, ctx);
-        const upgradeFiltered = upgradeFilteredForSlot(slot, scoredItems);
-        const statFiltered = filterUsefulStats(
-          upgradeFiltered,
-          priorityValue(),
-        );
-
-        return [slot, { required: [], primary: statFiltered, fallback: [] }];
-      }),
   ) as GearOptions;
 };
 

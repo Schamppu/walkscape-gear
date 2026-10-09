@@ -11,6 +11,7 @@ export const X_LABELS: Record<XValue, string> = {
   fineMaterials: "Fine materials",
   chests: "Chests",
   tokens: "Tokens",
+  coins: "Coins",
   collectibles: "Collectibles",
   eternalCrafts: "Eternal crafts",
 };

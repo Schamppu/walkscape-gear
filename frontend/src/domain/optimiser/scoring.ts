@@ -11,8 +11,6 @@
  * - Access any stores directly.
  */
 
-import type { OptimiserItem } from "@/domain/optimiser/types";
-
 // ---------------------------------------------------------------------------
 // Constants
 // ---------------------------------------------------------------------------
@@ -26,20 +24,6 @@ export const LOW_STATS = [
 ] as const;
 
 export const HIGH_STATS = ["xpPerStep", "craftsPerMaterial", "balancedRecipe"] as const;
-
-const BASE_STATS = ["work_efficiency", "double_action", "steps_required"];
-
-const USEFUL_STATS_BY_TARGET: Record<string, string[]> = {
-  stepsPerRewardRoll: [...BASE_STATS, "double_rewards"],
-  xpPerStep: [...BASE_STATS, "bonus_experience"],
-  stepsPerFineRoll: [...BASE_STATS, "double_rewards", "fine_material_finding"],
-  stepsPerCollectibleRoll: [...BASE_STATS, "double_rewards", "find_collectibles"],
-  craftsPerMaterial: [...BASE_STATS, "double_rewards", "no_materials_consumed"],
-  averageEternalCrafts: [...BASE_STATS, "double_rewards", "no_materials_consumed", "quality_outcome"],
-  // Balanced: union of all stats from each set of priorities.
-  balanced: [...BASE_STATS, "double_rewards", "bonus_experience", "fine_material_finding", "find_collectibles"],
-  balancedRecipe: [...BASE_STATS, "double_rewards", "no_materials_consumed", "bonus_experience"],
-};
 
 // ---------------------------------------------------------------------------
 // Exported functions
@@ -70,23 +54,4 @@ export const compareScore = (value: number, best: number, prio: string): number 
   if ((LOW_STATS as ReadonlyArray<string>).includes(prio)) return best - value;
   if ((HIGH_STATS as ReadonlyArray<string>).includes(prio)) return value - best;
   return best - value;
-};
-
-/**
- * Filters `items` down to those that have at least one stat useful for the
- * given `target` priority.
- */
-export const filterUsefulStats = (
-  items: OptimiserItem[],
-  target: string,
-): OptimiserItem[] => {
-  const targetStats = USEFUL_STATS_BY_TARGET[target];
-  if (!targetStats) {
-    console.warn(`"${target}" is not a recognised optimiser priority`);
-    return items;
-  }
-
-  return items.filter(({ usefulStats }) =>
-    usefulStats.some(({ stat, isNegative }) => !isNegative && targetStats.includes(stat)),
-  );
 };

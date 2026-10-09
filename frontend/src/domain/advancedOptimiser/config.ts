@@ -25,6 +25,7 @@ export const X_VALUES = [
   "fineMaterials",
   "chests",
   "tokens",
+  "coins",
   "collectibles",
   "eternalCrafts",
 ] as const;

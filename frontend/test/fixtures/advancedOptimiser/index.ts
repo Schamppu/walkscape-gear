@@ -31,6 +31,7 @@ export function makeTargetContext(overrides: Partial<TargetContext> = {}): Targe
     hasCollectibles: false,
     hasFineMaterials: false,
     hasTokens: false,
+    hasCoins: false,
     ...overrides,
   };
 }
@@ -85,7 +86,13 @@ export function makeSkillModifiers(
 
 /** Builds a DropProfile with no chests or tokens. */
 export function makeDropProfile(overrides: Partial<DropProfile> = {}): DropProfile {
-  return { chestsPerRoll: 0, tokenBasePerRoll: 0, tokenFineBonusPerRoll: 0, ...overrides };
+  return {
+    chestsPerRoll: 0,
+    unscaledChestsPerRoll: 0,
+    tokenBasePerRoll: 0,
+    tokenFineBonusPerRoll: 0,
+    ...overrides,
+  };
 }
 
 /** Builds an ExtractionContext for a fishing activity with naked modifiers. */

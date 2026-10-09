@@ -60,6 +60,11 @@ export type AdvancedOptimiserJob = {
    * quick set's requirementsFill). Empty means start from the locked items.
    */
   requirementSeeds: WorkerGearSet[];
+  /**
+   * Quick set only: items to fill slots the search leaves empty with, even if
+   * they don't help the targets (as long as they don't lower the score).
+   */
+  fallbackOptions?: Record<string, WorkerItem[]>;
 };
 
 // ---------------------------------------------------------------------------

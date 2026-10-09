@@ -31,11 +31,14 @@ export const computeBaseline = (
 };
 
 /**
- * Returns `value / baseline`, or `null` when the target has no positive
- * baseline (it can't be compared, so it is left out of the score).
+ * How `value` compares with the naked baseline: `1 + (value − base) / |base|`.
+ * For a positive baseline that's `value / base`; it also works for a negative
+ * one (net coins of a loss-making recipe), where getting closer to 0 is
+ * better. Returns `null` when the baseline is 0 or missing (the target can't
+ * be compared, so it's left out of the score).
  */
 export const normalise = (baseline: Baseline, target: Target, value: number): number | null => {
   const base = baseline.get(targetKey(target));
-  if (base === undefined || !(base > 0)) return null;
-  return value / base;
+  if (base === undefined || base === 0 || !Number.isFinite(base)) return null;
+  return 1 + (value - base) / Math.abs(base);
 };

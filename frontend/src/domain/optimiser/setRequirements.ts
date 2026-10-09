@@ -4,7 +4,7 @@
  * attribute requirements against the set's items and location, filtering of
  * static entries, and ring / tool duplicate and banned-keyword filtering.
  *
- * Shared by the quick-set worker and the advanced optimiser.
+ * Used by the advanced optimiser (which the quick set also runs on).
  *
  * Does NOT:
  * - Import Vue / reactive APIs.

@@ -12,6 +12,7 @@ import type { AdvancedOptimiserJob } from "@/workers/advancedOptimiserWorkerType
 import type { HandledRequirement } from "@/domain/optimiser/requirements";
 import {
   keywordEquippedReq,
+  makeDropProfile,
   makeJob,
   makeLocationSummary,
   makeTarget,
@@ -91,7 +92,7 @@ const nmcJob = (): AdvancedOptimiserJob =>
     targets: [makeTarget("rewardRolls", "material", 1)],
     source: { maxWorkEfficiency: 2, workRequired: 100, xpRewards: { crafting: 50 } },
     activitySelected: false,
-    extraction: { activitySkills: ["crafting"], quality: null, drops: { chestsPerRoll: 0, tokenBasePerRoll: 0, tokenFineBonusPerRoll: 0 } },
+    extraction: { activitySkills: ["crafting"], quality: null, drops: makeDropProfile() },
     searchSlots: ["head", "chest", "legs", "feet"],
     options: {
       head: [item("nmc_hat", [nmc(0.2)]), item("dr_hat", [dr(0.3)])],

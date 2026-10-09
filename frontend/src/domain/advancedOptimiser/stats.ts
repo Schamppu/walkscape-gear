@@ -29,6 +29,17 @@ export const USEFUL_STATS_BY_X: Record<XValue, readonly StatId[]> = {
   collectibles: ["double_rewards", "find_collectibles"],
   chests: ["double_rewards", "chest_finding"],
   tokens: ["double_rewards", "fine_material_finding"],
+  // Net coins: material cost per action falls with no materials consumed.
+  coins: [
+    "double_rewards",
+    "fine_material_finding",
+    "chest_finding",
+    "find_collectibles",
+    "find_gems",
+    "find_bird_nests",
+    "quality_outcome",
+    "no_materials_consumed",
+  ],
   eternalCrafts: ["double_rewards", "quality_outcome"],
 };
 

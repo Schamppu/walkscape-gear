@@ -7,8 +7,6 @@
  */
 
 import type { EffectiveAttrEntry } from "@/domain/effectiveAttrs";
-import type { SkillModifiersSource } from "@/domain/skillModifiers";
-import type { FineMaterialsMode } from "@/domain/quality/qualityOutcomeOdds";
 import type { OptimiserItem } from "@/domain/optimiser/types";
 import type { LocationSummary } from "@/domain/types/location";
 
@@ -30,10 +28,6 @@ export type WorkerCandidate = {
   gearSet: WorkerGearSet;
   score: number;
   slotCounts: Record<string, number>;
-};
-
-export type WorkerFulfilledCandidate = WorkerCandidate & {
-  fulfilled: number;
 };
 
 // ---------------------------------------------------------------------------
@@ -69,57 +63,4 @@ export type StaticReqCtx = {
   achievementPoints: number;
   factionReputation: Record<string, number>;
   ownedItemIds: string[];
-};
-
-// ---------------------------------------------------------------------------
-// Gear options
-// ---------------------------------------------------------------------------
-
-export type WorkerGearOptions = {
-  required: Record<string, WorkerItem[]>;
-  /** Location slot carries `LocationSummary`; all other slots carry `WorkerItem`. */
-  primary: Record<string, (WorkerItem | LocationSummary)[]>;
-  fallback: Record<string, WorkerItem[]>;
-};
-
-// ---------------------------------------------------------------------------
-// Worker messages
-// ---------------------------------------------------------------------------
-
-export type OptimiserJobData = {
-  // --- Scoring ---
-  /** Pre-built EffectiveAttrEntry[] for collectibles + level bonuses + service. */
-  staticEntries: EffectiveAttrEntry[];
-  source: SkillModifiersSource | null;
-  activitySelected: boolean;
-  recipeQualityContext: {
-    levelReq: number;
-    fineMode: FineMaterialsMode;
-  } | null;
-  prio: string;
-  /** Default location for gear sets that don't have an explicit location set. */
-  defaultLocation: LocationSummary | null;
-
-  // --- Requirement checking ---
-  reqCtx: StaticReqCtx;
-
-  // --- Beam search inputs ---
-  /** Candidates produced by requirementsFill on the main thread. */
-  reqSets: WorkerCandidate[];
-  gearOptions: WorkerGearOptions;
-  activeSlots: string[];
-  playerLevel: number;
-  keywordsMap: Record<string, { bannedKeywords: string[] }>;
-  /**
-   * Keywords of locked items, grouped by slot key (e.g. `"tool"`, `"ring"`).
-   * Locked items are excluded from `activeSlots` and never enter the worker's
-   * gear set, so their keywords must be supplied separately for `filterMultislot`
-   * to apply their `bannedKeywords` when filling sibling multi-slot slots.
-   */
-  lockedMultislotKeywords: Record<string, string[]>;
-};
-
-export type OptimiserJobResult = {
-  gearSet: WorkerGearSet;
-  score: number;
 };

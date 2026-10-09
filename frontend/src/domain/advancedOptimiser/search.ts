@@ -13,9 +13,9 @@
  */
 
 import type { Stat } from "@/domain/types/item";
-import type { WorkerGearSet } from "@/workers/optimiserWorkerTypes";
+import type { WorkerGearSet, WorkerItem } from "@/workers/optimiserWorkerTypes";
 import type { AdvancedOptimiserJob } from "@/workers/advancedOptimiserWorkerTypes";
-import { seedCandidates, type Candidate } from "./beam";
+import { seedCandidates, slotOptions, type Candidate } from "./beam";
 import {
   collectSetKeywords,
   countSlots,
@@ -41,8 +41,10 @@ export type SearchSettings = {
   climbedSeeds: number;
   /** Restarts in a row without improvement before giving up early. */
   patience: number;
-  /** Random pair swaps tried per climb round. */
+  /** Random pair swaps tried per climb round (0 = none). */
   pairSamples: number;
+  /** Try set moves (equipping several pieces of a keyword set at once). */
+  setMoves: boolean;
   /** Slots changed when perturbing the best set for a restart. */
   perturbSlots: number;
   yieldEveryMs: number;
@@ -57,6 +59,7 @@ export const DEFAULT_SEARCH_SETTINGS: SearchSettings = {
   // matched a 60s reference; 25 ended in 0.7–3s. 40 leaves a margin.
   patience: 40,
   pairSamples: 200,
+  setMoves: true,
   perturbSlots: 3,
   yieldEveryMs: 50,
   progressEveryMs: 200,
@@ -93,6 +96,7 @@ type ClimbContext = {
   moves: MoveContext;
   score: SetScorer;
   pairSamples: number;
+  setMoves: boolean;
   random: () => number;
 };
 
@@ -125,13 +129,39 @@ export const climbRound = (current: Candidate, ctx: ClimbContext): Candidate | n
 
   for (const neighbours of [
     () => singleMoves(current.gearSet, moves),
-    () => setMoves(current.gearSet, moves, rank),
+    () => (ctx.setMoves ? setMoves(current.gearSet, moves, rank) : []),
     () => pairMoves(current.gearSet, moves, ctx.pairSamples, ctx.random),
   ]) {
     const best = bestOf(current, neighbours(), score);
     if (best !== current) return best;
   }
   return null;
+};
+
+/**
+ * Fills slots the search left empty, in slot order, with the first item from
+ * `fallback` that doesn't lower the score.
+ */
+export const fillFallback = (
+  start: Candidate,
+  slots: readonly string[],
+  fallback: Record<string, WorkerItem[]>,
+  keywordsMap: MoveContext["keywordsMap"],
+  score: SetScorer,
+): Candidate => {
+  let current = start;
+  for (const slot of slots) {
+    if (current.gearSet[slot]) continue;
+    for (const item of slotOptions(current.gearSet, slot, fallback, keywordsMap)) {
+      const gearSet = { ...current.gearSet, [slot]: item };
+      const result = score(gearSet);
+      if (compareSetScores(result, current.result) <= 0) {
+        current = { gearSet, result };
+        break;
+      }
+    }
+  }
+  return current;
 };
 
 /** Climbs until a local optimum (sync; for tests and small searches). */
@@ -190,6 +220,7 @@ export const runSearch = async (
     },
     score,
     pairSamples: settings.pairSamples,
+    setMoves: settings.setMoves,
     random: hooks.random,
   };
 
@@ -250,6 +281,10 @@ export const runSearch = async (
     } else {
       sinceImprovement++;
     }
+  }
+
+  if (job.fallbackOptions) {
+    best = fillFallback(best, job.searchSlots, job.fallbackOptions, job.keywordsMap, score);
   }
 
   return {
