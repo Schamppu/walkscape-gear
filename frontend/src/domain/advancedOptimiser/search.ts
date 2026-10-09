@@ -154,6 +154,12 @@ export const runSearch = async (
   settings: SearchSettings,
   hooks: SearchHooks,
 ): Promise<SearchResult> => {
+  // Jobs exported before `mode` existed are single-activity.
+  const mode = job.mode?.kind ?? "singleActivity";
+  if (mode !== "singleActivity") {
+    throw new Error(`Optimiser mode "${mode}" is not implemented`);
+  }
+
   const start = hooks.now();
   const elapsed = () => hooks.now() - start;
   const outOfTime = () => elapsed() >= settings.timeBudgetMs;

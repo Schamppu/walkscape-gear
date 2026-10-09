@@ -60,6 +60,11 @@ describe("climb", () => {
 });
 
 describe("runSearch", () => {
+  it("refuses best-for-skill mode, which isn't implemented", async () => {
+    const bestForSkill = { ...job, mode: { kind: "bestForSkill" as const, skillId: "fishing" as const } };
+    await expect(runSearch(bestForSkill, settings(), hooks())).rejects.toThrow("not implemented");
+  });
+
   it("stops once the time budget is used up", async () => {
     const result = await runSearch(job, settings({ timeBudgetMs: 50, patience: 1e9 }), hooks());
     expect(result.cancelled).toBe(false);

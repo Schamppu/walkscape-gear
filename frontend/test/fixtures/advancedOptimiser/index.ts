@@ -242,6 +242,7 @@ export const locationKeywordsReq = (keywords: string[]) =>
  */
 export function makeJob(overrides: Partial<AdvancedOptimiserJob> = {}): AdvancedOptimiserJob {
   return {
+    mode: { kind: "singleActivity", activityId: "fixture-activity" },
     targets: [makeTarget("xp", "step", 1)],
     combinationRule: "weightedSum",
     staticEntries: [],

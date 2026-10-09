@@ -132,6 +132,7 @@ export const buildAdvancedJob = ({
   const levelReq = Object.values(getLevelRequirementsMap(source.requirements))[0] ?? 1;
 
   return toDeepRaw({
+    mode: config.mode,
     targets: config.targets,
     combinationRule: config.combinationRule,
     staticEntries: buildStaticEntries(),

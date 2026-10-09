@@ -11,7 +11,11 @@ import type { EffectiveAttrEntry } from "@/domain/effectiveAttrs";
 import type { SkillModifiersSource } from "@/domain/skillModifiers";
 import type { HandledRequirement } from "@/domain/optimiser/requirements";
 import type { LocationSummary } from "@/domain/types/location";
-import type { CombinationRule, Target } from "@/domain/advancedOptimiser/config";
+import type {
+  AdvancedOptimiserMode,
+  CombinationRule,
+  Target,
+} from "@/domain/advancedOptimiser/config";
 import type { ExtractionContext } from "@/domain/advancedOptimiser/targets";
 import type {
   SearchProgress,
@@ -22,6 +26,8 @@ import type { StaticReqCtx, WorkerGearSet, WorkerItem } from "./optimiserWorkerT
 
 export type AdvancedOptimiserJob = {
   // --- Objective ---
+  /** Only `singleActivity` runs; `bestForSkill` is config scaffolding for later. */
+  mode: AdvancedOptimiserMode;
   targets: Target[];
   combinationRule: CombinationRule;
 
