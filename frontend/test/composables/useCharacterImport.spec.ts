@@ -59,6 +59,7 @@ const emptyOwnedEntry = (): OwnedItemEntry => ({
   owned: false,
   hidden: false,
   quantity: 0,
+  quantityFine: 0,
   craftedTier: null,
   craftedTier2: null,
   consumableCommon: false,

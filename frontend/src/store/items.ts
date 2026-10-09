@@ -39,6 +39,7 @@ export type ToggleItemPayload = {
   owned?: boolean;
   hidden?: boolean;
   quantity?: number;
+  quantityFine?: number;
   craftedTier?: string | null;
   craftedTier2?: string | null;
   consumableCommon?: boolean;
@@ -135,6 +136,7 @@ export const useItemsStore = defineStore("itemStore", {
       owned = true,
       hidden = false,
       quantity = 0,
+      quantityFine = 0,
       craftedTier = null,
       craftedTier2 = null,
       consumableCommon = false,
@@ -146,6 +148,7 @@ export const useItemsStore = defineStore("itemStore", {
         owned,
         hidden,
         quantity,
+        quantityFine,
         craftedTier,
         craftedTier2,
         consumableCommon,

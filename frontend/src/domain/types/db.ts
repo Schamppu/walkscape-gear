@@ -22,6 +22,8 @@ export type DbOwnedItem = {
   owned: boolean;
   hidden: boolean;
   quantity: number;
+  /** Fine consumables among `quantity` (common = quantity − quantityFine). */
+  quantityFine: number;
   craftedTier: string | null;
   craftedTier2: string | null;
   consumableCommon: boolean;

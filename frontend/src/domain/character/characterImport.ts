@@ -65,6 +65,8 @@ export type OwnedItemEntry = {
   owned: boolean;
   hidden: boolean;
   quantity: number;
+  /** Fine consumables among `quantity`. */
+  quantityFine: number;
   craftedTier: string | null;
   craftedTier2: string | null;
   consumableCommon: boolean;
@@ -440,6 +442,7 @@ export function parseOwnedItems(
     owned: false,
     hidden,
     quantity: 0,
+    quantityFine: 0,
     craftedTier: null,
     craftedTier2: null,
     consumableCommon: false,
@@ -476,6 +479,7 @@ export function parseOwnedItems(
         ...emptyEntry(hidden),
         owned: hasCommon || hasFine,
         quantity: totalCount,
+        quantityFine: qualities.filter((q) => q === "consumableFine").length,
         consumableCommon: hasCommon,
         consumableFine: hasFine,
       };
