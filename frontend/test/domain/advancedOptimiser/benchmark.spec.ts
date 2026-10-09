@@ -5,11 +5,13 @@ import {
   type SearchSettings,
 } from "@/domain/advancedOptimiser/search";
 import type { AdvancedOptimiserJob } from "@/workers/advancedOptimiserWorkerTypes";
+import { QUICK_SEARCH_SETTINGS } from "@/domain/advancedOptimiser/quickSet";
 import { seededRandom } from "../../fixtures/advancedOptimiser";
 
 // Tuning benchmark on real jobs exported from the app (see
 // test/fixtures/advancedOptimiser/jobs/README.md). Opt-in and slow:
 //   BENCH=1 npx vitest run benchmark
+//   BENCH=1 BENCH_VARIANTS=quick,default npx vitest run benchmark
 // For each job: a long reference run gives the best-known score, then each
 // settings variant runs under the normal budget. The table shows how far each
 // variant ends from the reference (negative = it beat the reference), how long
@@ -22,8 +24,9 @@ const jobs = import.meta.glob<AdvancedOptimiserJob>("../../fixtures/advancedOpti
 
 const REFERENCE: Partial<SearchSettings> = { timeBudgetMs: 60_000, patience: 1_000, beamWidth: 100 };
 
-const VARIANTS: Record<string, Partial<SearchSettings>> = {
+const ALL_VARIANTS: Record<string, Partial<SearchSettings>> = {
   default: {},
+  quick: QUICK_SEARCH_SETTINGS,
   "beam 10": { beamWidth: 10 },
   "beam 25": { beamWidth: 25 },
   "beam 100": { beamWidth: 100 },
@@ -33,6 +36,12 @@ const VARIANTS: Record<string, Partial<SearchSettings>> = {
   "pairs 500": { pairSamples: 500 },
   "budget 5s": { timeBudgetMs: 5_000 },
 };
+
+// BENCH_VARIANTS=quick,default runs only those variants.
+const only = process.env.BENCH_VARIANTS?.split(",");
+const VARIANTS = only
+  ? Object.fromEntries(Object.entries(ALL_VARIANTS).filter(([name]) => only.includes(name)))
+  : ALL_VARIANTS;
 
 const run = (job: AdvancedOptimiserJob, settings: Partial<SearchSettings>, seed = 1) =>
   runSearch(

@@ -8,9 +8,6 @@ import useBaseContext from "@/composables/context/useBaseContext";
 import { useRequirements, type RequirementContext } from "@/composables/useRequirements";
 import { useLevelBonus, type LevelBonusContext } from "@/composables/useLevelBonus";
 import { usePlayerStore } from "@/store/player";
-import { useDataStore } from "@/store/data";
-import { useGearStore } from "@/store/gear";
-import { gearSlots } from "@/domain/constants/gear";
 import { toDeepRaw } from "@/utils/rawData";
 import {
   resolveItemAttrs,
@@ -27,7 +24,7 @@ import {
 } from "@/domain/skillModifiers";
 import { getOutcomeOdds, type FineMaterialsMode } from "@/domain/quality/qualityOutcomeOdds";
 import { getLevelRequirementsMap } from "@/domain/requirements/requirementUtils";
-import type { GearSet, OptimiserItem, GearOptions, Candidate } from "@/domain/optimiser/types";
+import type { GearSet, OptimiserItem, Candidate } from "@/domain/optimiser/types";
 import type { ItemDetail } from "@/domain/types/item";
 import type { XpPerStep } from "@/domain/skillModifiers";
 import type { ActivityDetail } from "@/domain/types/activity";
@@ -35,8 +32,6 @@ import type { RecipeDetail } from "@/domain/types/recipe";
 import { useFineMaterials, type FineMaterialsContext } from "@/composables/useFineMaterialsCalculations";
 import type {
   WorkerItem,
-  WorkerGearOptions,
-  OptimiserJobData,
   StaticReqCtx,
   WorkerCandidate,
 } from "@/workers/optimiserWorkerTypes";
@@ -304,102 +299,6 @@ export const buildStaticReqCtx = (): StaticReqCtx => {
     factionReputation: { ...(baseCtx.factionReputation.value ?? {}) },
     ownedItemIds: Object.keys(baseCtx.ownedItems.value),
   };
-};
-
-/**
- * Builds the serialisable `OptimiserJobData` to be posted to the optimiser
- * worker.  Must be called from a component/composable context (Pinia stores
- * are accessed here and nowhere in the worker).
- */
-export const buildWorkerJob = (
-  reqSets: Candidate[],
-  primaryOptions: GearOptions,
-  fallbackOptions: GearOptions,
-  activeSlots: readonly string[],
-): OptimiserJobData => {
-  const baseCtx = useBaseContext();
-  const playerStore = usePlayerStore();
-  const dataStore = useDataStore();
-  const gearStore = useGearStore();
-
-  const source = baseCtx.source.value as SkillModifiersSource | null;
-  const activitySelected = baseCtx.activitySelected.value;
-  const { fineMode } = useFineMaterials(baseCtx as unknown as FineMaterialsContext);
-  const prio = priorityValue();
-
-  // Ability context snapshot; baked into each candidate pet's _attrEntries.
-  const abilityCtx = buildAbilityAttrContext();
-
-  // Static entries: collectibles + level bonuses + service (same as makeScorer).
-  const staticEntries = buildStaticEntries();
-
-  const recipeDetail = baseCtx.recipe.value as RecipeDetail | null;
-  const recipeLevelReq = recipeDetail
-    ? Object.values(getLevelRequirementsMap(recipeDetail.requirements))[0] ?? 1
-    : 1;
-  const recipeQualityContext: RecipeQualityContext | null = activitySelected
-    ? null
-    : {
-        levelReq: recipeLevelReq,
-        fineMode: fineMode.value,
-      };
-  const location = baseCtx.location.value;
-
-  // Static requirement context: snapshot of all store data checkRequirements needs.
-  const reqCtx = buildStaticReqCtx();
-
-  // Build enriched worker gear options.
-  const workerGearOptions: WorkerGearOptions = {
-    required: Object.fromEntries(
-      Object.entries(primaryOptions).map(([slot, opts]) => [
-        slot,
-        enrichItems(opts.required, abilityCtx),
-      ]),
-    ),
-    primary: Object.fromEntries(
-      Object.entries(primaryOptions).map(([slot, opts]) => [
-        slot,
-        slot === "location"
-          ? (opts.primary as import("@/domain/types/location").LocationSummary[]) // LocationSummary[] — already serialisable
-          : enrichItems(opts.primary as OptimiserItem[], abilityCtx),
-      ]),
-    ),
-    fallback: Object.fromEntries(
-      Object.entries(fallbackOptions).map(([slot, opts]) => [
-        slot,
-        enrichItems(opts.fallback, abilityCtx),
-      ]),
-    ),
-  };
-
-  // Locked slots are excluded from activeSlots and never enter the worker's
-  // gear set, but their keywords must still inform filterMultislot's banned-
-  // keyword check for sibling slots. Collect them grouped by slot key.
-  const lockedMultislotKeywords: Record<string, string[]> = {};
-  for (const slot of gearSlots) {
-    if (!gearStore.isSlotLocked(slot)) continue;
-    const item = gearStore.selectedGearset[slot];
-    const keywords = (item as { keywords?: string[] } | null)?.keywords;
-    if (!keywords?.length) continue;
-    const slotKey = slot.replace(/\d+$/, "");
-    (lockedMultislotKeywords[slotKey] ??= []).push(...keywords);
-  }
-
-  return toDeepRaw({
-    staticEntries,
-    source,
-    activitySelected,
-    recipeQualityContext,
-    prio,
-    defaultLocation: location,
-    reqCtx,
-    reqSets: enrichCandidates(reqSets, abilityCtx),
-    gearOptions: workerGearOptions,
-    activeSlots: [...activeSlots],
-    playerLevel: playerStore.level,
-    keywordsMap: dataStore.keywordsMap,
-    lockedMultislotKeywords,
-  }) as OptimiserJobData;
 };
 
 // ---------------------------------------------------------------------------

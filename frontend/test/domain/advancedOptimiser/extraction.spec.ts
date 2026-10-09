@@ -83,6 +83,14 @@ describe("extracted — X values per action", () => {
     expect(extracted("chests", "step", ctx)).toBeCloseTo(0.0003, 10);
   });
 
+  it("chest find only scales chests from chest tables", () => {
+    const ctx = makeExtractionContext({
+      modifiers: makeSkillModifiers({ chestFind: 2 }),
+      drops: makeDropProfile({ chestsPerRoll: 0.002, unscaledChestsPerRoll: 0.001 }),
+    });
+    expect(extracted("chests", "action", ctx)).toBeCloseTo(0.002 * 2 + 0.001, 10);
+  });
+
   it("tokens add the fine bonus scaled by fine chance", () => {
     const ctx = makeExtractionContext({
       drops: makeDropProfile({ tokenBasePerRoll: 0.1, tokenFineBonusPerRoll: 2 }),
@@ -161,18 +169,25 @@ describe("buildDropProfile", () => {
   const tokens = { adventurers_guild_token: { common: 1 }, pin: { common: 2, fine: 10 } };
 
   it("sums chests and token values per roll", () => {
-    const profile = buildDropProfile(dropMap, containers, tokens);
+    const profile = buildDropProfile(dropMap, { small_chest: dropMap.small_chest }, containers, tokens);
     expect(profile.chestsPerRoll).toBeCloseTo(0.002, 10);
+    expect(profile.unscaledChestsPerRoll).toBeCloseTo(0, 10);
     expect(profile.tokenBasePerRoll).toBeCloseTo(0.01 * 1 + 0.02 * 2, 10);
     expect(profile.tokenFineBonusPerRoll).toBeCloseTo(0.02 * (10 - 2), 10);
   });
 
+  it("keeps chests from other tables out of the chest-find-scaled rate", () => {
+    const profile = buildDropProfile(dropMap, {}, containers, tokens);
+    expect(profile.chestsPerRoll).toBe(0);
+    expect(profile.unscaledChestsPerRoll).toBeCloseTo(0.002, 10);
+  });
+
   it("returns an empty profile for no drops", () => {
-    expect(buildDropProfile({}, containers, tokens)).toEqual(makeDropProfile());
+    expect(buildDropProfile({}, {}, containers, tokens)).toEqual(makeDropProfile());
   });
 
   it("gives the same token value as the drops panel's materialValue", () => {
-    const profile = buildDropProfile({ pin: dropMap.pin }, {}, tokens);
+    const profile = buildDropProfile({ pin: dropMap.pin }, {}, {}, tokens);
     const stepsPerRewardRoll = 10;
     const fine = 0.05;
     const ctx = makeExtractionContext({

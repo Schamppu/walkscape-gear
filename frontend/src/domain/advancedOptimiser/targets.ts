@@ -52,7 +52,10 @@ export type RecipeQualityContext = {
  * Gear only scales these, so they are computed once per activity.
  */
 export type DropProfile = {
+  /** Chests from `chestTable` tables, which chest find scales. */
   chestsPerRoll: number;
+  /** Chests from other tables, which chest find doesn't scale. */
+  unscaledChestsPerRoll: number;
   /** Token value per roll if every token item dropped as common. */
   tokenBasePerRoll: number;
   /** Extra token value per roll per unit of fine chance (fine − common value). */
@@ -187,7 +190,8 @@ const perAction = (x: XValue, ctx: ExtractionContext): number => {
     case "collectibles":
       return rolls * m.findCollectibles;
     case "chests":
-      return rolls * m.chestFind * drops.chestsPerRoll;
+      // `?? 0`: jobs exported before the field existed don't have it.
+      return rolls * (m.chestFind * drops.chestsPerRoll + (drops.unscaledChestsPerRoll ?? 0));
     case "tokens":
       return rolls * (drops.tokenBasePerRoll + drops.tokenFineBonusPerRoll * m.fineMaterialFind);
     case "eternalCrafts":
@@ -225,27 +229,47 @@ export const extracted = (x: XValue, y: YValue, ctx: ExtractionContext): number 
   return finiteOrZero(perAction(x, ctx) / divisor);
 };
 
+type PerRollDropMap = Record<string, Pick<DropItemInfo, "stepsPerItem" | "stepsPerFine">>;
+
+const perRollOf = ({ stepsPerItem }: { stepsPerItem: number }): number =>
+  finiteOrZero(1 / stepsPerItem);
+
+/** Chests per roll in a drop map. */
+const chestsIn = (dropMap: PerRollDropMap, containers: Record<string, unknown>): number =>
+  Object.entries(dropMap)
+    .filter(([id]) => id in containers)
+    .reduce((sum, [, info]) => sum + perRollOf(info), 0);
+
 /**
- * Builds a `DropProfile` from a drop map computed with
+ * Builds a `DropProfile` from drop maps computed with
  * `buildDropItemInfoMap(drops, 1, 1, () => 1, …)`, so each item's
  * `1 / stepsPerItem` is its count per reward roll.
  *
- * @param dropItemInfoMap Drop info keyed by item id, at 1 step per roll.
- * @param containers      Chest item ids (as in `identifyChestItems`).
- * @param tokens          Token value per item id.
+ * @param dropItemInfoMap    Drop info for all of the activity's tables.
+ * @param chestTableDropInfo The same, for its `chestTable` tables only. Chest
+ *                           find only scales chests from those.
+ * @param containers         Chest item ids (as in `identifyChestItems`).
+ * @param tokens             Token value per item id.
  */
 export const buildDropProfile = (
-  dropItemInfoMap: Record<string, Pick<DropItemInfo, "stepsPerItem" | "stepsPerFine">>,
+  dropItemInfoMap: PerRollDropMap,
+  chestTableDropInfo: PerRollDropMap,
   containers: Record<string, unknown>,
   tokens: TokenValuesMap,
 ): DropProfile => {
-  const profile: DropProfile = { chestsPerRoll: 0, tokenBasePerRoll: 0, tokenFineBonusPerRoll: 0 };
+  const scaledChests = chestsIn(chestTableDropInfo, containers);
+  const profile: DropProfile = {
+    chestsPerRoll: scaledChests,
+    // Rates per roll add up across tables, so the rest came from other tables.
+    unscaledChestsPerRoll: Math.max(0, chestsIn(dropItemInfoMap, containers) - scaledChests),
+    tokenBasePerRoll: 0,
+    tokenFineBonusPerRoll: 0,
+  };
 
-  for (const [id, { stepsPerItem, stepsPerFine }] of Object.entries(dropItemInfoMap)) {
-    const perRoll = finiteOrZero(1 / stepsPerItem);
+  for (const [id, info] of Object.entries(dropItemInfoMap)) {
+    const perRoll = perRollOf(info);
     if (perRoll <= 0) continue;
-
-    if (id in containers) profile.chestsPerRoll += perRoll;
+    const { stepsPerFine } = info;
 
     const token = tokens[id];
     if (token) {

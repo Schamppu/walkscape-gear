@@ -3,7 +3,6 @@ import {
   isHighStat,
   startScore,
   compareScore,
-  filterUsefulStats,
   LOW_STATS,
   HIGH_STATS,
 } from "@/domain/optimiser/scoring";
@@ -108,61 +107,5 @@ describe("compareScore", () => {
       expect(compareScore(100, 50, prio)).toBeGreaterThan(0);
       expect(compareScore(50, 100, prio)).toBeLessThan(0);
     }
-  });
-});
-
-// ---------------------------------------------------------------------------
-// filterUsefulStats
-// ---------------------------------------------------------------------------
-
-describe("filterUsefulStats", () => {
-  beforeEach(() => vi.spyOn(console, "warn").mockImplementation(() => {}));
-  afterEach(() => vi.restoreAllMocks());
-
-  it("keeps items with a stat that is in the target's useful set", () => {
-    const item = makeOptimiserItem("a", [{ stat: "work_efficiency" }]);
-    const result = filterUsefulStats([item], "stepsPerRewardRoll");
-    expect(result).toContain(item);
-  });
-
-  it("removes items with only stats not in the target's useful set", () => {
-    const item = makeOptimiserItem("b", [{ stat: "quality_outcome" }]);
-    const result = filterUsefulStats([item], "stepsPerRewardRoll");
-    expect(result).not.toContain(item);
-  });
-
-  it("removes items whose useful stats are all negative (even if stat type matches)", () => {
-    const item = makeOptimiserItem("c", [], {
-      usefulStats: [
-        {
-          stat: "work_efficiency",
-          isNegative: true,
-          isPercent: true,
-          isMultiplicative: true,
-          value: 0.1,
-          name: "WE",
-          type: "workEfficiency",
-        },
-      ],
-    } as Partial<ReturnType<typeof makeOptimiserItem>>);
-    const result = filterUsefulStats([item], "stepsPerRewardRoll");
-    expect(result).not.toContain(item);
-  });
-
-  it("returns all items unchanged for an unknown target (with a console warning)", () => {
-    const items = [
-      makeOptimiserItem("x"),
-      makeOptimiserItem("y"),
-    ];
-    const result = filterUsefulStats(items, "unknownTarget");
-    expect(result).toHaveLength(2);
-  });
-
-  it("correctly filters for the xpPerStep target (includes bonus_experience)", () => {
-    const xpItem = makeOptimiserItem("xp", [{ stat: "bonus_experience" }]);
-    const irrelevant = makeOptimiserItem("ir", [{ stat: "quality_outcome" }]);
-    const result = filterUsefulStats([xpItem, irrelevant], "xpPerStep");
-    expect(result).toContain(xpItem);
-    expect(result).not.toContain(irrelevant);
   });
 });

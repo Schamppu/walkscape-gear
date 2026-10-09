@@ -15,7 +15,8 @@ import type { LootTableRef } from "@/domain/types/common";
 
 /**
  * Chest and token rates per reward roll for the activity's own loot tables
- * (gear-added tables aren't included). Uses the same pipeline as the drops
+ * (gear-added tables aren't included). Chests are split by whether they come
+ * from a `chestTable` table, the only ones chest find scales. Uses the same pipeline as the drops
  * panel (`useLootTables`), with one step per roll and no find bonuses.
  *
  * Reads detailed loot tables already fetched by `useLootTables`.
@@ -40,14 +41,20 @@ export const buildSourceDropProfile = (
     ),
   }));
 
-  const drops = deduplicateAndGroupDrops(filterDetailedTables(tables, false, []));
-  const dropInfo = buildDropItemInfoMap(
-    drops,
-    1,
-    1,
-    () => 1,
-    itemsStore.fineMaterials,
-    playerStore.skillsMap,
+  const perRollDropInfo = (selected: typeof tables) =>
+    buildDropItemInfoMap(
+      deduplicateAndGroupDrops(filterDetailedTables(selected, false, [])),
+      1,
+      1,
+      () => 1,
+      itemsStore.fineMaterials,
+      playerStore.skillsMap,
+    );
+
+  return buildDropProfile(
+    perRollDropInfo(tables),
+    perRollDropInfo(tables.filter(({ type }) => type.includes("chestTable"))),
+    itemsStore.containers,
+    tokenValues,
   );
-  return buildDropProfile(dropInfo, itemsStore.containers, tokenValues);
 };

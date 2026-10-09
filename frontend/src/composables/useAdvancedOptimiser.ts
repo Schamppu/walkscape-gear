@@ -1,6 +1,5 @@
 import { computed, ref, shallowRef, watch } from "vue";
 import { useActivityStore } from "@/store/activity";
-import { useDataStore } from "@/store/data";
 import { useSettingsStore } from "@/store/settings";
 import { useGearStore } from "@/store/gear";
 import { useItemsStore } from "@/store/items";
@@ -8,13 +7,10 @@ import { useNotificationStore } from "@/store/notifications";
 import { useAdvancedOptimiserStore } from "@/store/advancedOptimiser";
 import {
   injectBaseContext,
-  injectFineMaterials,
   injectLootTables,
   injectRequirements,
 } from "@/composables/context/injectShared";
-import { installScorer } from "@/composables/optimiser/stats";
-import { prefetchPetAbilityDetails } from "@/composables/optimiser/petAbilities";
-import { buildAdvancedJob } from "@/composables/advancedOptimiser/buildJob";
+import { prepareAdvancedJob } from "@/composables/advancedOptimiser/buildJob";
 import { runAdvancedJob, type RunningJob } from "@/composables/advancedOptimiser/runWorker";
 import { applySearchResult } from "@/composables/advancedOptimiser/applyResult";
 import { gearSlots } from "@/domain/constants/gear";
@@ -49,10 +45,8 @@ import type { RecipeDetail } from "@/domain/types/recipe";
 export function useAdvancedOptimiser() {
   const baseCtx = injectBaseContext();
   const { hasFineDrops, dropItemInfoMap } = injectLootTables();
-  const { fineMode } = injectFineMaterials();
   const { canBeEquipped } = injectRequirements();
   const activityStore = useActivityStore();
-  const dataStore = useDataStore();
   const settingsStore = useSettingsStore();
   const gearStore = useGearStore();
   const itemsStore = useItemsStore();
@@ -168,22 +162,7 @@ export function useAdvancedOptimiser() {
       return null;
     }
 
-    const source = baseCtx.source.value as { tables?: LootTableRef[] | null } | null;
-    await Promise.all([
-      prefetchPetAbilityDetails(),
-      dataStore.fetchDetailedLootTables((source?.tables ?? []).flatMap(({ tables }) => tables)),
-    ]);
-
-    const uninstallScorer = installScorer();
-    try {
-      return buildAdvancedJob({
-        config: { ...config.value, targets },
-        producesCraftedItem: targetContext.value.producesCraftedItem,
-        fineMode: fineMode.value,
-      });
-    } finally {
-      uninstallScorer();
-    }
+    return prepareAdvancedJob({ config: { ...config.value, targets } });
   };
 
   /** Runs the optimiser on the current config and equips the best set found. */

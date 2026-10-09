@@ -3,13 +3,22 @@ import { useActivityStore } from "@/store/activity";
 import { useDataStore } from "@/store/data";
 import { useGearStore } from "@/store/gear";
 import { usePlayerStore } from "@/store/player";
-import { getRequiredGearOptions } from "@/composables/optimiser/gear";
+import { getFallbackGearOptions, getRequiredGearOptions } from "@/composables/optimiser/gear";
+import { useItemsStore } from "@/store/items";
+import {
+  useFineMaterials,
+  type FineMaterialsContext,
+} from "@/composables/useFineMaterialsCalculations";
+import { recipeProducesCraftedItem } from "@/domain/advancedOptimiser/targets";
+import type { RecipeDetail } from "@/domain/types/recipe";
 import {
   buildStaticEntries,
   buildStaticReqCtx,
   enrichCandidates,
   enrichItems,
+  installScorer,
 } from "@/composables/optimiser/stats";
+import { prefetchPetAbilityDetails } from "@/composables/optimiser/petAbilities";
 import { requirementsFill } from "@/composables/optimiser/requirementsFill";
 import { buildAbilityAttrContext } from "@/composables/useAbilityAttrContext";
 import { gearSlots, gearTypes, slotMax } from "@/domain/constants/gear";
@@ -19,7 +28,6 @@ import { getLevelRequirementsMap } from "@/domain/requirements/requirementUtils"
 import { slotKeyOf } from "@/domain/advancedOptimiser/beam";
 import { unionUsefulStats } from "@/domain/advancedOptimiser/stats";
 import type { AdvancedOptimiserConfig } from "@/domain/advancedOptimiser/config";
-import type { FineMaterialsMode } from "@/domain/quality/qualityOutcomeOdds";
 import type { SkillModifiersSource } from "@/domain/skillModifiers";
 import type { OptimiserItem } from "@/domain/optimiser/types";
 import type { Requirement, LootTableRef } from "@/domain/types/common";
@@ -40,9 +48,36 @@ type JobSource = SkillModifiersSource & {
 
 export type BuildJobInputs = {
   config: AdvancedOptimiserConfig;
-  /** The recipe's main reward is a crafted (quality-aware) item. */
-  producesCraftedItem: boolean;
-  fineMode: FineMaterialsMode;
+  /**
+   * Quick set: also fill slots the search leaves empty with generally useful
+   * items (`getFallbackGearOptions`), as the quick set always has.
+   */
+  fallback?: boolean;
+};
+
+/**
+ * Loads what building a job needs (pet ability details, the activity's loot
+ * tables) and builds it with the quick-set scorer installed for
+ * `requirementsFill`. Shared by the quick set and the advanced optimiser.
+ */
+export const prepareAdvancedJob = async (
+  inputs: BuildJobInputs,
+): Promise<AdvancedOptimiserJob | null> => {
+  const baseCtx = useBaseContext();
+  const dataStore = useDataStore();
+  const source = baseCtx.source.value as { tables?: LootTableRef[] | null } | null;
+
+  await Promise.all([
+    prefetchPetAbilityDetails(),
+    dataStore.fetchDetailedLootTables((source?.tables ?? []).flatMap(({ tables }) => tables)),
+  ]);
+
+  const uninstallScorer = installScorer();
+  try {
+    return buildAdvancedJob(inputs);
+  } finally {
+    uninstallScorer();
+  }
 };
 
 /** Slot names the player can use: tool slots beyond the toolbelt size are dropped. */
@@ -63,18 +98,25 @@ const usableSlots = (playerLevel: number): string[] => {
  */
 export const buildAdvancedJob = ({
   config,
-  producesCraftedItem,
-  fineMode,
+  fallback = false,
 }: BuildJobInputs): AdvancedOptimiserJob | null => {
   const baseCtx = useBaseContext();
   const activityStore = useActivityStore();
   const dataStore = useDataStore();
   const gearStore = useGearStore();
+  const itemsStore = useItemsStore();
   const playerStore = usePlayerStore();
 
   const source = baseCtx.source.value as JobSource | null;
   if (!source) return null;
   const activitySelected = baseCtx.activitySelected.value;
+  const { fineMode } = useFineMaterials(baseCtx as unknown as FineMaterialsContext);
+  const producesCraftedItem =
+    !activitySelected &&
+    recipeProducesCraftedItem(
+      source as unknown as RecipeDetail,
+      (id) => (itemsStore.allGearItems[id] ?? itemsStore.materials[id])?.type,
+    );
   const abilityCtx = buildAbilityAttrContext();
 
   // --- Slots and locks -------------------------------------------------------
@@ -140,7 +182,7 @@ export const buildAdvancedJob = ({
     activitySelected,
     extraction: {
       activitySkills: Object.keys(xpMap),
-      quality: !activitySelected && producesCraftedItem ? { levelReq, fineMode } : null,
+      quality: producesCraftedItem ? { levelReq, fineMode: fineMode.value } : null,
       drops: buildSourceDropProfile(source),
     },
     reqCtx: buildStaticReqCtx(),
@@ -154,5 +196,15 @@ export const buildAdvancedJob = ({
     searchSlots,
     lockedItems,
     requirementSeeds,
+    ...(fallback
+      ? {
+          fallbackOptions: Object.fromEntries(
+            Object.entries(
+              // The consumable slot is never filled just for the sake of it.
+              getFallbackGearOptions(new Set(slotKeys.filter((key) => key !== "consumable"))),
+            ).map(([key, opts]) => [key, enrichItems(opts.fallback, abilityCtx)]),
+          ),
+        }
+      : {}),
   }) as AdvancedOptimiserJob;
 };
