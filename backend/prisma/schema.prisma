@@ -40,6 +40,8 @@ model OwnedItem {
   owned            Boolean
   hidden           Boolean @default(false)
   quantity         Int     @default(0)
+  /// Fine consumables among `quantity` (common = quantity - quantityFine).
+  quantityFine     Int     @default(0)
   craftedTier      String?
   craftedTier2     String?
   consumableCommon Boolean @default(false)
