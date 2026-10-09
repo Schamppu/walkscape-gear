@@ -31,6 +31,15 @@ export const computeBaseline = (
 };
 
 /**
+ * Where `value` sits between naked gear (0) and the best this target reaches
+ * on its own (1). Puts targets of very different scales (e.g. chests ×24 vs
+ * reward rolls ×4 over naked) on one scale, so weights act as an exchange
+ * rate between targets. Returns `null` when no gear improves the target.
+ */
+export const shareOfBest = (base: number, best: number, value: number): number | null =>
+  best > base ? (value - base) / (best - base) : null;
+
+/**
  * How `value` compares with the naked baseline: `1 + (value − base) / |base|`.
  * For a positive baseline that's `value / base`; it also works for a negative
  * one (net coins of a loss-making recipe), where getting closer to 0 is

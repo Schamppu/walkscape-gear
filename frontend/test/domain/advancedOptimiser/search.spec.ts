@@ -10,6 +10,7 @@ import { createSetScorer } from "@/domain/advancedOptimiser/scorer";
 import { createSession } from "@/workers/advancedOptimiserSession";
 import type { AdvancedOptimiserOutbound } from "@/workers/advancedOptimiserWorkerTypes";
 import {
+  makeDropProfile,
   makeJob,
   makeWorkerItem,
   seededRandom,
@@ -130,6 +131,39 @@ describe("runSearch", () => {
     for (let i = 1; i < reports.length; i++) {
       expect(reports[i] - reports[i - 1]).toBeGreaterThanOrEqual(200);
     }
+  });
+});
+
+describe("normalising to each target's best", () => {
+  // XP / step (weight 10) vs chests / step (weight 1). The chest hat gives
+  // chests ×21 but no XP; the WE hat gives both ×1.6. By ratio to naked gear
+  // the chest hat wins (10·1 + 1·21 > 10·1.6 + 1·1.6) even though XP is the
+  // priority; by share of each target's best, the WE hat wins.
+  const scaleJob = makeJob({
+    targets: [
+      { x: "xp", y: "step", weight: 10 },
+      { x: "chests", y: "step", weight: 1 },
+    ],
+    extraction: { activitySkills: ["fishing"], quality: null, drops: makeDropProfile({ chestsPerRoll: 0.01 }) },
+    searchSlots: ["head"],
+    options: {
+      head: [
+        item("we_hat", [we(0.6)]),
+        makeWorkerItem("chest_hat", [{ type: "chestFind", value: 20 }]),
+      ],
+    },
+  });
+
+  it("picks the priority target's item instead of the larger-scale one", async () => {
+    const result = await runSearch(scaleJob, settings(), hooks());
+    expect((result.gearSet.head as { id: string }).id).toBe("we_hat");
+    expect(result.shares["xp/step"]).toBeCloseTo(1, 10);
+  });
+
+  it("scores by ratio to naked gear when turned off", async () => {
+    const result = await runSearch(scaleJob, settings({ normaliseToBest: false }), hooks());
+    expect((result.gearSet.head as { id: string }).id).toBe("chest_hat");
+    expect(result.shares).toEqual({});
   });
 });
 

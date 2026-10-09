@@ -67,6 +67,7 @@ const fakeResult = (overrides: Partial<SearchResult> = {}): SearchResult => ({
   gearSet: {},
   values: {},
   ratios: {},
+  shares: {},
   cancelled: false,
   ...overrides,
 });
