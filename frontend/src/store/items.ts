@@ -32,6 +32,8 @@ import type {
 
 export type OwnedItemState = Omit<DbOwnedItem, "itemId">;
 
+const OWNED_ITEMS_FLUSH_BATCH_SIZE = 250;
+
 export type ToggleItemPayload = {
   itemId: string;
   owned?: boolean;
@@ -156,25 +158,35 @@ export const useItemsStore = defineStore("itemStore", {
       this.scheduleOwnedItemsFlush();
     },
     async flushChangedOwnedItems(): Promise<void> {
-      const changed = Object.entries(this.changedOwnedItems).map(
-        ([itemId, data]) => {
-          return { itemId, ...data };
-        },
-      );
+      const changed = Object.entries(this.changedOwnedItems);
       if (changed.length === 0) return;
 
       const notificationStore = useNotificationStore();
+      let flushed = 0;
       try {
-        await upsertOwnedItems({ items: changed });
-        void notificationStore.debug(`Items: flushed ${changed.length} owned item change(s) to DB`);
+        // Send in sequential batches to keep request bodies and DB load bounded
+        for (let i = 0; i < changed.length; i += OWNED_ITEMS_FLUSH_BATCH_SIZE) {
+          const batch = changed.slice(i, i + OWNED_ITEMS_FLUSH_BATCH_SIZE);
+          await upsertOwnedItems({
+            items: batch.map(([itemId, data]) => ({ itemId, ...data })),
+          });
+          // Only clear entries that weren't changed again while the request was in flight
+          for (const [itemId, data] of batch) {
+            if (this.changedOwnedItems[itemId] === data) {
+              delete this.changedOwnedItems[itemId];
+            }
+          }
+          flushed += batch.length;
+        }
+        void notificationStore.debug(`Items: flushed ${flushed} owned item change(s) to DB`);
       } catch (error) {
+        // Unflushed changes stay in changedOwnedItems and are retried on the next flush
         console.error("error updating owned items", error);
-        void notificationStore.debug(`Items: failed to flush ${changed.length} owned item change(s)`, [
-          error instanceof Error ? error.message : String(error),
-        ]);
+        void notificationStore.debug(
+          `Items: failed to flush ${changed.length - flushed} of ${changed.length} owned item change(s)`,
+          [error instanceof Error ? error.message : String(error)],
+        );
       }
-
-      this.changedOwnedItems = {};
     },
     scheduleOwnedItemsFlush: debounce(
       function (this: { flushChangedOwnedItems(): Promise<void> }) {
