@@ -2,6 +2,8 @@ import type { Directive } from "vue";
 
 type ClickOutsideElement = HTMLElement & {
   __clickOutsideHandler__?: (e: MouseEvent) => void;
+  __insideClickHandler__?: (e: MouseEvent) => void;
+  __lastInsideClick__?: MouseEvent;
   __escHandler__?: (e: KeyboardEvent) => void;
 };
 
@@ -22,8 +24,16 @@ const clickOutside: Directive<ClickOutsideElement, ClickOutsideBinding> = {
     const escEnabled =
       typeof binding.value === "object" ? binding.value.esc !== false : true;
 
+    // Mark clicks that bubble through `el`. The bubble path is fixed when the
+    // event is dispatched, so this still catches clicks on children that an
+    // earlier handler removed from the DOM (where `el.contains(target)` fails).
+    el.__insideClickHandler__ = (event: MouseEvent) => {
+      el.__lastInsideClick__ = event;
+    };
+    el.addEventListener("click", el.__insideClickHandler__);
+
     el.__clickOutsideHandler__ = (event: MouseEvent) => {
-      if (!el.contains(event.target as Node)) {
+      if (el.__lastInsideClick__ !== event) {
         handler();
       }
     };
@@ -48,11 +58,16 @@ const clickOutside: Directive<ClickOutsideElement, ClickOutsideBinding> = {
     if (el.__clickOutsideHandler__) {
       document.removeEventListener("click", el.__clickOutsideHandler__);
     }
+    if (el.__insideClickHandler__) {
+      el.removeEventListener("click", el.__insideClickHandler__);
+    }
     if (el.__escHandler__) {
       document.removeEventListener("keydown", el.__escHandler__);
     }
 
     delete el.__clickOutsideHandler__;
+    delete el.__insideClickHandler__;
+    delete el.__lastInsideClick__;
     delete el.__escHandler__;
   },
 };
