@@ -1,72 +1,33 @@
-import type { Requirement, LootTableRef } from "./common";
+/**
+ * Activity types, aliased from the generated OpenAPI types
+ * (`./generated/api`, regenerate with `npm run gen:api-types`).
+ *
+ * Does NOT:
+ * - Import any Vue / reactive APIs.
+ * - Contain any logic.
+ */
 
-// ---------------------------------------------------------------------------
-// Activities
-// ---------------------------------------------------------------------------
+import type { components } from "./generated/api";
 
-export type ActivitySummary = {
-  id: string;
-  name: string;
-  relatedSkillsList: string[];
-  requirements?: Requirement[];
-  icon: string;
-};
+type Schemas = components["schemas"];
 
-export type ActivityRequiredKeyword = {
-  id: string;
-  keyword: string;
-};
+export type ActivitySummary = Schemas["ActivityListItem"];
 
-export type ActivityInputBase = {
-  type: string;
-};
+export type ActivityDetail = Schemas["ActivityDetail"];
 
-export type KeywordInputActivity = ActivityInputBase & {
-  type: "keyword";
-  keyword: string;
-  requirements?: Requirement[];
-}
+export type ActivityRequiredKeyword = NonNullable<ActivityDetail["requiredKeywords"]>[number];
 
-export type SpecificInputActivity = ActivityInputBase & {
-  type: "specific";
-  item: string;
-  quantity: number;
-  quality: string | null;
-  isOptional: boolean;
-}
+export type KeywordInputActivity = Schemas["KeywordInput"];
+
+export type SpecificInputActivity = Schemas["SpecificInput"];
 
 export type ActivityInput = KeywordInputActivity | SpecificInputActivity;
 
-export type ActivityInputOption = {
-  type: "inputActivity";
-  inputs: ActivityInput[];
-  enableAttributes: boolean;
-  enableTierBenefit: boolean;
-  enableQualityBenefit: boolean;
-  enableFineBenefit: boolean;
-  requireFine: boolean;
-};
+/** Discriminated on `type` ("inputActivity", "limitedActivity"). */
+export type ActivityOption = Schemas["ActivityInput"];
 
-export type ActivityLimitedOption = {
-  type: "limitedActivity";
-  maxCompletions: number;
-};
+export type ActivityInputOption = Extract<ActivityOption, { type: "inputActivity" }>;
 
-export type ActivityOption = ActivityInputOption | ActivityLimitedOption;
+export type ActivityLimitedOption = Extract<ActivityOption, { type: "limitedActivity" }>;
 
-export type ActivityReward = {
-  runtimeType: string;
-  [key: string]: unknown;
-};
-
-export type ActivityDetail = ActivitySummary & {
-  keywords: string[];
-  requiredKeywords?: ActivityRequiredKeyword[] | null;
-  xpRewardsMap: Record<string, number>;
-  workRequired: number;
-  maxWorkEfficiency: number;
-  tables: LootTableRef[];
-  rewards: ActivityReward[];
-  options?: ActivityOption[] | null;
-  abilities?: string[];
-};
+export type ActivityReward = Schemas["FactionReputationReward"];

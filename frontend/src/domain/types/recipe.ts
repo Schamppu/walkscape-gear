@@ -1,32 +1,15 @@
-import type { Requirement, LootTableRef } from "./common";
+import type { components } from "./generated/api";
+
+type Schemas = components["schemas"];
 
 // ---------------------------------------------------------------------------
 // Recipes
 // ---------------------------------------------------------------------------
 
-export type RecipeSummary = {
-  id: string;
-  name: string;
-  relatedSkills: string[];
-  requirements: Requirement[];
-  icon: string;
-};
+export type RecipeSummary = Schemas["RecipeListItem"];
 
-export type RecipeMaterialOption = {
-  item: string;
-  amount: number;
-};
+export type RecipeMaterialOption = Schemas["RecipeMaterialOptions"][number];
 
-export type RecipeMaterial = {
-  options: RecipeMaterialOption[];
-};
+export type RecipeDetail = Schemas["RecipeDetail"];
 
-export type RecipeDetail = RecipeSummary & {
-  keywords: string[];
-  workRequired: number;
-  maxWorkEfficiency: number;
-  materials: RecipeMaterial[];
-  itemRewards: Record<string, number>;
-  tables: LootTableRef[];
-  xpRewards: Record<string, number>;
-};
+export type RecipeMaterial = RecipeDetail["materials"][number];

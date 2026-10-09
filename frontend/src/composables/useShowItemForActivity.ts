@@ -43,7 +43,7 @@ type SourceLike = SourceForItem & {
 };
 
 type ServiceLike = {
-  requirements: Requirement[];
+  requirements?: Requirement[];
 } | null;
 
 // ---------------------------------------------------------------------------

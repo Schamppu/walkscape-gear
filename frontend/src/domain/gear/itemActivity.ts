@@ -168,7 +168,7 @@ export function filterUsefulAttrs(
       ) ?? [];
 
     if (!checkRequirements(usedRequirements)) return false;
-    if (!attr.stats.some((stat) => !stat.isNegative)) return false;
+    if (!attr.stats.some((stat) => stat && !stat.isNegative)) return false;
 
     return true;
   });

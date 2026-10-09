@@ -12,7 +12,7 @@ import { gearSlots, gearTypes } from "@/domain/constants/gear";
 import { filterLocations, filterDirectUpgrades } from "@/domain/optimiser/gear";
 import { getLevelRequirementsMap } from "@/domain/requirements/requirementUtils";
 import type { Stat } from "@/domain/types/item";
-import type { ItemDetail } from "@/domain/types/item";
+import type { ItemDetail, SelectedQualityItem } from "@/domain/types/item";
 import type { Requirement } from "@/domain/types/common";
 import { type GearSlot } from "@/domain/constants/gear";
 
@@ -36,8 +36,8 @@ import { intersect } from "@/utils/intersect";
 /** Minimal shape expected by `usefulKeywords` for the service parameter. */
 type ServiceLike = { requirements: Requirement[] } | null;
 
-/** ItemDetail extended with an optional quality2, added for owned ring items. */
-type QualityItem = ItemDetail & { quality2?: string | null };
+/** Item with its selected quality, plus quality2 for owned ring items. */
+type QualityItem = SelectedQualityItem & { quality2?: string | null };
 
 /**
  * Minimal type expected by `showItemForActivity`, `usefulKeywords`, and
@@ -65,12 +65,12 @@ const mapItemToStats = (
   ): { stats: Stat[]; usefulStats: Stat[] } => {
     const attrs = usedAttrs(it as ItemDetail, quality);
     return {
-      stats: attrs.flatMap(({ stats }) => stats[0]),
+      stats: attrs.flatMap(({ stats }) => stats[0] ?? []),
       usefulStats: attrs
         .filter(({ requirements }) =>
           checkRequirements(requirements, ctx as unknown as RequirementContext),
         )
-        .flatMap(({ stats }) => stats[0]),
+        .flatMap(({ stats }) => stats[0] ?? []),
     };
   };
 
@@ -130,11 +130,11 @@ export const filterMultislot = (
           slotItem && slot !== slotName && slot.includes(slotKey),
       )
       .map(([, slotItem]) => slotItem as OptimiserItem);
-    const equippedKeywords = otherSlotsItems.flatMap((si) => si.keywords);
+    const equippedKeywords = otherSlotsItems.flatMap((si) => si.keywords ?? []);
     const bannedKeywords = equippedKeywords.flatMap(
       (keyword) => dataStore.keywordsMap[keyword]?.bannedKeywords ?? [],
     );
-    const commonKeywords = intersect(item.keywords, bannedKeywords);
+    const commonKeywords = intersect(item.keywords ?? [], bannedKeywords);
     return commonKeywords.length === 0;
   };
 
@@ -186,17 +186,17 @@ const makeGearCtx = () => {
     (slot) => gearStore.selectedGearset[slot],
   );
 
-  const filterLocked = (item: ItemDetail): boolean => {
+  const filterLocked = (item: QualityItem): boolean => {
     return !lockedItems.some((locked) => locked?.id === item.id);
   };
 
-  const filterOwned = (item: ItemDetail): boolean =>
+  const filterOwned = (item: QualityItem): boolean =>
     item.id in baseCtx.ownedItems.value;
 
   const hideUnmetRequirements =
     settingsStore.gearSettings.showUnmetRequirements?.value === false;
 
-  const itemPassesRequirements = (item: ItemDetail): boolean =>
+  const itemPassesRequirements = (item: QualityItem): boolean =>
     !hideUnmetRequirements || canBeEquipped(item);
 
   const filterItems = (items: QualityItem[]): QualityItem[] =>
@@ -480,6 +480,21 @@ export const getFallbackGearOptions = (
         ];
       }),
   ) as GearOptions;
+};
+
+/**
+ * Every item the player could use in each slot type for the current activity:
+ * owned, not locked, passing the requirement setting and shown for the
+ * activity. Not filtered by any target; the advanced optimiser filters these
+ * by its own useful stats.
+ */
+export const getCandidateItems = (
+  slotKeys: readonly string[],
+): Record<string, OptimiserItem[]> => {
+  const ctx = makeGearCtx();
+  return Object.fromEntries(
+    slotKeys.map((slot) => [slot, getScoredItemsForSlot(slot, ctx).scoredItems]),
+  );
 };
 
 export function getItemOptions(

@@ -10,9 +10,12 @@
  */
 
 import { stripHtmlTags } from "@/utils/stripHtmlTags";
-import type { Attribute } from "@/domain/types/item";
+import type { Attribute, Stat } from "@/domain/types/item";
 
 export function makePseudoStat(attr: Attribute): Attribute {
+  const [baseStat] = attr.stats;
+  if (!baseStat) return attr;
+
   const text = stripHtmlTags(attr.customText);
   const split = (attr.customTextLocalizationKey ?? "").split(".");
   const pseudoStat = split[split.length - 2];
@@ -21,11 +24,13 @@ export function makePseudoStat(attr: Attribute): Attribute {
     statText: text,
     stats: [
       {
-        ...attr.stats[0],
+        ...baseStat,
         name: text,
-        stat: pseudoStat,
+        // Pseudo-stat keys are derived client-side from the localization key,
+        // so they are not part of the API's stat enum.
+        stat: pseudoStat as Stat["stat"],
         type: pseudoStat,
-      },
+      } as Stat,
     ],
   };
 }

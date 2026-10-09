@@ -13,14 +13,14 @@
  */
 
 import type { EffectiveAttrEntry } from "@/domain/effectiveAttrs";
-import type { StatDefinition } from "@/domain/types/stat";
+import type { DisplayStat, StatDefinition } from "@/domain/types/stat";
 
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
 
 export type StatsListRow = {
-  stat: StatDefinition;
+  stat: DisplayStat;
   isPercent: boolean;
   data?: { skill: string; stat: string };
 };
