@@ -112,4 +112,54 @@ describe("getOutcomeOdds", () => {
       expect(eternalWithFine.value).toBeGreaterThan(eternalWithoutFine.value);
     });
   });
+
+  // The advanced optimiser expresses the eternal-crafts objective as
+  // `eternalCrafts / material` (high-is-better), derived from the existing
+  // `materialsNeeded` field via `1 / materialsNeeded`. These tests lock in
+  // that inverse relationship so the extractor cannot silently drift.
+  describe("inverse relation: 1 / materialsNeeded = eternal-crafts per material", () => {
+    const cases: Array<{
+      levelReq: number;
+      qualityOutcome: number;
+      fineMode: "none" | "partial" | "all";
+      craftsPerMaterial: number;
+    }> = [
+      { levelReq: 1, qualityOutcome: 0, fineMode: "none", craftsPerMaterial: 1 },
+      { levelReq: 50, qualityOutcome: 300, fineMode: "none", craftsPerMaterial: 1 },
+      { levelReq: 50, qualityOutcome: 300, fineMode: "none", craftsPerMaterial: 1.5 },
+      { levelReq: 50, qualityOutcome: 300, fineMode: "partial", craftsPerMaterial: 1.25 },
+      { levelReq: 50, qualityOutcome: 500, fineMode: "all", craftsPerMaterial: 2 },
+      { levelReq: 100, qualityOutcome: 800, fineMode: "all", craftsPerMaterial: 1 },
+    ];
+
+    it.each(cases)(
+      "1 / materialsNeeded[eternal] === probability[eternal] * craftsPerMaterial for %o",
+      ({ levelReq, qualityOutcome, fineMode, craftsPerMaterial }) => {
+        const odds = getOutcomeOdds(levelReq, qualityOutcome, fineMode, craftsPerMaterial);
+        const eternal = odds[odds.length - 1];
+        expect(eternal.name).toBe("Eternal");
+
+        const inverse = 1 / eternal.materialsNeeded;
+        const direct = eternal.value * craftsPerMaterial;
+
+        expect(inverse).toBeCloseTo(direct, 10);
+      },
+    );
+
+    it("inverse matches for every tier, not just Eternal", () => {
+      const odds = getOutcomeOdds(50, 300, "none", 1.5);
+      for (const tier of odds) {
+        expect(1 / tier.materialsNeeded).toBeCloseTo(tier.value * 1.5, 10);
+      }
+    });
+
+    it("eternal-crafts-per-material increases monotonically with craftsPerMaterial", () => {
+      const lowC = getOutcomeOdds(50, 300, "none", 1);
+      const highC = getOutcomeOdds(50, 300, "none", 2);
+      const lowEternal = 1 / lowC[lowC.length - 1].materialsNeeded;
+      const highEternal = 1 / highC[highC.length - 1].materialsNeeded;
+      expect(highEternal).toBeGreaterThan(lowEternal);
+      expect(highEternal).toBeCloseTo(2 * lowEternal, 10);
+    });
+  });
 });
