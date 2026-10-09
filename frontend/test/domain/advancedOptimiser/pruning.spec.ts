@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { pruneDominated } from "@/domain/advancedOptimiser/pruning";
+import { hasUsefulStat, pruneDominated } from "@/domain/advancedOptimiser/pruning";
 import { makeWorkerItem, realmReq, type FixtureStat } from "../../fixtures/advancedOptimiser";
 
 const item = (id: string, stats: FixtureStat[], keywords: string[] = []) =>
@@ -107,5 +107,27 @@ describe("pruneDominated", () => {
   it("keeps identical items", () => {
     const stats = [{ type: "workEfficiency", value: 0.1 }];
     expect(keptIds({ head: [item("a", stats), item("b", stats)] })).toEqual({ head: ["a", "b"] });
+  });
+});
+
+describe("hasUsefulStat", () => {
+  const useful = new Set(["workEfficiency", "doubleAction"]);
+
+  it("needs a helpful stat among the useful ones", () => {
+    expect(hasUsefulStat(item("good", [{ type: "workEfficiency", value: 0.1 }]), useful)).toBe(true);
+    expect(hasUsefulStat(item("penalty", [{ type: "workEfficiency", value: -0.1 }]), useful)).toBe(false);
+    expect(hasUsefulStat(item("other", [{ type: "inventorySpace", value: 5 }]), useful)).toBe(false);
+  });
+
+  it("counts conditional stats", () => {
+    const realmOnly = makeWorkerItem("realm_hat", [], {
+      conditional: [{ stats: [{ type: "doubleAction", value: 0.1 }], requirements: [realmReq("syrenthia")] }],
+    });
+    expect(hasUsefulStat(realmOnly, useful)).toBe(true);
+  });
+
+  it("treats fewer steps required as helpful", () => {
+    const steps = new Set(["stepsRequired"]);
+    expect(hasUsefulStat(item("boots", [{ type: "stepsRequired", value: -2, isPercent: false }]), steps)).toBe(true);
   });
 });

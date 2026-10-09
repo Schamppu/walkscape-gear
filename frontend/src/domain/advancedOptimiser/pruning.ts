@@ -45,6 +45,10 @@ type Profile = {
 /** Stats where a lower value is better. */
 const LOWER_IS_BETTER = new Set(["stepsRequired"]);
 
+/** How much a stat helps: its value, sign-flipped for lower-is-better stats. */
+export const statGoodness = (stat: Pick<Stat, "type" | "value">): number =>
+  LOWER_IS_BETTER.has(stat.type) ? -stat.value : stat.value;
+
 const statKey = (stat: Stat, requirementsKey: string): string => {
   const { type, isPercent } = stat;
   const skill = "skill" in stat && stat.skill ? `:${stat.skill}` : "";
@@ -58,8 +62,7 @@ const buildProfile = (item: WorkerItem, isUseful: (stat: Stat) => boolean): Prof
     for (const stat of entry.stats) {
       if (!isUseful(stat)) continue;
       const key = statKey(stat, requirementsKey);
-      const goodness = LOWER_IS_BETTER.has(stat.type) ? -stat.value : stat.value;
-      stats.set(key, (stats.get(key) ?? 0) + goodness);
+      stats.set(key, (stats.get(key) ?? 0) + statGoodness(stat));
     }
   }
 
@@ -92,6 +95,16 @@ const dominates = (a: Profile, b: Profile, sameTags: boolean): boolean => {
 // ---------------------------------------------------------------------------
 // Exported functions
 // ---------------------------------------------------------------------------
+
+/**
+ * True when the item has at least one stat in `useful` that helps (including
+ * conditional ones, e.g. set bonuses or realm-only stats). Items with only
+ * penalties or irrelevant stats can never improve a set.
+ */
+export const hasUsefulStat = (item: WorkerItem, useful: ReadonlySet<string>): boolean =>
+  item._attrEntries.some(({ stats }) =>
+    stats.some((stat) => useful.has(stat.stat) && statGoodness(stat) > 0),
+  );
 
 /**
  * Drops each item that at least `slotCounts[slotKey]` other items dominate

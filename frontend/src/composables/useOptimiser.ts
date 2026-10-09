@@ -2,45 +2,24 @@ import { useGearStore } from "@/store/gear";
 import { useActivityStore } from "@/store/activity";
 import { useNotificationStore } from "@/store/notifications";
 import { usePlayerStore } from "@/store/player";
-import { useItemsStore } from "@/store/items";
-import { useDataStore } from "@/store/data";
 
 import { injectBaseContext } from "@/composables/context/injectShared";
 import { gearSlots, slotMax } from "@/domain/constants/gear";
 import type { GearSlot } from "@/domain/constants/gear";
 import type { LocationSummary } from "@/domain/types/location";
-import { unlockedAbilityIds } from "@/domain/abilities/petAbilityAttrs";
-import type { PetAbility } from "@/domain/types/pet";
 
 import {
   getRequiredGearOptions,
   getPrimaryGearOptions,
   getFallbackGearOptions,
-  getItemOptions,
 } from "@/composables/optimiser/gear";
-import {
-  getGearSetStats,
-  installScorer,
-  buildWorkerJob,
-} from "@/composables/optimiser/stats";
+import { installScorer, buildWorkerJob } from "@/composables/optimiser/stats";
+import { requirementsFill as sharedRequirementsFill } from "@/composables/optimiser/requirementsFill";
+import { prefetchPetAbilityDetails } from "@/composables/optimiser/petAbilities";
 import type { OptimiserJobResult } from "@/workers/optimiserWorkerTypes";
-import { startScore, compareScore } from "@/composables/optimiser/score";
 import { priorityName } from "@/composables/optimiser/priority";
-import { getRequirementCandidates } from "@/composables/optimiser/requirements";
-import {
-  getReq,
-  filterItemsForReq,
-  contributesToReq,
-  isHandledRequirement,
-} from "@/domain/optimiser/requirements";
-import type { Req } from "@/domain/optimiser/requirements";
-import type {
-  Candidate,
-  FulfilledCandidate,
-  GearOptions,
-  GearSet,
-  OptimiserItem,
-} from "@/domain/optimiser/types";
+import type { Requirement } from "@/domain/types/common";
+import type { Candidate, GearOptions } from "@/domain/optimiser/types";
 
 /**
  * Create a gear set for a specifc activity or recipe
@@ -57,27 +36,6 @@ export function useOptimiser() {
   const activityStore = useActivityStore();
   const notificationStore = useNotificationStore();
   const playerStore = usePlayerStore();
-  const itemsStore = useItemsStore();
-  const dataStore = useDataStore();
-
-  /**
-   * Fetches the ability details for every owned pet's unlocked abilities, so
-   * that candidate pets' ability attributes are available when the (synchronous)
-   * scorer / worker job snapshots the ability context.
-   */
-  const prefetchPetAbilityDetails = async (): Promise<void> => {
-    const ids = new Set<string>();
-    for (const [id, owned] of Object.entries(itemsStore.ownedItems)) {
-      const pet = itemsStore.petsMap[id] as unknown as
-        | { abilities?: PetAbility[] }
-        | undefined;
-      if (!pet?.abilities?.length) continue;
-      for (const aid of unlockedAbilityIds(pet, owned.petLevel ?? 0)) {
-        ids.add(aid);
-      }
-    }
-    if (ids.size) await dataStore.fetchDetailedAbilities([...ids]);
-  };
 
   /**
    * Returns the set of slot *keys* (e.g. `"ring"`, `"tool"`, `"weapon"`) that
@@ -100,100 +58,9 @@ export function useOptimiser() {
   }
 
   function requirementsFill(gearOptions: GearOptions): Candidate[] {
-    const source = baseCtx.source.value as {
-      requirements: Parameters<typeof isHandledRequirement>[0][];
-    } | null;
-    const serviceReqs = (activityStore.service?.requirements ??
-      []) as Parameters<typeof isHandledRequirement>[0][];
-    const reqs = (source?.requirements ?? [])
-      .concat(serviceReqs)
-      .filter(isHandledRequirement);
-
-    let candidates: Candidate[] = [
-      { gearSet: {}, score: startScore(), slotCounts: {} },
-    ];
-
-    const requiredOptions = getItemOptions(gearOptions, "required");
-    reqs.forEach((requirement) => {
-      const req = getReq(requirement);
-
-      const filteredGearSlots = Object.fromEntries(
-        Object.entries(requiredOptions)
-          .map(([slot, items]) => [slot, filterItemsForReq(req, items)])
-          .filter(([, value]) => value.length),
-      ) as Record<string, OptimiserItem[]>;
-
-      let next: Candidate[] = [];
-      candidates.forEach((candidate) => {
-        next = next.concat(reqsBeamSearch(candidate, filteredGearSlots, req));
-      });
-
-      const newCandidates = next
-        .sort((a, b) => compareScore(b.score, a.score))
-        .slice(0, 3);
-      candidates = newCandidates.length ? newCandidates : candidates;
-    });
-
-    return candidates;
-  }
-
-  function reqsBeamSearch(
-    baseCandidate: Candidate,
-    gearOptions: Record<string, OptimiserItem[]>,
-    req: Req,
-  ): FulfilledCandidate[] {
-    const BEAM_WIDTH = 3;
-    const { gearSet, slotCounts } = baseCandidate;
-
-    const startingFulfilled = Object.entries(gearSet).filter(([, item]) =>
-      contributesToReq(item as OptimiserItem, req),
-    ).length;
-
-    let candidates: FulfilledCandidate[] = [
-      {
-        gearSet,
-        score: startScore(),
-        slotCounts,
-        fulfilled: startingFulfilled,
-      },
-    ];
-
-    const candidatesPool = getRequirementCandidates(gearOptions, req);
-
-    for (const { slotName, slotKey, item } of candidatesPool) {
-      const next: FulfilledCandidate[] = [];
-
-      for (const { gearSet, fulfilled, slotCounts } of candidates) {
-        if (gearSet[slotName]) continue;
-        if (fulfilled >= req.quantity) continue;
-
-        const newSet: GearSet = { ...gearSet, [slotName]: item };
-        const newFulfilled = fulfilled + 1;
-        const score = getGearSetStats(newSet);
-        const prevCount = slotKey in slotCounts ? slotCounts[slotKey] : 0;
-        const newSlotCount = { ...slotCounts, [slotName]: prevCount + 1 };
-
-        next.push({
-          gearSet: newSet,
-          fulfilled: newFulfilled,
-          score,
-          slotCounts: newSlotCount,
-        });
-      }
-
-      candidates = candidates
-        .concat(next)
-        .sort((a, b) => {
-          if (a.fulfilled !== b.fulfilled) return b.fulfilled - a.fulfilled;
-          const slotsA = Object.keys(a.gearSet).length;
-          const slotsB = Object.keys(b.gearSet).length;
-          if (slotsA !== slotsB) return slotsA - slotsB;
-          return compareScore(b.score, a.score);
-        })
-        .slice(0, BEAM_WIDTH);
-    }
-
-    return candidates.filter((c) => c.fulfilled >= req.quantity);
+    const source = baseCtx.source.value as { requirements: Requirement[] } | null;
+    const serviceReqs = (activityStore.service?.requirements ?? []) as Requirement[];
+    return sharedRequirementsFill(gearOptions, (source?.requirements ?? []).concat(serviceReqs));
   }
 
   /**

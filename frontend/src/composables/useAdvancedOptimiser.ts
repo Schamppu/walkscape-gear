@@ -1,19 +1,28 @@
-import { computed } from "vue";
+import { computed, ref, shallowRef, watch } from "vue";
+import { useActivityStore } from "@/store/activity";
 import { useGearStore } from "@/store/gear";
 import { useItemsStore } from "@/store/items";
 import { useNotificationStore } from "@/store/notifications";
 import { useAdvancedOptimiserStore } from "@/store/advancedOptimiser";
 import {
   injectBaseContext,
+  injectFineMaterials,
   injectLootTables,
 } from "@/composables/context/injectShared";
+import { installScorer } from "@/composables/optimiser/stats";
+import { prefetchPetAbilityDetails } from "@/composables/optimiser/petAbilities";
+import { buildAdvancedJob } from "@/composables/advancedOptimiser/buildJob";
+import { runAdvancedJob, type RunningJob } from "@/composables/advancedOptimiser/runWorker";
+import { applySearchResult } from "@/composables/advancedOptimiser/applyResult";
 import { gearSlots } from "@/domain/constants/gear";
 import {
   defaultConfig,
   type AdvancedOptimiserConfig,
   type Target,
 } from "@/domain/advancedOptimiser/config";
+import type { SearchProgress } from "@/domain/advancedOptimiser/search";
 import {
+  isTargetValid,
   nextUnusedTarget,
   recipeProducesCraftedItem,
   sourceTableFlags,
@@ -24,19 +33,23 @@ import type { RecipeDetail } from "@/domain/types/recipe";
 
 /**
  * Drives the advanced optimiser modal: the target context for the selected
- * activity / recipe, its config, and running the optimiser.
- *
- * For now `run()` only logs the config the optimiser would receive.
+ * activity / recipe, its config (saved per activity), and running the
+ * optimiser in a worker, then applying the best set.
  */
 export function useAdvancedOptimiser() {
   const baseCtx = injectBaseContext();
   const { hasFineDrops } = injectLootTables();
+  const { fineMode } = injectFineMaterials();
+  const activityStore = useActivityStore();
   const gearStore = useGearStore();
   const itemsStore = useItemsStore();
   const notificationStore = useNotificationStore();
   const store = useAdvancedOptimiserStore();
 
   const activityId = computed<string | null>(() => baseCtx.source.value?.id ?? null);
+
+  // Bring in the saved config when an activity is selected.
+  watch(activityId, (id) => id && store.load(id), { immediate: true });
 
   const targetContext = computed<TargetContext>(() => {
     const source = baseCtx.source.value as
@@ -84,19 +97,63 @@ export function useAdvancedOptimiser() {
     if (activityId.value) store.removeTarget(activityId.value, index);
   };
 
+  const running = ref(false);
+  const progress = shallowRef<SearchProgress | null>(null);
+  let current: RunningJob | null = null;
+
+  /** Runs the optimiser on the current config and equips the best set found. */
   const run = async (): Promise<void> => {
+    if (running.value) return;
     if (!config.value) {
       notificationStore.warning("No activity selected");
       return;
     }
-    // Plain copy without reactive proxies, as a worker job would need.
-    const job = {
-      config: JSON.parse(JSON.stringify(config.value)) as AdvancedOptimiserConfig,
-      lockedSlots: [...lockedSlots.value],
-    };
-    console.log("Advanced optimiser job", job);
-    await notificationStore.debug("Advanced optimiser: built job", [job]);
+    const targets = config.value.targets.filter(
+      (t) => t.weight > 0 && isTargetValid(t, targetContext.value),
+    );
+    if (!targets.length) {
+      notificationStore.warning("Give at least one target a weight above 0");
+      return;
+    }
+
+    running.value = true;
+    progress.value = null;
+    try {
+      await prefetchPetAbilityDetails();
+      const uninstallScorer = installScorer();
+      let job;
+      try {
+        job = buildAdvancedJob({
+          config: { ...config.value, targets },
+          producesCraftedItem: targetContext.value.producesCraftedItem,
+          fineMode: fineMode.value,
+        });
+      } finally {
+        uninstallScorer();
+      }
+      if (!job) return;
+      await notificationStore.debug("Advanced optimiser: built job", [job]);
+
+      current = runAdvancedJob(job, { onProgress: (p) => (progress.value = p) });
+      const result = await current.result;
+      await notificationStore.debug("Advanced optimiser: result", [result]);
+
+      const applied = await applySearchResult(result, job.searchSlots, {
+        setLocation: (location) => activityStore.setLocation(location),
+        equipMultiple: (data, useQuality) => gearStore.equipMultiple(data, useQuality),
+      });
+      if (applied) notificationStore.success("Optimised gear set equipped");
+    } catch (e) {
+      notificationStore.error("Error during gear set optimisation");
+      console.error(e);
+    } finally {
+      current = null;
+      running.value = false;
+    }
   };
+
+  /** Stops a running search; the gear set is left unchanged. */
+  const cancel = (): void => current?.cancel();
 
   return {
     targetContext,
@@ -106,6 +163,9 @@ export function useAdvancedOptimiser() {
     addTarget,
     updateTarget,
     removeTarget,
+    running,
+    progress,
     run,
+    cancel,
   };
 }

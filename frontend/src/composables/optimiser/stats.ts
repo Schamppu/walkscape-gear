@@ -225,12 +225,12 @@ const enrichItem = (
   };
 };
 
-const enrichItems = (
+export const enrichItems = (
   items: OptimiserItem[],
   abilityCtx: AbilityAttrContext,
 ): WorkerItem[] => items.map((item) => enrichItem(item, abilityCtx));
 
-const enrichCandidates = (
+export const enrichCandidates = (
   candidates: Candidate[],
   abilityCtx: AbilityAttrContext,
 ): WorkerCandidate[] =>
@@ -247,66 +247,45 @@ const enrichCandidates = (
   }));
 
 /**
- * Builds the serialisable `OptimiserJobData` to be posted to the optimiser
- * worker.  Must be called from a component/composable context (Pinia stores
- * are accessed here and nowhere in the worker).
+ * Attribute entries that don't depend on the gear set: owned collectibles,
+ * level bonuses and the selected service. Shared by both optimisers' worker
+ * jobs. Must be called from a component/composable context.
  */
-export const buildWorkerJob = (
-  reqSets: Candidate[],
-  primaryOptions: GearOptions,
-  fallbackOptions: GearOptions,
-  activeSlots: readonly string[],
-): OptimiserJobData => {
+export const buildStaticEntries = () => {
   const baseCtx = useBaseContext();
-  const playerStore = usePlayerStore();
-  const dataStore = useDataStore();
-  const gearStore = useGearStore();
-
   const { workEfficiencyBonus, qualityOutcomeBonus } = useLevelBonus(
     baseCtx as unknown as LevelBonusContext,
   );
-
-  const source = baseCtx.source.value as SkillModifiersSource | null;
-  const activitySelected = baseCtx.activitySelected.value;
-  const { fineMode } = useFineMaterials(baseCtx as unknown as FineMaterialsContext);
-  const prio = priorityValue();
-
-  // Ability context snapshot; baked into each candidate pet's _attrEntries.
-  const abilityCtx = buildAbilityAttrContext();
-
-  // Static entries: collectibles + level bonuses + service (same as makeScorer).
   const collectibles = toDeepRaw(
     baseCtx.ownedItemsByCategory("collectibles") as ItemDetail[],
   );
-  const staticEntries = buildAllAttrEntries(
+  return buildAllAttrEntries(
     resolveItemAttrs(collectibles),
     workEfficiencyBonus.value,
     qualityOutcomeBonus.value,
     baseCtx.service.value,
   );
+};
 
-  // Static requirement context: snapshot of all store data checkRequirements needs.
+/**
+ * Snapshot of everything requirement checks need that doesn't depend on the
+ * gear set being scored. Must be called from a component/composable context.
+ */
+export const buildStaticReqCtx = (): StaticReqCtx => {
+  const baseCtx = useBaseContext();
+  const playerStore = usePlayerStore();
   const activitySource = baseCtx.source.value;
   const activityDetail = baseCtx.activity.value as ActivityDetail | null;
   const recipeDetail = baseCtx.recipe.value as RecipeDetail | null;
-  const recipeLevelReq = recipeDetail
-    ? Object.values(getLevelRequirementsMap(recipeDetail.requirements))[0] ?? 1
-    : 1;
-  const recipeQualityContext: RecipeQualityContext | null = activitySelected
-    ? null
-    : {
-        levelReq: recipeLevelReq,
-        fineMode: fineMode.value,
-      };
   const location = baseCtx.location.value;
 
-  const reqCtx: StaticReqCtx = {
+  return {
     activityId: activitySource?.id ?? null,
     activityKeywords: activitySource?.keywords ?? [],
     activityRelatedSkills:
       activityDetail?.relatedSkillsList ?? recipeDetail?.relatedSkills ?? [],
     recipeRelatedSkills: recipeDetail?.relatedSkills ?? [],
-    isActivity: activitySelected,
+    isActivity: baseCtx.activitySelected.value,
     locationKeywords: location?.keywords ?? [],
     locationFaction: location?.faction ?? null,
     locationSubFactions: location?.subFactions ?? [],
@@ -325,6 +304,49 @@ export const buildWorkerJob = (
     factionReputation: { ...(baseCtx.factionReputation.value ?? {}) },
     ownedItemIds: Object.keys(baseCtx.ownedItems.value),
   };
+};
+
+/**
+ * Builds the serialisable `OptimiserJobData` to be posted to the optimiser
+ * worker.  Must be called from a component/composable context (Pinia stores
+ * are accessed here and nowhere in the worker).
+ */
+export const buildWorkerJob = (
+  reqSets: Candidate[],
+  primaryOptions: GearOptions,
+  fallbackOptions: GearOptions,
+  activeSlots: readonly string[],
+): OptimiserJobData => {
+  const baseCtx = useBaseContext();
+  const playerStore = usePlayerStore();
+  const dataStore = useDataStore();
+  const gearStore = useGearStore();
+
+  const source = baseCtx.source.value as SkillModifiersSource | null;
+  const activitySelected = baseCtx.activitySelected.value;
+  const { fineMode } = useFineMaterials(baseCtx as unknown as FineMaterialsContext);
+  const prio = priorityValue();
+
+  // Ability context snapshot; baked into each candidate pet's _attrEntries.
+  const abilityCtx = buildAbilityAttrContext();
+
+  // Static entries: collectibles + level bonuses + service (same as makeScorer).
+  const staticEntries = buildStaticEntries();
+
+  const recipeDetail = baseCtx.recipe.value as RecipeDetail | null;
+  const recipeLevelReq = recipeDetail
+    ? Object.values(getLevelRequirementsMap(recipeDetail.requirements))[0] ?? 1
+    : 1;
+  const recipeQualityContext: RecipeQualityContext | null = activitySelected
+    ? null
+    : {
+        levelReq: recipeLevelReq,
+        fineMode: fineMode.value,
+      };
+  const location = baseCtx.location.value;
+
+  // Static requirement context: snapshot of all store data checkRequirements needs.
+  const reqCtx = buildStaticReqCtx();
 
   // Build enriched worker gear options.
   const workerGearOptions: WorkerGearOptions = {

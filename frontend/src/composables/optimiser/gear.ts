@@ -482,6 +482,21 @@ export const getFallbackGearOptions = (
   ) as GearOptions;
 };
 
+/**
+ * Every item the player could use in each slot type for the current activity:
+ * owned, not locked, passing the requirement setting and shown for the
+ * activity. Not filtered by any target; the advanced optimiser filters these
+ * by its own useful stats.
+ */
+export const getCandidateItems = (
+  slotKeys: readonly string[],
+): Record<string, OptimiserItem[]> => {
+  const ctx = makeGearCtx();
+  return Object.fromEntries(
+    slotKeys.map((slot) => [slot, getScoredItemsForSlot(slot, ctx).scoredItems]),
+  );
+};
+
 export function getItemOptions(
   options: GearOptions,
   key: "required",

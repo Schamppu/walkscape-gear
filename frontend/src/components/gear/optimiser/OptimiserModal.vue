@@ -15,6 +15,7 @@ const {
   addTarget,
   updateTarget,
   removeTarget,
+  running,
   run,
 } = useAdvancedOptimiser();
 </script>
@@ -48,8 +49,12 @@ const {
 
       <locked-slots :slots="lockedSlots" />
 
-      <button class="optimise" :disabled="!config.targets.length" @click="run">
-        Optimise
+      <button
+        class="optimise"
+        :disabled="running || !config.targets.length"
+        @click="run"
+      >
+        {{ running ? "Optimising…" : "Optimise" }}
       </button>
     </div>
   </base-modal>

@@ -66,3 +66,50 @@ export const defaultConfig = (activityId: string): AdvancedOptimiserConfig => ({
   targets: [{ x: "xp", y: "step", weight: MAX_WEIGHT }],
   combinationRule: "weightedSum",
 });
+
+export const BEST_FOR_SKILL_STORAGE_KEY = "advancedOptimiser.bestForSkillConfig";
+
+/** localStorage key a config is saved under. `bestForSkill` configs share one key. */
+export const configStorageKey = ({ mode }: Pick<AdvancedOptimiserConfig, "mode">): string =>
+  mode.kind === "singleActivity"
+    ? `advancedOptimiser.config.${mode.activityId}`
+    : BEST_FOR_SKILL_STORAGE_KEY;
+
+const isOneOf = <T extends string>(values: readonly T[], value: unknown): value is T =>
+  typeof value === "string" && (values as readonly string[]).includes(value);
+
+/**
+ * Reads a stored config back, or `null` if it isn't a usable config.
+ * Unknown targets and duplicate `X / Y` pairs are dropped; weights are rounded
+ * and clamped to 0–10.
+ */
+export const parseConfig = (raw: unknown): AdvancedOptimiserConfig | null => {
+  if (!raw || typeof raw !== "object") return null;
+  const { mode, targets } = raw as Partial<Record<keyof AdvancedOptimiserConfig, unknown>>;
+
+  const m = mode as Partial<{ kind: string; activityId: unknown; skillId: unknown }> | undefined;
+  let parsedMode: AdvancedOptimiserMode;
+  if (m?.kind === "singleActivity" && typeof m.activityId === "string") {
+    parsedMode = { kind: "singleActivity", activityId: m.activityId };
+  } else if (m?.kind === "bestForSkill" && typeof m.skillId === "string") {
+    parsedMode = { kind: "bestForSkill", skillId: m.skillId as components["schemas"]["SkillsEnum"] };
+  } else {
+    return null;
+  }
+  if (!Array.isArray(targets)) return null;
+
+  const seen = new Set<string>();
+  const parsedTargets: Target[] = [];
+  for (const t of targets as Partial<Record<keyof Target, unknown>>[]) {
+    if (!isOneOf(X_VALUES, t?.x) || !isOneOf(Y_VALUES, t?.y) || typeof t.weight !== "number") {
+      continue;
+    }
+    const key = `${t.x}/${t.y}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    const weight = Math.min(MAX_WEIGHT, Math.max(MIN_WEIGHT, Math.round(t.weight)));
+    parsedTargets.push({ x: t.x, y: t.y, weight: Number.isFinite(weight) ? weight : MIN_WEIGHT });
+  }
+
+  return { mode: parsedMode, targets: parsedTargets, combinationRule: "weightedSum" };
+};
