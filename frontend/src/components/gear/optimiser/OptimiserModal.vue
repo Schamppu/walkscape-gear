@@ -1,10 +1,22 @@
-<script setup>
+<script setup lang="ts">
 import BaseModal from "@/components/common/BaseModal.vue";
+import TargetsTable from "./advanced/TargetsTable.vue";
+import LockedSlots from "./advanced/LockedSlots.vue";
+import { useAdvancedOptimiser } from "@/composables/useAdvancedOptimiser";
 
-defineProps({
-  isOpen: Boolean,
-});
-defineEmits(["close"]);
+defineProps<{ isOpen: boolean }>();
+defineEmits<{ (event: "close"): void }>();
+
+const {
+  targetContext,
+  config,
+  lockedSlots,
+  canAddTarget,
+  addTarget,
+  updateTarget,
+  removeTarget,
+  run,
+} = useAdvancedOptimiser();
 </script>
 
 <template>
@@ -16,21 +28,79 @@ defineEmits(["close"]);
     min-height="600px"
     @update:model-value="$emit('close')"
   >
-    <p>Under Construction</p>
-    <p>Use the quick set function for now</p>
-    <p>You can set its target functionality in options</p>
-    <img src="/tyomaa.png" />
+    <p v-if="!config" class="empty">Select an activity or recipe first</p>
+
+    <div v-else class="optimiser">
+      <section>
+        <div class="section-header">
+          <h3>Targets</h3>
+          <button class="border-common" :disabled="!canAddTarget" @click="addTarget">
+            + Add target
+          </button>
+        </div>
+        <targets-table
+          :targets="config.targets"
+          :context="targetContext"
+          @update="updateTarget"
+          @remove="removeTarget"
+        />
+      </section>
+
+      <locked-slots :slots="lockedSlots" />
+
+      <button class="optimise" :disabled="!config.targets.length" @click="run">
+        Optimise
+      </button>
+    </div>
   </base-modal>
 </template>
 
 <style lang="scss" scoped>
-.modal-backdrop {
-  position: fixed;
-  inset: 0;
-  background-color: rgba(6, 12, 15, 0.5);
-  z-index: 3000;
+.optimiser {
   display: flex;
+  flex-direction: column;
+  gap: $lg;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
+  margin-bottom: $md;
+}
+
+h3 {
+  margin: 0 0 $xs;
+}
+
+.empty {
+  opacity: 0.7;
+}
+
+button {
+  cursor: pointer;
+  border-radius: $sm;
+  padding: $xxs $xs;
+
+  &:hover:not(:disabled),
+  &:focus:not(:disabled) {
+    background-color: $boxTransparentDarkOutline;
+  }
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.5;
+  }
+}
+
+.optimise {
+  align-self: center;
+  color: $txPositive;
+  border: 1px solid $txPositive;
+
+  &:hover:not(:disabled),
+  &:focus:not(:disabled) {
+    background-color: $txPositiveDark;
+  }
 }
 </style>
