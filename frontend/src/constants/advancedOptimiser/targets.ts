@@ -17,6 +17,6 @@ export const X_LABELS: Record<XValue, string> = {
 
 export const Y_LABELS: Record<YValue, string> = {
   step: "step",
-  action: "action",
   material: "material",
+  action: "action",
 };

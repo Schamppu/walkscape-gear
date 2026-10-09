@@ -41,6 +41,11 @@ export type SetScore = {
   score: number;
   /** Raw extracted value per target key ("x/y"). */
   values: Record<string, number>;
+  /**
+   * Value relative to naked gear at the set's location per target key
+   * (1.3 = 30% better); `null` when the target has no baseline.
+   */
+  ratios: Record<string, number | null>;
 };
 
 export type SetScorer = (set: WorkerGearSet) => SetScore;
@@ -125,13 +130,15 @@ export const createSetScorer = (job: AdvancedOptimiserJob): SetScorer => {
     const ctx = extractionCtx([...staticEntries, ...gearEntries]);
 
     const values: Record<string, number> = {};
+    const ratios: Record<string, number | null> = {};
     const scored = job.targets.map((target) => {
       const key = targetKey(target);
       values[key] ??= extracted(target.x, target.y, ctx);
-      return { target, normalised: normalise(baseline, target, values[key]) };
+      ratios[key] = normalise(baseline, target, values[key]);
+      return { target, normalised: ratios[key] };
     });
 
-    return { valid, score: combine(scored), values };
+    return { valid, score: combine(scored), values, ratios };
   };
 };
 

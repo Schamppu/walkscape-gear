@@ -25,6 +25,7 @@ import {
   singleMoves,
   type MoveContext,
 } from "./moves";
+import { overallImprovement } from "./combination";
 import { pruneDominated } from "./pruning";
 import { compareSetScores, createSetScorer, type SetScorer } from "./scorer";
 import { unionUsefulStats } from "./stats";
@@ -61,6 +62,8 @@ export const DEFAULT_SEARCH_SETTINGS: SearchSettings = {
 
 export type SearchProgress = {
   bestScore: number;
+  /** Best set vs naked gear overall (0.31 = 31% better). */
+  improvement: number;
   valid: boolean;
   elapsedMs: number;
   evaluations: number;
@@ -69,6 +72,8 @@ export type SearchProgress = {
 export type SearchResult = SearchProgress & {
   gearSet: WorkerGearSet;
   values: Record<string, number>;
+  /** Per target key, relative to naked gear at the result's location. */
+  ratios: Record<string, number | null>;
   /** True when the run ended because `shouldStop` returned true. */
   cancelled: boolean;
 };
@@ -189,6 +194,7 @@ export const runSearch = async (
 
   const progress = (): SearchProgress => ({
     bestScore: best.result.score,
+    improvement: overallImprovement(job.targets, best.result.ratios),
     valid: best.result.valid,
     elapsedMs: elapsed(),
     evaluations,
@@ -242,6 +248,7 @@ export const runSearch = async (
     ...progress(),
     gearSet: best.gearSet,
     values: best.result.values,
+    ratios: best.result.ratios,
     cancelled,
   };
 };

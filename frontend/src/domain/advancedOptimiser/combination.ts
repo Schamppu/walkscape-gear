@@ -29,3 +29,23 @@ export const weightedSum: CombinationStrategy = (entries) =>
 export const COMBINATION_STRATEGIES: Record<CombinationRule, CombinationStrategy> = {
   weightedSum,
 };
+
+/**
+ * How much better a set is than naked gear overall: the weighted mean of the
+ * targets' ratios minus 1 (0.31 = 31% better). Targets without a ratio or
+ * with weight 0 are left out; returns 0 when none remain.
+ */
+export const overallImprovement = (
+  targets: readonly Target[],
+  ratios: Record<string, number | null>,
+): number => {
+  let weighted = 0;
+  let totalWeight = 0;
+  for (const target of targets) {
+    const ratio = ratios[`${target.x}/${target.y}`];
+    if (ratio == null || target.weight <= 0) continue;
+    weighted += target.weight * ratio;
+    totalWeight += target.weight;
+  }
+  return totalWeight > 0 ? weighted / totalWeight - 1 : 0;
+};

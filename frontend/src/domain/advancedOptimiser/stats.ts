@@ -38,7 +38,7 @@ export const USEFUL_STATS_BY_X: Record<XValue, readonly StatId[]> = {
  */
 export const USEFUL_STATS_BY_Y: Record<YValue, readonly StatId[]> = {
   step: ["work_efficiency", "steps_required", "double_action"],
-  action: [],
+  action: ["double_action"],
   material: ["no_materials_consumed"],
 };
 

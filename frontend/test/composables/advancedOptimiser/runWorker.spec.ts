@@ -60,11 +60,13 @@ class InProcessWorker implements WorkerLike {
 
 const fakeResult = (overrides: Partial<SearchResult> = {}): SearchResult => ({
   bestScore: 2,
+  improvement: 1,
   valid: true,
   elapsedMs: 10,
   evaluations: 5,
   gearSet: {},
   values: {},
+  ratios: {},
   cancelled: false,
   ...overrides,
 });
@@ -76,7 +78,7 @@ describe("runAdvancedJob", () => {
     const running = runAdvancedJob(job, { createWorker: () => worker, onProgress });
 
     expect(worker.sent).toEqual([{ type: "start", job, settings: undefined }]);
-    worker.emit({ type: "progress", progress: { bestScore: 1.5, valid: true, elapsedMs: 5, evaluations: 3 } });
+    worker.emit({ type: "progress", progress: { bestScore: 1.5, improvement: 0.5, valid: true, elapsedMs: 5, evaluations: 3 } });
     worker.emit({ type: "result", result: fakeResult() });
 
     await expect(running.result).resolves.toEqual(fakeResult());

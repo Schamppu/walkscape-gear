@@ -20,7 +20,12 @@ import {
   type AdvancedOptimiserConfig,
   type Target,
 } from "@/domain/advancedOptimiser/config";
-import type { SearchProgress } from "@/domain/advancedOptimiser/search";
+import {
+  DEFAULT_SEARCH_SETTINGS,
+  type SearchProgress,
+  type SearchResult,
+} from "@/domain/advancedOptimiser/search";
+import type { LocationSummary } from "@/domain/types/location";
 import {
   isTargetValid,
   nextUnusedTarget,
@@ -48,8 +53,25 @@ export function useAdvancedOptimiser() {
 
   const activityId = computed<string | null>(() => baseCtx.source.value?.id ?? null);
 
-  // Bring in the saved config when an activity is selected.
-  watch(activityId, (id) => id && store.load(id), { immediate: true });
+  /** The most recent finished run, for the result summary. */
+  const lastRun = shallowRef<{
+    result: SearchResult;
+    targets: Target[];
+    /** False when the run was cancelled and nothing was equipped. */
+    applied: boolean;
+    locationName: string | null;
+  } | null>(null);
+
+  // Bring in the saved config when an activity is selected; a previous
+  // run's summary belongs to the previous activity.
+  watch(
+    activityId,
+    (id) => {
+      lastRun.value = null;
+      if (id) store.load(id);
+    },
+    { immediate: true },
+  );
 
   const targetContext = computed<TargetContext>(() => {
     const source = baseCtx.source.value as
@@ -118,6 +140,7 @@ export function useAdvancedOptimiser() {
 
     running.value = true;
     progress.value = null;
+    lastRun.value = null;
     try {
       await prefetchPetAbilityDetails();
       const uninstallScorer = installScorer();
@@ -143,11 +166,20 @@ export function useAdvancedOptimiser() {
         equipMultiple: (data, useQuality) => gearStore.equipMultiple(data, useQuality),
       });
       if (applied) notificationStore.success("Optimised gear set equipped");
+
+      const location = result.gearSet.location as LocationSummary | null | undefined;
+      lastRun.value = {
+        result,
+        targets: job.targets,
+        applied,
+        locationName: (location ?? job.defaultLocation)?.name ?? null,
+      };
     } catch (e) {
       notificationStore.error("Error during gear set optimisation");
       console.error(e);
     } finally {
       current = null;
+      progress.value = null;
       running.value = false;
     }
   };
@@ -165,6 +197,8 @@ export function useAdvancedOptimiser() {
     removeTarget,
     running,
     progress,
+    lastRun,
+    timeBudgetMs: DEFAULT_SEARCH_SETTINGS.timeBudgetMs,
     run,
     cancel,
   };

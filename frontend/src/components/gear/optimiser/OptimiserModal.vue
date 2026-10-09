@@ -2,6 +2,8 @@
 import BaseModal from "@/components/common/BaseModal.vue";
 import TargetsTable from "./advanced/TargetsTable.vue";
 import LockedSlots from "./advanced/LockedSlots.vue";
+import ProgressDisplay from "./advanced/ProgressDisplay.vue";
+import ResultSummary from "./advanced/ResultSummary.vue";
 import { useAdvancedOptimiser } from "@/composables/useAdvancedOptimiser";
 
 defineProps<{ isOpen: boolean }>();
@@ -16,7 +18,11 @@ const {
   updateTarget,
   removeTarget,
   running,
+  progress,
+  lastRun,
+  timeBudgetMs,
   run,
+  cancel,
 } = useAdvancedOptimiser();
 </script>
 
@@ -49,13 +55,25 @@ const {
 
       <locked-slots :slots="lockedSlots" />
 
-      <button
-        class="optimise"
-        :disabled="running || !config.targets.length"
-        @click="run"
-      >
-        {{ running ? "Optimising…" : "Optimise" }}
-      </button>
+      <section class="run">
+        <button v-if="running" class="cancel" @click="cancel">Cancel</button>
+        <button v-else class="optimise" :disabled="!config.targets.length" @click="run">
+          Optimise
+        </button>
+
+        <progress-display
+          v-if="running"
+          :progress="progress"
+          :time-budget-ms="timeBudgetMs"
+        />
+        <result-summary
+          v-else-if="lastRun"
+          :result="lastRun.result"
+          :targets="lastRun.targets"
+          :applied="lastRun.applied"
+          :location-name="lastRun.locationName"
+        />
+      </section>
     </div>
   </base-modal>
 </template>
@@ -98,8 +116,24 @@ button {
   }
 }
 
+.run {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $md;
+}
+
+.cancel {
+  color: $txNegative;
+  border: 1px solid $txNegative;
+
+  &:hover:not(:disabled),
+  &:focus:not(:disabled) {
+    background-color: $txNegativeDark;
+  }
+}
+
 .optimise {
-  align-self: center;
   color: $txPositive;
   border: 1px solid $txPositive;
 

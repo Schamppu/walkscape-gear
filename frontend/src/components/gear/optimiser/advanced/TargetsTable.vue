@@ -132,8 +132,8 @@ const onWeightInput = (index: number, event: Event): void => {
 // Each target is two lines: "X / Y  delete" on top, a full-width weight
 // slider below. The header row is only there for screen readers.
 .targets-table {
-  @include table.settings-table($control-width: auto);
   display: block;
+  @include table.settings-table($control-width: auto);
 
   thead {
     position: absolute;
