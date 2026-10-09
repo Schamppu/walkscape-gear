@@ -2,6 +2,7 @@
 import BaseModal from "@/components/common/BaseModal.vue";
 import TargetsTable from "./advanced/TargetsTable.vue";
 import LockedSlots from "./advanced/LockedSlots.vue";
+import OptimiserSettings from "./advanced/OptimiserSettings.vue";
 import ProgressDisplay from "./advanced/ProgressDisplay.vue";
 import ResultSummary from "./advanced/ResultSummary.vue";
 import { useAdvancedOptimiser } from "@/composables/useAdvancedOptimiser";
@@ -56,6 +57,8 @@ const {
           @remove="removeTarget"
         />
       </section>
+
+      <optimiser-settings />
 
       <locked-slots :slots="lockedSlots" :unusable="unusableLockedSlots" />
 

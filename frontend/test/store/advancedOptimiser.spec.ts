@@ -57,3 +57,26 @@ describe("advanced optimiser store", () => {
     expect(store.configs.act_1).toBeUndefined();
   });
 });
+
+describe("optimiser settings", () => {
+  beforeEach(() => {
+    localStorage.clear();
+    setActivePinia(createPinia());
+  });
+
+  it("starts from the defaults", () => {
+    expect(useAdvancedOptimiserStore().settings).toEqual({
+      allowFineConsumables: true,
+      minConsumableStock: 0,
+    });
+  });
+
+  it("saves changes and loads them in a fresh store", () => {
+    useAdvancedOptimiserStore().updateSettings({ allowFineConsumables: false, minConsumableStock: 20 });
+    setActivePinia(createPinia());
+    expect(useAdvancedOptimiserStore().settings).toEqual({
+      allowFineConsumables: false,
+      minConsumableStock: 20,
+    });
+  });
+});
