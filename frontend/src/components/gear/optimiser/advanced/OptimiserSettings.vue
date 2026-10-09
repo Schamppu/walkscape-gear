@@ -5,11 +5,15 @@ import { useAdvancedOptimiserStore } from "@/store/advancedOptimiser";
 const store = useAdvancedOptimiserStore();
 
 const onFineChange = (event: Event): void => {
-  store.updateSettings({ allowFineConsumables: (event.target as HTMLInputElement).checked });
+  store.updateSettings({
+    allowFineConsumables: (event.target as HTMLInputElement).checked,
+  });
 };
 
 const onStockChange = (event: Event): void => {
-  store.updateSettings({ minConsumableStock: Number((event.target as HTMLInputElement).value) });
+  store.updateSettings({
+    minConsumableStock: Number((event.target as HTMLInputElement).value),
+  });
 };
 </script>
 
@@ -41,10 +45,10 @@ const onStockChange = (event: Event): void => {
         <tr>
           <td class="setting-label">
             <span class="label-with-help">
-              <label for="optimiser-min-stock">Minimum consumable stock</label>
+              <label for="optimiser-min-stock">Minimum consumables</label>
               <help-tip
-                label="Minimum consumable stock"
-                text="Consumables you own fewer of aren't suggested; 0 means no limit. Common and fine are counted separately, from your last character import."
+                label="Minimum consumable"
+                text="Consumables you own fewer of aren't suggested; 0 means no limit."
               />
             </span>
           </td>
