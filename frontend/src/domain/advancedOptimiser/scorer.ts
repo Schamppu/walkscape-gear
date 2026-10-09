@@ -24,7 +24,13 @@ import type { LocationSummary } from "@/domain/types/location";
 import type { StaticReqCtx, WorkerGearSet, WorkerItem } from "@/workers/optimiserWorkerTypes";
 import type { AdvancedOptimiserJob } from "@/workers/advancedOptimiserWorkerTypes";
 import { COMBINATION_STRATEGIES } from "./combination";
-import { computeBaseline, normalise, targetKey, type Baseline } from "./normalisation";
+import {
+  computeBaseline,
+  normalise,
+  shareOfBest,
+  targetKey,
+  type Baseline,
+} from "./normalisation";
 import { extracted, type ExtractionContext } from "./targets";
 
 // ---------------------------------------------------------------------------
@@ -46,6 +52,11 @@ export type SetScore = {
    * (1.3 = 30% better); `null` when the target has no baseline.
    */
   ratios: Record<string, number | null>;
+  /**
+   * Share of the best value each target reaches on its own (0 = naked,
+   * 1 = best), when the scorer was given best values; otherwise empty.
+   */
+  shares: Record<string, number | null>;
 };
 
 export type SetScorer = (set: WorkerGearSet) => SetScore;
@@ -90,7 +101,15 @@ export const applyLocks = (lockedItems: Record<string, WorkerItem>): WorkerGearS
 // Scorer
 // ---------------------------------------------------------------------------
 
-export const createSetScorer = (job: AdvancedOptimiserJob): SetScorer => {
+/**
+ * @param bestValues Best value per target key, each target optimised alone.
+ *                   When given, targets are scored by their share of it
+ *                   (`shareOfBest`) instead of their ratio to naked gear.
+ */
+export const createSetScorer = (
+  job: AdvancedOptimiserJob,
+  bestValues?: Record<string, number>,
+): SetScorer => {
   const combine = COMBINATION_STRATEGIES[job.combinationRule];
   const cache = new Map<string, LocationCache>();
 
@@ -131,14 +150,21 @@ export const createSetScorer = (job: AdvancedOptimiserJob): SetScorer => {
 
     const values: Record<string, number> = {};
     const ratios: Record<string, number | null> = {};
+    const shares: Record<string, number | null> = {};
     const scored = job.targets.map((target) => {
       const key = targetKey(target);
       values[key] ??= extracted(target.x, target.y, ctx);
       ratios[key] = normalise(baseline, target, values[key]);
-      return { target, normalised: ratios[key] };
+      if (!bestValues) return { target, normalised: ratios[key] };
+
+      const base = baseline.get(key);
+      const best = bestValues[key];
+      shares[key] =
+        base === undefined || best === undefined ? null : shareOfBest(base, best, values[key]);
+      return { target, normalised: shares[key] };
     });
 
-    return { valid, score: combine(scored), values, ratios };
+    return { valid, score: combine(scored), values, ratios, shares };
   };
 };
 

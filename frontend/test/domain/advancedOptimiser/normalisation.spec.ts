@@ -1,5 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { computeBaseline, normalise, targetKey } from "@/domain/advancedOptimiser/normalisation";
+import {
+  computeBaseline,
+  normalise,
+  shareOfBest,
+  targetKey,
+} from "@/domain/advancedOptimiser/normalisation";
 import {
   makeExtractionContext,
   makeSkillModifiers,
@@ -42,5 +47,21 @@ describe("targetKey", () => {
     expect(targetKey(makeTarget("chests", "action", 1))).toBe(
       targetKey(makeTarget("chests", "action", 9)),
     );
+  });
+});
+
+describe("shareOfBest", () => {
+  it("is 0 at naked gear and 1 at the best value", () => {
+    expect(shareOfBest(2, 6, 2)).toBe(0);
+    expect(shareOfBest(2, 6, 6)).toBe(1);
+    expect(shareOfBest(2, 6, 3)).toBeCloseTo(0.25, 10);
+  });
+
+  it("works for a negative baseline", () => {
+    expect(shareOfBest(-10, 0, -5)).toBeCloseTo(0.5, 10);
+  });
+
+  it("is null when nothing improves the target", () => {
+    expect(shareOfBest(2, 2, 2)).toBeNull();
   });
 });

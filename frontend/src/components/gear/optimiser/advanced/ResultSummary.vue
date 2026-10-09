@@ -26,11 +26,13 @@ const overall = computed(() =>
 const rows = computed(() =>
   props.targets.map((target) => {
     const ratio = props.result.ratios[targetKey(target)];
+    const share = props.result.shares?.[targetKey(target)];
     return {
       key: targetKey(target),
       label: `${X_LABELS[target.x]} / ${Y_LABELS[target.y]}`,
       weight: target.weight,
       change: ratio == null ? "–" : percent(ratio - 1),
+      ofBest: share == null ? "" : `${n(Math.min(share, 1) * 100, 0)}% of best`,
     };
   }),
 );
@@ -56,7 +58,9 @@ const rows = computed(() =>
       <ul class="targets">
         <li v-for="row in rows" :key="row.key">
           <span>{{ row.label }}</span>
-          <span class="change">{{ row.change }}</span>
+          <span class="change">
+            {{ row.change }}<span v-if="row.ofBest" class="of-best"> ({{ row.ofBest }})</span>
+          </span>
         </li>
       </ul>
     </template>
@@ -99,6 +103,10 @@ const rows = computed(() =>
 
   .change {
     font-variant-numeric: tabular-nums;
+  }
+
+  .of-best {
+    opacity: 0.7;
   }
 }
 </style>

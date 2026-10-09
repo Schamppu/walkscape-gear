@@ -45,6 +45,12 @@ export type SearchSettings = {
   pairSamples: number;
   /** Try set moves (equipping several pieces of a keyword set at once). */
   setMoves: boolean;
+  /**
+   * With several weighted targets, first find each target's best value alone
+   * and score targets by their share of it (`shareOfBest`), so targets of
+   * very different scales can be weighted against each other.
+   */
+  normaliseToBest: boolean;
   /** Slots changed when perturbing the best set for a restart. */
   perturbSlots: number;
   yieldEveryMs: number;
@@ -60,6 +66,7 @@ export const DEFAULT_SEARCH_SETTINGS: SearchSettings = {
   patience: 40,
   pairSamples: 200,
   setMoves: true,
+  normaliseToBest: true,
   perturbSlots: 3,
   yieldEveryMs: 50,
   progressEveryMs: 200,
@@ -79,6 +86,8 @@ export type SearchResult = SearchProgress & {
   values: Record<string, number>;
   /** Per target key, relative to naked gear at the result's location. */
   ratios: Record<string, number | null>;
+  /** Per target key, share of its best value alone; empty without the range pass. */
+  shares: Record<string, number | null>;
   /** True when the run ended because `shouldStop` returned true. */
   cancelled: boolean;
 };
@@ -196,7 +205,35 @@ export const runSearch = async (
   const yieldToEventLoop = hooks.yieldToEventLoop ?? defaultYield;
 
   let evaluations = 0;
-  const scoreSet = createSetScorer(job);
+
+  // Range pass: each weighted target's best value on its own, within the
+  // overall budget. Skipped for one target, where share and ratio rank the
+  // same.
+  const weighted = job.targets.filter(({ weight }) => weight > 0);
+  let bestValues: Record<string, number> | undefined;
+  if (settings.normaliseToBest && weighted.length > 1) {
+    bestValues = {};
+    const perTargetMs = settings.timeBudgetMs / (weighted.length + 1);
+    for (const target of weighted) {
+      if (hooks.shouldStop()) break;
+      const key = `${target.x}/${target.y}`;
+      const alone = await runSearch(
+        { ...job, targets: [{ ...target, weight: 1 }], fallbackOptions: undefined },
+        {
+          ...settings,
+          normaliseToBest: false,
+          timeBudgetMs: perTargetMs,
+          climbedSeeds: 1,
+          patience: Math.min(settings.patience, 10),
+        },
+        { ...hooks, onProgress: undefined },
+      );
+      evaluations += alone.evaluations;
+      bestValues[key] = alone.values[key];
+    }
+  }
+
+  const scoreSet = createSetScorer(job, bestValues);
   const score: SetScorer = (set) => {
     evaluations++;
     return scoreSet(set);
@@ -292,6 +329,7 @@ export const runSearch = async (
     gearSet: best.gearSet,
     values: best.result.values,
     ratios: best.result.ratios,
+    shares: best.result.shares,
     cancelled,
   };
 };
