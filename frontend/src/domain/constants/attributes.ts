@@ -2,7 +2,7 @@ export const baseAttrs: string[] = [
   "bonus_experience",
   "chest_finding",
   "double_action",
-  "double_reward",
+  "double_rewards",
   "find_collectibles",
   "fine_material_finding",
   "inventory_space",
