@@ -1,3 +1,4 @@
+import { normalizeConsumableQuality } from "@/domain/constants/quality";
 import type { Ref } from "vue";
 import { getOldItemIds } from "../utils/axios/api_routes";
 import { getGearSetsForExport } from "@/utils/axios/db_routes";
@@ -55,7 +56,7 @@ export function useGearSetExport(ctx: GearSetExportContext): {
         const slotName = toSlotName(item.slotType, item.slotIndex);
         return buildExportedSlot(
           slotName,
-          { id: item.itemId, quality: item.quality },
+          { id: item.itemId, quality: normalizeConsumableQuality(item.quality) },
           itemIdMap,
         );
       });

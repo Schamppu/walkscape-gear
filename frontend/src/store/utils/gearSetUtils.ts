@@ -13,6 +13,7 @@
  * - Contain side effects.
  */
 
+import { normalizeConsumableQuality } from "@/domain/constants/quality";
 import type { DbTag, DbGearSetItem } from "@/domain/types/db";
 
 // ---------------------------------------------------------------------------
@@ -75,7 +76,7 @@ export function buildGearSlotMapping(
 
   for (const { slotType, slotIndex, itemId, quality } of items) {
     const slotName = resolveSlotName(slotType, slotIndex);
-    mapping[slotName] = { id: itemId, quality: quality ?? null };
+    mapping[slotName] = { id: itemId, quality: normalizeConsumableQuality(quality ?? null) };
   }
 
   for (const key of existingSlotKeys) {

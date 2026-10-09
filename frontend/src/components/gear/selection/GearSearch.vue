@@ -162,8 +162,8 @@ const filteredItems = computed(() => {
       if (isConsumable) {
         if (showOwned) {
           const { common, fine } = consumableCounts(entry);
-          quality = common > 0 ? "consumableCommon" : null;
-          quality2 = fine > 0 ? "consumableFine" : null;
+          quality = common > 0 ? "common" : null;
+          quality2 = fine > 0 ? "fine" : null;
         } else {
           quality = consumableQualityOptions[0].value;
           quality2 = consumableQualityOptions[1].value;

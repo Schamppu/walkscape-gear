@@ -151,7 +151,7 @@ export const useGearStore = defineStore("gearStore", {
         return entry.craftedTier ?? itemData?.quality ?? "common";
       }
       if (type === "consumable") {
-        return consumableCounts(entry).fine > 0 ? "consumableFine" : "consumableCommon";
+        return consumableCounts(entry).fine > 0 ? "fine" : "common";
       }
       if (id in itemsStore.petsMap) {
         return String(entry.petLevel ?? 0);

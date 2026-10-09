@@ -212,7 +212,7 @@ type ParsedItemId = {
 /** Parses a raw item-id string into its base id and quality suffix. */
 function parseItemId(itemId: string): ParsedItemId {
   if (itemId.endsWith("_fine")) {
-    return { baseId: itemId.slice(0, -5), quality: "consumableFine" };
+    return { baseId: itemId.slice(0, -5), quality: "fine" };
   }
 
   for (const { value: quality } of qualityOptions) {
@@ -474,7 +474,7 @@ export function parseOwnedItems(
     const hidden = currentOwnedItems[baseId]?.hidden ?? false;
 
     if (itemData.type === "consumable") {
-      const fine = qualities.filter((q) => q === "consumableFine").length;
+      const fine = qualities.filter((q) => q === "fine").length;
       result[baseId] = {
         ...emptyEntry(hidden),
         ...consumableEntryFields(totalCount - fine, fine),
@@ -558,7 +558,7 @@ export function parseTotalWealth(
       value = Object.values(values)[0];
     } else if (quality in values) {
       value = values[quality];
-    } else if (quality === "consumableFine" && "fine" in values) {
+    } else if (quality === "fine" && "fine" in values) {
       value = values["fine"];
     }
 

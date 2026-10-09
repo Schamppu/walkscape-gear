@@ -27,7 +27,7 @@ export const DEFAULT_OPTIMISER_SETTINGS: OptimiserSettings = {
 
 export const OPTIMISER_SETTINGS_STORAGE_KEY = "advancedOptimiser.settings";
 
-export type ConsumableQuality = "consumableCommon" | "consumableFine";
+export type ConsumableQuality = "common" | "fine";
 
 type OwnedConsumable = {
   /** Common and fine together. */
@@ -69,7 +69,7 @@ export const suggestableConsumableQualities = (
   const enough = (stock: number) => stock > 0 && stock >= settings.minConsumableStock;
 
   const qualities: ConsumableQuality[] = [];
-  if (settings.allowFineConsumables && enough(fine)) qualities.push("consumableFine");
-  if (enough(common)) qualities.push("consumableCommon");
+  if (settings.allowFineConsumables && enough(fine)) qualities.push("fine");
+  if (enough(common)) qualities.push("common");
   return qualities;
 };

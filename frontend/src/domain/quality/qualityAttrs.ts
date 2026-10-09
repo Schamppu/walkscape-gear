@@ -15,10 +15,7 @@
  * - Mutate the caller's data (deep-clones inputs before mutation).
  */
 
-import {
-  qualityOptions,
-  consumableQualityOptions,
-} from "@/domain/constants/quality";
+import { qualityOptions } from "@/domain/constants/quality";
 import type {
   Attribute,
   Buff,
@@ -75,19 +72,14 @@ const qualityRank = Object.fromEntries(
 
 /**
  * Accumulates `itemAttrs` with all quality-tier bonus attributes up to and
- * including the tier matching `quality`.  Handles consumable items by
- * delegating to `sumBuffAttrs`.
+ * including the tier matching `quality`. For gear; consumables go through
+ * `sumBuffAttrs` (see `usedAttrs`).
  */
 export function sumAttrs(
   itemAttrs: Attribute[] | undefined,
   qualityAttrs: QualityAttr[] | undefined | null,
-  buffs: Buff[] | null | undefined,
   quality: string,
 ): Attribute[] {
-  if (quality && quality.includes("consumable")) {
-    return sumBuffAttrs(buffs ?? [], quality);
-  }
-
   const attrs: Attribute[] = (itemAttrs ?? [])
     .map((a) => deepClone(a))
     .map((attribute) => ({
@@ -146,9 +138,8 @@ export function sumAttrs(
 }
 
 /**
- * Returns the effective attributes for a consumable item.
- * Normal quality returns the base buff attributes; any fine quality returns
- * the fine buff attributes.
+ * Returns the effective attributes for a consumable item: the fine buff
+ * attributes for quality `"fine"`, the normal ones otherwise.
  */
 export function sumBuffAttrs(buffs: Buff[], quality: string): Attribute[] {
   const buffData = buffs.flatMap(({ data }) =>
@@ -158,7 +149,6 @@ export function sumBuffAttrs(buffs: Buff[], quality: string): Attribute[] {
     return [];
   }
 
-  const [normal] = consumableQualityOptions.map(({ value }) => value);
   const mapAttrs = (attribute: Attribute): Attribute => ({
     ...attribute,
     stats: attribute.stats,
@@ -166,15 +156,15 @@ export function sumBuffAttrs(buffs: Buff[], quality: string): Attribute[] {
 
   const attrs = buffData[0].attributes.map(mapAttrs);
   const fineAttrs = buffData[0].fineAttributes.map(mapAttrs);
-  return quality === normal ? attrs : fineAttrs;
+  return quality === "fine" ? fineAttrs : attrs;
 }
 
 /**
  * Returns the effective attributes for any item (gear, consumable, or pet).
  *
  * - For pets: `quality` is the numeric level (as a string, e.g. "1").
- * - For consumables: `quality` is a consumable quality string
- *   (e.g. "consumableCommon").
+ * - For consumables: `quality` is "common" or "fine"; the item type decides
+ *   that buffs apply, not the quality string (gear also has "common").
  * - For gear: `quality` is a standard quality string (e.g. "common").
  */
 export function usedAttrs(item: Item, quality: string): Attribute[] {
@@ -197,15 +187,11 @@ export function usedAttrs(item: Item, quality: string): Attribute[] {
     }
   };
 
+  if (consumable) return sumBuffAttrs(item.buffs ?? [], quality);
+
   const attrs = getAttrs(item);
   const usedQuality = pet ? "common" : quality;
-  const gearItem = pet || consumable ? undefined : (item as GearItem);
-  const consumableItem = consumable ? item : undefined;
+  const gearItem = pet ? undefined : (item as GearItem);
 
-  return sumAttrs(
-    attrs,
-    gearItem?.itemQualityAttrs,
-    consumableItem?.buffs,
-    usedQuality,
-  );
+  return sumAttrs(attrs, gearItem?.itemQualityAttrs, usedQuality);
 }
