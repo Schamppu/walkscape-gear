@@ -5,6 +5,7 @@ import {
   computeTokenTotal,
   buildGoldBreakdown,
   buildTokenBreakdown,
+  computeRecipeValue,
 } from "@/domain/drops/aggregateDropValue";
 import type {
   MaterialValueInfo,
@@ -261,5 +262,32 @@ describe("buildTokenBreakdown", () => {
     expect(lines[0].value).toBeCloseTo(2); // (1000/500)*1
     expect(lines[0].icon).toBe("icons/t.png");
     expect(lines[0].label).toBe("token");
+  });
+});
+
+describe("computeRecipeValue", () => {
+  const params = (noMaterialsConsumed: number) => ({
+    materials: [{ options: [{ item: "ore", amount: 2 }] }],
+    itemRewards: { bar: 1 },
+    stepsPerRewardRoll: 10,
+    stepsPerAction: 10,
+    noMaterialsConsumed,
+    useFine: false,
+    allGearItems: {},
+    itemValues: {
+      ore: { common: 5, fine: 20 },
+      bar: { common: 30, fine: 90 },
+    } as unknown as ItemValueMap,
+    craftingOdds: [],
+  });
+
+  it("is reward value minus material cost per 1k steps", () => {
+    // 100 crafts per 1k steps: 100 × 30 reward − 100 × 2 × 5 cost.
+    expect(computeRecipeValue(params(0) as never)).toBeCloseTo(3000 - 1000, 6);
+  });
+
+  it("gets cheaper with no materials consumed", () => {
+    // Half the actions consume nothing: cost halves.
+    expect(computeRecipeValue(params(0.5) as never)).toBeCloseTo(3000 - 500, 6);
   });
 });

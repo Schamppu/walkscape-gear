@@ -34,6 +34,7 @@ describe("validXValues", () => {
     ["chests", { hasChests: true }],
     ["collectibles", { hasCollectibles: true }],
     ["tokens", { hasTokens: true }],
+    ["coins", { hasCoins: true }],
   ] as const)("offers %s when the context has it", (x, overrides) => {
     expect(validXValues(makeTargetContext(overrides))).toContain(x);
   });

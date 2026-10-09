@@ -21,6 +21,7 @@ import { X_VALUES, Y_VALUES } from "./config";
 import type { Target, XValue, YValue } from "./config";
 import { getOutcomeOdds, type FineMaterialsMode } from "@/domain/quality/qualityOutcomeOdds";
 import type { SkillModifiersResult } from "@/domain/skillModifiers";
+import { coinsPerAction, type CoinProfile } from "./coins";
 import type { DropItemInfo } from "@/domain/lootTables/dropInfo";
 import type { TokenValuesMap } from "@/domain/constants/tokenValues";
 import type { LootTableRef } from "@/domain/types/common";
@@ -39,6 +40,8 @@ export type TargetContext = {
   hasFineMaterials: boolean;
   /** The activity drops items with an Adventurer's Guild token value. */
   hasTokens: boolean;
+  /** The activity drops items with a coin value, or is a recipe. */
+  hasCoins: boolean;
 };
 
 /** Quality inputs for recipes whose main reward is a crafted item. */
@@ -60,6 +63,8 @@ export type DropProfile = {
   tokenBasePerRoll: number;
   /** Extra token value per roll per unit of fine chance (fine − common value). */
   tokenFineBonusPerRoll: number;
+  /** Coin values; missing in jobs exported before coins existed. */
+  coins?: CoinProfile;
 };
 
 export type ExtractionContext = {
@@ -81,6 +86,7 @@ const X_RULES: Partial<Record<XValue, (ctx: TargetContext) => boolean>> = {
   chests: (ctx) => ctx.hasChests,
   collectibles: (ctx) => ctx.hasCollectibles,
   tokens: (ctx) => ctx.hasTokens,
+  coins: (ctx) => ctx.hasCoins,
   eternalCrafts: (ctx) => ctx.isRecipe && ctx.producesCraftedItem,
 };
 
@@ -196,6 +202,8 @@ const perAction = (x: XValue, ctx: ExtractionContext): number => {
       return rolls * (drops.tokenBasePerRoll + drops.tokenFineBonusPerRoll * m.fineMaterialFind);
     case "eternalCrafts":
       return rolls * eternalChance(m, ctx.quality);
+    case "coins":
+      return coinsPerAction(drops.coins, m, ctx.quality);
   }
 };
 

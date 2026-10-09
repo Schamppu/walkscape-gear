@@ -31,6 +31,7 @@ export function makeTargetContext(overrides: Partial<TargetContext> = {}): Targe
     hasCollectibles: false,
     hasFineMaterials: false,
     hasTokens: false,
+    hasCoins: false,
     ...overrides,
   };
 }

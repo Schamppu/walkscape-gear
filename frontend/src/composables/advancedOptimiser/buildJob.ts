@@ -9,7 +9,8 @@ import {
   useFineMaterials,
   type FineMaterialsContext,
 } from "@/composables/useFineMaterialsCalculations";
-import { recipeProducesCraftedItem } from "@/domain/advancedOptimiser/targets";
+import { recipeProducesCraftedItem, type DropProfile } from "@/domain/advancedOptimiser/targets";
+import { buildRecipeCoins } from "@/domain/advancedOptimiser/coins";
 import type { RecipeDetail } from "@/domain/types/recipe";
 import {
   buildStaticEntries,
@@ -110,7 +111,7 @@ export const buildAdvancedJob = ({
   const source = baseCtx.source.value as JobSource | null;
   if (!source) return null;
   const activitySelected = baseCtx.activitySelected.value;
-  const { fineMode } = useFineMaterials(baseCtx as unknown as FineMaterialsContext);
+  const { fineMode, useFine } = useFineMaterials(baseCtx as unknown as FineMaterialsContext);
   const producesCraftedItem =
     !activitySelected &&
     recipeProducesCraftedItem(
@@ -170,6 +171,26 @@ export const buildAdvancedJob = ({
     .filter((set) => Object.keys(set).length > 0);
 
   // --- Extraction inputs -----------------------------------------------------
+  const isGear = (id: string) => id in itemsStore.allGearItems;
+  const withRecipeCoins = (drops: DropProfile): DropProfile => {
+    if (activitySelected || !drops.coins) return drops;
+    const recipe = source as unknown as RecipeDetail;
+    return {
+      ...drops,
+      coins: {
+        ...drops.coins,
+        recipe: buildRecipeCoins({
+          materials: recipe.materials ?? [],
+          itemRewards: recipe.itemRewards ?? {},
+          isGear,
+          isCrafted: (id) => isGear(id) && itemsStore.allGearItems[id].type === "crafted",
+          itemValues: dataStore.itemValues as unknown as Record<string, Record<string, number>>,
+          useFine: useFine.value,
+        }),
+      },
+    };
+  };
+
   const xpMap = (activitySelected ? source.xpRewardsMap : source.xpRewards) ?? {};
   const levelReq = Object.values(getLevelRequirementsMap(source.requirements))[0] ?? 1;
 
@@ -183,7 +204,7 @@ export const buildAdvancedJob = ({
     extraction: {
       activitySkills: Object.keys(xpMap),
       quality: producesCraftedItem ? { levelReq, fineMode: fineMode.value } : null,
-      drops: buildSourceDropProfile(source),
+      drops: withRecipeCoins(buildSourceDropProfile(source)),
     },
     reqCtx: buildStaticReqCtx(),
     activityRequirements: requirements.filter(isHandledRequirement),

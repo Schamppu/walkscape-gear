@@ -1,5 +1,6 @@
 import { computed, ref, shallowRef, watch } from "vue";
 import { useActivityStore } from "@/store/activity";
+import { useDataStore } from "@/store/data";
 import { useSettingsStore } from "@/store/settings";
 import { useGearStore } from "@/store/gear";
 import { useItemsStore } from "@/store/items";
@@ -47,6 +48,7 @@ export function useAdvancedOptimiser() {
   const { hasFineDrops, dropItemInfoMap } = injectLootTables();
   const { canBeEquipped } = injectRequirements();
   const activityStore = useActivityStore();
+  const dataStore = useDataStore();
   const settingsStore = useSettingsStore();
   const gearStore = useGearStore();
   const itemsStore = useItemsStore();
@@ -93,6 +95,9 @@ export function useAdvancedOptimiser() {
       ...sourceTableFlags(source?.tables),
       hasFineMaterials: hasFineDrops.value,
       hasTokens: Object.keys(dropItemInfoMap.value).some((id) => id in tokenValues),
+      hasCoins:
+        isRecipe ||
+        Object.keys(dropItemInfoMap.value).some((id) => id === "gold" || id in dataStore.itemValues),
     };
   });
 
