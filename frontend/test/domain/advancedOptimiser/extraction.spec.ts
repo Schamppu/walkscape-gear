@@ -24,6 +24,12 @@ describe("extracted — Y conversion", () => {
     expect(extracted("xp", "material", ctx)).toBeCloseTo(50 / 0.8, 10);
   });
 
+  it("counts per completion: a double action's bonus action is free", () => {
+    const ctx = makeExtractionContext({ modifiers: makeSkillModifiers({ doubleAction: 0.25 }) });
+    expect(extracted("xp", "action", ctx)).toBeCloseTo(50 * 1.25, 10);
+    expect(extracted("rewardRolls", "action", ctx)).toBeCloseTo(1.25, 10);
+  });
+
   it("double rewards doesn't change xp per material", () => {
     const withoutDr = makeExtractionContext({
       modifiers: makeSkillModifiers({ noMaterialsConsumed: 0.25 }),

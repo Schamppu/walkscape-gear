@@ -20,6 +20,10 @@ describe("usefulStatsFor", () => {
     },
   );
 
+  it("per-action (per completion) targets care about double action", () => {
+    expect(usefulStatsFor({ x: "rewardRolls", y: "action" })).toContain("double_action");
+  });
+
   it("per-action targets don't care about step cost", () => {
     const stats = usefulStatsFor({ x: "rewardRolls", y: "action" });
     expect(stats).not.toContain("work_efficiency");
@@ -44,7 +48,7 @@ describe("unionUsefulStats", () => {
       makeTarget("xp", "action", 5),
       makeTarget("chests", "step", 0),
     ]);
-    expect(stats).toEqual(["bonus_experience"]);
+    expect(stats).toEqual(["bonus_experience", "double_action"]);
   });
 
   it("returns nothing for no targets", () => {

@@ -193,15 +193,20 @@ const perAction = (x: XValue, ctx: ExtractionContext): number => {
 };
 
 /**
- * How many `y` one action takes. Double actions consume materials too, so a
- * material set is used per action unless `no_materials_consumed` procs.
+ * How many `y` one action takes ("action" = an effective action, so a double
+ * action counts as two).
+ * - `action` as a Y means an action *completion*, the unit ability and buff
+ *   durations count in. A double action's bonus action comes within the same
+ *   completion, so one effective action is 1 / (1 + double action) completions.
+ * - Double actions consume materials too, so a material set is used per
+ *   action unless `no_materials_consumed` procs.
  */
 const yPerAction = (y: YValue, m: SkillModifiersResult): number => {
   switch (y) {
     case "step":
       return m.stepsPerAction;
     case "action":
-      return 1;
+      return 1 / (1 + m.doubleAction);
     case "material":
       return 1 - m.noMaterialsConsumed;
   }
