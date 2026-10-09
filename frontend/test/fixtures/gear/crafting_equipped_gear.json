@@ -4134,7 +4134,7 @@
       "crafting"
     ],
     "type": "consumable",
-    "quality": "consumableCommon",
+    "quality": "common",
     "consumableType": "food",
     "gearType": null,
     "requirements": [],
@@ -4230,6 +4230,6 @@
     "tables": [],
     "canBeFine": true,
     "icon": "assets/icons/items/materials/food/pickles.png",
-    "quality2": "consumableCommon"
+    "quality2": "common"
   }
 ]

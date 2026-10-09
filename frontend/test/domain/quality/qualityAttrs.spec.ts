@@ -38,7 +38,6 @@ describe("sumAttrs", () => {
       const result = sumAttrs(
         farganitePickaxe.itemAttrs as Attribute[],
         farganitePickaxe.itemQualityAttrs as Attribute[],
-        [],
         "common",
       );
       expect(result).toHaveLength(1);
@@ -50,7 +49,6 @@ describe("sumAttrs", () => {
       const result = sumAttrs(
         tarsiliumBoots.itemAttrs as Attribute[],
         tarsiliumBoots.itemQualityAttrs as Attribute[],
-        [],
         "common",
       );
       expect(result).toHaveLength(4);
@@ -74,7 +72,6 @@ describe("sumAttrs", () => {
       const result = sumAttrs(
         farganitePickaxe.itemAttrs as Attribute[],
         farganitePickaxe.itemQualityAttrs as Attribute[],
-        [],
         "uncommon",
       );
       const stat = getStat(result, "workEfficiency", "Mining");
@@ -86,7 +83,6 @@ describe("sumAttrs", () => {
       const result = sumAttrs(
         farganitePickaxe.itemAttrs as Attribute[],
         farganitePickaxe.itemQualityAttrs as Attribute[],
-        [],
         "uncommon",
       );
       // base had 1 attr, uncommon adds 5 new attrs → total 6
@@ -113,7 +109,6 @@ describe("sumAttrs", () => {
       const result = sumAttrs(
         tarsiliumBoots.itemAttrs as Attribute[],
         tarsiliumBoots.itemQualityAttrs as Attribute[],
-        [],
         "uncommon",
       );
       expect(result).toHaveLength(4);
@@ -126,7 +121,6 @@ describe("sumAttrs", () => {
       const result = sumAttrs(
         tarsiliumBoots.itemAttrs as Attribute[],
         tarsiliumBoots.itemQualityAttrs as Attribute[],
-        [],
         "uncommon",
       );
       const doubleActionSmithing = getStat(result, "doubleAction", "Smithing");
@@ -138,7 +132,6 @@ describe("sumAttrs", () => {
       const result = sumAttrs(
         tarsiliumBoots.itemAttrs as Attribute[],
         tarsiliumBoots.itemQualityAttrs as Attribute[],
-        [],
         "uncommon",
       );
       expect(
@@ -155,7 +148,6 @@ describe("sumAttrs", () => {
       const result = sumAttrs(
         farganitePickaxe.itemAttrs as Attribute[],
         farganitePickaxe.itemQualityAttrs as Attribute[],
-        [],
         "rare",
       );
       const stat = getStat(result, "workEfficiency", "Mining");
@@ -164,37 +156,11 @@ describe("sumAttrs", () => {
     });
   });
 
-  describe("consumable item - delegates to sumBuffAttrs", () => {
-    it("returns normal buff attributes for consumableCommon quality", () => {
-      const result = sumAttrs(
-        cookedSquid.itemAttrs as Attribute[],
-        cookedSquid.itemQualityAttrs as Attribute[],
-        cookedSquid.buffs as Buff[],
-        "consumableCommon",
-      );
-      expect(result).toHaveLength(1);
-      expect(result[0].stats[0].type).toBe("doubleAction");
-      expect(result[0].stats[0].value).toBeCloseTo(0.08, 5);
-    });
-
-    it("returns fine buff attributes for consumableFine quality", () => {
-      const result = sumAttrs(
-        cookedSquid.itemAttrs as Attribute[],
-        cookedSquid.itemQualityAttrs as Attribute[],
-        cookedSquid.buffs as Buff[],
-        "consumableFine",
-      );
-      expect(result).toHaveLength(1);
-      expect(result[0].stats[0].value).toBeCloseTo(0.16, 5);
-    });
-  });
-
   describe("gear item with two doubleRewards attrs - good (uncommon) quality", () => {
     it("returns both doubleRewards attrs at good quality", () => {
       const result = sumAttrs(
         spectralHuntingBow.itemAttrs as Attribute[],
         spectralHuntingBow.itemQualityAttrs as Attribute[],
-        [],
         "uncommon",
       );
       const doubleRewards = result.filter(
@@ -207,7 +173,6 @@ describe("sumAttrs", () => {
       const result = sumAttrs(
         spectralHuntingBow.itemAttrs as Attribute[],
         spectralHuntingBow.itemQualityAttrs as Attribute[],
-        [],
         "uncommon",
       );
       const doubleRewards = result.filter(
@@ -221,7 +186,6 @@ describe("sumAttrs", () => {
       const result = sumAttrs(
         spectralHuntingBow.itemAttrs as Attribute[],
         spectralHuntingBow.itemQualityAttrs as Attribute[],
-        [],
         "uncommon",
       );
       const doubleRewards = result.filter(
@@ -237,7 +201,6 @@ describe("sumAttrs", () => {
       const result = sumAttrs(
         spectralVest.itemAttrs as Attribute[],
         spectralVest.itemQualityAttrs as Attribute[],
-        [],
         "uncommon",
       );
       const doubleRewards = result.filter(
@@ -250,7 +213,6 @@ describe("sumAttrs", () => {
       const result = sumAttrs(
         spectralVest.itemAttrs as Attribute[],
         spectralVest.itemQualityAttrs as Attribute[],
-        [],
         "uncommon",
       );
       const spectralAttr = result.find(
@@ -266,7 +228,6 @@ describe("sumAttrs", () => {
       const result = sumAttrs(
         spectralVest.itemAttrs as Attribute[],
         spectralVest.itemQualityAttrs as Attribute[],
-        [],
         "uncommon",
       );
       const generalAttr = result.find(
@@ -283,7 +244,6 @@ describe("sumAttrs", () => {
       const result = sumAttrs(
         farganitePickaxe.itemAttrs as Attribute[],
         [],
-        [],
         "uncommon",
       );
       expect(result).toHaveLength(1);
@@ -294,7 +254,6 @@ describe("sumAttrs", () => {
       const result = sumAttrs(
         farganitePickaxe.itemAttrs as Attribute[],
         undefined,
-        [],
         "uncommon",
       );
       expect(result).toHaveLength(1);
@@ -307,13 +266,11 @@ describe("sumAttrs", () => {
       sumAttrs(
         farganitePickaxe.itemAttrs as Attribute[],
         farganitePickaxe.itemQualityAttrs as Attribute[],
-        [],
         "uncommon",
       );
       sumAttrs(
         farganitePickaxe.itemAttrs as Attribute[],
         farganitePickaxe.itemQualityAttrs as Attribute[],
-        [],
         "uncommon",
       );
       expect(farganitePickaxe.itemAttrs[0].stats[0].value).toBe(originalValue);
@@ -326,25 +283,25 @@ describe("sumAttrs", () => {
 // ---------------------------------------------------------------------------
 
 describe("sumBuffAttrs", () => {
-  it("returns normal attributes for consumableCommon quality", () => {
+  it("returns normal attributes for common quality", () => {
     const result = sumBuffAttrs(
       cookedSquid.buffs as Buff[],
-      "consumableCommon",
+      "common",
     );
     expect(result).toHaveLength(1);
     expect(result[0].stats[0].type).toBe("doubleAction");
     expect(result[0].stats[0].value).toBeCloseTo(0.08, 5);
   });
 
-  it("returns fine attributes for consumableFine quality", () => {
-    const result = sumBuffAttrs(cookedSquid.buffs as Buff[], "consumableFine");
+  it("returns fine attributes for fine quality", () => {
+    const result = sumBuffAttrs(cookedSquid.buffs as Buff[], "fine");
     expect(result).toHaveLength(1);
     expect(result[0].stats[0].type).toBe("doubleAction");
     expect(result[0].stats[0].value).toBeCloseTo(0.16, 5);
   });
 
   it("returns empty array when buffs array is empty", () => {
-    expect(sumBuffAttrs([], "consumableCommon")).toEqual([]);
+    expect(sumBuffAttrs([], "common")).toEqual([]);
   });
 });
 
@@ -378,14 +335,21 @@ describe("usedAttrs", () => {
   });
 
   describe("consumable items", () => {
-    it("returns normal buff attrs for consumableCommon quality", () => {
-      const result = usedAttrs(cookedSquid as GearItem, "consumableCommon");
+    it("returns normal buff attrs for common quality", () => {
+      const result = usedAttrs(cookedSquid as GearItem, "common");
       expect(result).toHaveLength(1);
       expect(result[0].stats[0].value).toBeCloseTo(0.08, 5);
     });
 
-    it("returns fine buff attrs for consumableFine quality", () => {
-      const result = usedAttrs(cookedSquid as GearItem, "consumableFine");
+    it("gives a consumable its buffs even with the catalog's default \"common\" quality", () => {
+      // Gear also has "common"; the item type, not the quality string, decides.
+      const result = usedAttrs(cookedSquid as GearItem, "common");
+      expect(result).toHaveLength(1);
+      expect(result[0].stats[0].type).toBe("doubleAction");
+    });
+
+    it("returns fine buff attrs for fine quality", () => {
+      const result = usedAttrs(cookedSquid as GearItem, "fine");
       expect(result).toHaveLength(1);
       expect(result[0].stats[0].value).toBeCloseTo(0.16, 5);
     });

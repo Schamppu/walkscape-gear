@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import { consumableCounts } from "@/domain/items/consumableCounts";
 import { getItem, searchItems, getPet } from "@/utils/axios/api_routes";
 import { useItemsStore } from "./items";
 import {
@@ -150,9 +151,7 @@ export const useGearStore = defineStore("gearStore", {
         return entry.craftedTier ?? itemData?.quality ?? "common";
       }
       if (type === "consumable") {
-        if (entry.consumableFine) return "consumableFine";
-        if (entry.consumableCommon) return "consumableCommon";
-        return "consumableCommon";
+        return consumableCounts(entry).fine > 0 ? "fine" : "common";
       }
       if (id in itemsStore.petsMap) {
         return String(entry.petLevel ?? 0);

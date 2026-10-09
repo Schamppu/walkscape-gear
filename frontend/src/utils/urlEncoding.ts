@@ -119,7 +119,7 @@ export function encodeGearLoadout(
     const itemId = entry?.id ?? null;
     if (!itemId) return 0;
     let index = reverseMapping[slotName]?.[itemId] ?? 0;
-    if (slot === "consumable" && index > 0 && entry?.quality === "consumableFine") {
+    if (slot === "consumable" && index > 0 && entry?.quality === "fine") {
       index |= CONSUMABLE_FINE_BIT;
     }
     return index;
@@ -156,7 +156,7 @@ export function decodeGearLoadout(
       chunk &= ~CONSUMABLE_FINE_BIT;
       result[slot] = mapping[slotName]?.[chunk] ?? null;
       if (result[slot]) {
-        result["consumableQuality"] = isFine ? "consumableFine" : "consumableCommon";
+        result["consumableQuality"] = isFine ? "fine" : "common";
       }
     } else {
       result[slot] = mapping[slotName]?.[chunk] ?? null;

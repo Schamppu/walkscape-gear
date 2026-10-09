@@ -6,6 +6,11 @@ import {
   type AdvancedOptimiserConfig,
   type Target,
 } from "@/domain/advancedOptimiser/config";
+import {
+  OPTIMISER_SETTINGS_STORAGE_KEY,
+  parseOptimiserSettings,
+  type OptimiserSettings,
+} from "@/domain/advancedOptimiser/consumables";
 
 /**
  * Advanced Optimiser Store
@@ -42,9 +47,20 @@ const removeStored = (key: string): void => {
   }
 };
 
+const loadSettings = (): OptimiserSettings => {
+  try {
+    const raw = localStorage.getItem(OPTIMISER_SETTINGS_STORAGE_KEY);
+    return parseOptimiserSettings(raw ? JSON.parse(raw) : null);
+  } catch {
+    return parseOptimiserSettings(null);
+  }
+};
+
 export const useAdvancedOptimiserStore = defineStore("advancedOptimiserStore", {
   state: () => ({
     configs: {} as Record<string, AdvancedOptimiserConfig>,
+    /** Player-wide settings shared by the quick set and advanced optimiser. */
+    settings: loadSettings(),
   }),
   actions: {
     /** Loads the saved config for an activity into memory, if there is one. */
@@ -81,6 +97,14 @@ export const useAdvancedOptimiserStore = defineStore("advancedOptimiserStore", {
       const config = defaultConfig(activityId);
       this.configs[activityId] = config;
       removeStored(configStorageKey(config));
+    },
+    updateSettings(patch: Partial<OptimiserSettings>): void {
+      this.settings = parseOptimiserSettings({ ...this.settings, ...patch });
+      try {
+        localStorage.setItem(OPTIMISER_SETTINGS_STORAGE_KEY, JSON.stringify(this.settings));
+      } catch {
+        // Storage full or blocked: keep the in-memory settings.
+      }
     },
     save(activityId: string): void {
       const config = this.configs[activityId];

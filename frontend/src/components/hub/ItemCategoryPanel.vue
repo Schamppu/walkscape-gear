@@ -7,6 +7,10 @@ import PetEntry from "./PetEntry.vue";
 import { itemQualityNameSort, levelReqNameSort } from "@/domain/gear/sorting";
 import { getItemEntryQualities } from "@/domain/gear/itemEntryQualities";
 import { consumableQualityOptions } from "@/domain/constants/quality";
+import {
+  consumableCounts,
+  consumableEntryFields,
+} from "@/domain/items/consumableCounts";
 import { injectBaseContext } from "@/composables/context/injectShared";
 
 const props = defineProps({
@@ -49,25 +53,28 @@ const allSelected = computed(() => {
   );
 });
 
+/**
+ * Checking gives consumables you have none of a normal count of 1 (existing
+ * counts are kept); unchecking sets every count to 0.
+ */
 const toggleAllConsumables = (e) => {
   if (e.target.checked) {
-    const newSet = new Set();
     items.forEach((item) => {
-      newSet.add(item.id);
+      const { common, fine } = consumableCounts(itemsStore.ownedItems[item.id]);
+      if (common + fine > 0) return;
       itemsStore.toggleItem({
         itemId: item.id,
-        owned: true,
         hidden: false,
-        consumableCommon: true,
+        ...consumableEntryFields(1, 0),
       });
     });
-    selectedItems.value = newSet;
+    selectedItems.value = new Set(items.map((item) => item.id));
   } else {
     items.forEach((item) => {
       itemsStore.toggleItem({
         itemId: item.id,
-        owned: false,
         hidden: false,
+        ...consumableEntryFields(0, 0),
       });
     });
     selectedItems.value = new Set();

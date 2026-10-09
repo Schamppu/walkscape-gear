@@ -107,7 +107,7 @@ type WithSelectedQuality<T> = T extends unknown
 /**
  * An `ItemDetail` whose `quality` holds the tier selected on the frontend,
  * which is wider than the API's quality enum: the owned crafted tier,
- * "consumableCommon" / "consumableFine", or a pet's level as a string.
+ * "common" / "fine" for consumables, or a pet's level as a string.
  */
 export type SelectedQualityItem = WithSelectedQuality<ItemDetail>;
 

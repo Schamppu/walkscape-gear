@@ -2,6 +2,8 @@ import { useActivityStore } from "@/store/activity";
 import { useGearStore, type EquippedItem } from "@/store/gear";
 import { useDataStore } from "@/store/data";
 import { useSettingsStore } from "@/store/settings";
+import { useAdvancedOptimiserStore } from "@/store/advancedOptimiser";
+import { suggestableConsumableQualities } from "@/domain/advancedOptimiser/consumables";
 import useBaseContext from "@/composables/context/useBaseContext";
 import { useShowItemForActivity } from "@/composables/useShowItemForActivity";
 import { useRequirements } from "@/composables/useRequirements";
@@ -218,6 +220,7 @@ const makeGearCtx = () => {
 
   return {
     activityStore,
+    optimiserSettings: useAdvancedOptimiserStore().settings,
     baseCtx,
     usefulKeywords,
     usefulAbilities,
@@ -244,7 +247,7 @@ const getScoredItemsForSlot = (
   slot: string,
   ctx: GearCtx,
 ): { qualityItems: QualityItem[]; scoredItems: OptimiserItem[] } => {
-  const { baseCtx, filterItems, baseScore } = ctx;
+  const { baseCtx, filterItems, baseScore, optimiserSettings } = ctx;
 
   const items = Object.values(baseCtx.allGearItems.value).filter((item) => {
     const it = item as ItemDetail & { egg?: unknown };
@@ -253,7 +256,7 @@ const getScoredItemsForSlot = (
     );
   });
 
-  const qualityItems: QualityItem[] = items.map((item) => {
+  const qualityItems: QualityItem[] = items.flatMap((item): QualityItem | QualityItem[] => {
     if (!(item.id in baseCtx.ownedItems.value)) {
       return item;
     }
@@ -267,12 +270,11 @@ const getScoredItemsForSlot = (
       };
     }
     if (item.type === "consumable") {
-      const quality = owned.consumableFine
-        ? "consumableFine"
-        : owned.consumableCommon
-          ? "consumableCommon"
-          : item.quality;
-      return { ...item, quality };
+      // One candidate per quality the settings allow (fine can be switched
+      // off; low stock excludes the consumable).
+      const qualities = suggestableConsumableQualities(owned, optimiserSettings);
+      if (qualities === null) return item;
+      return qualities.map((quality) => ({ ...item, quality }));
     }
     if (slot === "pet") {
       return {

@@ -20,6 +20,7 @@ const emptyEntry = (): OwnedItemEntry => ({
   owned: false,
   hidden: false,
   quantity: 0,
+  quantityFine: 0,
   craftedTier: null,
   craftedTier2: null,
   consumableCommon: false,
@@ -153,6 +154,22 @@ describe("Character Import Functionality", () => {
 
     // fishing_guidebook - present in bank
     expect(result["fishing_guidebook"]?.owned).toBe(true);
+  });
+
+  it("counts common and fine consumables separately", () => {
+    const result = parseOwnedItems(
+      { bank: { cooked_squid: 7, cooked_squid_fine: 3 } } as never,
+      { cooked_squid: { type: "consumable" } },
+      { cooked_squid: emptyEntry() },
+      {},
+      false,
+    );
+    expect(result.cooked_squid).toMatchObject({
+      consumableCommon: true,
+      consumableFine: true,
+      quantity: 10,
+      quantityFine: 3,
+    });
   });
 
   // -------------------------------------------------------------------------

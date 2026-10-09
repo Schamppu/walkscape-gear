@@ -21,6 +21,7 @@
 
 import { skillLevelFromXp, characterLevelFromSteps } from "@/domain/character";
 import { qualityOptions } from "@/domain/constants/quality";
+import { consumableEntryFields } from "@/domain/items/consumableCounts";
 
 // ---------------------------------------------------------------------------
 // Public types
@@ -65,6 +66,8 @@ export type OwnedItemEntry = {
   owned: boolean;
   hidden: boolean;
   quantity: number;
+  /** Fine consumables among `quantity`. */
+  quantityFine: number;
   craftedTier: string | null;
   craftedTier2: string | null;
   consumableCommon: boolean;
@@ -209,7 +212,7 @@ type ParsedItemId = {
 /** Parses a raw item-id string into its base id and quality suffix. */
 function parseItemId(itemId: string): ParsedItemId {
   if (itemId.endsWith("_fine")) {
-    return { baseId: itemId.slice(0, -5), quality: "consumableFine" };
+    return { baseId: itemId.slice(0, -5), quality: "fine" };
   }
 
   for (const { value: quality } of qualityOptions) {
@@ -440,6 +443,7 @@ export function parseOwnedItems(
     owned: false,
     hidden,
     quantity: 0,
+    quantityFine: 0,
     craftedTier: null,
     craftedTier2: null,
     consumableCommon: false,
@@ -470,14 +474,10 @@ export function parseOwnedItems(
     const hidden = currentOwnedItems[baseId]?.hidden ?? false;
 
     if (itemData.type === "consumable") {
-      const hasCommon = qualities.includes("common");
-      const hasFine = qualities.includes("consumableFine");
+      const fine = qualities.filter((q) => q === "fine").length;
       result[baseId] = {
         ...emptyEntry(hidden),
-        owned: hasCommon || hasFine,
-        quantity: totalCount,
-        consumableCommon: hasCommon,
-        consumableFine: hasFine,
+        ...consumableEntryFields(totalCount - fine, fine),
       };
     } else if (itemData.type === "crafted") {
       const { quality, quality2 } = resolveQualities(
@@ -558,7 +558,7 @@ export function parseTotalWealth(
       value = Object.values(values)[0];
     } else if (quality in values) {
       value = values[quality];
-    } else if (quality === "consumableFine" && "fine" in values) {
+    } else if (quality === "fine" && "fine" in values) {
       value = values["fine"];
     }
 

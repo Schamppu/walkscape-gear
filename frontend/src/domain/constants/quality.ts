@@ -69,16 +69,25 @@ export const qualityOptions: QualityOption[] = [
   },
 ];
 
+/** Plain "common" / "fine", as in the game and API. */
 export const consumableQualityOptions: QualityOption[] = [
   {
     name: "Common",
-    value: "consumableCommon",
+    value: "common",
   },
   {
     name: "Fine",
-    value: "consumableFine",
+    value: "fine",
   },
 ];
+
+/**
+ * Maps the old consumable qualities ("consumableCommon" / "consumableFine",
+ * used before 2026-10-09) to "common" / "fine". Other values pass through.
+ * For gear sets saved with the old names.
+ */
+export const normalizeConsumableQuality = <T extends string | null | undefined>(quality: T): T | "common" | "fine" =>
+  quality === "consumableCommon" ? "common" : quality === "consumableFine" ? "fine" : quality;
 
 export const petQualityOptions: QualityOption[] = [
   {

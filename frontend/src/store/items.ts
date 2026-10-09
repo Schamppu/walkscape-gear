@@ -39,6 +39,7 @@ export type ToggleItemPayload = {
   owned?: boolean;
   hidden?: boolean;
   quantity?: number;
+  quantityFine?: number;
   craftedTier?: string | null;
   craftedTier2?: string | null;
   consumableCommon?: boolean;
@@ -130,29 +131,28 @@ export const useItemsStore = defineStore("itemStore", {
         `Items: loaded ${Object.keys(this.allGearItems).length} items across ${this.categorizedItems.length} groups, ${Object.keys(this.ownedItems).length} owned, ${Object.keys(this.materials).length} materials`,
       );
     },
-    toggleItem({
-      itemId,
-      owned = true,
-      hidden = false,
-      quantity = 0,
-      craftedTier = null,
-      craftedTier2 = null,
-      consumableCommon = false,
-      consumableFine = false,
-      petLevel = null,
-      petRarity = null,
-    }: ToggleItemPayload): void {
-      const entry = {
-        owned,
-        hidden,
-        quantity,
-        craftedTier,
-        craftedTier2,
-        consumableCommon,
-        consumableFine,
-        petLevel,
-        petRarity,
+    /**
+     * Updates an owned item with the fields in `payload`, keeping the
+     * entry's other fields (e.g. imported quantities, crafted tiers). Fields
+     * the entry doesn't have yet get their defaults.
+     */
+    toggleItem({ itemId, ...payload }: ToggleItemPayload): void {
+      const defaults: OwnedItemState = {
+        owned: true,
+        hidden: false,
+        quantity: 0,
+        quantityFine: 0,
+        craftedTier: null,
+        craftedTier2: null,
+        consumableCommon: false,
+        consumableFine: false,
+        petLevel: null,
+        petRarity: null,
       };
+      const given = Object.fromEntries(
+        Object.entries(payload).filter(([, value]) => value !== undefined),
+      ) as Partial<OwnedItemState>;
+      const entry: OwnedItemState = { ...defaults, ...this.ownedItems[itemId], ...given };
       this.ownedItems[itemId] = entry;
       this.changedOwnedItems[itemId] = entry;
       this.scheduleOwnedItemsFlush();
