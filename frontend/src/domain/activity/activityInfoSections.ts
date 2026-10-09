@@ -26,13 +26,6 @@ export const TRAVEL_ACTIVITY_ID = "travelling";
 // Types
 // ---------------------------------------------------------------------------
 
-/** Faction reward shape expected from ActivityDetail.rewards. */
-export type FactionActivityReward = {
-  runtimeType: string;
-  faction: string;
-  amount: number;
-};
-
 /** Requirement types split into skill-level and non-skill-level groups. */
 export type ClassifiedRequirements = {
   /** Skill-level requirements (type === "skillLevel"). */

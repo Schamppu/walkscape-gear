@@ -114,23 +114,23 @@ export function sumAttrs(
         .map((r) => r.type)
         .sort()
         .join("|");
-      return `${a.stats[0].type}-${a.skillText}-${reqTypes}`;
+      return `${a.stats[0]?.type}-${a.skillText}-${reqTypes}`;
     };
     const statIds = attrs.map(attrKey);
 
-    attributes.forEach((attr) => {
+    (attributes ?? []).forEach((attr) => {
       const stat = deepClone(attr.stats)[0];
       const key = attrKey(attr);
       const prev = statIds.findIndex((id) => id === key);
       const exists = prev >= 0;
 
-      if (!exists) {
+      const oldStat = exists ? attrs[prev].stats[0] : null;
+      if (!oldStat || !stat) {
         attrs.push(attr);
         return;
       }
 
       const getSign = (val: number) => val >= 0;
-      const oldStat = attrs[prev].stats[0];
       const previousSign = getSign(oldStat.value);
 
       oldStat.value =

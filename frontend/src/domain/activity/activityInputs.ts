@@ -34,7 +34,7 @@ export type MaterialRef = {
   id: string;
   name: string;
   icon: string;
-  keywords?: string[];
+  keywords?: string[] | null;
 };
 
 /** External lookups injected from the store/composable layer. */

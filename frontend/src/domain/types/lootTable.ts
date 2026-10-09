@@ -1,50 +1,25 @@
+import type { components } from "./generated/api";
 import type { LootTableRef } from "./common";
 
-export type LootTableSummary = {
-  id: string;
-  name: string;
-};
+type Schemas = components["schemas"];
 
-/**
- * An inline sub-table within a chest loot table.
- * `weight` is the per-roll probability that this sub-table is triggered.
- */
-export type ChestSubTable = {
-  id: string;
-  weight: number;
-  type: string;
-  tableRows: LootTableRow[];
-};
+export type LootTableSummary = Schemas["LootTableListItem"];
 
-export type LootTableDetail = {
-  id: string;
-  category: string;
-  noDropChance: number;
-  subTables: ChestSubTable[];
-  tableRows: LootTableRow[];
-}
+export type RequirementBonus = Schemas["RequirementBonus"];
 
 // ---------------------------------------------------------------------------
 // Loot table row detail
 // ---------------------------------------------------------------------------
 
-export type RequirementBonus = {
-  levelRequirement: number;
-  levelMaxScaling: number;
-  relatedSkill: string;
-};
+export type LootTableDetail = Schemas["LootTableDetail"];
 
-export type LootTableRow = {
-  rowItemID: string | null;
-  name?: string;
-  rowWeight: number;
-  minWeightScale: number;
-  rowMinimumAmount: number;
-  rowMaximumAmount: number;
-  isMoney?: boolean;
-  icon?: string;
-  requirementsBonuses?: RequirementBonus[];
-};
+export type LootTableRow = NonNullable<LootTableDetail["tableRows"]>[number];
+
+/**
+ * An inline sub-table within a chest loot table.
+ * `weight` is the per-roll probability that this sub-table is triggered.
+ */
+export type ChestSubTable = NonNullable<LootTableDetail["subTables"]>[number];
 
 export type DetailedLootTable = {
   noDropChance: number;

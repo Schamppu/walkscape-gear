@@ -75,15 +75,17 @@ export function attrsToDisplayEntries(
 ): DisplayAttrEntry[] {
   return attrs
     .flatMap((obj) => {
-      const { customText, stats, requirements } = obj;
-      return stats.flatMap((stat): DisplayAttrEntry => {
+      const { customText, customIcon } = obj;
+      const stats = obj.stats.filter((stat): stat is Stat => stat !== null);
+      const requirements = obj.requirements ?? [];
+      return stats.map((stat): DisplayAttrEntry => {
         const displayStat: DisplayStat = { ...stat };
         if (stat.stat === "roll_special_table") {
           displayStat.name = customText;
-          displayStat.customIcon = obj.customIcon;
+          displayStat.customIcon = customIcon;
         }
         const data = { requirements, stats };
-        return { stat: displayStat, requirements: requirements ?? [], data };
+        return { stat: displayStat, requirements, data };
       });
     })
     .filter(({ stat }) => !filterStat || stat.type === filterStat);

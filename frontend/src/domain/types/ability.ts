@@ -1,36 +1,24 @@
-import type { Requirement } from "./common";
-import type { Attribute } from "./item";
+/**
+ * Ability types, aliased from the generated OpenAPI types
+ * (`./generated/api`, regenerate with `npm run gen:api-types`).
+ *
+ * Does NOT:
+ * - Import any Vue / reactive APIs.
+ * - Contain any logic.
+ */
 
-export type AbilitySummary = {
-  id: string;
-  name: string;
-  type: string;
-  desc: string;
-  icon: string;
-};
+import type { components } from "./generated/api";
 
-export type AbilityAction = {
-  type: string;
-  runtimeType: string;
-  /** Present on `effect` actions (active abilities carry their stats here). */
-  attributes?: Attribute[];
-  [key: string]: unknown;
-};
+type Schemas = components["schemas"];
 
-export type AbilityData = {
-  dataType: string;
-  actions: AbilityAction[];
-};
+export type AbilitySummary = Schemas["AbilityListItem"];
 
-export type AbilityCooldown = {
-  steps?: number;
-  hours?: number;
-  requirements: Requirement[];
-};
+/** Discriminated on `type` ("effect", "experience", "rollLootTable", ...). */
+export type AbilityAction = Schemas["Action"];
 
-export type AbilityDetail = AbilitySummary & {
-  requirements: Requirement[];
-  cooldown?: AbilityCooldown;
-  data: AbilityData[];
-  attributes?: Attribute[];
-};
+/** Discriminated on `dataType` ("normal", "null"). */
+export type AbilityData = Schemas["Data"];
+
+export type AbilityCooldown = Schemas["Cooldown"];
+
+export type AbilityDetail = Schemas["AbilityDetail"];

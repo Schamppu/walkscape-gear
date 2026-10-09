@@ -1,13 +1,7 @@
-import { type Attribute } from "./item";
+import type { components } from "./generated/api";
 
-type GlobalVariableBase = {
-  id: string;
-  type: string;
-};
+type Schemas = components["schemas"];
 
-export type FineInputBenefit = GlobalVariableBase & {
-  type: "fineInputBenefit";
-  attrs: Attribute[];
-};
+export type FineInputBenefit = Schemas["FineInputBenefit"];
 
-export type GlobalVariable = FineInputBenefit;
+export type GlobalVariable = Schemas["GlobalVariableDetail"];

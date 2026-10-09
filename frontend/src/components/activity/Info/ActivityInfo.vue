@@ -26,7 +26,6 @@ import {
   computeStepsPerRep,
   classifyRequirements,
   TRAVEL_ACTIVITY_ID,
-  type FactionActivityReward,
 } from "@/domain/activity/activityInfoSections";
 import type { ActivityDetail } from "@/domain/types/activity";
 
@@ -146,7 +145,7 @@ const sections = computed(() => {
   };
 
   if (showRewards) {
-    const factionReward = rewards[0] as unknown as FactionActivityReward;
+    const factionReward = rewards[0];
     const rewardsFaction = playerStore.factionsMap[factionReward.faction];
     const stepsPerRep = n(computeStepsPerRep(factionReward.amount, stepsPerAction.value), 0);
 

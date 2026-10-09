@@ -59,9 +59,9 @@ function close() {
         class="modal-content"
         :class="{ 'bottom-sheet': bottomSheet, 'no-padding': noPadding }"
         :style="{
-          width: width,
+          '--modal-width': width,
+          '--modal-min-width': minWidth || 'auto',
           maxWidth: maxWidth,
-          minWidth: minWidth || undefined,
           minHeight: minHeight || undefined,
           maxHeight: bottomSheet ? undefined : '80vh',
           height: height || undefined,
@@ -107,48 +107,68 @@ function close() {
 }
 
 .modal-content {
+  // Horizontal padding lives on the header / body / footer so the body's
+  // scrollbar sits at the modal's edge.
+  --modal-padding: #{$xxxlg};
+
+  // Width comes through CSS variables (not inline width) so the phone
+  // breakpoint below can override it.
+  width: var(--modal-width);
+  min-width: var(--modal-min-width);
   background: $boxDarkBackground;
   border: 1px solid $boxDarkOutline;
-  padding: $xxxlg;
+  padding: var(--modal-padding) 0;
   border-radius: $sm;
   position: relative;
-  overflow-y: auto;
+
+  // Only the body scrolls, so the header (title + close button) and footer
+  // always stay visible.
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 
   &.no-padding {
-    padding: 0;
+    --modal-padding: 0px;
+  }
+
+  @media (max-width: 480px) {
+    &:not(.bottom-sheet) {
+      width: 95%;
+      min-width: 0;
+
+      &:not(.no-padding) {
+        --modal-padding: #{$sm};
+      }
+    }
   }
 
   &.bottom-sheet {
     border-radius: 0;
     border-top-left-radius: $base;
     border-top-right-radius: $base;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
   }
 }
 
 .modal-content.bottom-sheet {
   .modal-header {
     background-color: $boxDarkBackground;
-    border-bottom: 1px solid $boxDarkOutline;
     border-radius: calc($sm - 2px) calc($sm - 2px) 0 0;
     margin-bottom: $xxxs;
   }
 
   .modal-body {
-    flex: 1;
-    min-height: 0;
     display: flex;
     flex-direction: column;
-    overflow-y: auto;
   }
 }
 
 .modal-header {
   display: flex;
+  flex-shrink: 0;
   align-items: center;
   margin-bottom: $base;
+  border-bottom: 1px solid $boxDarkOutline;
+  padding: 0 var(--modal-padding);
 
   h2 {
     flex: 1;
@@ -172,11 +192,15 @@ function close() {
 
 .modal-body {
   flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 0 var(--modal-padding);
 }
 
 .modal-footer {
+  flex-shrink: 0;
   margin-top: $base;
-  padding-top: $base;
+  padding: $base var(--modal-padding) 0;
   border-top: 1px solid $boxDarkOutline;
 }
 

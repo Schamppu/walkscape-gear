@@ -1,21 +1,11 @@
-import type { Requirement } from "./common";
-import type { Attribute } from "./item";
+import type { components } from "./generated/api";
+
+type Schemas = components["schemas"];
 
 // ---------------------------------------------------------------------------
 // Services
 // ---------------------------------------------------------------------------
 
-export type ServiceSummary = {
-  id: string;
-  name: string;
-  icon: string;
-};
+export type ServiceSummary = Schemas["ServiceListItem"];
 
-export type ServiceDetail = ServiceSummary & {
-  tier: string;
-  serviceType: string;
-  keywords: string[];
-  relatedSkills: string[];
-  requirements: Requirement[];
-  attributes: Attribute[];
-};
+export type ServiceDetail = Schemas["ServiceDetail"];

@@ -61,7 +61,7 @@ export function resolveGearContextTables(
         (attr: Attribute) =>
           Array.isArray(attr.tables) &&
           (attr.tables as LootTableRef[]).length > 0 &&
-          checkRequirements(attr.requirements),
+          checkRequirements(attr.requirements ?? []),
       )
       .flatMap((attr: Attribute) => {
         const { stats, customText } = attr;

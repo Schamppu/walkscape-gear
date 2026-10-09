@@ -66,6 +66,15 @@ type ResolvedItem = {
 // Functions
 // ---------------------------------------------------------------------------
 
+/** Drops the nulls the API allows in an attribute's requirements and stats. */
+export function normalizeAttr<T extends Attribute>(attr: T) {
+  return {
+    ...attr,
+    requirements: attr.requirements ?? [],
+    stats: attr.stats.filter((stat): stat is Stat => stat !== null),
+  };
+}
+
 /**
  * Maps a list of plain (non-reactive) `ItemDetail` objects to resolved items,
  * each annotated with the usable attributes for their current quality tier.
@@ -102,7 +111,7 @@ export function buildAllAttrEntries(
           ? attr
           : makePseudoStat(attr);
       return {
-        ...stat,
+        ...normalizeAttr(stat),
         // Attributes may carry their own source (e.g. pet ability attributes,
         // attributed to the ability rather than the pet carrying them).
         item: attr.sourceItem ?? item,
@@ -127,7 +136,10 @@ export function buildAllAttrEntries(
 
   if (service?.attributes?.length) {
     entries.push(
-      ...service.attributes.map((attr) => ({ ...attr, item: service })),
+      ...service.attributes.map((attr) => ({
+        ...normalizeAttr(attr),
+        item: service,
+      })),
     );
   }
 

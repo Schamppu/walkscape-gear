@@ -1,8 +1,3 @@
-import type { Requirement } from "./common";
+import type { components } from "./generated/api";
 
-export type TerrainModifier = {
-  id: string;
-  name: string;
-  requirements: Requirement[];
-  keyword: string[];
-};
+export type TerrainModifier = components["schemas"]["TerrainModifierListItem"];

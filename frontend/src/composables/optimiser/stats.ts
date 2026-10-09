@@ -225,12 +225,12 @@ const enrichItem = (
   };
 };
 
-const enrichItems = (
+export const enrichItems = (
   items: OptimiserItem[],
   abilityCtx: AbilityAttrContext,
 ): WorkerItem[] => items.map((item) => enrichItem(item, abilityCtx));
 
-const enrichCandidates = (
+export const enrichCandidates = (
   candidates: Candidate[],
   abilityCtx: AbilityAttrContext,
 ): WorkerCandidate[] =>
@@ -245,6 +245,66 @@ const enrichCandidates = (
       ]),
     ),
   }));
+
+/**
+ * Attribute entries that don't depend on the gear set: owned collectibles,
+ * level bonuses and the selected service. Shared by both optimisers' worker
+ * jobs. Must be called from a component/composable context.
+ */
+export const buildStaticEntries = () => {
+  const baseCtx = useBaseContext();
+  const { workEfficiencyBonus, qualityOutcomeBonus } = useLevelBonus(
+    baseCtx as unknown as LevelBonusContext,
+  );
+  const collectibles = toDeepRaw(
+    baseCtx.ownedItemsByCategory("collectibles") as ItemDetail[],
+  );
+  return buildAllAttrEntries(
+    resolveItemAttrs(collectibles),
+    workEfficiencyBonus.value,
+    qualityOutcomeBonus.value,
+    baseCtx.service.value,
+  );
+};
+
+/**
+ * Snapshot of everything requirement checks need that doesn't depend on the
+ * gear set being scored. Must be called from a component/composable context.
+ */
+export const buildStaticReqCtx = (): StaticReqCtx => {
+  const baseCtx = useBaseContext();
+  const playerStore = usePlayerStore();
+  const activitySource = baseCtx.source.value;
+  const activityDetail = baseCtx.activity.value as ActivityDetail | null;
+  const recipeDetail = baseCtx.recipe.value as RecipeDetail | null;
+  const location = baseCtx.location.value;
+
+  return {
+    activityId: activitySource?.id ?? null,
+    activityKeywords: activitySource?.keywords ?? [],
+    activityRelatedSkills:
+      activityDetail?.relatedSkillsList ?? recipeDetail?.relatedSkills ?? [],
+    recipeRelatedSkills: recipeDetail?.relatedSkills ?? [],
+    isActivity: baseCtx.activitySelected.value,
+    locationKeywords: location?.keywords ?? [],
+    locationFaction: location?.faction ?? null,
+    locationSubFactions: location?.subFactions ?? [],
+    segments: baseCtx.segments.value.map((s) => ({
+      keywords: s.from.keywords ?? [],
+      faction: s.from.faction,
+      subFactions: s.from.subFactions,
+    })),
+    selectedServiceTier: baseCtx.service.value?.tier ?? null,
+    selectedServiceKeywords: baseCtx.service.value?.keywords ?? [],
+    skillLevels: { ...playerStore.skillLevels },
+    skillsMap: Object.fromEntries(
+      Object.entries(playerStore.skillsMap).map(([k, v]) => [k, { type: v.type }]),
+    ),
+    achievementPoints: baseCtx.achievementPoints.value,
+    factionReputation: { ...(baseCtx.factionReputation.value ?? {}) },
+    ownedItemIds: Object.keys(baseCtx.ownedItems.value),
+  };
+};
 
 /**
  * Builds the serialisable `OptimiserJobData` to be posted to the optimiser
@@ -262,10 +322,6 @@ export const buildWorkerJob = (
   const dataStore = useDataStore();
   const gearStore = useGearStore();
 
-  const { workEfficiencyBonus, qualityOutcomeBonus } = useLevelBonus(
-    baseCtx as unknown as LevelBonusContext,
-  );
-
   const source = baseCtx.source.value as SkillModifiersSource | null;
   const activitySelected = baseCtx.activitySelected.value;
   const { fineMode } = useFineMaterials(baseCtx as unknown as FineMaterialsContext);
@@ -275,19 +331,8 @@ export const buildWorkerJob = (
   const abilityCtx = buildAbilityAttrContext();
 
   // Static entries: collectibles + level bonuses + service (same as makeScorer).
-  const collectibles = toDeepRaw(
-    baseCtx.ownedItemsByCategory("collectibles") as ItemDetail[],
-  );
-  const staticEntries = buildAllAttrEntries(
-    resolveItemAttrs(collectibles),
-    workEfficiencyBonus.value,
-    qualityOutcomeBonus.value,
-    baseCtx.service.value,
-  );
+  const staticEntries = buildStaticEntries();
 
-  // Static requirement context: snapshot of all store data checkRequirements needs.
-  const activitySource = baseCtx.source.value;
-  const activityDetail = baseCtx.activity.value as ActivityDetail | null;
   const recipeDetail = baseCtx.recipe.value as RecipeDetail | null;
   const recipeLevelReq = recipeDetail
     ? Object.values(getLevelRequirementsMap(recipeDetail.requirements))[0] ?? 1
@@ -300,31 +345,8 @@ export const buildWorkerJob = (
       };
   const location = baseCtx.location.value;
 
-  const reqCtx: StaticReqCtx = {
-    activityId: activitySource?.id ?? null,
-    activityKeywords: activitySource?.keywords ?? [],
-    activityRelatedSkills:
-      activityDetail?.relatedSkillsList ?? recipeDetail?.relatedSkills ?? [],
-    recipeRelatedSkills: recipeDetail?.relatedSkills ?? [],
-    isActivity: activitySelected,
-    locationKeywords: location?.keywords ?? [],
-    locationFaction: location?.faction ?? null,
-    locationSubFactions: location?.subFactions ?? [],
-    segments: baseCtx.segments.value.map((s) => ({
-      keywords: s.from.keywords,
-      faction: s.from.faction,
-      subFactions: s.from.subFactions,
-    })),
-    selectedServiceTier: baseCtx.service.value?.tier ?? null,
-    selectedServiceKeywords: baseCtx.service.value?.keywords ?? [],
-    skillLevels: { ...playerStore.skillLevels },
-    skillsMap: Object.fromEntries(
-      Object.entries(playerStore.skillsMap).map(([k, v]) => [k, { type: v.type }]),
-    ),
-    achievementPoints: baseCtx.achievementPoints.value,
-    factionReputation: { ...(baseCtx.factionReputation.value ?? {}) },
-    ownedItemIds: Object.keys(baseCtx.ownedItems.value),
-  };
+  // Static requirement context: snapshot of all store data checkRequirements needs.
+  const reqCtx = buildStaticReqCtx();
 
   // Build enriched worker gear options.
   const workerGearOptions: WorkerGearOptions = {

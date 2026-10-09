@@ -1,7 +1,3 @@
-export type Faction = {
-  id: string;
-  name: string;
-  color: string;
-  reputation: string | null;
-  icon: string;
-};
+import type { components } from "./generated/api";
+
+export type Faction = components["schemas"]["FactionListItem"];

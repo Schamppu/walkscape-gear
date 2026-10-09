@@ -6,6 +6,8 @@
  * - Contain any logic.
  */
 
+import type { components } from "./generated/api";
+
 // ---------------------------------------------------------------------------
 // Requirements
 // ---------------------------------------------------------------------------
@@ -16,9 +18,4 @@ export type { Requirement } from "@/domain/types/requirement";
 // Loot table references (used by activities, recipes, etc.)
 // ---------------------------------------------------------------------------
 
-export type LootTableRef = {
-  isPrimary: boolean;
-  type: string[];
-  rollAmount: number;
-  tables: string[];
-};
+export type LootTableRef = components["schemas"]["LootTable"];

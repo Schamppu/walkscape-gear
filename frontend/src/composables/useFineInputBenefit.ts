@@ -2,7 +2,10 @@ import { computed, type ComputedRef, type Ref } from "vue";
 import { useDataStore } from "@/store/data";
 import { useActivityStore } from "@/store/activity";
 import { useItemsStore } from "@/store/items";
-import type { EffectiveAttrEntry } from "@/domain/effectiveAttrs";
+import {
+  normalizeAttr,
+  type EffectiveAttrEntry,
+} from "@/domain/effectiveAttrs";
 import type { ActivityDetail, ActivityInputOption } from "@/domain/types/activity";
 import type { ActivityNone } from "@/domain/constants/activityNone";
 
@@ -78,7 +81,7 @@ export function useFineInputBenefit(ctx: FineInputBenefitContext): {
       name: "Fine Input Benefit",
       icon: "",
     };
-    return variable.attrs.map((attr) => ({ ...attr, item }));
+    return variable.attrs.map((attr) => ({ ...normalizeAttr(attr), item }));
   });
 
   return { canUseFineInputs, fineInputBonusAttrs };

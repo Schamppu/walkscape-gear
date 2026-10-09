@@ -9,10 +9,10 @@ import {
   computeApplicableTotal,
   roundStatValue,
 } from "@/domain/stats/statAggregation";
-import type { StatDefinition } from "@/domain/types/stat";
+import type { DisplayStat } from "@/domain/types/stat";
 
 const props = defineProps<{
-  stat: StatDefinition;
+  stat: DisplayStat;
   data?: Record<string, unknown>;
   isPercent?: boolean;
 }>();
