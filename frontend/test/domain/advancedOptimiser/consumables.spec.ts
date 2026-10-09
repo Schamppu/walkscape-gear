@@ -7,47 +7,42 @@ import {
 import { pruneDominated } from "@/domain/advancedOptimiser/pruning";
 import { makeWorkerItem } from "../../fixtures/advancedOptimiser";
 
-const owned = (common: boolean, fine: boolean, commonCount = 10, fineCount = 10) => ({
-  consumableCommon: common,
-  consumableFine: fine,
-  quantity: commonCount + fineCount,
-  quantityFine: fineCount,
-});
+/** An owned consumable with these common and fine counts. */
+const owned = (common: number, fine: number) => ({ quantity: common + fine, quantityFine: fine });
 
 describe("suggestableConsumableQualities", () => {
   const settings = (overrides = {}) => ({ ...DEFAULT_OPTIMISER_SETTINGS, ...overrides });
 
-  it("offers every owned quality, fine first", () => {
-    expect(suggestableConsumableQualities(owned(true, true), settings())).toEqual([
+  it("offers every quality with stock, fine first", () => {
+    expect(suggestableConsumableQualities(owned(10, 10), settings())).toEqual([
       "consumableFine",
       "consumableCommon",
     ]);
+    expect(suggestableConsumableQualities(owned(3, 0), settings())).toEqual(["consumableCommon"]);
   });
 
   it("leaves out fine when fine consumables are off", () => {
-    expect(suggestableConsumableQualities(owned(true, true), settings({ allowFineConsumables: false }))).toEqual([
-      "consumableCommon",
-    ]);
-    expect(suggestableConsumableQualities(owned(false, true), settings({ allowFineConsumables: false }))).toEqual([]);
+    const noFine = settings({ allowFineConsumables: false });
+    expect(suggestableConsumableQualities(owned(10, 10), noFine)).toEqual(["consumableCommon"]);
+    expect(suggestableConsumableQualities(owned(0, 10), noFine)).toEqual([]);
   });
 
   it("checks each quality's stock on its own", () => {
     const min = settings({ minConsumableStock: 5 });
-    expect(suggestableConsumableQualities(owned(true, true, 4, 4), min)).toEqual([]);
-    expect(suggestableConsumableQualities(owned(true, true, 20, 2), min)).toEqual(["consumableCommon"]);
-    expect(suggestableConsumableQualities(owned(true, true, 2, 20), min)).toEqual(["consumableFine"]);
-    expect(suggestableConsumableQualities(owned(true, false, 5, 0), min)).toEqual(["consumableCommon"]);
+    expect(suggestableConsumableQualities(owned(4, 4), min)).toEqual([]);
+    expect(suggestableConsumableQualities(owned(20, 2), min)).toEqual(["consumableCommon"]);
+    expect(suggestableConsumableQualities(owned(2, 20), min)).toEqual(["consumableFine"]);
+    expect(suggestableConsumableQualities(owned(5, 0), min)).toEqual(["consumableCommon"]);
   });
 
   it("counts everything as common in data saved without a fine count", () => {
-    const old = { consumableCommon: true, consumableFine: true, quantity: 8 };
-    expect(suggestableConsumableQualities(old, settings({ minConsumableStock: 5 }))).toEqual([
+    expect(suggestableConsumableQualities({ quantity: 8 }, settings({ minConsumableStock: 5 }))).toEqual([
       "consumableCommon",
     ]);
   });
 
-  it("returns null when no quality is recorded", () => {
-    expect(suggestableConsumableQualities(owned(false, false), settings())).toBeNull();
+  it("returns null when no count is recorded", () => {
+    expect(suggestableConsumableQualities(owned(0, 0), settings())).toBeNull();
   });
 });
 

@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed } from "vue";
 import { storeToRefs } from "pinia";
+import { consumableCounts } from "@/domain/items/consumableCounts";
 import { useDataStore } from "@/store/data";
 import { useSettingsStore } from "@/store/settings";
 import {
@@ -160,8 +161,9 @@ const filteredItems = computed(() => {
 
       if (isConsumable) {
         if (showOwned) {
-          quality = entry?.consumableCommon ? "consumableCommon" : null;
-          quality2 = entry?.consumableFine ? "consumableFine" : null;
+          const { common, fine } = consumableCounts(entry);
+          quality = common > 0 ? "consumableCommon" : null;
+          quality2 = fine > 0 ? "consumableFine" : null;
         } else {
           quality = consumableQualityOptions[0].value;
           quality2 = consumableQualityOptions[1].value;

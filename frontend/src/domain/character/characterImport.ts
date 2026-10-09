@@ -21,6 +21,7 @@
 
 import { skillLevelFromXp, characterLevelFromSteps } from "@/domain/character";
 import { qualityOptions } from "@/domain/constants/quality";
+import { consumableEntryFields } from "@/domain/items/consumableCounts";
 
 // ---------------------------------------------------------------------------
 // Public types
@@ -473,15 +474,10 @@ export function parseOwnedItems(
     const hidden = currentOwnedItems[baseId]?.hidden ?? false;
 
     if (itemData.type === "consumable") {
-      const hasCommon = qualities.includes("common");
-      const hasFine = qualities.includes("consumableFine");
+      const fine = qualities.filter((q) => q === "consumableFine").length;
       result[baseId] = {
         ...emptyEntry(hidden),
-        owned: hasCommon || hasFine,
-        quantity: totalCount,
-        quantityFine: qualities.filter((q) => q === "consumableFine").length,
-        consumableCommon: hasCommon,
-        consumableFine: hasFine,
+        ...consumableEntryFields(totalCount - fine, fine),
       };
     } else if (itemData.type === "crafted") {
       const { quality, quality2 } = resolveQualities(

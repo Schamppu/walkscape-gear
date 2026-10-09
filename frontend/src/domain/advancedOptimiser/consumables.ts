@@ -7,6 +7,8 @@
  * - Import Vue / reactive APIs or access stores.
  */
 
+import { consumableCounts } from "@/domain/items/consumableCounts";
+
 export type OptimiserSettings = {
   /** Suggest fine consumables (they're rare, so players may want to save them). */
   allowFineConsumables: boolean;
@@ -28,8 +30,6 @@ export const OPTIMISER_SETTINGS_STORAGE_KEY = "advancedOptimiser.settings";
 export type ConsumableQuality = "consumableCommon" | "consumableFine";
 
 type OwnedConsumable = {
-  consumableCommon: boolean;
-  consumableFine: boolean;
   /** Common and fine together. */
   quantity: number;
   /** Fine among `quantity`; missing in data saved before it existed. */
@@ -51,8 +51,8 @@ export const parseOptimiserSettings = (raw: unknown): OptimiserSettings => {
 
 /**
  * The qualities of an owned consumable the optimisers may suggest, best first.
- * - `null`: no quality is recorded (owned without quality flags); use the
- *   item's default quality.
+ * - `null`: no count is recorded (owned without counts); use the item's
+ *   default quality.
  * - `[]`: none may be suggested (fine is off, or each owned quality's stock
  *   is below the minimum).
  *
@@ -63,16 +63,13 @@ export const suggestableConsumableQualities = (
   owned: OwnedConsumable,
   settings: OptimiserSettings,
 ): ConsumableQuality[] | null => {
-  if (!owned.consumableCommon && !owned.consumableFine) return null;
+  const { common, fine } = consumableCounts(owned);
+  if (common + fine === 0) return null;
 
-  const fineStock = owned.quantityFine ?? 0;
-  const commonStock = (owned.quantity ?? 0) - fineStock;
-  const enough = (stock: number) => stock >= settings.minConsumableStock;
+  const enough = (stock: number) => stock > 0 && stock >= settings.minConsumableStock;
 
   const qualities: ConsumableQuality[] = [];
-  if (owned.consumableFine && settings.allowFineConsumables && enough(fineStock)) {
-    qualities.push("consumableFine");
-  }
-  if (owned.consumableCommon && enough(commonStock)) qualities.push("consumableCommon");
+  if (settings.allowFineConsumables && enough(fine)) qualities.push("consumableFine");
+  if (enough(common)) qualities.push("consumableCommon");
   return qualities;
 };
