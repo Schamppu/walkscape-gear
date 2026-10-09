@@ -1,5 +1,7 @@
 import { computed, ref, shallowRef, watch } from "vue";
 import { useActivityStore } from "@/store/activity";
+import { useDataStore } from "@/store/data";
+import { useSettingsStore } from "@/store/settings";
 import { useGearStore } from "@/store/gear";
 import { useItemsStore } from "@/store/items";
 import { useNotificationStore } from "@/store/notifications";
@@ -8,6 +10,7 @@ import {
   injectBaseContext,
   injectFineMaterials,
   injectLootTables,
+  injectRequirements,
 } from "@/composables/context/injectShared";
 import { installScorer } from "@/composables/optimiser/stats";
 import { prefetchPetAbilityDetails } from "@/composables/optimiser/petAbilities";
@@ -26,6 +29,7 @@ import {
   type SearchResult,
 } from "@/domain/advancedOptimiser/search";
 import type { LocationSummary } from "@/domain/types/location";
+import type { AdvancedOptimiserJob } from "@/workers/advancedOptimiserWorkerTypes";
 import {
   isTargetValid,
   nextUnusedTarget,
@@ -33,6 +37,7 @@ import {
   sourceTableFlags,
   type TargetContext,
 } from "@/domain/advancedOptimiser/targets";
+import { tokenValues } from "@/domain/constants/tokenValues";
 import type { LootTableRef } from "@/domain/types/common";
 import type { RecipeDetail } from "@/domain/types/recipe";
 
@@ -43,9 +48,12 @@ import type { RecipeDetail } from "@/domain/types/recipe";
  */
 export function useAdvancedOptimiser() {
   const baseCtx = injectBaseContext();
-  const { hasFineDrops } = injectLootTables();
+  const { hasFineDrops, dropItemInfoMap } = injectLootTables();
   const { fineMode } = injectFineMaterials();
+  const { canBeEquipped } = injectRequirements();
   const activityStore = useActivityStore();
+  const dataStore = useDataStore();
+  const settingsStore = useSettingsStore();
   const gearStore = useGearStore();
   const itemsStore = useItemsStore();
   const notificationStore = useNotificationStore();
@@ -90,6 +98,7 @@ export function useAdvancedOptimiser() {
       producesCraftedItem,
       ...sourceTableFlags(source?.tables),
       hasFineMaterials: hasFineDrops.value,
+      hasTokens: Object.keys(dropItemInfoMap.value).some((id) => id in tokenValues),
     };
   });
 
@@ -100,6 +109,23 @@ export function useAdvancedOptimiser() {
   });
 
   const lockedSlots = computed(() => gearSlots.filter((slot) => gearStore.isSlotLocked(slot)));
+
+  /**
+   * Locked slots whose item the player can't equip yet (requirements unmet).
+   * Allowed on purpose: locking an item you don't meet the requirements for
+   * plans the rest of the set around it ("what if I had this").
+   */
+  const unusableLockedSlots = computed(() =>
+    lockedSlots.value.filter((slot) => {
+      const item = gearStore.selectedGearset[slot];
+      return !!item && !canBeEquipped(item as Parameters<typeof canBeEquipped>[0]);
+    }),
+  );
+
+  /** Show the "Export job" button (Optimiser operations debug setting). */
+  const canExportJob = computed(
+    () => settingsStore.toolSettings.debugOptimiser?.value === true,
+  );
 
   const canAddTarget = computed<boolean>(
     () => !!config.value && nextUnusedTarget(config.value.targets, targetContext.value) !== null,
@@ -122,38 +148,53 @@ export function useAdvancedOptimiser() {
   const running = ref(false);
   const progress = shallowRef<SearchProgress | null>(null);
   let current: RunningJob | null = null;
+  /** Set when the user stops a run: Finish applies the best set so far, Cancel doesn't. */
+  let stoppedWith: "cancel" | "finish" | null = null;
 
-  /** Runs the optimiser on the current config and equips the best set found. */
-  const run = async (): Promise<void> => {
-    if (running.value) return;
+  /**
+   * Validates the config and builds the worker job, or warns and returns
+   * `null`. Loads the activity's loot tables first (for chest / token rates).
+   */
+  const prepareJob = async (): Promise<AdvancedOptimiserJob | null> => {
     if (!config.value) {
       notificationStore.warning("No activity selected");
-      return;
+      return null;
     }
     const targets = config.value.targets.filter(
       (t) => t.weight > 0 && isTargetValid(t, targetContext.value),
     );
     if (!targets.length) {
-      notificationStore.warning("Give at least one target a weight above 0");
-      return;
+      notificationStore.warning("Give at least one available target a weight above 0");
+      return null;
     }
 
+    const source = baseCtx.source.value as { tables?: LootTableRef[] | null } | null;
+    await Promise.all([
+      prefetchPetAbilityDetails(),
+      dataStore.fetchDetailedLootTables((source?.tables ?? []).flatMap(({ tables }) => tables)),
+    ]);
+
+    const uninstallScorer = installScorer();
+    try {
+      return buildAdvancedJob({
+        config: { ...config.value, targets },
+        producesCraftedItem: targetContext.value.producesCraftedItem,
+        fineMode: fineMode.value,
+      });
+    } finally {
+      uninstallScorer();
+    }
+  };
+
+  /** Runs the optimiser on the current config and equips the best set found. */
+  const run = async (): Promise<void> => {
+    if (running.value) return;
     running.value = true;
     progress.value = null;
     lastRun.value = null;
+    stoppedWith = null;
     try {
-      await prefetchPetAbilityDetails();
-      const uninstallScorer = installScorer();
-      let job;
-      try {
-        job = buildAdvancedJob({
-          config: { ...config.value, targets },
-          producesCraftedItem: targetContext.value.producesCraftedItem,
-          fineMode: fineMode.value,
-        });
-      } finally {
-        uninstallScorer();
-      }
+      const job = await prepareJob();
       if (!job) return;
       await notificationStore.debug("Advanced optimiser: built job", [job]);
 
@@ -164,7 +205,7 @@ export function useAdvancedOptimiser() {
       const applied = await applySearchResult(result, job.searchSlots, {
         setLocation: (location) => activityStore.setLocation(location),
         equipMultiple: (data, useQuality) => gearStore.equipMultiple(data, useQuality),
-      });
+      }, { applyStopped: stoppedWith === "finish" });
       if (applied) notificationStore.success("Optimised gear set equipped");
 
       const location = result.gearSet.location as LocationSummary | null | undefined;
@@ -184,13 +225,44 @@ export function useAdvancedOptimiser() {
     }
   };
 
+  /**
+   * Downloads the job the optimiser would run as JSON, for replaying in the
+   * benchmark (`test/fixtures/advancedOptimiser/jobs/`).
+   */
+  const exportJob = async (): Promise<void> => {
+    try {
+      const job = await prepareJob();
+      if (!job) return;
+      const blob = new Blob([JSON.stringify(job)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = `optimiser-job-${activityId.value}.json`;
+      anchor.click();
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      notificationStore.error("Error exporting optimiser job");
+      console.error(e);
+    }
+  };
+
   /** Stops a running search; the gear set is left unchanged. */
-  const cancel = (): void => current?.cancel();
+  const cancel = (): void => {
+    stoppedWith = "cancel";
+    current?.cancel();
+  };
+
+  /** Stops a running search early and equips the best set found so far. */
+  const finish = (): void => {
+    stoppedWith = "finish";
+    current?.cancel();
+  };
 
   return {
     targetContext,
     config,
     lockedSlots,
+    unusableLockedSlots,
     canAddTarget,
     addTarget,
     updateTarget,
@@ -201,5 +273,8 @@ export function useAdvancedOptimiser() {
     timeBudgetMs: DEFAULT_SEARCH_SETTINGS.timeBudgetMs,
     run,
     cancel,
+    finish,
+    canExportJob,
+    exportJob,
   };
 }

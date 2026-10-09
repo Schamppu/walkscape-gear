@@ -37,6 +37,8 @@ export type TargetContext = {
   hasChests: boolean;
   hasCollectibles: boolean;
   hasFineMaterials: boolean;
+  /** The activity drops items with an Adventurer's Guild token value. */
+  hasTokens: boolean;
 };
 
 /** Quality inputs for recipes whose main reward is a crafted item. */
@@ -75,6 +77,7 @@ const X_RULES: Partial<Record<XValue, (ctx: TargetContext) => boolean>> = {
   fineMaterials: (ctx) => ctx.hasFineMaterials,
   chests: (ctx) => ctx.hasChests,
   collectibles: (ctx) => ctx.hasCollectibles,
+  tokens: (ctx) => ctx.hasTokens,
   eternalCrafts: (ctx) => ctx.isRecipe && ctx.producesCraftedItem,
 };
 

@@ -8,7 +8,11 @@ import type { GearSlot } from "@/domain/constants/gear";
 import type { PetItem } from "@/domain/types/item";
 import { icons } from "@/constants/iconPaths";
 
-const props = defineProps<{ slots: GearSlot[] }>();
+const props = defineProps<{
+  slots: GearSlot[];
+  /** Locked slots whose item the player can't currently use. */
+  unusable?: GearSlot[];
+}>();
 
 const gearStore = useGearStore();
 
@@ -45,6 +49,9 @@ const rows = computed(() =>
               />
               <span :class="`color-${item.quality}`">{{ item.name }}</span>
             </div>
+            <p v-if="unusable?.includes(slot)" class="unusable">
+              Requirements not met yet; results assume you can equip it
+            </p>
             <span v-else class="empty">Empty (kept empty)</span>
           </td>
           <td class="setting-action">
@@ -87,6 +94,12 @@ const rows = computed(() =>
   td.setting-action {
     white-space: nowrap;
   }
+}
+
+.unusable {
+  margin: $xxs 0 0;
+  color: $txNegative;
+  font-size: 0.875em;
 }
 
 .hint,

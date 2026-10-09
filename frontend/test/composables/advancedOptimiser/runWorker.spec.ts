@@ -150,6 +150,19 @@ describe("applySearchResult", () => {
     expect(t.setLocation).toHaveBeenCalledWith(reef);
   });
 
+  it("applies a stopped run when finishing early", async () => {
+    const t = targets();
+    const hat = makeWorkerItem("big_hat");
+    const applied = await applySearchResult(
+      fakeResult({ cancelled: true, gearSet: { head: hat } }),
+      ["head"],
+      t,
+      { applyStopped: true },
+    );
+    expect(applied).toBe(true);
+    expect(t.equipMultiple).toHaveBeenCalledWith({ head: { id: "big_hat", quality: "common" } }, true);
+  });
+
   it("leaves the gear set alone for a cancelled run", async () => {
     const t = targets();
     const applied = await applySearchResult(fakeResult({ cancelled: true }), ["head"], t);

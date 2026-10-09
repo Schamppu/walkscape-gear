@@ -13,6 +13,7 @@ const {
   targetContext,
   config,
   lockedSlots,
+  unusableLockedSlots,
   canAddTarget,
   addTarget,
   updateTarget,
@@ -23,6 +24,9 @@ const {
   timeBudgetMs,
   run,
   cancel,
+  finish,
+  canExportJob,
+  exportJob,
 } = useAdvancedOptimiser();
 </script>
 
@@ -53,12 +57,28 @@ const {
         />
       </section>
 
-      <locked-slots :slots="lockedSlots" />
+      <locked-slots :slots="lockedSlots" :unusable="unusableLockedSlots" />
 
       <section class="run">
-        <button v-if="running" class="cancel" @click="cancel">Cancel</button>
-        <button v-else class="optimise" :disabled="!config.targets.length" @click="run">
+        <div v-if="running" class="run-buttons">
+          <button class="optimise" :disabled="!progress" @click="finish">
+            Finish now
+          </button>
+          <button class="cancel" @click="cancel">Cancel</button>
+        </div>
+        <p v-if="!running && unusableLockedSlots.length" class="warning" role="status">
+          Planning around locked items you can't equip yet. Results assume you can.
+        </p>
+        <button
+          v-if="!running"
+          class="optimise"
+          :disabled="!config.targets.length"
+          @click="run"
+        >
           Optimise
+        </button>
+        <button v-if="canExportJob && !running" class="border-common" @click="exportJob">
+          Export job (debug)
         </button>
 
         <progress-display
@@ -121,6 +141,17 @@ button {
   flex-direction: column;
   align-items: center;
   gap: $md;
+}
+
+.run-buttons {
+  display: flex;
+  gap: $md;
+}
+
+.warning {
+  margin: 0;
+  color: $txNegative;
+  text-align: center;
 }
 
 .cancel {

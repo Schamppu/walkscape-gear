@@ -94,14 +94,32 @@ export const buildAdvancedJob = ({
   // --- Item options ----------------------------------------------------------
   const slotKeys = [...new Set(searchSlots.map(slotKeyOf))];
   const useful = new Set<string>(unionUsefulStats(config.targets));
-  const options = getAdvancedGearOptions(slotKeys, useful, abilityCtx);
+  const usefulOptions = getAdvancedGearOptions(slotKeys, useful, abilityCtx);
 
   // --- Requirements ----------------------------------------------------------
   const requirements = (source.requirements ?? []).concat(
     (activityStore.service?.requirements ?? []) as Requirement[],
   );
+  const requiredOptions = getRequiredGearOptions();
+
+  // Items that fulfil the activity's requirements (e.g. any fishing rod) are
+  // options too, even without useful stats, so the search can swap them.
+  const options = Object.fromEntries(
+    slotKeys.map((key) => {
+      const items = [...(usefulOptions[key] ?? [])];
+      const seen = new Set(items.map((i) => `${i.id}:${i.quality}`));
+      for (const item of enrichItems(requiredOptions[key]?.required ?? [], abilityCtx)) {
+        if (!seen.has(`${item.id}:${item.quality}`)) {
+          seen.add(`${item.id}:${item.quality}`);
+          items.push(item);
+        }
+      }
+      return [key, items];
+    }),
+  );
+
   const requirementSeeds: WorkerGearSet[] = enrichCandidates(
-    requirementsFill(getRequiredGearOptions(), requirements),
+    requirementsFill(requiredOptions, requirements),
     abilityCtx,
   )
     .map(({ gearSet }) =>

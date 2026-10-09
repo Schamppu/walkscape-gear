@@ -14,7 +14,10 @@ export type ApplyTargets = {
 /**
  * Equips the result's items in `searchSlots` (emptying slots the result
  * leaves empty) and switches to its location. Locked slots aren't in
- * `searchSlots`, so they are never touched. Does nothing for a cancelled run.
+ * `searchSlots`, so they are never touched.
+ *
+ * A run stopped early is only applied with `applyStopped` (the user pressed
+ * Finish rather than Cancel).
  *
  * @returns Whether anything was applied.
  */
@@ -22,8 +25,9 @@ export const applySearchResult = async (
   result: SearchResult,
   searchSlots: readonly string[],
   { setLocation, equipMultiple }: ApplyTargets,
+  { applyStopped = false }: { applyStopped?: boolean } = {},
 ): Promise<boolean> => {
-  if (result.cancelled) return false;
+  if (result.cancelled && !applyStopped) return false;
 
   const location = result.gearSet.location as LocationSummary | null | undefined;
   if (location) await setLocation(location as unknown as LocationDetail);

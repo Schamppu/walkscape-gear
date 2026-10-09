@@ -53,7 +53,9 @@ export const DEFAULT_SEARCH_SETTINGS: SearchSettings = {
   beamWidth: 50,
   timeBudgetMs: 10_000,
   climbedSeeds: 5,
-  patience: 100,
+  // Benchmark on 5 real jobs (2026-10-09): every variant down to patience 25
+  // matched a 60s reference; 25 ended in 0.7–3s. 40 leaves a margin.
+  patience: 40,
   pairSamples: 200,
   perturbSlots: 3,
   yieldEveryMs: 50,

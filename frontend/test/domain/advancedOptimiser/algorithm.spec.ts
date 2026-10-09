@@ -9,7 +9,9 @@ import {
 } from "@/domain/advancedOptimiser/search";
 import type { WorkerGearSet, WorkerItem } from "@/workers/optimiserWorkerTypes";
 import type { AdvancedOptimiserJob } from "@/workers/advancedOptimiserWorkerTypes";
+import type { HandledRequirement } from "@/domain/optimiser/requirements";
 import {
+  keywordEquippedReq,
   makeJob,
   makeLocationSummary,
   makeTarget,
@@ -130,6 +132,32 @@ const locationJob = (): AdvancedOptimiserJob =>
     },
   });
 
+/** One item per slot beats everything else: pruning leaves a single option. */
+const dominatedJob = (): AdvancedOptimiserJob =>
+  makeJob({
+    searchSlots: ["head", "chest", "legs"],
+    options: Object.fromEntries(
+      ["head", "chest", "legs"].map((slot) => [
+        slot,
+        [0.05, 0.1, 0.3, 0.15].map((v, i) => item(`${slot}_${i}`, [we(v), da(v / 3)])),
+      ]),
+    ),
+  });
+
+/** The activity needs a rod; the stat-less starting rod should be swapped for a better one. */
+const requiredRodJob = (): AdvancedOptimiserJob => {
+  const plainRod = item("plain_rod", [], ["fishing_rod"]);
+  return makeJob({
+    activityRequirements: [keywordEquippedReq("fishing_rod") as HandledRequirement],
+    searchSlots: ["tool1", "tool2", "head"],
+    options: {
+      tool: [plainRod, item("good_rod", [we(0.2)], ["fishing_rod"]), item("we_tool", [we(0.3)])],
+      head: [item("we_hat", [we(0.25)])],
+    },
+    requirementSeeds: [{ tool1: plainRod }],
+  });
+};
+
 // ---------------------------------------------------------------------------
 // Tests
 // ---------------------------------------------------------------------------
@@ -140,6 +168,8 @@ describe("advanced optimiser finds the brute-force optimum", () => {
     ["no-materials-consumed increasing returns", nmcJob],
     ["3-piece set bonus", setBonusJob],
     ["realm-only item and location", locationJob],
+    ["one dominant item per slot", dominatedJob],
+    ["required keyword item", requiredRodJob],
   ])("%s", async (_, makeUniverse) => {
     const job = makeUniverse();
     const expected = bruteForce(job);
@@ -158,6 +188,14 @@ describe("advanced optimiser finds the brute-force optimum", () => {
     expect(result.bestScore).toBeCloseTo(expected.score, 10);
     const equipped = Object.values(result.gearSet) as WorkerItem[];
     expect(equipped.filter((i) => i?.keywords?.includes("treasure"))).toHaveLength(3);
+  });
+
+  it("swaps a required item for a better one and stays valid", async () => {
+    const result = await search(requiredRodJob());
+    expect(result.valid).toBe(true);
+    const tools = [result.gearSet.tool1, result.gearSet.tool2].map((t) => (t as WorkerItem | undefined)?.id);
+    expect(tools).toContain("good_rod");
+    expect(tools).not.toContain("plain_rod");
   });
 
   it("finds the work-efficiency cap combination from a greedy start", async () => {

@@ -30,6 +30,7 @@ export function makeTargetContext(overrides: Partial<TargetContext> = {}): Targe
     hasChests: false,
     hasCollectibles: false,
     hasFineMaterials: false,
+    hasTokens: false,
     ...overrides,
   };
 }

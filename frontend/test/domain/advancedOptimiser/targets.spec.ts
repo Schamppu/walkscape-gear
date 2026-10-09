@@ -26,13 +26,14 @@ const table = (type: string[]): LootTableRef => ({
 
 describe("validXValues", () => {
   it("offers only the always-valid Xs for a plain activity", () => {
-    expect(validXValues(makeTargetContext())).toEqual(["xp", "rewardRolls", "tokens"]);
+    expect(validXValues(makeTargetContext())).toEqual(["xp", "rewardRolls"]);
   });
 
   it.each([
     ["fineMaterials", { hasFineMaterials: true }],
     ["chests", { hasChests: true }],
     ["collectibles", { hasCollectibles: true }],
+    ["tokens", { hasTokens: true }],
   ] as const)("offers %s when the context has it", (x, overrides) => {
     expect(validXValues(makeTargetContext(overrides))).toContain(x);
   });
@@ -91,7 +92,7 @@ describe("availableYValues", () => {
 describe("availableXValues", () => {
   it("excludes an X once all its Ys are used", () => {
     const others = [makeTarget("xp", "step"), makeTarget("xp", "action")];
-    expect(availableXValues(others, makeTargetContext())).toEqual(["rewardRolls", "tokens"]);
+    expect(availableXValues(others, makeTargetContext())).toEqual(["rewardRolls"]);
   });
 });
 

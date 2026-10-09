@@ -47,6 +47,9 @@ const rows = computed(() =>
           at <strong>{{ locationName }}</strong></span
         >.
       </p>
+      <p v-if="result.cancelled" class="note">
+        Finished early, so this is the best set found so far.
+      </p>
       <p v-if="!result.valid" class="warning">
         No set met all of the activity's gear requirements. Check the equipped set.
       </p>

@@ -12,6 +12,7 @@ import {
 import {
   availableXValues,
   availableYValues,
+  isTargetValid,
   type TargetContext,
 } from "@/domain/advancedOptimiser/targets";
 
@@ -28,10 +29,20 @@ const emit = defineEmits<{
 /** The other rows' targets, whose X / Y pairs row `index` can't pick. */
 const othersOf = (index: number): Target[] => props.targets.filter((_, i) => i !== index);
 
-const xOptions = (index: number): XValue[] => availableXValues(othersOf(index), props.context);
+/** Adds the row's current value so an unavailable (e.g. saved) target still shows. */
+const withCurrent = <T extends string>(values: T[], current: T): T[] =>
+  values.includes(current) ? values : [current, ...values];
+
+const xOptions = (index: number): XValue[] =>
+  withCurrent(availableXValues(othersOf(index), props.context), props.targets[index].x);
 
 const yOptions = (index: number): YValue[] =>
-  availableYValues(props.targets[index].x, othersOf(index), props.context);
+  withCurrent(
+    availableYValues(props.targets[index].x, othersOf(index), props.context),
+    props.targets[index].y,
+  );
+
+const isAvailable = (index: number): boolean => isTargetValid(props.targets[index], props.context);
 
 const onXChange = (index: number, event: Event): void => {
   const x = (event.target as HTMLSelectElement).value as XValue;
@@ -65,7 +76,7 @@ const onWeightInput = (index: number, event: Event): void => {
         <tr
           v-for="(target, index) in targets"
           :key="index"
-          :class="{ disabled: target.weight === 0 }"
+          :class="{ disabled: target.weight === 0, unavailable: !isAvailable(index) }"
         >
           <td class="target-x">
             <select
@@ -110,6 +121,9 @@ const onWeightInput = (index: number, event: Event): void => {
               aria-label="Remove target"
               @click="emit('remove', index)"
             />
+          </td>
+          <td v-if="!isAvailable(index)" class="unavailable-note">
+            Not available for this activity, so it's ignored
           </td>
         </tr>
         <tr v-if="!targets.length">
@@ -167,6 +181,19 @@ const onWeightInput = (index: number, event: Event): void => {
         opacity: 0.6;
       }
     }
+
+    &.unavailable {
+      grid-template-areas:
+        "x y del"
+        "w w w"
+        "n n n";
+
+      .target-x,
+      .target-y,
+      .target-weight {
+        opacity: 0.5;
+      }
+    }
   }
 
   // :nth-child(n) matches the specificity of the mixin's
@@ -203,6 +230,12 @@ const onWeightInput = (index: number, event: Event): void => {
 
   td.setting-action {
     grid-area: del;
+  }
+
+  td.unavailable-note {
+    grid-area: n;
+    color: $txNegative;
+    font-size: 0.875em;
   }
 
   .weight {
