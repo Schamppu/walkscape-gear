@@ -5,43 +5,21 @@ type Schemas = components["schemas"];
 
 export type LootTableSummary = Schemas["LootTableListItem"];
 
-/**
- * The spec declares `relatedSkill` as `SkillsEnum & null`, which collapses to
- * `never`; the API returns a skill id here.
- */
-export type RequirementBonus = Omit<Schemas["RequirementBonus"], "relatedSkill"> & {
-  relatedSkill: Schemas["SkillsEnum"];
-};
-
-type WithRequirementBonus<T> = Omit<T, "requirementsBonuses"> & {
-  requirementsBonuses: RequirementBonus[] | null;
-};
-
-type ApiLootTableDetail = Schemas["LootTableDetail"];
+export type RequirementBonus = Schemas["RequirementBonus"];
 
 // ---------------------------------------------------------------------------
 // Loot table row detail
 // ---------------------------------------------------------------------------
 
-export type LootTableRow = WithRequirementBonus<
-  NonNullable<ApiLootTableDetail["tableRows"]>[number]
->;
+export type LootTableDetail = Schemas["LootTableDetail"];
+
+export type LootTableRow = NonNullable<LootTableDetail["tableRows"]>[number];
 
 /**
  * An inline sub-table within a chest loot table.
  * `weight` is the per-roll probability that this sub-table is triggered.
  */
-export type ChestSubTable = Omit<
-  NonNullable<ApiLootTableDetail["subTables"]>[number],
-  "tableRows"
-> & {
-  tableRows: LootTableRow[] | null;
-};
-
-export type LootTableDetail = Omit<ApiLootTableDetail, "tableRows" | "subTables"> & {
-  tableRows: LootTableRow[] | null;
-  subTables: ChestSubTable[] | null;
-};
+export type ChestSubTable = NonNullable<LootTableDetail["subTables"]>[number];
 
 export type DetailedLootTable = {
   noDropChance: number;

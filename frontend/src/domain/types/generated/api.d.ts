@@ -6635,7 +6635,7 @@ export interface components {
                 rowMinimumAmount: number;
                 /** @description Maximum amount of the item that can drop from this row */
                 rowMaximumAmount: number;
-                minWeightScale: number | null;
+                minWeightScale: number;
                 /** @description List of requirement bonuses that can affect the drop chance of this row */
                 requirementsBonuses: components["schemas"]["RequirementBonus"][] | null;
             }[] | null;
@@ -6669,14 +6669,14 @@ export interface components {
                     rowMinimumAmount: number;
                     /** @description Maximum amount of the item that can drop from this row */
                     rowMaximumAmount: number;
-                    minWeightScale: number | null;
+                    minWeightScale: number;
                     /** @description List of requirement bonuses that can affect the drop chance of this row */
                     requirementsBonuses: components["schemas"]["RequirementBonus"][] | null;
                 }[] | null;
             }[] | null;
         };
         RequirementBonus: {
-            relatedSkill: components["schemas"]["SkillsEnum"] & null;
+            relatedSkill: components["schemas"]["SkillsEnum"];
             levelRequirement: number;
             levelMinScaling: number;
             levelMaxScaling: number;
@@ -6828,7 +6828,7 @@ export interface components {
         /** @description A recipe detail */
         RecipeDetail: components["schemas"]["RecipeListItem"] & {
             /** @description List of keyword ids associated with the activity */
-            keywords?: string[] | null;
+            keywords: string[];
             /** @description Map of skill id to XP reward for the activity */
             xpRewards: {
                 [key: string]: number;
@@ -6971,7 +6971,7 @@ export interface components {
                 /** @description Quantity of the item sold by the shop */
                 quantity: number;
                 /** @description Price multiplier applied to the base price of the item when sold by the shop */
-                priceMultiplier: number | null;
+                priceMultiplier: number;
                 addedPrice: number;
                 fixedPrice: number | null;
             } | {

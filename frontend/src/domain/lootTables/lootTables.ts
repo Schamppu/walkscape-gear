@@ -55,7 +55,7 @@ export function resolveLootTableWeights(
         rowWeight: requirementsBonuses?.length
           ? resolveRowWeight(
               rowWeight,
-              minWeightScale ?? 0,
+              minWeightScale,
               requirementsBonuses[0].levelRequirement,
               requirementsBonuses[0].levelMaxScaling,
               getSkillLevel(requirementsBonuses[0].relatedSkill),
