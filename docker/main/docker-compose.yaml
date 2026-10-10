@@ -4,8 +4,9 @@ services:
     container_name: walkscape-gear-frontend-${NAME_SUFFIX}
     restart: always
     networks:
-      - default
-      - ws-gear
+      default:
+        ipv4_address: ${FRONTEND_IP}
+      ws-gear: {}
     ports:
       - "4001:80"
 
