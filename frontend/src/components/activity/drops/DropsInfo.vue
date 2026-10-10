@@ -62,7 +62,10 @@ const visibleLootTables = computed(() => {
           Hide owned collectibles
         </label>
       </div>
-      <aggregate-drops :chest-loot-tables="chestLootTables" />
+      <aggregate-drops
+        :chest-loot-tables="chestLootTables"
+        :ability-loot-tables="abilityLootTables"
+      />
       <section class="drops-info">
         <template v-if="activitySettings.showCombined.value">
           <drop-item-display

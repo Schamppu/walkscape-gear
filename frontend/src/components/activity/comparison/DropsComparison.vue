@@ -3,6 +3,8 @@ import { computed } from "vue";
 import ComparisonTableShell from "./table/ComparisonTableShell.vue";
 import WsIcon from "@/components/primitives/WsIcon.vue";
 import { useLootTables, type LootTablesContext } from "@/composables/useLootTables";
+import { useChestLootTables } from "@/composables/useChestLootTables";
+import { useAbilityLootTables } from "@/composables/useAbilityLootTables";
 import { snakeToTitle } from "@/utils/string";
 import AggregateDrops from "../drops/aggregate/AggregateDrops.vue";
 import DropStepColumn from "./table/DropStepColumn.vue";
@@ -17,6 +19,10 @@ const props = defineProps<{
 
 const { dropItemInfoMap: drops1 } = useLootTables(props.gs1Ctx as unknown as LootTablesContext);
 const { dropItemInfoMap: drops2 } = useLootTables(props.gs2Ctx as unknown as LootTablesContext);
+const chests1 = useChestLootTables(drops1);
+const chests2 = useChestLootTables(drops2);
+const abilities1 = useAbilityLootTables(props.gs1Ctx);
+const abilities2 = useAbilityLootTables(props.gs2Ctx);
 
 const toData = (v: DropStepValues | null) =>
   v ? { item: v.stepsPerItem, normal: v.stepsPerNormal, fine: v.stepsPerFine, rare: v.stepsPerRare } : {};
@@ -41,8 +47,22 @@ const dropsMap = computed(() =>
           <ws-icon :icon-path="icons.steps" size="sm" />
         </div>
       </td>
-      <td><aggregate-drops :context="props.gs1Ctx" :compact="true" /></td>
-      <td><aggregate-drops :context="props.gs2Ctx" :compact="true" /></td>
+      <td>
+        <aggregate-drops
+          :context="props.gs1Ctx"
+          :compact="true"
+          :chest-loot-tables="chests1"
+          :ability-loot-tables="abilities1"
+        />
+      </td>
+      <td>
+        <aggregate-drops
+          :context="props.gs2Ctx"
+          :compact="true"
+          :chest-loot-tables="chests2"
+          :ability-loot-tables="abilities2"
+        />
+      </td>
     </tr>
     <tr v-for="{ item, g1, g2 } in dropsMap" :key="item.name">
       <td>
