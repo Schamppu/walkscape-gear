@@ -75,6 +75,7 @@ export const icons: IconMap = {
     WE: "work_efficiency.png",
     DR: "double_result.png",
     DA: "double_action.png",
+    xp: "bonus_experience.png",
   }),
   ...withBase("items", {
     money: "money.png",

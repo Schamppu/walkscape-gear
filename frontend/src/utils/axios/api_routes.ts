@@ -189,6 +189,15 @@ export function getContainerItems(): Promise<AxiosResponse<ItemDetail[]>> {
   });
 }
 
+export function getMemosphereItems(): Promise<AxiosResponse<ItemDetail[]>> {
+  return proxy<ItemDetail[]>({
+    url: "items/search",
+    options: {
+      params: { keywords: "memosphere", detailed: true },
+    },
+  });
+}
+
 export function getFineMaterials(): Promise<AxiosResponse<string[]>> {
   return proxy<string[]>({
     url: `items/fine_materials`,

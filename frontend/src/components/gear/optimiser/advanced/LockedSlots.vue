@@ -49,10 +49,10 @@ const rows = computed(() =>
               />
               <span :class="`color-${item.quality}`">{{ item.name }}</span>
             </div>
+            <span v-else class="empty">Empty (kept empty)</span>
             <p v-if="unusable?.includes(slot)" class="unusable">
               Requirements not met yet; results assume you can equip it
             </p>
-            <span v-else class="empty">Empty (kept empty)</span>
           </td>
           <td class="setting-action">
             <ws-button

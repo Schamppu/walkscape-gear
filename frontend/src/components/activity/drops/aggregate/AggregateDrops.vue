@@ -3,6 +3,7 @@ import { icons } from "@/constants/iconPaths";
 import WsIcon from "@/components/primitives/WsIcon.vue";
 import MoneyAggregateDisplay from "./MoneyAggregateDisplay.vue";
 import TokenAggregateDisplay from "./TokenAggregateDisplay.vue";
+import MemosphereXpAggregateDisplay from "./MemosphereXpAggregateDisplay.vue";
 import NewItemsAggregateDisplay from "./NewItemsAggregateDisplay.vue";
 
 const props = defineProps({
@@ -18,6 +19,10 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  abilityLootTables: {
+    type: Array,
+    default: () => [],
+  },
 });
 </script>
 
@@ -25,6 +30,11 @@ const props = defineProps({
   <section :class="['aggregate-drops', { compact: props.compact }]">
     <money-aggregate-display :context="props.context" />
     <token-aggregate-display :context="props.context" />
+    <memosphere-xp-aggregate-display
+      :context="props.context"
+      :chest-loot-tables="props.chestLootTables"
+      :ability-loot-tables="props.abilityLootTables"
+    />
     <p v-if="!compact" class="title">
       /1k
       <ws-icon :icon-path="icons.steps" size="sm" />

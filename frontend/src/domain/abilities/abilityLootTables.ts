@@ -76,14 +76,17 @@ export function abilityUsageRequirements(
 }
 
 /**
- * Steps between activations for an actions-based cooldown, or `null` for a
- * time-based cooldown (where steps don't apply). One activation becomes
- * available every `cooldown.actions` completed actions.
+ * Steps between activations, or `null` for a time-based cooldown (where steps
+ * don't apply). A steps-based cooldown recharges one activation every
+ * `cooldown.steps` steps (stored `charges` only cap the buffer, not the rate);
+ * an actions-based one every `cooldown.actions` completed actions.
  */
 export function abilityStepsPerActivation(
   cooldown: AbilityDetail["cooldown"],
   stepsPerAction: number,
 ): number | null {
+  const steps = cooldown?.steps;
+  if (steps && steps > 0) return steps;
   const actions = cooldown?.actions;
   if (!actions || actions <= 0) return null;
   return stepsPerAction * actions;
