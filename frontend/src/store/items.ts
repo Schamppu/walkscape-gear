@@ -5,6 +5,7 @@ import {
   getContainerItems,
   getFineMaterials,
   getMaterials,
+  getMemosphereItems,
 } from "@/utils/axios/api_routes";
 import debounce from "@/utils/debounce";
 import { useNotificationStore } from "@/store/notifications";
@@ -59,6 +60,7 @@ export const useItemsStore = defineStore("itemStore", {
     changedOwnedItems: {} as Record<string, OwnedItemState>,
     materials: {} as Record<string, ItemDetail>,
     containers: {} as Record<string, ItemDetail>,
+    memospheres: {} as Record<string, ItemDetail>,
     fineMaterials: {} as Record<string, boolean>,
     isLoaded: false,
   }),
@@ -85,12 +87,14 @@ export const useItemsStore = defineStore("itemStore", {
         { data: materials },
         { data: containers },
         { data: fineMaterials },
+        { data: memospheres },
       ] = await Promise.all([
         getCategorizedItems(),
         fetchOwnedItems(),
         getMaterials(),
         getContainerItems(),
         getFineMaterials(),
+        getMemosphereItems(),
       ]);
 
       this.ownedItems = Object.fromEntries(
@@ -117,6 +121,9 @@ export const useItemsStore = defineStore("itemStore", {
       );
       this.containers = Object.fromEntries(
         containers.map((item) => [item.id, item]),
+      );
+      this.memospheres = Object.fromEntries(
+        memospheres.map((item) => [item.id, item]),
       );
       this.fineMaterials = Object.fromEntries(
         fineMaterials.map((id) => [id, true]),
