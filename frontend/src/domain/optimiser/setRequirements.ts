@@ -232,6 +232,20 @@ export function preFilterStaticEntries(
 // Multi-slot filter (ring / tool deduplication)
 // ---------------------------------------------------------------------------
 
+/**
+ * True when items with keywords `a` and `b` can't be equipped together: a
+ * keyword of either one bans a keyword of the other.
+ */
+export function keywordsClash(
+  a: readonly string[],
+  b: readonly string[],
+  keywordsMap: Record<string, { bannedKeywords: string[] }>,
+): boolean {
+  const bans = (from: readonly string[], to: readonly string[]) =>
+    from.some((kw) => (keywordsMap[kw]?.bannedKeywords ?? []).some((banned) => to.includes(banned)));
+  return bans(a, b) || bans(b, a);
+}
+
 export function filterMultislot(
   gearSet: WorkerGearSet,
   opts: WorkerItem[],

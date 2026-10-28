@@ -12,6 +12,7 @@ import { type RequirementContext } from "@/composables/useRequirements";
 import { usedAttrs } from "@/domain/quality/qualityAttrs";
 import { gearSlots, gearTypes } from "@/domain/constants/gear";
 import { filterDirectUpgrades } from "@/domain/optimiser/gear";
+import { keywordsClash } from "@/domain/optimiser/setRequirements";
 import { getLevelRequirementsMap } from "@/domain/requirements/requirementUtils";
 import type { Stat } from "@/domain/types/item";
 import type { ItemDetail, SelectedQualityItem } from "@/domain/types/item";
@@ -190,6 +191,18 @@ const makeGearCtx = () => {
     return !lockedItems.some((locked) => locked?.id === item.id);
   };
 
+  // Items that can't be equipped next to a locked one of the same type
+  // (e.g. a second hatchet when a hatchet is locked).
+  const { keywordsMap } = useDataStore();
+  const filterLockedBans = (item: QualityItem): boolean =>
+    !lockedItems.some(
+      (locked) =>
+        locked &&
+        "gearType" in locked &&
+        locked.gearType === item.gearType &&
+        keywordsClash(locked.keywords ?? [], item.keywords ?? [], keywordsMap),
+    );
+
   const filterOwned = (item: QualityItem): boolean =>
     item.id in baseCtx.ownedItems.value;
 
@@ -204,6 +217,7 @@ const makeGearCtx = () => {
       (item) =>
         filterOwned(item) &&
         filterLocked(item) &&
+        filterLockedBans(item) &&
         itemPassesRequirements(item) &&
         showItemForActivity(item as unknown as DisplayableItem),
     );
@@ -214,6 +228,7 @@ const makeGearCtx = () => {
       (item) =>
         filterOwned(item) &&
         filterLocked(item) &&
+        filterLockedBans(item) &&
         itemPassesRequirements(item) &&
         !showItemForActivity(item as unknown as DisplayableItem),
     );
@@ -319,15 +334,7 @@ const areMutuallyExclusiveTools = (
   keywordsMap: Record<string, { bannedKeywords: string[] }>,
 ): boolean => {
   if (!a.keywords || !b.keywords) return false;
-  for (const kw of a.keywords) {
-    const banned = keywordsMap[kw]?.bannedKeywords ?? [];
-    if (b.keywords.some((k) => banned.includes(k))) return true;
-  }
-  for (const kw of b.keywords) {
-    const banned = keywordsMap[kw]?.bannedKeywords ?? [];
-    if (a.keywords.some((k) => banned.includes(k))) return true;
-  }
-  return false;
+  return keywordsClash(a.keywords, b.keywords, keywordsMap);
 };
 
 const upgradeFilteredForSlot = (
