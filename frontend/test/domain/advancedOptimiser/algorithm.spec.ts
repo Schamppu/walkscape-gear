@@ -10,6 +10,8 @@ import {
 import type { WorkerGearSet, WorkerItem } from "@/workers/optimiserWorkerTypes";
 import type { AdvancedOptimiserJob } from "@/workers/advancedOptimiserWorkerTypes";
 import type { HandledRequirement } from "@/domain/optimiser/requirements";
+import { keywordsClash } from "@/domain/optimiser/setRequirements";
+import cutYewTrees from "../../fixtures/advancedOptimiser/jobs/optimiser-job-cut_yew_trees.json";
 import {
   keywordEquippedReq,
   makeDropProfile,
@@ -205,6 +207,21 @@ describe("advanced optimiser finds the brute-force optimum", () => {
     const result = await search(job, { beamWidth: 1 });
     expect(result.bestScore).toBeCloseTo(expected.score, 10);
   });
+});
+
+// Regressions on real jobs exported from the app.
+describe("real jobs", () => {
+  it("doesn't add a second hatchet next to a locked one (cut_yew_trees)", async () => {
+    const job = cutYewTrees as unknown as AdvancedOptimiserJob;
+    const { gearSet } = await search(job, { patience: 10, beamWidth: 5 });
+    const tools = Object.entries(gearSet)
+      .filter(([slot, value]) => value && slot.startsWith("tool"))
+      .map(([, value]) => (value as WorkerItem).keywords ?? []);
+    expect(gearSet.tool1).toMatchObject({ id: "ice_axe" });
+    for (const [i, a] of tools.entries()) {
+      for (const b of tools.slice(i + 1)) expect(keywordsClash(a, b, job.keywordsMap)).toBe(false);
+    }
+  }, 30_000);
 });
 
 // Benchmark: run with `BENCH=1 npx vitest run algorithm`. Checks a large

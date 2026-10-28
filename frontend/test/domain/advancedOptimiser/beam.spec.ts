@@ -126,4 +126,17 @@ describe("seedCandidates", () => {
     expect(best.result.valid).toBe(true);
     expect(ids(best.gearSet)).toEqual({ tool1: "rod", head: "hat" });
   });
+
+  it("drops requirement seed items banned by a locked item", () => {
+    const job = makeJob({
+      keywordsMap: { hatchet: { bannedKeywords: ["hatchet"] } },
+      options: { head: [item("hat", [we(0.5)])] },
+      searchSlots: ["head", "tool2"],
+      lockedItems: { tool1: item("locked_axe", [], ["hatchet"]) },
+      requirementSeeds: [{ tool2: item("seed_axe", [we(0.5)], ["hatchet"]) }],
+    });
+    const results = seedCandidates(job, createSetScorer(job), 3);
+    expect(ids(results[0].gearSet)).toEqual({ tool1: "locked_axe", head: "hat" });
+    for (const { gearSet } of results) expect(gearSet.tool2).toBeUndefined();
+  });
 });

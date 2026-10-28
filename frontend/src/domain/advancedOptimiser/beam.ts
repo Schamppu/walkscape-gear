@@ -133,6 +133,21 @@ export const beamSearch = (
 };
 
 /**
+ * `seed` on top of `base`, dropping seed items that can't be equipped next to
+ * what's already there (e.g. a second hatchet when a hatchet is locked).
+ */
+const withSeed = (
+  base: WorkerGearSet,
+  seed: WorkerGearSet,
+  keywordsMap: BeamOptions["keywordsMap"],
+): WorkerGearSet =>
+  Object.entries(seed).reduce<WorkerGearSet>((set, [slot, item]) => {
+    if (!item || set[slot]) return set;
+    const allowed = slotOptions(set, slot, { [slotKeyOf(slot)]: [item as WorkerItem] }, keywordsMap);
+    return allowed.length ? { ...set, [slot]: item } : set;
+  }, base);
+
+/**
  * Starting sets for the local search: a beam search from every combination
  * of location and requirement seed, all holding the locked items.
  */
@@ -150,7 +165,7 @@ export const seedCandidates = (
   const all = locations.flatMap((location) =>
     requirementSeeds.flatMap((requirementSeed) =>
       beamSearch(
-        { ...requirementSeed, ...locked, location },
+        withSeed({ ...locked, location }, requirementSeed, job.keywordsMap),
         job.searchSlots,
         job.options,
         score,
