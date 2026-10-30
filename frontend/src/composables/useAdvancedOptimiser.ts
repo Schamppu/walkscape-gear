@@ -17,7 +17,9 @@ import { applySearchResult } from "@/composables/advancedOptimiser/applyResult";
 import { gearSlots } from "@/domain/constants/gear";
 import {
   defaultConfig,
+  sourceKey,
   type AdvancedOptimiserConfig,
+  type OptimiserSource,
   type Target,
 } from "@/domain/advancedOptimiser/config";
 import {
@@ -57,6 +59,12 @@ export function useAdvancedOptimiser() {
 
   const activityId = computed<string | null>(() => baseCtx.source.value?.id ?? null);
 
+  const optimiserSource = computed<OptimiserSource | null>(() =>
+    activityId.value
+      ? { kind: baseCtx.recipeSelected.value ? "recipe" : "activity", id: activityId.value }
+      : null,
+  );
+
   /** The most recent finished run, for the result summary. */
   const lastRun = shallowRef<{
     result: SearchResult;
@@ -69,10 +77,11 @@ export function useAdvancedOptimiser() {
   // Bring in the saved config when an activity is selected; a previous
   // run's summary belongs to the previous activity.
   watch(
-    activityId,
-    (id) => {
+    optimiserSource,
+    (source, previous) => {
+      if (source && previous && sourceKey(source) === sourceKey(previous)) return;
       lastRun.value = null;
-      if (id) store.load(id);
+      if (source) store.load(source);
     },
     { immediate: true },
   );
@@ -102,9 +111,9 @@ export function useAdvancedOptimiser() {
   });
 
   const config = computed<AdvancedOptimiserConfig | null>(() => {
-    const id = activityId.value;
-    if (!id) return null;
-    return store.configs[id] ?? defaultConfig(id);
+    const source = optimiserSource.value;
+    if (!source) return null;
+    return store.configs[sourceKey(source)] ?? defaultConfig(source.id);
   });
 
   const lockedSlots = computed(() => gearSlots.filter((slot) => gearStore.isSlotLocked(slot)));
@@ -131,17 +140,17 @@ export function useAdvancedOptimiser() {
   );
 
   const addTarget = (): void => {
-    if (!activityId.value || !config.value) return;
+    if (!optimiserSource.value || !config.value) return;
     const target = nextUnusedTarget(config.value.targets, targetContext.value);
-    if (target) store.addTarget(activityId.value, target);
+    if (target) store.addTarget(optimiserSource.value, target);
   };
 
   const updateTarget = (index: number, patch: Partial<Target>): void => {
-    if (activityId.value) store.updateTarget(activityId.value, index, patch);
+    if (optimiserSource.value) store.updateTarget(optimiserSource.value, index, patch);
   };
 
   const removeTarget = (index: number): void => {
-    if (activityId.value) store.removeTarget(activityId.value, index);
+    if (optimiserSource.value) store.removeTarget(optimiserSource.value, index);
   };
 
   const running = ref(false);

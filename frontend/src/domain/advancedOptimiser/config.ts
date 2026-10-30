@@ -55,7 +55,12 @@ export type AdvancedOptimiserConfig = {
   mode: AdvancedOptimiserMode;
   targets: Target[];
   combinationRule: CombinationRule;
+  /** The preset the targets were last loaded from or saved to (see `presets.ts`). */
+  presetId?: string;
 };
+
+/** The selected activity or recipe a single-activity config belongs to. */
+export type OptimiserSource = { kind: "activity" | "recipe"; id: string };
 
 // ---------------------------------------------------------------------------
 // Exported functions
@@ -68,13 +73,21 @@ export const defaultConfig = (activityId: string): AdvancedOptimiserConfig => ({
   combinationRule: "weightedSum",
 });
 
-export const BEST_FOR_SKILL_STORAGE_KEY = "advancedOptimiser.bestForSkillConfig";
+/**
+ * Identifies a source across activities and recipes, which can share ids.
+ * Used as the key for per-source configs.
+ */
+export const sourceKey = ({ kind, id }: OptimiserSource): string => `${kind}:${id}`;
 
-/** localStorage key a config is saved under. `bestForSkill` configs share one key. */
-export const configStorageKey = ({ mode }: Pick<AdvancedOptimiserConfig, "mode">): string =>
-  mode.kind === "singleActivity"
-    ? `advancedOptimiser.config.${mode.activityId}`
-    : BEST_FOR_SKILL_STORAGE_KEY;
+/** localStorage key a single-activity config is saved under. */
+export const configStorageKey = (source: OptimiserSource): string =>
+  `advancedOptimiser.config.${sourceKey(source)}`;
+
+/**
+ * Key configs were saved under before activities and recipes were told apart.
+ * Read once and moved to `configStorageKey`.
+ */
+export const legacyConfigStorageKey = (id: string): string => `advancedOptimiser.config.${id}`;
 
 const isOneOf = <T extends string>(values: readonly T[], value: unknown): value is T =>
   typeof value === "string" && (values as readonly string[]).includes(value);
@@ -86,7 +99,7 @@ const isOneOf = <T extends string>(values: readonly T[], value: unknown): value 
  */
 export const parseConfig = (raw: unknown): AdvancedOptimiserConfig | null => {
   if (!raw || typeof raw !== "object") return null;
-  const { mode, targets } = raw as Partial<Record<keyof AdvancedOptimiserConfig, unknown>>;
+  const { mode, targets, presetId } = raw as Partial<Record<keyof AdvancedOptimiserConfig, unknown>>;
 
   const m = mode as Partial<{ kind: string; activityId: unknown; skillId: unknown }> | undefined;
   let parsedMode: AdvancedOptimiserMode;
@@ -112,5 +125,10 @@ export const parseConfig = (raw: unknown): AdvancedOptimiserConfig | null => {
     parsedTargets.push({ x: t.x, y: t.y, weight: Number.isFinite(weight) ? weight : MIN_WEIGHT });
   }
 
-  return { mode: parsedMode, targets: parsedTargets, combinationRule: "weightedSum" };
+  return {
+    mode: parsedMode,
+    targets: parsedTargets,
+    combinationRule: "weightedSum",
+    ...(typeof presetId === "string" ? { presetId } : {}),
+  };
 };

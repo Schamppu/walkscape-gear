@@ -2,8 +2,11 @@ import { defineStore } from "pinia";
 import {
   configStorageKey,
   defaultConfig,
+  legacyConfigStorageKey,
   parseConfig,
+  sourceKey,
   type AdvancedOptimiserConfig,
+  type OptimiserSource,
   type Target,
 } from "@/domain/advancedOptimiser/config";
 import {
@@ -14,26 +17,30 @@ import {
 
 /**
  * Advanced Optimiser Store
- * Holds the advanced optimiser config per activity / recipe id, persisted to
- * localStorage under `advancedOptimiser.config.<id>` (`bestForSkill` configs
- * share `advancedOptimiser.bestForSkillConfig`).
+ * Holds the advanced optimiser config per activity / recipe, persisted to
+ * localStorage under `advancedOptimiser.config.<activity|recipe>:<id>`.
+ * Configs saved under the older `advancedOptimiser.config.<id>` key are moved
+ * on first load.
  *
  * Storage can be unavailable (private mode, blocked site data); every access
  * is wrapped so the optimiser still works in memory.
  */
 
-const readStored = (key: string): AdvancedOptimiserConfig | null => {
+const readStored = (key: string, source: OptimiserSource): AdvancedOptimiserConfig | null => {
   try {
     const raw = localStorage.getItem(key);
-    return raw ? parseConfig(JSON.parse(raw)) : null;
+    const config = raw ? parseConfig(JSON.parse(raw)) : null;
+    return config?.mode.kind === "singleActivity" && config.mode.activityId === source.id
+      ? config
+      : null;
   } catch {
     return null;
   }
 };
 
-const writeStored = (config: AdvancedOptimiserConfig): void => {
+const writeStored = (source: OptimiserSource, config: AdvancedOptimiserConfig): void => {
   try {
-    localStorage.setItem(configStorageKey(config), JSON.stringify(config));
+    localStorage.setItem(configStorageKey(source), JSON.stringify(config));
   } catch {
     // Storage full or blocked: keep the in-memory config.
   }
@@ -63,40 +70,51 @@ export const useAdvancedOptimiserStore = defineStore("advancedOptimiserStore", {
     settings: loadSettings(),
   }),
   actions: {
-    /** Loads the saved config for an activity into memory, if there is one. */
-    load(activityId: string): void {
-      if (this.configs[activityId]) return;
-      const stored = readStored(configStorageKey(defaultConfig(activityId)));
-      if (stored?.mode.kind === "singleActivity" && stored.mode.activityId === activityId) {
-        this.configs[activityId] = stored;
+    /** Loads the saved config for a source into memory, if there is one. */
+    load(source: OptimiserSource): void {
+      const key = sourceKey(source);
+      if (this.configs[key]) return;
+      const stored = readStored(configStorageKey(source), source);
+      if (stored) {
+        this.configs[key] = stored;
+        return;
+      }
+      // Older key without the activity / recipe kind: whichever loads it
+      // first takes it over.
+      const legacyKey = legacyConfigStorageKey(source.id);
+      const legacy = readStored(legacyKey, source);
+      if (legacy) {
+        this.configs[key] = legacy;
+        writeStored(source, legacy);
+        removeStored(legacyKey);
       }
     },
-    getOrCreate(activityId: string): AdvancedOptimiserConfig {
-      this.load(activityId);
-      if (!this.configs[activityId]) {
-        this.configs[activityId] = defaultConfig(activityId);
+    getOrCreate(source: OptimiserSource): AdvancedOptimiserConfig {
+      this.load(source);
+      const key = sourceKey(source);
+      if (!this.configs[key]) {
+        this.configs[key] = defaultConfig(source.id);
       }
-      return this.configs[activityId];
+      return this.configs[key];
     },
-    addTarget(activityId: string, target: Target): void {
-      this.getOrCreate(activityId).targets.push(target);
-      this.save(activityId);
+    addTarget(source: OptimiserSource, target: Target): void {
+      this.getOrCreate(source).targets.push(target);
+      this.save(source);
     },
-    updateTarget(activityId: string, index: number, patch: Partial<Target>): void {
-      const targets = this.getOrCreate(activityId).targets;
+    updateTarget(source: OptimiserSource, index: number, patch: Partial<Target>): void {
+      const targets = this.getOrCreate(source).targets;
       if (!targets[index]) return;
       targets[index] = { ...targets[index], ...patch };
-      this.save(activityId);
+      this.save(source);
     },
-    removeTarget(activityId: string, index: number): void {
-      this.getOrCreate(activityId).targets.splice(index, 1);
-      this.save(activityId);
+    removeTarget(source: OptimiserSource, index: number): void {
+      this.getOrCreate(source).targets.splice(index, 1);
+      this.save(source);
     },
     /** Back to the default config, forgetting the saved one. */
-    resetConfig(activityId: string): void {
-      const config = defaultConfig(activityId);
-      this.configs[activityId] = config;
-      removeStored(configStorageKey(config));
+    resetConfig(source: OptimiserSource): void {
+      this.configs[sourceKey(source)] = defaultConfig(source.id);
+      removeStored(configStorageKey(source));
     },
     updateSettings(patch: Partial<OptimiserSettings>): void {
       this.settings = parseOptimiserSettings({ ...this.settings, ...patch });
@@ -106,9 +124,9 @@ export const useAdvancedOptimiserStore = defineStore("advancedOptimiserStore", {
         // Storage full or blocked: keep the in-memory settings.
       }
     },
-    save(activityId: string): void {
-      const config = this.configs[activityId];
-      if (config) writeStored(config);
+    save(source: OptimiserSource): void {
+      const config = this.configs[sourceKey(source)];
+      if (config) writeStored(source, config);
     },
   },
 });
