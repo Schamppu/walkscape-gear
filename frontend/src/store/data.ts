@@ -1,16 +1,9 @@
 import { defineStore } from "pinia";
 import {
-  getAbilities,
-  getKeywords,
-  getStats,
-  getLootTables,
   getMultipleAbilities,
   getMultipleLootTables,
-  getItemValueMap,
-  getGlobalVariables,
-  getLocations,
-  getFactions,
 } from "@/utils/axios/api_routes";
+import type { StaticBootstrap } from "@/domain/types/bootstrap";
 import type { AxiosResponse } from "axios";
 import type { AbilityDetail, AbilitySummary } from "@/domain/types/ability";
 import type { Keyword } from "@/domain/types/keyword";
@@ -105,29 +98,26 @@ export const useDataStore = defineStore("dataStore", {
   },
 
   actions: {
-    async fetchGameData(): Promise<void> {
-      if (this.isLoaded) return;
-
-      const [
-        { data: abilities },
-        { data: keywords },
-        { data: statList },
-        { data: lootTables },
-        { data: itemValues },
-        { data: locations },
-        { data: factions },
-        { data: globalVariables },
-      ] = await Promise.all([
-        getAbilities(),
-        getKeywords(),
-        getStats(),
-        getLootTables(),
-        getItemValueMap(),
-        getLocations(),
-        getFactions(),
-        getGlobalVariables(),
-      ]);
-
+    hydrate({
+      abilities,
+      keywords,
+      stats: statList,
+      lootTables,
+      itemValueMapping: itemValues,
+      locations,
+      factions,
+      globalVariables,
+    }: Pick<
+      StaticBootstrap,
+      | "abilities"
+      | "keywords"
+      | "stats"
+      | "lootTables"
+      | "itemValueMapping"
+      | "locations"
+      | "factions"
+      | "globalVariables"
+    >): void {
       this.abilities = abilities;
       this.abilitiesMap = Object.fromEntries(
         abilities.map((ability) => [ability.id, ability]),

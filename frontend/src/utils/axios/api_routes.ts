@@ -27,12 +27,24 @@ import {
   UrlMap,
   GlobalVariable,
 } from "@/domain/types";
+import type { StaticBootstrap } from "@/domain/types/bootstrap";
 
 const rawProxy = createProxyInstance("/api");
 
 /** Type-safe wrapper – the proxy always returns a promise for valid methods. */
 function proxy<T>(request: ProxyRequest): Promise<AxiosResponse<T>> {
   return rawProxy(request) as Promise<AxiosResponse<T>>;
+}
+
+// ---------------------------------------------------------------------------
+// Bootstrap
+// ---------------------------------------------------------------------------
+
+/** All static game data needed at startup, in one request. */
+export function getStaticBootstrap(): Promise<AxiosResponse<StaticBootstrap>> {
+  return proxy<StaticBootstrap>({
+    url: "bootstrap",
+  });
 }
 
 // ---------------------------------------------------------------------------

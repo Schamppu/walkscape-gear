@@ -1,10 +1,6 @@
 import { defineStore } from "pinia";
-import { getSkills, getFactions } from "@/utils/axios/api_routes";
-import {
-  fetchPlayerStats,
-  fetchFactionReputations,
-} from "@/utils/axios/db_routes";
 import type { Skill, Faction, StatDefinition } from "@/domain/types";
+import type { StaticBootstrap, UserBootstrap } from "@/domain/types/bootstrap";
 import { useNotificationStore } from "@/store/notifications";
 
 export type SkillOption = Skill & { value: string };
@@ -34,20 +30,7 @@ export const usePlayerStore = defineStore("playerStore", {
     isLoaded: false,
   }),
   actions: {
-    async fetchPlayerData(): Promise<void> {
-      if (this.isLoaded) return;
-      const [
-        { data: skills },
-        { data: factions },
-        playerStats,
-        factionReputations,
-      ] = await Promise.all([
-        getSkills(),
-        getFactions(),
-        fetchPlayerStats(),
-        fetchFactionReputations(),
-      ]);
-
+    hydrate({ skills, factions }: Pick<StaticBootstrap, "skills" | "factions">): void {
       this.skills = skills
         .map(({ id, ...rest }) => {
           return { id, ...rest, value: id };
@@ -59,8 +42,31 @@ export const usePlayerStore = defineStore("playerStore", {
           { icon, name, type, typeIcon },
         ]),
       );
+
+      // Copy before sorting: the bundle's factions array is shared with the data store.
+      this.factions = [...factions].sort((a, b) => a.name.localeCompare(b.name));
+      const hiddenReputation = new Set([
+        "wallisiaReputation",
+        "wrentmarkReputation",
+      ]);
+      this.reputationFactions = this.factions.filter(
+        ({ reputation }) =>
+          reputation !== null && !hiddenReputation.has(reputation),
+      );
+      this.factionsMap = Object.fromEntries(
+        factions.map(({ id, icon, name, color, reputation }) => [
+          id,
+          { icon, name, color, reputation },
+        ]),
+      );
+    },
+    /** Applies the player's saved stats. Requires `hydrate` to have run first. */
+    hydrateUser({
+      userStats: playerStats,
+      factionReputations,
+    }: Pick<UserBootstrap, "userStats" | "factionReputations">): void {
       this.skillLevels = Object.fromEntries(
-        skills.map(({ id }) => [id, playerStats[id] ?? 1]),
+        this.skills.map(({ id }) => [id, playerStats[id] ?? 1]),
       );
       this.setAchievementPoints(playerStats.achievementPoints ?? 0);
       this.setTotalWealth(playerStats.totalWealth ?? 0);
@@ -70,26 +76,10 @@ export const usePlayerStore = defineStore("playerStore", {
           .filter(([key]) => key.endsWith("Locations"))
           .map(([key, value]) => [key.split("Locations")[0], value as number]),
       );
-
-      this.factions = factions.sort((a, b) => a.name.localeCompare(b.name));
-      const hiddenReputation = new Set([
-        "wallisiaReputation",
-        "wrentmarkReputation",
-      ]);
-      this.reputationFactions = this.factions.filter(
-        ({ reputation }) =>
-          reputation !== null && !hiddenReputation.has(reputation),
-      );
       this.factionReputation = Object.fromEntries(
-        factions.map(({ reputation }) => [
+        this.factions.map(({ reputation }) => [
           reputation,
           factionReputations[reputation as string] ?? 0,
-        ]),
-      );
-      this.factionsMap = Object.fromEntries(
-        factions.map(({ id, icon, name, color, reputation }) => [
-          id,
-          { icon, name, color, reputation },
         ]),
       );
 

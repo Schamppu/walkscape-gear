@@ -5,8 +5,6 @@ import {
   searchLocations,
   getRealmDefaultLocations,
   searchServices,
-  getActivities,
-  getRecipes,
 } from "@/utils/axios/api_routes";
 import {
   filterServices,
@@ -27,6 +25,7 @@ import type { ServiceDetail } from "@/domain/types/service";
 import type { Requirement } from "@/domain/types/common";
 import type { SkillLevelRequirement } from "@/domain/types/requirement";
 import type { LocationDetail } from "@/domain/types/location";
+import type { StaticBootstrap } from "@/domain/types/bootstrap";
 import { useNotificationStore } from "@/store/notifications";
 import { executeCommand, initializeHistoryTracking } from "@/store/utils/historyUtils";
 
@@ -76,14 +75,10 @@ export const useActivityStore = defineStore("activityStore", {
     },
   },
   actions: {
-    async fetchActivitiesData(): Promise<void> {
-      if (this.isLoaded) return;
-
-      const [{ data: activities }, { data: recipes }] = await Promise.all([
-        getActivities(),
-        getRecipes(),
-      ]);
-
+    hydrate({
+      activities,
+      recipes,
+    }: Pick<StaticBootstrap, "activities" | "recipes">): void {
       this.activities = activities;
       this.activitiesMap = Object.fromEntries(
         activities.map(({ id, name, icon, requirements }) => [

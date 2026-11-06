@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
-import { getSettings, upsertSettings } from "@/utils/axios/db_routes";
+import { upsertSettings } from "@/utils/axios/db_routes";
+import type { UserBootstrap } from "@/domain/types/bootstrap";
 import { useNotificationStore } from "./notifications";
 import {
   activityOptimiserPriorities,
@@ -157,43 +158,26 @@ export const useSettingsStore = defineStore("settingsStore", {
       return map[name];
     },
 
-    async fetchSettingsData(): Promise<void> {
+    /** Applies defaults, then the player's saved settings on top. An empty object leaves just the defaults. */
+    hydrateUser({ userSettings }: Pick<UserBootstrap, "userSettings">): void {
       const notificationStore = useNotificationStore();
-      try {
-        const defaultSettings = this.defaultSettingsData();
-        this.settingsGroups.forEach((group) => {
-          this._group(group);
-          Object.assign(this[group], { ...defaultSettings[group] });
-        });
-        void notificationStore.debug("Settings: defaults applied", [
-          this.settingsGroups.map((g) => ({
-            group: g,
-            keys: Object.keys(this._group(g) ?? {}).join(", ") || "(none)",
-          })),
-        ]);
+      const defaultSettings = this.defaultSettingsData();
+      this.settingsGroups.forEach((group) => {
+        Object.assign(this[group], { ...defaultSettings[group] });
+      });
+      void notificationStore.debug("Settings: defaults applied", [
+        this.settingsGroups.map((g) => ({
+          group: g,
+          keys: Object.keys(this._group(g) ?? {}).join(", ") || "(none)",
+        })),
+      ]);
 
-        const backendSettings = await getSettings();
-        void notificationStore.debug("Settings: fetched from backend", [
-          typeof backendSettings === "object" && backendSettings !== null
-            ? Object.keys(backendSettings).length + " entries"
-            : "(empty response)",
-        ]);
-        this.mergeBackendSettings(backendSettings);
-        this.changedSettings.clear();
-        this.isLoaded = true;
-      } catch (error) {
-        notificationStore.error("Failed to fetch settings from backend");
-        void notificationStore.debug(
-          "Settings: fetch error - falling back to defaults",
-          [error instanceof Error ? error.message : String(error)],
-        );
-        console.error("Failed to fetch settings from backend:", error);
-        const defaultSettings = this.defaultSettingsData();
-        this.gearSettings = defaultSettings.gearSettings;
-        this.activitySettings = defaultSettings.activitySettings;
-        this.changedSettings.clear();
-        this.isLoaded = true;
-      }
+      void notificationStore.debug("Settings: fetched from backend", [
+        Object.keys(userSettings).length + " entries",
+      ]);
+      this.mergeBackendSettings(userSettings);
+      this.changedSettings.clear();
+      this.isLoaded = true;
     },
 
     mergeBackendSettings(backendSettings: DbUserSettings): void {

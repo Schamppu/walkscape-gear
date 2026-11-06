@@ -17,6 +17,13 @@ import type {
   UpsertOptimiserPresetPayload,
   DeleteOptimiserPresetResponse,
 } from "@/domain/types";
+import type { UserBootstrap } from "@/domain/types/bootstrap";
+
+/** All of the player's saved data needed at startup, in one request. */
+export const getUserBootstrap = async (): Promise<UserBootstrap> => {
+  const { data } = await axios.get<UserBootstrap>(`${getHost()}/db/bootstrap`);
+  return data;
+};
 
 export const fetchPlayerStats = async (): Promise<DbPlayerStats> => {
   const { data } = await axios.get<DbPlayerStats>(`${getHost()}/db/user_stats`);

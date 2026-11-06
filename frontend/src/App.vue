@@ -2,14 +2,12 @@
 import { ref, onMounted, onUnmounted, reactive, nextTick } from "vue";
 import { storeToRefs } from "pinia";
 import { useActivityStore } from "@/store/activity";
-import { useDataStore } from "@/store/data";
 import { usePlayerStore } from "@/store/player";
 import { useUrlStore } from "@/store/url";
-import { useItemsStore } from "@/store/items";
 import { useGearSetStore } from "@/store/gearSet";
-import { useRouteStore } from "@/store/route";
 import { useSettingsStore } from "@/store/settings";
 import { useOptimiserPresetsStore } from "@/store/optimiserPresets";
+import { loadStatic, loadUser } from "@/bootstrap/loadApp";
 import { provideSharedComposables } from "@/composables/context/provideSharedComposables";
 import { getOrCreateUserUuid } from "@/utils/user";
 import { icons } from "@/constants/iconPaths";
@@ -73,25 +71,11 @@ const bootstrap = async () => {
   if (isLoaded.value) return;
 
   const activityStore = useActivityStore();
-  const dataStore = useDataStore();
   const gearSetStore = useGearSetStore();
-  const playerStore = usePlayerStore();
-  const itemsStore = useItemsStore();
-  const routeStore = useRouteStore();
-  const settingsStore = useSettingsStore();
 
-  playerStore.setUuid(getOrCreateUserUuid());
+  usePlayerStore().setUuid(getOrCreateUserUuid());
 
-  await Promise.all([
-    activityStore.fetchActivitiesData(),
-    dataStore.fetchGameData(),
-    playerStore.fetchPlayerData(),
-    urlStore.fetchMapping(),
-    itemsStore.fetchItems(),
-    gearSetStore.fetchGearSets(),
-    routeStore.fetchRouteData(),
-    settingsStore.fetchSettingsData(),
-  ]);
+  await Promise.all([loadStatic(), loadUser()]);
 
   // Initialize history tracking for stores
   await activityStore.initializeHistoryTracking();
@@ -104,11 +88,7 @@ const bootstrap = async () => {
 function handleUuidUpdate(newUuid) {
   localStorage.setItem("userUuid", newUuid);
 
-  const playerStore = usePlayerStore();
-  const itemsStore = useItemsStore();
-
-  playerStore.isLoaded = false;
-  itemsStore.isLoaded = false;
+  // bootstrap() reuses the loaded static data and refetches only the user bundle.
   // Fetched again the next time the optimiser opens.
   useOptimiserPresetsStore().$reset();
   showSettings.value = false;
