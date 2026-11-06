@@ -14,17 +14,6 @@ import fixtureData from "../fixtures/characterImport.json";
 vi.mock("@/utils/axios/db_routes", () => ({
   upsertPlayerStats: vi.fn(),
   upsertFactionReputations: vi.fn(),
-  fetchPlayerStats: vi.fn(() => Promise.resolve({})),
-  fetchFactionReputations: vi.fn(() => Promise.resolve({})),
-  fetchOwnedItems: vi.fn(() => Promise.resolve([])),
-}));
-
-vi.mock("@/utils/axios/api_routes", () => ({
-  getSkills: vi.fn(() => Promise.resolve({ data: [] })),
-  getFactions: vi.fn(() => Promise.resolve({ data: [] })),
-  getCategorizedItems: vi.fn(() => Promise.resolve({ data: [] })),
-  getMaterials: vi.fn(() => Promise.resolve({ data: [] })),
-  getFineMaterials: vi.fn(() => Promise.resolve({ data: [] })),
 }));
 
 // ---------------------------------------------------------------------------
