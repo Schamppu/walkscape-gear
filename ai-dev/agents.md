@@ -8,3 +8,6 @@ When generating code:
 - Respect layer boundaries.
 - Do not move logic across architectural layers.
 - Do not introduce business logic into Express routes.
+
+When developing features:
+- Use tracer bullets
