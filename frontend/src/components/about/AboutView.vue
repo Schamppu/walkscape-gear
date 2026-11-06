@@ -52,11 +52,12 @@ defineEmits(["back", "privacy-policy"]);
         </p>
         <h3>Known issues</h3>
         <ul>
-          <li>Pets not in game data import</li>
-          <li>Multiple issues with how rings are handled</li>
+          <li>Optimiser does not consider items with loot tables (rollSpecialTable)</li>
+          <li>Missing handling for certain pet abilities</li>
         </ul>
         <h3>Planned features</h3>
         <ul>
+          <li>Best activity within skill in optimiser</li>
           <li>Steps to full inventory estimation</li>
           <li>Adding custom data (items, activities)</li>
         </ul>
@@ -76,7 +77,7 @@ defineEmits(["back", "privacy-policy"]);
         </p>
         <p>
           Thanks to the people who helped me test the tool and provided valuable
-          feedback: Bonez565, Bassos, floursifter, Igno & Numismaster
+          feedback: Bonez565, Bassos, floursifter, Igno, Numismaster & Sheer
         </p>
       </section>
     </details>
