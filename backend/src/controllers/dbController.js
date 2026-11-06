@@ -139,6 +139,38 @@ export const deleteGearSet = async (req, res) => {
 export const getUserSettings = makeGetHandler(dbService.getUserSettings);
 export const upsertUserSettings = makeUpsertHandler(dbService.upsertUserSettings);
 
+// Optimiser preset handler: only HttpError messages reach the client.
+function makeOptimiserPresetHandler(serviceFn, getArg) {
+  return async (req, res) => {
+    const userUuid = getUserUuid(req, res);
+    if (!userUuid) return;
+    try {
+      res.json(await serviceFn(userUuid, getArg(req)));
+    } catch (e) {
+      if (e.status) return res.status(e.status).json({ error: e.message });
+      console.error("Optimiser preset error:", e);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  };
+}
+
+export const getOptimiserPresets = makeOptimiserPresetHandler(
+  dbService.getOptimiserPresets,
+  () => undefined
+);
+export const upsertOptimiserPreset = makeOptimiserPresetHandler(
+  dbService.upsertOptimiserPreset,
+  (req) => req.body
+);
+export const deleteOptimiserPreset = makeOptimiserPresetHandler(
+  dbService.deleteOptimiserPreset,
+  (req) => (/^\d+$/.test(req.params.id) ? Number(req.params.id) : NaN)
+);
+export const reorderOptimiserPresets = makeOptimiserPresetHandler(
+  dbService.reorderOptimiserPresets,
+  (req) => req.body?.ids
+);
+
 export const deleteUserData = async (req, res) => {
   const userUuid = getUserUuid(req, res);
   if (!userUuid) return;
