@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, defineAsyncComponent } from "vue";
 import { useActivityStore } from "@/store/activity";
 import { usePlayerStore } from "@/store/player";
 import { useUrlStore } from "@/store/url";
@@ -13,9 +13,10 @@ import TravelInfo from "./Info/TravelInfo.vue";
 import RecipeInfo from "./Info/RecipeInfo.vue";
 import DropsInfo from "./drops/DropsInfo.vue";
 import ActivityComparison from "./comparison/ActivityComparison.vue";
-import RecipeCalculator from "./calculator/ActivityCalculator.vue";
 import RecipeComparison from "./comparison/RecipeComparison.vue";
 import DropsComparison from "./comparison/DropsComparison.vue";
+
+const RecipeCalculator = defineAsyncComponent(() => import("./calculator/ActivityCalculator.vue"));
 
 const activityStore = useActivityStore();
 const playerStore = usePlayerStore();

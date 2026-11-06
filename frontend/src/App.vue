@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, onUnmounted, reactive, nextTick } from "vue";
+import { ref, onMounted, onUnmounted, reactive, nextTick, defineAsyncComponent } from "vue";
 import { storeToRefs } from "pinia";
 import { useActivityStore } from "@/store/activity";
 import { usePlayerStore } from "@/store/player";
@@ -15,14 +15,15 @@ import Hub from "@/components/hub/HubTab.vue";
 import Activity from "@/components/activity/ActivityTab.vue";
 import Gear from "@/components/gear/GearTab.vue";
 import Footer from "@/components/footer/FooterNav.vue";
-import About from "@/components/about/AboutView.vue";
-import PrivacyPolicy from "@/components/about/PrivacyPolicyView.vue";
 import SiteNotice from "@/components/about/SiteNotice.vue";
 import LoadingThrobber from "@/components/primitives/LoadingThrobber.vue";
 import WsButton from "@/components/primitives/WsButton.vue";
-import SettingsModal from "@/components/settings/SettingsModal.vue";
 import NotificationContainer from "@/components/common/NotificationContainer.vue";
 import UndoRedoButtons from "@/components/common/UndoRedoButtons.vue";
+
+const About = defineAsyncComponent(() => import("@/components/about/AboutView.vue"));
+const PrivacyPolicy = defineAsyncComponent(() => import("@/components/about/PrivacyPolicyView.vue"));
+const SettingsModal = defineAsyncComponent(() => import("@/components/settings/SettingsModal.vue"));
 
 const urlStore = useUrlStore();
 const settingsStore = useSettingsStore();
