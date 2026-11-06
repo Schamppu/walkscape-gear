@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import BaseModal from "@/components/common/BaseModal.vue";
+import PresetPicker from "./advanced/PresetPicker.vue";
 import TargetsTable from "./advanced/TargetsTable.vue";
 import LockedSlots from "./advanced/LockedSlots.vue";
 import OptimiserSettings from "./advanced/OptimiserSettings.vue";
@@ -13,6 +14,13 @@ defineEmits<{ (event: "close"): void }>();
 const {
   targetContext,
   config,
+  applicablePresets,
+  hiddenPresets,
+  selectedPreset,
+  presetModified,
+  applyPreset,
+  savePreset,
+  savePresetAsNew,
   lockedSlots,
   unusableLockedSlots,
   canAddTarget,
@@ -43,6 +51,17 @@ const {
     <p v-if="!config" class="empty">Select an activity or recipe first</p>
 
     <div v-else class="optimiser">
+      <preset-picker
+        :presets="applicablePresets"
+        :hidden-presets="hiddenPresets"
+        :selected="selectedPreset"
+        :modified="presetModified"
+        :targets="config.targets"
+        :save="savePreset"
+        :save-as-new="savePresetAsNew"
+        @apply="applyPreset"
+      />
+
       <section>
         <div class="section-header">
           <h3>Targets</h3>

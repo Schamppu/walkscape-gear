@@ -55,7 +55,7 @@ describe("optimiser presets store", () => {
     expect(store.presets.map((p) => p.id).slice(0, 3)).toEqual([
       "user:1",
       "user:2",
-      "builtin:balanced",
+      "builtin:eternal-per-material",
     ]);
   });
 
@@ -163,25 +163,26 @@ describe("optimiser presets store", () => {
     expect(store.userPresets).toHaveLength(2);
   });
 
-  it("moves a preset and saves the order", async () => {
+  it("swaps two presets and saves the order", async () => {
     const store = await loadedStore([dbPreset(1), dbPreset(2), dbPreset(3)]);
     vi.mocked(api.reorderOptimiserPresets).mockResolvedValue([]);
-    await store.movePreset("user:3", -1);
-    expect(store.userPresets.map((p) => p.id)).toEqual(["user:1", "user:3", "user:2"]);
-    expect(api.reorderOptimiserPresets).toHaveBeenCalledWith([1, 3, 2]);
+    await store.swapPresets("user:3", "user:1");
+    expect(store.userPresets.map((p) => p.id)).toEqual(["user:3", "user:2", "user:1"]);
+    expect(api.reorderOptimiserPresets).toHaveBeenCalledWith([3, 2, 1]);
   });
 
-  it("does not move past either end", async () => {
+  it("ignores a swap with an unknown or the same preset", async () => {
     const store = await loadedStore();
-    await store.movePreset("user:1", -1);
-    await store.movePreset("user:2", 1);
+    await store.swapPresets("user:1", "user:9");
+    await store.swapPresets("user:1", "user:1");
+    await store.swapPresets("user:1", "builtin:balanced");
     expect(api.reorderOptimiserPresets).not.toHaveBeenCalled();
   });
 
-  it("reloads the saved order when a move is rejected", async () => {
+  it("reloads the saved order when a swap is rejected", async () => {
     const store = await loadedStore();
     vi.mocked(api.reorderOptimiserPresets).mockRejectedValue(httpError(400, "out of sync"));
-    await store.movePreset("user:2", -1);
+    await store.swapPresets("user:2", "user:1");
     expect(api.getOptimiserPresets).toHaveBeenCalledTimes(2);
     expect(store.userPresets.map((p) => p.id)).toEqual(["user:1", "user:2"]);
   });

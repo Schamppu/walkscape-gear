@@ -5,7 +5,11 @@ import {
   configFromPreset,
   isPresetApplicable,
   pickDefaultPreset,
+  MAX_PRESET_TARGETS,
+  MAX_PRESET_NAME_LENGTH,
   presetFromDb,
+  presetNameProblem,
+  presetTargetsProblem,
   targetsEqual,
   userPresetDbId,
   userPresetId,
@@ -43,11 +47,11 @@ describe("BUILTIN_PRESETS", () => {
 
   it.each([
     ["an activity", ACTIVITY, ["builtin:balanced"]],
-    ["a recipe", RECIPE, ["builtin:balanced", "builtin:items-per-material"]],
+    ["a recipe", RECIPE, ["builtin:items-per-material", "builtin:balanced"]],
     [
       "a crafted recipe",
       CRAFTED_RECIPE,
-      ["builtin:balanced", "builtin:items-per-material", "builtin:eternal-per-material"],
+      ["builtin:eternal-per-material", "builtin:items-per-material", "builtin:balanced"],
     ],
   ])("offers the right presets for %s", (_, ctx, expected) => {
     expect(applicableIds(ctx)).toEqual(expected);
@@ -104,6 +108,32 @@ describe("configFromPreset", () => {
     expect(config.presetId).toBe(p.id);
     expect(config.targets).toEqual(p.targets);
     expect(config.targets[0]).not.toBe(p.targets[0]);
+  });
+});
+
+describe("presetNameProblem", () => {
+  it.each(["Mine", "  Fishing 🎣  ", "Café", "x".repeat(MAX_PRESET_NAME_LENGTH)])(
+    "accepts %j",
+    (name) => {
+      expect(presetNameProblem(name)).toBeNull();
+    },
+  );
+
+  it.each(["", "   ", "x".repeat(MAX_PRESET_NAME_LENGTH + 1), "a​b", "a\nb", "‮abc"])(
+    "rejects %j",
+    (name) => {
+      expect(presetNameProblem(name)).not.toBeNull();
+    },
+  );
+});
+
+describe("presetTargetsProblem", () => {
+  it("needs 1 to 8 targets", () => {
+    const xp = { x: "xp", y: "step", weight: 1 } as const;
+    expect(presetTargetsProblem([])).not.toBeNull();
+    expect(presetTargetsProblem([xp])).toBeNull();
+    expect(presetTargetsProblem(Array(MAX_PRESET_TARGETS).fill(xp))).toBeNull();
+    expect(presetTargetsProblem(Array(MAX_PRESET_TARGETS + 1).fill(xp))).not.toBeNull();
   });
 });
 

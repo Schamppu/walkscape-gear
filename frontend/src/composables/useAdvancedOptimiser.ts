@@ -128,6 +128,13 @@ export function useAdvancedOptimiser() {
     presetsStore.presets.filter((p) => isPresetApplicable(p, targetContext.value)),
   );
 
+  /** Hidden built-ins that would apply here, so they can be shown again. */
+  const hiddenPresets = computed<OptimiserPreset[]>(() =>
+    presetsStore.allPresets.filter(
+      (p) => presetsStore.isHidden(p.id) && isPresetApplicable(p, targetContext.value),
+    ),
+  );
+
   // A saved config always wins; otherwise the first applicable preset, which
   // can change while the player's presets and the loot tables load.
   const config = computed<AdvancedOptimiserConfig | null>(() => {
@@ -164,23 +171,25 @@ export function useAdvancedOptimiser() {
     if (source && preset) store.setConfig(source, configFromPreset(preset, source.id));
   };
 
-  /** Overwrites the selected user preset with the current targets. */
-  const savePreset = async (name: string): Promise<void> => {
+  /** Overwrites the selected user preset with the current targets. Returns whether it saved. */
+  const savePreset = async (name: string): Promise<boolean> => {
     const source = optimiserSource.value;
     const preset = selectedPreset.value;
-    if (!source || !config.value || !preset || preset.builtin) return;
+    if (!source || !config.value || !preset || preset.builtin) return false;
     ensureStored(source);
     const saved = await presetsStore.savePreset(preset.id, name, config.value.targets);
     if (saved) store.setPresetId(source, saved.id);
+    return !!saved;
   };
 
-  /** Saves the current targets as a new user preset and selects it. */
-  const savePresetAsNew = async (name: string): Promise<void> => {
+  /** Saves the current targets as a new user preset and selects it. Returns whether it saved. */
+  const savePresetAsNew = async (name: string): Promise<boolean> => {
     const source = optimiserSource.value;
-    if (!source || !config.value) return;
+    if (!source || !config.value) return false;
     ensureStored(source);
     const saved = await presetsStore.saveAsNew(name, config.value.targets);
     if (saved) store.setPresetId(source, saved.id);
+    return !!saved;
   };
 
   const lockedSlots = computed(() => gearSlots.filter((slot) => gearStore.isSlotLocked(slot)));
@@ -328,6 +337,7 @@ export function useAdvancedOptimiser() {
     targetContext,
     config,
     applicablePresets,
+    hiddenPresets,
     selectedPreset,
     presetModified,
     applyPreset,

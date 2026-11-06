@@ -168,14 +168,17 @@ export const useOptimiserPresetsStore = defineStore("optimiserPresetsStore", {
       return true;
     },
 
-    /** Moves one of the player's presets up (-1) or down (1) in the list. */
-    async movePreset(presetId: string, offset: -1 | 1): Promise<void> {
-      const from = this.userPresets.findIndex((p) => p.id === presetId);
-      const to = from + offset;
-      if (from < 0 || to < 0 || to >= this.userPresets.length) return;
+    /**
+     * Swaps two of the player's presets in the list. The picker shows only the
+     * presets that apply, so its neighbours needn't be next to each other here.
+     */
+    async swapPresets(presetId: string, otherId: string): Promise<void> {
+      const a = this.userPresets.findIndex((p) => p.id === presetId);
+      const b = this.userPresets.findIndex((p) => p.id === otherId);
+      if (a < 0 || b < 0 || a === b) return;
 
       const reordered = [...this.userPresets];
-      [reordered[from], reordered[to]] = [reordered[to], reordered[from]];
+      [reordered[a], reordered[b]] = [reordered[b], reordered[a]];
       this.userPresets = reordered;
       try {
         await reorderOptimiserPresets(reordered.map((p) => userPresetDbId(p.id)!));
