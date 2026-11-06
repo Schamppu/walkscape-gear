@@ -1,28 +1,40 @@
 /* Notototo */
 @font-face {
   font-family: "Notototo";
-  src: url("/fonts/notototo/NotoSerifToto-Regular.ttf") format("truetype");
+  src:
+    url("/fonts/notototo/NotoSerifToto-Regular.woff2") format("woff2"),
+    url("/fonts/notototo/NotoSerifToto-Regular.ttf") format("truetype");
+  font-display: swap;
   font-weight: 400;
   font-style: normal;
 }
 
 @font-face {
   font-family: "Notototo";
-  src: url("/fonts/notototo/NotoSerifToto-Medium.ttf") format("truetype");
+  src:
+    url("/fonts/notototo/NotoSerifToto-Medium.woff2") format("woff2"),
+    url("/fonts/notototo/NotoSerifToto-Medium.ttf") format("truetype");
+  font-display: swap;
   font-weight: 500;
   font-style: normal;
 }
 
 @font-face {
   font-family: "Notototo";
-  src: url("/fonts/notototo/NotoSerifToto-SemiBold.ttf") format("truetype");
+  src:
+    url("/fonts/notototo/NotoSerifToto-SemiBold.woff2") format("woff2"),
+    url("/fonts/notototo/NotoSerifToto-SemiBold.ttf") format("truetype");
+  font-display: swap;
   font-weight: 600;
   font-style: normal;
 }
 
 @font-face {
   font-family: "Notototo";
-  src: url("/fonts/notototo/NotoSerifToto-Bold.ttf") format("truetype");
+  src:
+    url("/fonts/notototo/NotoSerifToto-Bold.woff2") format("woff2"),
+    url("/fonts/notototo/NotoSerifToto-Bold.ttf") format("truetype");
+  font-display: swap;
   font-weight: 700;
   font-style: normal;
 }
@@ -30,19 +42,28 @@
 /* Work Sans */
 @font-face {
   font-family: "WorkSans";
-  src: url("/fonts/worksans/WorkSans-Regular.ttf") format("truetype");
+  src:
+    url("/fonts/worksans/WorkSans-Regular.woff2") format("woff2"),
+    url("/fonts/worksans/WorkSans-Regular.ttf") format("truetype");
+  font-display: swap;
   font-weight: 400;
 }
 
 @font-face {
   font-family: "WorkSans";
-  src: url("/fonts/worksans/WorkSans-Medium.ttf") format("truetype");
+  src:
+    url("/fonts/worksans/WorkSans-Medium.woff2") format("woff2"),
+    url("/fonts/worksans/WorkSans-Medium.ttf") format("truetype");
+  font-display: swap;
   font-weight: 500;
 }
 
 @font-face {
   font-family: "WorkSans";
-  src: url("/fonts/worksans/WorkSans-SemiBold.ttf") format("truetype");
+  src:
+    url("/fonts/worksans/WorkSans-SemiBold.woff2") format("woff2"),
+    url("/fonts/worksans/WorkSans-SemiBold.ttf") format("truetype");
+  font-display: swap;
   font-weight: 600;
 }
 
