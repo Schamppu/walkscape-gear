@@ -32,13 +32,6 @@ $activity-colors: (
   "emergency": rgb(244, 143, 177),
 );
 
-@each $name, $color in $activity-colors {
-  .color-#{$name} {
-    color: $color !important;
-  }
-}
-
-
 $quality-colors: (
   "common": $txPrimary,
   "common-dark": $boxDarkBackground,
@@ -58,28 +51,6 @@ $quality-colors: (
   "petRare-dark": rgb(45, 4, 13)
   );
 
-@each $name, $color in $quality-colors {
-  .color-#{$name} {
-    color: $color !important;
-  }
-
-  .bg-#{$name} {
-    background: $color !important;
-  }
-
-  .border-#{$name} {
-    border: 2px solid $color !important;
-  }
-
-  .outline-#{$name} {
-    filter:
-      drop-shadow(1px 0 0 $color)
-      drop-shadow(-1px 0 0 $color)
-      drop-shadow(0 1px 0 $color)
-      drop-shadow(0 -1px 0 $color);
-  }
-}
-
 $skill-colors: (
   "agility": rgb(241, 95, 192),
   "carpentry": rgb(241, 141, 95),
@@ -95,20 +66,6 @@ $skill-colors: (
   "hunting": rgba(251, 163, 86),
 );
 
-@each $name, $color in $skill-colors {
-  .color-#{$name} {
-    color: $color !important;
-  }
-  
-  .bg-#{$name} {
-    background: $color !important;
-  }
-
-  .border-#{$name} {
-    border: 2px solid $color !important;
-  }
-}
-
 $faction-colors: (
   "erdwise": rgb(255, 193, 141),
   "grand_duchy_of_trellin_erdwise": rgb(197, 255, 197),
@@ -120,33 +77,3 @@ $faction-colors: (
   "wallisia": rgb(255, 72, 150),
   "wrentmark": rgb(255,200,37,1)
 );
-
-@each $name, $color in $faction-colors {
-  .color-#{$name} {
-    color: $color !important;
-  }
-  
-  .bg-#{$name} {
-    background: $color !important;
-  }
-
-  .border-#{$name} {
-    border: 2px solid $color !important;
-  }
-}
-
-.negative {
-  color: $txNegative !important;
-  
-  &.disabled {
-    color: $txNegativeDark !important;
-  }
-}
-
-.positive {
-  color: $txPositive !important;
-
-  &.disabled {
-    color: $txPositiveDark !important;
-  }
-}

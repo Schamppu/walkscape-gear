@@ -1,0 +1,75 @@
+// Colour utility classes generated from the colour maps.
+// Kept out of styles/variables, which is injected into every component style block.
+@use "@/styles/variables" as *;
+
+@each $name, $color in $activity-colors {
+  .color-#{$name} {
+    color: $color !important;
+  }
+}
+
+@each $name, $color in $quality-colors {
+  .color-#{$name} {
+    color: $color !important;
+  }
+
+  .bg-#{$name} {
+    background: $color !important;
+  }
+
+  .border-#{$name} {
+    border: 2px solid $color !important;
+  }
+
+  .outline-#{$name} {
+    filter:
+      drop-shadow(1px 0 0 $color)
+      drop-shadow(-1px 0 0 $color)
+      drop-shadow(0 1px 0 $color)
+      drop-shadow(0 -1px 0 $color);
+  }
+}
+
+@each $name, $color in $skill-colors {
+  .color-#{$name} {
+    color: $color !important;
+  }
+  
+  .bg-#{$name} {
+    background: $color !important;
+  }
+
+  .border-#{$name} {
+    border: 2px solid $color !important;
+  }
+}
+
+@each $name, $color in $faction-colors {
+  .color-#{$name} {
+    color: $color !important;
+  }
+  
+  .bg-#{$name} {
+    background: $color !important;
+  }
+
+  .border-#{$name} {
+    border: 2px solid $color !important;
+  }
+}
+
+.negative {
+  color: $txNegative !important;
+  
+  &.disabled {
+    color: $txNegativeDark !important;
+  }
+}
+
+.positive {
+  color: $txPositive !important;
+
+  &.disabled {
+    color: $txPositiveDark !important;
+  }
+}
