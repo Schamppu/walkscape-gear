@@ -1,38 +1,37 @@
 import type { AxiosResponse } from "axios";
 import { createProxyInstance, type ProxyRequest } from "./proxy";
 import {
-  AbilitySummary,
   ActivitySummary,
   ApInfo,
-  Faction,
   IconBatchResponse,
-  ItemCategoryGroup,
   ItemSummary,
-  ItemValueMap,
-  Keyword,
-  LootTableSummary,
   PetDetail,
   PetSummary,
   RecipeSummary,
-  RouteSummary,
-  Skill,
-  StatDefinition,
-  TerrainModifier,
   AbilityDetail,
   LocationDetail,
   LootTableDetail,
   ServiceDetail,
-  LocationSummary,
   ItemDetail,
-  UrlMap,
-  GlobalVariable,
 } from "@/domain/types";
+import type { StaticBootstrap } from "@/domain/types/bootstrap";
 
 const rawProxy = createProxyInstance("/api");
 
 /** Type-safe wrapper – the proxy always returns a promise for valid methods. */
 function proxy<T>(request: ProxyRequest): Promise<AxiosResponse<T>> {
   return rawProxy(request) as Promise<AxiosResponse<T>>;
+}
+
+// ---------------------------------------------------------------------------
+// Bootstrap
+// ---------------------------------------------------------------------------
+
+/** All static game data needed at startup, in one request. */
+export function getStaticBootstrap(): Promise<AxiosResponse<StaticBootstrap>> {
+  return proxy<StaticBootstrap>({
+    url: "bootstrap",
+  });
 }
 
 // ---------------------------------------------------------------------------
@@ -85,12 +84,6 @@ export function getLocalization({
 // Abilities
 // ---------------------------------------------------------------------------
 
-export function getAbilities(): Promise<AxiosResponse<AbilitySummary[]>> {
-  return proxy<AbilitySummary[]>({
-    url: "abilities",
-  });
-}
-
 export function getMultipleAbilities(
   ids: string[],
 ): Promise<AxiosResponse<AbilityDetail[]>> {
@@ -104,56 +97,8 @@ export function getMultipleAbilities(
 }
 
 // ---------------------------------------------------------------------------
-// Skills
-// ---------------------------------------------------------------------------
-
-export function getSkills(): Promise<AxiosResponse<Skill[]>> {
-  return proxy<Skill[]>({
-    url: "skills",
-  });
-}
-
-// ---------------------------------------------------------------------------
-// Factions
-// ---------------------------------------------------------------------------
-
-export function getFactions(): Promise<AxiosResponse<Faction[]>> {
-  return proxy<Faction[]>({
-    url: "factions",
-  });
-}
-
-// ---------------------------------------------------------------------------
-// Global variables
-// ---------------------------------------------------------------------------
-
-export function getGlobalVariables(): Promise<AxiosResponse<GlobalVariable[]>> {
-  return proxy<GlobalVariable[]>({
-    url: "global_variables",
-  });
-}
-
-// ---------------------------------------------------------------------------
-// Keywords
-// ---------------------------------------------------------------------------
-
-export function getKeywords(): Promise<AxiosResponse<Keyword[]>> {
-  return proxy<Keyword[]>({
-    url: "keywords",
-  });
-}
-
-// ---------------------------------------------------------------------------
 // Items
 // ---------------------------------------------------------------------------
-
-export function getCategorizedItems(): Promise<
-  AxiosResponse<ItemCategoryGroup[]>
-> {
-  return proxy<ItemCategoryGroup[]>({
-    url: "items/categorized_items",
-  });
-}
 
 export function getItems(): Promise<AxiosResponse<ItemSummary[]>> {
   return proxy<ItemSummary[]>({
@@ -168,39 +113,6 @@ export function getItem({
 }): Promise<AxiosResponse<ItemDetail>> {
   return proxy<ItemDetail>({
     url: `items/${id}`,
-  });
-}
-
-export function getMaterials(): Promise<AxiosResponse<ItemDetail[]>> {
-  return proxy<ItemDetail[]>({
-    url: "items/search",
-    options: {
-      params: { type: "material", detailed: true },
-    },
-  });
-}
-
-export function getContainerItems(): Promise<AxiosResponse<ItemDetail[]>> {
-  return proxy<ItemDetail[]>({
-    url: "items/search",
-    options: {
-      params: { type: "container", detailed: true },
-    },
-  });
-}
-
-export function getMemosphereItems(): Promise<AxiosResponse<ItemDetail[]>> {
-  return proxy<ItemDetail[]>({
-    url: "items/search",
-    options: {
-      params: { keywords: "memosphere", detailed: true },
-    },
-  });
-}
-
-export function getFineMaterials(): Promise<AxiosResponse<string[]>> {
-  return proxy<string[]>({
-    url: `items/fine_materials`,
   });
 }
 
@@ -241,27 +153,9 @@ export function searchItems({
   });
 }
 
-export function getUrlMap(): Promise<AxiosResponse<UrlMap>> {
-  return proxy<UrlMap>({
-    url: "items/url_mapping",
-  });
-}
-
-export function getItemValueMap(): Promise<AxiosResponse<ItemValueMap>> {
-  return proxy<ItemValueMap>({
-    url: "items/item_value_mapping",
-  });
-}
-
 // ---------------------------------------------------------------------------
 // Locations
 // ---------------------------------------------------------------------------
-
-export function getLocations(): Promise<AxiosResponse<LocationSummary[]>> {
-  return proxy<LocationSummary[]>({
-    url: "locations",
-  });
-}
 
 export function searchLocations({
   activityList,
@@ -290,12 +184,6 @@ export function getRealmDefaultLocations(): Promise<
 // Activities
 // ---------------------------------------------------------------------------
 
-export function getActivities(): Promise<AxiosResponse<ActivitySummary[]>> {
-  return proxy<ActivitySummary[]>({
-    url: "activities",
-  });
-}
-
 export function getActivity({
   id,
 }: {
@@ -309,12 +197,6 @@ export function getActivity({
 // ---------------------------------------------------------------------------
 // Recipes
 // ---------------------------------------------------------------------------
-
-export function getRecipes(): Promise<AxiosResponse<RecipeSummary[]>> {
-  return proxy<RecipeSummary[]>({
-    url: "recipes",
-  });
-}
 
 export function getRecipe({
   id,
@@ -344,24 +226,8 @@ export function searchServices({
 }
 
 // ---------------------------------------------------------------------------
-// Stats
-// ---------------------------------------------------------------------------
-
-export function getStats(): Promise<AxiosResponse<StatDefinition[]>> {
-  return proxy<StatDefinition[]>({
-    url: "stats",
-  });
-}
-
-// ---------------------------------------------------------------------------
 // Loot tables
 // ---------------------------------------------------------------------------
-
-export function getLootTables(): Promise<AxiosResponse<LootTableSummary[]>> {
-  return proxy<LootTableSummary[]>({
-    url: "lootTables",
-  });
-}
 
 export function getMultipleLootTables(
   ids: string[],
@@ -372,24 +238,6 @@ export function getMultipleLootTables(
     options: {
       ids,
     },
-  });
-}
-
-// ---------------------------------------------------------------------------
-// Routes & terrain
-// ---------------------------------------------------------------------------
-
-export function getRoutes(): Promise<AxiosResponse<RouteSummary[]>> {
-  return proxy<RouteSummary[]>({
-    url: "routes",
-  });
-}
-
-export function getTerrainModifiers(): Promise<
-  AxiosResponse<TerrainModifier[]>
-> {
-  return proxy<TerrainModifier[]>({
-    url: "terrain_modifiers",
   });
 }
 

@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  getUserBootstrap,
   getUserInfo,
   upsertUserInfo,
   getUserOwnedItems,
@@ -23,6 +24,7 @@ import {
 
 const router = Router();
 
+router.get("/bootstrap", getUserBootstrap);
 router.get("/user_stats", getUserInfo);
 router.post("/user_stats", upsertUserInfo);
 router.get("/owned_items", getUserOwnedItems);

@@ -1,8 +1,7 @@
 import { defineStore } from "pinia";
 import { useNotificationStore } from "@/store/notifications";
+import type { StaticBootstrap, UserBootstrap } from "@/domain/types/bootstrap";
 import {
-  getGearSetTags,
-  getGearSets,
   getGearSet,
   upsertGearSet,
   deleteGearSet,
@@ -89,16 +88,11 @@ export const useGearSetStore = defineStore("gearSetStore", {
   },
 
   actions: {
-    async fetchGearSets(): Promise<void> {
-      if (this.isLoaded) return;
-
-      const [gearSetTags, gearSets] = await Promise.all([
-        getGearSetTags(),
-        getGearSets(),
-      ]);
-
+    hydrate({ gearSetTags }: Pick<StaticBootstrap, "gearSetTags">): void {
       this.gearSetTags = gearSetTags;
-
+    },
+    /** Applies the player's gear sets. Requires `hydrate` to have run first (tags). */
+    hydrateUser({ gearSets }: Pick<UserBootstrap, "gearSets">): void {
       const mappedGearSets: MappedGearSet[] = gearSets.map((gearSet) => ({
         ...gearSet,
         tags: resolveTagsFromIds(gearSet.tags, this.gearSetTags),

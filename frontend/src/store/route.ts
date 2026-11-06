@@ -1,9 +1,5 @@
 import { defineStore } from "pinia";
-import {
-  getLocations,
-  getRoutes,
-  getTerrainModifiers,
-} from "@/utils/axios/api_routes";
+import type { StaticBootstrap } from "@/domain/types/bootstrap";
 import type {
   LocationSummary,
   RouteSummary,
@@ -45,19 +41,11 @@ export const useRouteStore = defineStore("routeStore", {
     terrainModifiersMap: {} as Record<string, TerrainModifierMapEntry>,
   }),
   actions: {
-    async fetchRouteData(): Promise<void> {
-      if (this.isLoaded) return;
-
-      const [
-        { data: locations },
-        { data: routes },
-        { data: terrainModifiers },
-      ] = await Promise.all([
-        getLocations(),
-        getRoutes(),
-        getTerrainModifiers(),
-      ]);
-
+    hydrate({
+      locations,
+      routes,
+      terrainModifiers,
+    }: Pick<StaticBootstrap, "locations" | "routes" | "terrainModifiers">): void {
       this.locations = locations;
       this.locationsMap = Object.fromEntries(
         locations.map(({ id, ...rest }) => [id, rest])

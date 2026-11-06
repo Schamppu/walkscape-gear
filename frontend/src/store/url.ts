@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { getUrlMap } from "@/utils/axios/api_routes";
+import type { StaticBootstrap } from "@/domain/types/bootstrap";
 import { useUrlMap } from "@/composables/useUrlMap";
 import { useActivityStore } from "./activity";
 import { useGearStore } from "./gear";
@@ -44,15 +44,12 @@ export const useUrlStore = defineStore("url", {
   }),
 
   actions: {
-    async fetchMapping(): Promise<void> {
-      if (this.isLoaded) return;
-
-      const { data: response } = await getUrlMap();
-      this.mapping = response;
-      this.reverseMapping = buildReverseMapping(response);
+    hydrate({ urlMapping }: Pick<StaticBootstrap, "urlMapping">): void {
+      this.mapping = urlMapping;
+      this.reverseMapping = buildReverseMapping(urlMapping);
       this.isLoaded = true;
       const notificationStore = useNotificationStore();
-      void notificationStore.debug(`URL: loaded mapping with ${Object.keys(response).length} entries`);
+      void notificationStore.debug(`URL: loaded mapping with ${Object.keys(urlMapping).length} entries`);
     },
 
     encodeAndPushToUrl(): void {
@@ -159,8 +156,6 @@ export const useUrlStore = defineStore("url", {
     async _applyGearSetFromUrl(gearSetId: number): Promise<void> {
       const { useGearSetStore } = await import("./gearSet");
       const gearSetStore = useGearSetStore();
-
-      await gearSetStore.fetchGearSets();
 
       const gearSetExists = gearSetStore.gearSets.some(
         (set) => set.id === gearSetId,

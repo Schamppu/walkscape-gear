@@ -20,6 +20,7 @@ import {
   terrainModifierService,
 } from "./index.js";
 import cachedApi from "./cachedApi.js";
+import { getStaticBundle } from "./bootstrapService.js";
 
 async function runStep(label, fn) {
   const start = Date.now();
@@ -76,6 +77,8 @@ export async function warmCache() {
   for (const [label, fn] of aggregations) {
     await runStep(label, fn);
   }
+
+  await runStep("bootstrap.getStaticBundle", () => getStaticBundle());
 
   const stats = await cachedApi.getCacheStats();
   console.log(

@@ -1,12 +1,6 @@
 import { defineStore } from "pinia";
-import { upsertOwnedItems, fetchOwnedItems } from "@/utils/axios/db_routes";
-import {
-  getCategorizedItems,
-  getContainerItems,
-  getFineMaterials,
-  getMaterials,
-  getMemosphereItems,
-} from "@/utils/axios/api_routes";
+import { upsertOwnedItems } from "@/utils/axios/db_routes";
+import type { StaticBootstrap, UserBootstrap } from "@/domain/types/bootstrap";
 import debounce from "@/utils/debounce";
 import { useNotificationStore } from "@/store/notifications";
 import type {
@@ -78,28 +72,20 @@ export const useItemsStore = defineStore("itemStore", {
       },
   },
   actions: {
-    async fetchItems(): Promise<void> {
-      if (this.isLoaded) return;
-
-      const [
-        { data: categorizedItems },
-        ownedItems,
-        { data: materials },
-        { data: containers },
-        { data: fineMaterials },
-        { data: memospheres },
-      ] = await Promise.all([
-        getCategorizedItems(),
-        fetchOwnedItems(),
-        getMaterials(),
-        getContainerItems(),
-        getFineMaterials(),
-        getMemosphereItems(),
-      ]);
-
-      this.ownedItems = Object.fromEntries(
-        ownedItems.map(({ itemId, ...data }) => [itemId, data]),
-      );
+    hydrate({
+      categorizedItems,
+      materials,
+      containers,
+      fineMaterials,
+      memospheres,
+    }: Pick<
+      StaticBootstrap,
+      | "categorizedItems"
+      | "materials"
+      | "containers"
+      | "fineMaterials"
+      | "memospheres"
+    >): void {
       this.categorizedItems = categorizedItems;
 
       const categories = categorizedItems.flatMap(
@@ -135,7 +121,16 @@ export const useItemsStore = defineStore("itemStore", {
       this.isLoaded = true;
       const notificationStore = useNotificationStore();
       void notificationStore.debug(
-        `Items: loaded ${Object.keys(this.allGearItems).length} items across ${this.categorizedItems.length} groups, ${Object.keys(this.ownedItems).length} owned, ${Object.keys(this.materials).length} materials`,
+        `Items: loaded ${Object.keys(this.allGearItems).length} items across ${this.categorizedItems.length} groups, ${Object.keys(this.materials).length} materials`,
+      );
+    },
+    hydrateUser({ ownedItems }: Pick<UserBootstrap, "ownedItems">): void {
+      this.ownedItems = Object.fromEntries(
+        ownedItems.map(({ itemId, ...data }) => [itemId, data]),
+      );
+      const notificationStore = useNotificationStore();
+      void notificationStore.debug(
+        `Items: loaded ${Object.keys(this.ownedItems).length} owned items`,
       );
     },
     /**

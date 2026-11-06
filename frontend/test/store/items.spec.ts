@@ -4,7 +4,6 @@ import { useItemsStore } from "@/store/items";
 
 vi.mock("@/utils/axios/db_routes", () => ({
   upsertOwnedItems: vi.fn(() => Promise.resolve()),
-  fetchOwnedItems: vi.fn(() => Promise.resolve({ data: [] })),
 }));
 
 describe("itemsStore.toggleItem", () => {

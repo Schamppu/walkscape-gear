@@ -8,7 +8,6 @@ import { BaseContextKey } from "@/composables/context/injectionKeys";
 
 vi.mock("@/utils/axios/db_routes", () => ({
   upsertOwnedItems: vi.fn(() => Promise.resolve()),
-  fetchOwnedItems: vi.fn(() => Promise.resolve({ data: [] })),
 }));
 
 const item = { id: "pie", name: "Pie", icon: "", buffs: [] };
