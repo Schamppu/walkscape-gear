@@ -19,6 +19,7 @@
     "@prisma/client": "^7.7.0",
     "axios": "^1.9.0",
     "bottleneck": "^2.19.5",
+    "compression": "^1.8.2",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^4.21.2",

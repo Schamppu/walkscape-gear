@@ -1,4 +1,5 @@
 import * as dbService from "../services/dbService.js";
+import { getUserBundle } from "../services/bootstrapService.js";
 
 // Helper to extract userUuid and handle missing header
 function getUserUuid(req, res) {
@@ -58,6 +59,17 @@ export const upsertUserFactionReputations = makeUpsertHandler(
   dbService.upsertUserFactionReputations,
   (req) => req.body.reputations
 );
+
+export const getUserBootstrap = async (req, res) => {
+  const userUuid = getUserUuid(req, res);
+  if (!userUuid) return;
+  try {
+    res.set("Cache-Control", "no-store");
+    res.json(await getUserBundle(userUuid));
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+};
 
 export const getGearSetTags = async (req, res) => {
   try {

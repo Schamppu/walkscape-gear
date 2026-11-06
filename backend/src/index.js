@@ -3,6 +3,7 @@ import express from "express";
 import morgan from "morgan";
 import cors from "cors";
 import helmet from "helmet";
+import compression from "compression";
 
 import { registerRoutes } from "./routes/index.js";
 import { errorHandler } from "./middleware/errorHandler.js";
@@ -18,6 +19,7 @@ app.use(
     origin: ["http://localhost:5173", "https://gear.dev.walkscape.app/"],
   })
 );
+app.use(compression());
 app.use(morgan("dev"));
 app.use(express.json({ limit: "1mb" }));
 app.use(errorHandler);

@@ -2,6 +2,7 @@ import { createBaseRouter } from "./baseRouter.js";
 
 import { Router } from "express";
 import { achievementRoutes } from "./achievementRoutes.js";
+import { getStaticBootstrap } from "../controllers/bootstrapController.js";
 import { dbRoutes } from "./dbRoutes.js";
 import itemRoutes from "./itemRoutes.js";
 import iconRoutes from "./iconRoutes.js";
@@ -25,6 +26,7 @@ import {
 export function registerRoutes(app) {
   const apiRouter = Router();
 
+  apiRouter.get("/bootstrap", getStaticBootstrap);
   apiRouter.use("/abilities", createBaseRouter("Abilities", abilitiesService));
   apiRouter.use("/achievements", achievementRoutes);
   apiRouter.use("/activities", createBaseRouter("Activity", activityService));
