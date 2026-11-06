@@ -1,7 +1,8 @@
 <script setup>
-import { ref } from "vue";
+import { ref, defineAsyncComponent } from "vue";
 import WsButton from "@/components/primitives/WsButton.vue";
-import ImportModal from "./ImportModal.vue";
+
+const ImportModal = defineAsyncComponent(() => import("./ImportModal.vue"));
 
 const emit = defineEmits(["import-data"]);
 

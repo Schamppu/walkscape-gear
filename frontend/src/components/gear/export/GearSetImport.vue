@@ -1,7 +1,6 @@
 <script setup>
-import { ref } from "vue";
+import { ref, defineAsyncComponent } from "vue";
 import WsButton from "@/components/primitives/WsButton.vue";
-import GearSetImportModal from "./GearSetImportModal.vue";
 import { injectBaseContext } from "@/composables/context/injectShared";
 import { useGearSetExport } from "@/composables/useGearSetExport";
 import { icons } from "@/constants/iconPaths";
@@ -9,6 +8,8 @@ import { useNotificationStore } from "@/store/notifications";
 import { useGearStore } from "@/store/gear";
 import { useUrlStore } from "@/store/url";
 import { getNewItemIds } from "@/utils/axios/api_routes";
+
+const GearSetImportModal = defineAsyncComponent(() => import("./GearSetImportModal.vue"));
 
 const ctx = injectBaseContext();
 const { importCode } = useGearSetExport(ctx);

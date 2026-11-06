@@ -1,11 +1,12 @@
 <script setup>
-import { ref } from "vue";
+import { ref, defineAsyncComponent } from "vue";
 import { injectBaseContext } from "@/composables/context/injectShared";
 import { useGearSetExport } from "@/composables/useGearSetExport";
 import { icons } from "@/constants/iconPaths";
 import { useNotificationStore } from "@/store/notifications";
 import WsButton from "@/components/primitives/WsButton.vue";
-import ExportCodeModal from "./ExportCodeModal.vue";
+
+const ExportCodeModal = defineAsyncComponent(() => import("./ExportCodeModal.vue"));
 
 const ctx = injectBaseContext();
 const { exportCode } = useGearSetExport(ctx);
