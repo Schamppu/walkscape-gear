@@ -9,6 +9,7 @@ import { useItemsStore } from "@/store/items";
 import { useGearSetStore } from "@/store/gearSet";
 import { useRouteStore } from "@/store/route";
 import { useSettingsStore } from "@/store/settings";
+import { useOptimiserPresetsStore } from "@/store/optimiserPresets";
 import { provideSharedComposables } from "@/composables/context/provideSharedComposables";
 import { getOrCreateUserUuid } from "@/utils/user";
 import { icons } from "@/constants/iconPaths";
@@ -108,6 +109,8 @@ function handleUuidUpdate(newUuid) {
 
   playerStore.isLoaded = false;
   itemsStore.isLoaded = false;
+  // Fetched again the next time the optimiser opens.
+  useOptimiserPresetsStore().$reset();
   showSettings.value = false;
   isLoaded.value = false;
 

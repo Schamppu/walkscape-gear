@@ -134,3 +134,31 @@ export type UpsertSettingEntry = {
   value: boolean;
   display: number;
 };
+
+// ---------------------------------------------------------------------------
+// Optimiser Presets
+// ---------------------------------------------------------------------------
+
+export type DbOptimiserPresetTarget = {
+  x: string;
+  y: string;
+  weight: number;
+};
+
+export type DbOptimiserPreset = {
+  id: number;
+  name: string;
+  targets: DbOptimiserPresetTarget[];
+  sortOrder: number;
+};
+
+/** Updates the preset when `id` is given, otherwise creates one at the top of the list. */
+export type UpsertOptimiserPresetPayload = {
+  id?: number;
+  name: string;
+  targets: DbOptimiserPresetTarget[];
+};
+
+export type DeleteOptimiserPresetResponse = {
+  message: string;
+};

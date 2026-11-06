@@ -37,6 +37,9 @@ const mockPrisma = vi.hoisted(() => ({
   userSetting: {
     deleteMany: vi.fn().mockReturnValue("op:userSetting.deleteMany"),
   },
+  optimiserPreset: {
+    deleteMany: vi.fn().mockReturnValue("op:optimiserPreset.deleteMany"),
+  },
   user: {
     deleteMany: vi.fn().mockReturnValue("op:user.deleteMany"),
   },
@@ -88,11 +91,11 @@ describe("deleteUserData", () => {
     });
   });
 
-  it("passes all 8 delete operations to $transaction", async () => {
+  it("passes all 9 delete operations to $transaction", async () => {
     await deleteUserData(USER_A);
     expect(mockPrisma.$transaction).toHaveBeenCalledOnce();
     const ops = mockPrisma.$transaction.mock.calls[0][0];
-    expect(ops).toHaveLength(8);
+    expect(ops).toHaveLength(9);
   });
 
   it("deletes gear set child rows scoped to the resolved gear set IDs", async () => {
@@ -115,6 +118,7 @@ describe("deleteUserData", () => {
     expect(mockPrisma.ownedItem.deleteMany).toHaveBeenCalledWith(byUuid);
     expect(mockPrisma.factionReputation.deleteMany).toHaveBeenCalledWith(byUuid);
     expect(mockPrisma.userSetting.deleteMany).toHaveBeenCalledWith(byUuid);
+    expect(mockPrisma.optimiserPreset.deleteMany).toHaveBeenCalledWith(byUuid);
     expect(mockPrisma.user.deleteMany).toHaveBeenCalledWith(byUuid);
   });
 
@@ -129,6 +133,7 @@ describe("deleteUserData", () => {
       mockPrisma.ownedItem.deleteMany,
       mockPrisma.factionReputation.deleteMany,
       mockPrisma.userSetting.deleteMany,
+      mockPrisma.optimiserPreset.deleteMany,
       mockPrisma.user.deleteMany,
     ].flatMap((fn) => fn.mock.calls);
 

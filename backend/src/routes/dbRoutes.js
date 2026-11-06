@@ -14,6 +14,10 @@ import {
   deleteGearSet,
   getUserSettings,
   upsertUserSettings,
+  getOptimiserPresets,
+  upsertOptimiserPreset,
+  deleteOptimiserPreset,
+  reorderOptimiserPresets,
   deleteUserData,
 } from "../controllers/dbController.js";
 
@@ -33,6 +37,10 @@ router.post("/gear_sets", upsertGearSet);
 router.delete("/gear_sets/:id", deleteGearSet);
 router.get("/user_settings", getUserSettings);
 router.post("/user_settings", upsertUserSettings);
+router.get("/optimiser_presets", getOptimiserPresets);
+router.post("/optimiser_presets", upsertOptimiserPreset);
+router.post("/optimiser_presets/order", reorderOptimiserPresets);
+router.delete("/optimiser_presets/:id", deleteOptimiserPreset);
 router.delete("/user_data", deleteUserData);
 
 export { router as dbRoutes };

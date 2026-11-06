@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
 import {
-  BEST_FOR_SKILL_STORAGE_KEY,
   configStorageKey,
   defaultConfig,
+  legacyConfigStorageKey,
   parseConfig,
 } from "@/domain/advancedOptimiser/config";
 import { isTargetValid } from "@/domain/advancedOptimiser/targets";
@@ -32,13 +32,17 @@ describe("defaultConfig", () => {
 });
 
 describe("configStorageKey", () => {
-  it("keys single-activity configs by activity id", () => {
-    expect(configStorageKey(defaultConfig("act_1"))).toBe("advancedOptimiser.config.act_1");
+  it("keys configs by source kind and id", () => {
+    expect(configStorageKey({ kind: "activity", id: "act_1" })).toBe(
+      "advancedOptimiser.config.activity:act_1",
+    );
+    expect(configStorageKey({ kind: "recipe", id: "act_1" })).toBe(
+      "advancedOptimiser.config.recipe:act_1",
+    );
   });
 
-  it("shares one key for all best-for-skill configs", () => {
-    const config = { ...defaultConfig("x"), mode: { kind: "bestForSkill" as const, skillId: "fishing" as const } };
-    expect(configStorageKey(config)).toBe(BEST_FOR_SKILL_STORAGE_KEY);
+  it("keeps the legacy key without the kind", () => {
+    expect(legacyConfigStorageKey("act_1")).toBe("advancedOptimiser.config.act_1");
   });
 });
 
@@ -59,6 +63,12 @@ describe("parseConfig", () => {
       expect(parseConfig(raw)).toBeNull();
     },
   );
+
+  it("keeps a string preset id and drops anything else", () => {
+    const base = { mode: { kind: "singleActivity", activityId: "a" }, targets: [] };
+    expect(parseConfig({ ...base, presetId: "builtin:balanced" })?.presetId).toBe("builtin:balanced");
+    expect(parseConfig({ ...base, presetId: 5 })).not.toHaveProperty("presetId");
+  });
 
   it("drops unknown and duplicate targets and clamps weights", () => {
     const parsed = parseConfig({

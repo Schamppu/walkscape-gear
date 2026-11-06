@@ -2,6 +2,7 @@ import "dotenv/config";
 import { PrismaClient } from "../generated/prisma/client.js";
 import { validTags } from "../../prisma/tag-data.js";
 import { PrismaPg } from "@prisma/adapter-pg";
+import { HttpError } from "../utils/httpError.js";
 
 const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL,
@@ -77,6 +78,39 @@ const ALLOWED_SETTINGS = new Set([
   "showChestLootTables",
   ...DEBUG_SETTINGS,
 ]);
+
+// Built-in optimiser presets the player can hide: `hideOptimiserPreset:<slug>`.
+// The slugs live in the frontend, so cap how many a user can store instead.
+const HIDE_OPTIMISER_PRESET_PREFIX = "hideOptimiserPreset:";
+const HIDE_OPTIMISER_PRESET_SETTING = /^hideOptimiserPreset:[a-z0-9-]{1,40}$/;
+const MAX_HIDDEN_OPTIMISER_PRESETS = 20;
+
+const isAllowedSetting = (setting) =>
+  ALLOWED_SETTINGS.has(setting) || HIDE_OPTIMISER_PRESET_SETTING.test(setting);
+
+// Shape checks for saved optimiser presets. Mirrors the target lists in
+// frontend/src/domain/advancedOptimiser/config.ts.
+const OPTIMISER_X_VALUES = new Set([
+  "xp",
+  "rewardRolls",
+  "fineMaterials",
+  "chests",
+  "tokens",
+  "coins",
+  "collectibles",
+  "eternalCrafts",
+]);
+const OPTIMISER_Y_VALUES = new Set(["step", "action", "material"]);
+const OPTIMISER_MAX_WEIGHT = 10;
+const OPTIMISER_PRESET_MAX_TARGETS = 8;
+const OPTIMISER_PRESET_MAX_NAME_LENGTH = 50;
+const OPTIMISER_PRESET_MAX_COUNT = 50;
+// Control and invisible formatting characters (zero-width, bidi overrides).
+const OPTIMISER_PRESET_NAME_FORBIDDEN = /[\p{Cc}\p{Cf}]/u;
+// Preset ids are a Postgres SERIAL (INT4).
+const MAX_DB_INT = 2147483647;
+
+const isValidPresetId = (id) => Number.isInteger(id) && id > 0 && id <= MAX_DB_INT;
 
 async function markUserActiveThrottled(userUuid) {
   const FIVE_MINUTES = 5 * 60 * 1000;
@@ -406,6 +440,7 @@ export async function deleteUserData(userUuid) {
     prisma.ownedItem.deleteMany({ where: { userUuid } }),
     prisma.factionReputation.deleteMany({ where: { userUuid } }),
     prisma.userSetting.deleteMany({ where: { userUuid } }),
+    prisma.optimiserPreset.deleteMany({ where: { userUuid } }),
     prisma.user.deleteMany({ where: { userUuid } }),
   ]);
 }
@@ -425,9 +460,23 @@ export async function getUserSettings(userUuid) {
 export async function upsertUserSettings(userUuid, settingsArr) {
   await ensureUser(userUuid);
   const validEntries = settingsArr.filter(({ setting }) =>
-    ALLOWED_SETTINGS.has(setting),
+    isAllowedSetting(setting),
   );
   if (validEntries.length === 0) throw new Error("No valid settings provided");
+
+  const newHidden = validEntries
+    .map(({ setting }) => setting)
+    .filter((setting) => setting.startsWith(HIDE_OPTIMISER_PRESET_PREFIX));
+  if (newHidden.length > 0) {
+    const existing = await prisma.userSetting.findMany({
+      where: { userUuid, setting: { startsWith: HIDE_OPTIMISER_PRESET_PREFIX } },
+      select: { setting: true },
+    });
+    const hidden = new Set([...existing.map(({ setting }) => setting), ...newHidden]);
+    if (hidden.size > MAX_HIDDEN_OPTIMISER_PRESETS) {
+      throw new HttpError(400, "Too many hidden optimiser presets");
+    }
+  }
 
   await Promise.all(
     validEntries.map(({ setting, display, value }) => {
@@ -438,4 +487,116 @@ export async function upsertUserSettings(userUuid, settingsArr) {
       });
     }),
   );
+}
+
+const OPTIMISER_PRESET_FIELDS = { id: true, name: true, targets: true, sortOrder: true };
+
+/** Throws unless `payload` is `{ id?, name, targets }` with valid targets. */
+function validateOptimiserPreset(payload) {
+  const { id, name, targets } = payload ?? {};
+  if (id !== undefined && !isValidPresetId(id)) {
+    throw new HttpError(400, "Invalid preset id");
+  }
+  if (typeof name === "string" && OPTIMISER_PRESET_NAME_FORBIDDEN.test(name)) {
+    throw new HttpError(400, "Preset name contains invalid characters");
+  }
+  const trimmed = typeof name === "string" ? name.normalize("NFC").trim() : "";
+  if (!trimmed || trimmed.length > OPTIMISER_PRESET_MAX_NAME_LENGTH) {
+    throw new HttpError(400, `Preset name must be 1-${OPTIMISER_PRESET_MAX_NAME_LENGTH} characters`);
+  }
+  if (
+    !Array.isArray(targets) ||
+    targets.length === 0 ||
+    targets.length > OPTIMISER_PRESET_MAX_TARGETS
+  ) {
+    throw new HttpError(400, `A preset needs 1-${OPTIMISER_PRESET_MAX_TARGETS} targets`);
+  }
+  const seen = new Set();
+  const cleanTargets = targets.map((t) => {
+    const { x, y, weight } = t ?? {};
+    if (
+      !OPTIMISER_X_VALUES.has(x) ||
+      !OPTIMISER_Y_VALUES.has(y) ||
+      !Number.isInteger(weight) ||
+      weight < 0 ||
+      weight > OPTIMISER_MAX_WEIGHT
+    ) {
+      throw new HttpError(400, "Invalid preset target");
+    }
+    if (seen.has(`${x}/${y}`)) throw new HttpError(400, "Duplicate preset target");
+    seen.add(`${x}/${y}`);
+    return { x, y, weight };
+  });
+  return { id, name: trimmed, targets: cleanTargets };
+}
+
+export async function getOptimiserPresets(userUuid) {
+  return prisma.optimiserPreset.findMany({
+    where: { userUuid },
+    select: OPTIMISER_PRESET_FIELDS,
+    orderBy: [{ sortOrder: "asc" }, { id: "desc" }],
+  });
+}
+
+/** Updates the preset when `id` is given, otherwise creates it at the top of the list. */
+export async function upsertOptimiserPreset(userUuid, payload) {
+  const { id, name, targets } = validateOptimiserPreset(payload);
+  await ensureUser(userUuid);
+
+  if (id) {
+    const { count } = await prisma.optimiserPreset.updateMany({
+      where: { id, userUuid },
+      data: { name, targets },
+    });
+    if (count === 0) throw new HttpError(404, "Optimiser preset not found");
+    return prisma.optimiserPreset.findUnique({
+      where: { id },
+      select: OPTIMISER_PRESET_FIELDS,
+    });
+  }
+
+  const presetCount = await prisma.optimiserPreset.count({ where: { userUuid } });
+  if (presetCount >= OPTIMISER_PRESET_MAX_COUNT) {
+    throw new HttpError(400, `You can save up to ${OPTIMISER_PRESET_MAX_COUNT} presets`);
+  }
+  const first = await prisma.optimiserPreset.findFirst({
+    where: { userUuid },
+    orderBy: { sortOrder: "asc" },
+    select: { sortOrder: true },
+  });
+  return prisma.optimiserPreset.create({
+    data: { userUuid, name, targets, sortOrder: (first?.sortOrder ?? 1) - 1 },
+    select: OPTIMISER_PRESET_FIELDS,
+  });
+}
+
+export async function deleteOptimiserPreset(userUuid, presetId) {
+  if (!isValidPresetId(presetId)) throw new HttpError(400, "Invalid preset id");
+  const { count } = await prisma.optimiserPreset.deleteMany({
+    where: { id: presetId, userUuid },
+  });
+  if (count === 0) throw new HttpError(404, "Optimiser preset not found");
+  return { message: "Optimiser preset deleted" };
+}
+
+/** Sets the order of the player's presets; `ids` must list exactly their presets. */
+export async function reorderOptimiserPresets(userUuid, ids) {
+  if (!Array.isArray(ids) || !ids.every(isValidPresetId)) {
+    throw new HttpError(400, "Invalid preset order");
+  }
+  const owned = await prisma.optimiserPreset.findMany({
+    where: { userUuid },
+    select: { id: true },
+  });
+  const ownedIds = new Set(owned.map((p) => p.id));
+  if (ids.length !== ownedIds.size || new Set(ids).size !== ids.length || !ids.every((id) => ownedIds.has(id))) {
+    throw new HttpError(400, "Preset order must list each of your presets once");
+  }
+
+  await prisma.$transaction(
+    ids.map((id, sortOrder) =>
+      prisma.optimiserPreset.updateMany({ where: { id, userUuid }, data: { sortOrder } }),
+    ),
+  );
+  return getOptimiserPresets(userUuid);
 }
