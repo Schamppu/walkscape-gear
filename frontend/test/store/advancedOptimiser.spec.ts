@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { setActivePinia, createPinia } from "pinia";
 import { useAdvancedOptimiserStore } from "@/store/advancedOptimiser";
+import type { AdvancedOptimiserConfig } from "@/domain/advancedOptimiser/config";
 
 const ACT_1 = { kind: "activity", id: "act_1" } as const;
 const ACT_2 = { kind: "activity", id: "act_2" } as const;
@@ -35,13 +36,36 @@ describe("advanced optimiser store", () => {
     expect(store.configs["activity:act_2"].targets).toHaveLength(1);
   });
 
-  it("resetConfig restores the default and forgets the saved one", () => {
+  it("resetConfig forgets the config, in memory and saved", () => {
     const store = useAdvancedOptimiserStore();
     store.removeTarget(ACT_1, 0);
     expect(localStorage.getItem(KEY)).not.toBeNull();
     store.resetConfig(ACT_1);
-    expect(store.configs["activity:act_1"].targets).toHaveLength(1);
+    expect(store.configs["activity:act_1"]).toBeUndefined();
     expect(localStorage.getItem(KEY)).toBeNull();
+  });
+
+  it("setConfig saves a copy", () => {
+    const store = useAdvancedOptimiserStore();
+    const config: AdvancedOptimiserConfig = {
+      mode: { kind: "singleActivity", activityId: "act_1" },
+      targets: [{ x: "chests", y: "action", weight: 4 }],
+      combinationRule: "weightedSum",
+      presetId: "builtin:balanced",
+    };
+    store.setConfig(ACT_1, config);
+    store.updateTarget(ACT_1, 0, { weight: 9 });
+    expect(config.targets[0].weight).toBe(4);
+    expect(JSON.parse(localStorage.getItem(KEY)!).presetId).toBe("builtin:balanced");
+  });
+
+  it("setPresetId keeps the targets", () => {
+    const store = useAdvancedOptimiserStore();
+    store.setPresetId(ACT_1, "user:3");
+    expect(store.configs["activity:act_1"]).toMatchObject({
+      presetId: "user:3",
+      targets: [{ x: "xp", y: "step", weight: 10 }],
+    });
   });
 
   it("ignores unreadable saved data", () => {

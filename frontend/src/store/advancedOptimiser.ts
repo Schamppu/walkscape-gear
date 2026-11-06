@@ -111,9 +111,22 @@ export const useAdvancedOptimiserStore = defineStore("advancedOptimiserStore", {
       this.getOrCreate(source).targets.splice(index, 1);
       this.save(source);
     },
-    /** Back to the default config, forgetting the saved one. */
+    /** Replaces the config for a source with a copy of `config`, and saves it. */
+    setConfig(source: OptimiserSource, config: AdvancedOptimiserConfig): void {
+      this.configs[sourceKey(source)] = {
+        ...config,
+        mode: { ...config.mode },
+        targets: config.targets.map((t) => ({ ...t })),
+      };
+      this.save(source);
+    },
+    setPresetId(source: OptimiserSource, presetId: string): void {
+      this.getOrCreate(source).presetId = presetId;
+      this.save(source);
+    },
+    /** Forgets the saved config, so the source starts from its default again. */
     resetConfig(source: OptimiserSource): void {
-      this.configs[sourceKey(source)] = defaultConfig(source.id);
+      delete this.configs[sourceKey(source)];
       removeStored(configStorageKey(source));
     },
     updateSettings(patch: Partial<OptimiserSettings>): void {

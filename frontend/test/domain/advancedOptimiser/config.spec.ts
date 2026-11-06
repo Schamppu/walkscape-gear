@@ -66,7 +66,7 @@ describe("parseConfig", () => {
 
   it("keeps a string preset id and drops anything else", () => {
     const base = { mode: { kind: "singleActivity", activityId: "a" }, targets: [] };
-    expect(parseConfig({ ...base, presetId: "builtin:max-xp" })?.presetId).toBe("builtin:max-xp");
+    expect(parseConfig({ ...base, presetId: "builtin:balanced" })?.presetId).toBe("builtin:balanced");
     expect(parseConfig({ ...base, presetId: 5 })).not.toHaveProperty("presetId");
   });
 

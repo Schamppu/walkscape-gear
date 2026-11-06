@@ -93,10 +93,27 @@ const isOneOf = <T extends string>(values: readonly T[], value: unknown): value 
   typeof value === "string" && (values as readonly string[]).includes(value);
 
 /**
- * Reads a stored config back, or `null` if it isn't a usable config.
- * Unknown targets and duplicate `X / Y` pairs are dropped; weights are rounded
- * and clamped to 0–10.
+ * Reads stored targets back. Unknown targets and duplicate `X / Y` pairs are
+ * dropped; weights are rounded and clamped to 0–10.
  */
+export const parseTargets = (targets: unknown): Target[] => {
+  if (!Array.isArray(targets)) return [];
+  const seen = new Set<string>();
+  const parsedTargets: Target[] = [];
+  for (const t of targets as Partial<Record<keyof Target, unknown>>[]) {
+    if (!isOneOf(X_VALUES, t?.x) || !isOneOf(Y_VALUES, t?.y) || typeof t.weight !== "number") {
+      continue;
+    }
+    const key = `${t.x}/${t.y}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    const weight = Math.min(MAX_WEIGHT, Math.max(MIN_WEIGHT, Math.round(t.weight)));
+    parsedTargets.push({ x: t.x, y: t.y, weight: Number.isFinite(weight) ? weight : MIN_WEIGHT });
+  }
+  return parsedTargets;
+};
+
+/** Reads a stored config back, or `null` if it isn't a usable config (see `parseTargets`). */
 export const parseConfig = (raw: unknown): AdvancedOptimiserConfig | null => {
   if (!raw || typeof raw !== "object") return null;
   const { mode, targets, presetId } = raw as Partial<Record<keyof AdvancedOptimiserConfig, unknown>>;
@@ -112,22 +129,9 @@ export const parseConfig = (raw: unknown): AdvancedOptimiserConfig | null => {
   }
   if (!Array.isArray(targets)) return null;
 
-  const seen = new Set<string>();
-  const parsedTargets: Target[] = [];
-  for (const t of targets as Partial<Record<keyof Target, unknown>>[]) {
-    if (!isOneOf(X_VALUES, t?.x) || !isOneOf(Y_VALUES, t?.y) || typeof t.weight !== "number") {
-      continue;
-    }
-    const key = `${t.x}/${t.y}`;
-    if (seen.has(key)) continue;
-    seen.add(key);
-    const weight = Math.min(MAX_WEIGHT, Math.max(MIN_WEIGHT, Math.round(t.weight)));
-    parsedTargets.push({ x: t.x, y: t.y, weight: Number.isFinite(weight) ? weight : MIN_WEIGHT });
-  }
-
   return {
     mode: parsedMode,
-    targets: parsedTargets,
+    targets: parseTargets(targets),
     combinationRule: "weightedSum",
     ...(typeof presetId === "string" ? { presetId } : {}),
   };

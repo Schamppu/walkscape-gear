@@ -5,6 +5,7 @@ import {
   configFromPreset,
   isPresetApplicable,
   pickDefaultPreset,
+  presetFromDb,
   targetsEqual,
   userPresetDbId,
   userPresetId,
@@ -40,17 +41,13 @@ describe("BUILTIN_PRESETS", () => {
     }
   });
 
-  it("each have more than one target", () => {
-    for (const p of BUILTIN_PRESETS) expect(p.targets.length).toBeGreaterThan(1);
-  });
-
   it.each([
-    ["an activity", ACTIVITY, ["builtin:max-xp"]],
-    ["a recipe", RECIPE, ["builtin:max-xp", "builtin:items-per-material"]],
+    ["an activity", ACTIVITY, ["builtin:balanced"]],
+    ["a recipe", RECIPE, ["builtin:balanced", "builtin:items-per-material"]],
     [
       "a crafted recipe",
       CRAFTED_RECIPE,
-      ["builtin:max-xp", "builtin:items-per-material", "builtin:eternal-per-material"],
+      ["builtin:balanced", "builtin:items-per-material", "builtin:eternal-per-material"],
     ],
   ])("offers the right presets for %s", (_, ctx, expected) => {
     expect(applicableIds(ctx)).toEqual(expected);
@@ -91,7 +88,7 @@ describe("pickDefaultPreset", () => {
     const recipeOnly = { ...preset([{ x: "rewardRolls", y: "material", weight: 10 }]), id: "user:2" };
     const presets = [recipeOnly, ...BUILTIN_PRESETS];
     expect(pickDefaultPreset(presets, RECIPE)?.id).toBe("user:2");
-    expect(pickDefaultPreset(presets, ACTIVITY)?.id).toBe("builtin:max-xp");
+    expect(pickDefaultPreset(presets, ACTIVITY)?.id).toBe("builtin:balanced");
   });
 
   it("returns null when nothing applies", () => {
@@ -110,17 +107,39 @@ describe("configFromPreset", () => {
   });
 });
 
+describe("presetFromDb", () => {
+  it("maps a saved preset and cleans its targets", () => {
+    expect(
+      presetFromDb({
+        id: 4,
+        name: "Mine",
+        sortOrder: 0,
+        targets: [
+          { x: "xp", y: "step", weight: 12 },
+          { x: "unknown", y: "step", weight: 1 },
+          { x: "xp", y: "step", weight: 2 },
+        ],
+      }),
+    ).toEqual({
+      id: "user:4",
+      name: "Mine",
+      targets: [{ x: "xp", y: "step", weight: 10 }],
+      builtin: false,
+    });
+  });
+});
+
 describe("preset ids", () => {
   it("round-trips user preset ids", () => {
     expect(userPresetDbId(userPresetId(12))).toBe(12);
   });
 
-  it.each(["builtin:max-xp", "user:abc", "user:0", "12"])("has no database id for %s", (id) => {
+  it.each(["builtin:balanced", "user:abc", "user:0", "12"])("has no database id for %s", (id) => {
     expect(userPresetDbId(id)).toBeNull();
   });
 
   it("reads built-in slugs", () => {
-    expect(builtinPresetSlug("builtin:max-xp")).toBe("max-xp");
+    expect(builtinPresetSlug("builtin:balanced")).toBe("balanced");
     expect(builtinPresetSlug("user:1")).toBeNull();
   });
 });

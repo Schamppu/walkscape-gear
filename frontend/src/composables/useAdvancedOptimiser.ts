@@ -6,6 +6,7 @@ import { useGearStore } from "@/store/gear";
 import { useItemsStore } from "@/store/items";
 import { useNotificationStore } from "@/store/notifications";
 import { useAdvancedOptimiserStore } from "@/store/advancedOptimiser";
+import { useOptimiserPresetsStore } from "@/store/optimiserPresets";
 import {
   injectBaseContext,
   injectLootTables,
@@ -36,14 +37,24 @@ import {
   sourceTableFlags,
   type TargetContext,
 } from "@/domain/advancedOptimiser/targets";
+import {
+  configFromPreset,
+  isPresetApplicable,
+  pickDefaultPreset,
+  targetsEqual,
+  type OptimiserPreset,
+} from "@/domain/advancedOptimiser/presets";
 import { tokenValues } from "@/domain/constants/tokenValues";
 import type { LootTableRef } from "@/domain/types/common";
 import type { RecipeDetail } from "@/domain/types/recipe";
 
 /**
  * Drives the advanced optimiser modal: the target context for the selected
- * activity / recipe, its config (saved per activity), and running the
- * optimiser in a worker, then applying the best set.
+ * activity / recipe, its config (saved per activity), the presets that apply
+ * to it, and running the optimiser in a worker, then applying the best set.
+ *
+ * A source with no saved config shows its default preset's targets; they are
+ * only saved once the player changes them or picks a preset.
  */
 export function useAdvancedOptimiser() {
   const baseCtx = injectBaseContext();
@@ -56,6 +67,8 @@ export function useAdvancedOptimiser() {
   const itemsStore = useItemsStore();
   const notificationStore = useNotificationStore();
   const store = useAdvancedOptimiserStore();
+  const presetsStore = useOptimiserPresetsStore();
+  void presetsStore.ensureLoaded();
 
   const activityId = computed<string | null>(() => baseCtx.source.value?.id ?? null);
 
@@ -110,11 +123,65 @@ export function useAdvancedOptimiser() {
     };
   });
 
+  /** Presets to offer for this activity, in display order. */
+  const applicablePresets = computed<OptimiserPreset[]>(() =>
+    presetsStore.presets.filter((p) => isPresetApplicable(p, targetContext.value)),
+  );
+
+  // A saved config always wins; otherwise the first applicable preset, which
+  // can change while the player's presets and the loot tables load.
   const config = computed<AdvancedOptimiserConfig | null>(() => {
     const source = optimiserSource.value;
     if (!source) return null;
-    return store.configs[sourceKey(source)] ?? defaultConfig(source.id);
+    const stored = store.configs[sourceKey(source)];
+    if (stored) return stored;
+    const preset = pickDefaultPreset(presetsStore.presets, targetContext.value);
+    return preset ? configFromPreset(preset, source.id) : defaultConfig(source.id);
   });
+
+  /** The preset the config came from, even if it has been hidden since. */
+  const selectedPreset = computed<OptimiserPreset | null>(() => {
+    const presetId = config.value?.presetId;
+    return presetId ? presetsStore.findPreset(presetId) : null;
+  });
+
+  /** The targets were changed after the selected preset was loaded or saved. */
+  const presetModified = computed<boolean>(
+    () =>
+      !!selectedPreset.value &&
+      !!config.value &&
+      !targetsEqual(selectedPreset.value.targets, config.value.targets),
+  );
+
+  /** Saves the shown config before its first change, so the change lands on it. */
+  const ensureStored = (source: OptimiserSource): void => {
+    if (!store.configs[sourceKey(source)] && config.value) store.setConfig(source, config.value);
+  };
+
+  const applyPreset = (presetId: string): void => {
+    const source = optimiserSource.value;
+    const preset = presetsStore.findPreset(presetId);
+    if (source && preset) store.setConfig(source, configFromPreset(preset, source.id));
+  };
+
+  /** Overwrites the selected user preset with the current targets. */
+  const savePreset = async (name: string): Promise<void> => {
+    const source = optimiserSource.value;
+    const preset = selectedPreset.value;
+    if (!source || !config.value || !preset || preset.builtin) return;
+    ensureStored(source);
+    const saved = await presetsStore.savePreset(preset.id, name, config.value.targets);
+    if (saved) store.setPresetId(source, saved.id);
+  };
+
+  /** Saves the current targets as a new user preset and selects it. */
+  const savePresetAsNew = async (name: string): Promise<void> => {
+    const source = optimiserSource.value;
+    if (!source || !config.value) return;
+    ensureStored(source);
+    const saved = await presetsStore.saveAsNew(name, config.value.targets);
+    if (saved) store.setPresetId(source, saved.id);
+  };
 
   const lockedSlots = computed(() => gearSlots.filter((slot) => gearStore.isSlotLocked(slot)));
 
@@ -142,15 +209,21 @@ export function useAdvancedOptimiser() {
   const addTarget = (): void => {
     if (!optimiserSource.value || !config.value) return;
     const target = nextUnusedTarget(config.value.targets, targetContext.value);
-    if (target) store.addTarget(optimiserSource.value, target);
+    if (!target) return;
+    ensureStored(optimiserSource.value);
+    store.addTarget(optimiserSource.value, target);
   };
 
   const updateTarget = (index: number, patch: Partial<Target>): void => {
-    if (optimiserSource.value) store.updateTarget(optimiserSource.value, index, patch);
+    if (!optimiserSource.value) return;
+    ensureStored(optimiserSource.value);
+    store.updateTarget(optimiserSource.value, index, patch);
   };
 
   const removeTarget = (index: number): void => {
-    if (optimiserSource.value) store.removeTarget(optimiserSource.value, index);
+    if (!optimiserSource.value) return;
+    ensureStored(optimiserSource.value);
+    store.removeTarget(optimiserSource.value, index);
   };
 
   const running = ref(false);
@@ -254,6 +327,12 @@ export function useAdvancedOptimiser() {
   return {
     targetContext,
     config,
+    applicablePresets,
+    selectedPreset,
+    presetModified,
+    applyPreset,
+    savePreset,
+    savePresetAsNew,
     lockedSlots,
     unusableLockedSlots,
     canAddTarget,

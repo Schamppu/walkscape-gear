@@ -13,6 +13,9 @@ import type {
   DeleteGearSetResponse,
   DbUserSettings,
   UpsertSettingEntry,
+  DbOptimiserPreset,
+  UpsertOptimiserPresetPayload,
+  DeleteOptimiserPresetResponse,
 } from "@/domain/types";
 
 export const fetchPlayerStats = async (): Promise<DbPlayerStats> => {
@@ -96,6 +99,43 @@ export const getSettings = async (): Promise<DbUserSettings> => {
 
 export const upsertSettings = async (payload: UpsertSettingEntry[]): Promise<void> => {
   await axios.post(`${getHost()}/db/user_settings`, payload);
+};
+
+export const getOptimiserPresets = async (): Promise<DbOptimiserPreset[]> => {
+  const { data } = await axios.get<DbOptimiserPreset[]>(
+    `${getHost()}/db/optimiser_presets`,
+  );
+  return data;
+};
+
+export const upsertOptimiserPreset = async (
+  payload: UpsertOptimiserPresetPayload,
+): Promise<DbOptimiserPreset> => {
+  const { data } = await axios.post<DbOptimiserPreset>(
+    `${getHost()}/db/optimiser_presets`,
+    payload,
+  );
+  return data;
+};
+
+export const deleteOptimiserPreset = async (
+  id: number,
+): Promise<DeleteOptimiserPresetResponse> => {
+  const { data } = await axios.delete<DeleteOptimiserPresetResponse>(
+    `${getHost()}/db/optimiser_presets/${id}`,
+  );
+  return data;
+};
+
+/** `ids` must list each of the player's presets once; returns them in the new order. */
+export const reorderOptimiserPresets = async (
+  ids: number[],
+): Promise<DbOptimiserPreset[]> => {
+  const { data } = await axios.post<DbOptimiserPreset[]>(
+    `${getHost()}/db/optimiser_presets/order`,
+    { ids },
+  );
+  return data;
 };
 
 export const deleteUserData = async (): Promise<void> => {

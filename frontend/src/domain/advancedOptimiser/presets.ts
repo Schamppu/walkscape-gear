@@ -11,8 +11,9 @@
  * - Fetch or save user presets (see the optimiser presets store).
  */
 
-import { MAX_WEIGHT, type AdvancedOptimiserConfig, type Target } from "./config";
+import { MAX_WEIGHT, parseTargets, type AdvancedOptimiserConfig, type Target } from "./config";
 import { isTargetValid, type TargetContext } from "./targets";
+import type { DbOptimiserPreset } from "@/domain/types/db";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -83,6 +84,14 @@ export const userPresetDbId = (presetId: string): number | null => {
 /** The slug of a built-in preset (`builtin:max-xp` → `max-xp`), or `null`. */
 export const builtinPresetSlug = (presetId: string): string | null =>
   presetId.startsWith(BUILTIN_PREFIX) ? presetId.slice(BUILTIN_PREFIX.length) : null;
+
+/** A saved user preset as a preset; targets this version doesn't know are dropped. */
+export const presetFromDb = ({ id, name, targets }: DbOptimiserPreset): OptimiserPreset => ({
+  id: userPresetId(id),
+  name,
+  targets: parseTargets(targets),
+  builtin: false,
+});
 
 /** A preset is offered only when every one of its targets is valid here. */
 export const isPresetApplicable = (preset: OptimiserPreset, ctx: TargetContext): boolean =>
