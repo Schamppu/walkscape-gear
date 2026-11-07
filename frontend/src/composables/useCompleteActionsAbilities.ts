@@ -36,6 +36,7 @@ import {
 import {
   extractCompleteActionsSpec,
   abilityFineRecipeOutcome,
+  fineRecipeOutputShare,
   completeActionsScale,
   scaleDropInfoMap,
   buildRecipeOutputDropInfo,
@@ -60,7 +61,16 @@ export type CompleteActionsAbilityInfo = {
   stepsPerActivation: number;
   /** Per-step rate multiplier relative to the context (see domain helper). */
   scale: number;
-  /** Fine share of completed recipes' output (0–1); 0 for activities. */
+  /**
+   * Fine recipe outcome chance per completion (0–1), as granted by the
+   * ability; 0 for activities or when fine materials are used. For display.
+   */
+  fineChance: number;
+  /**
+   * Fine share of the completed recipes' total output (0–1), used for all
+   * calculations; 1 with fine materials, 0 for activities. Not equal to
+   * `fineChance` — see `fineRecipeOutputShare`.
+   */
   fineShare: number;
   /** XP per step gained from the completed actions, per skill. */
   xpPerStep: CompleteActionsXp[];
@@ -134,13 +144,23 @@ export function useCompleteActionsAbilities(
         );
         if (stepsPerActivation === null || scale <= 0) return null;
 
-        const fineShare = recipe
-          ? useFine.value
-            ? 1
-            : abilityFineRecipeOutcome(detail, (reqs) =>
+        const fineChance =
+          recipe && !useFine.value
+            ? abilityFineRecipeOutcome(detail, (reqs) =>
                 checkRequirements(reqs ?? []),
               )
-          : 0;
+            : 0;
+        // In-game the chance rolls once per completion, unaffected by double
+        // action / double rewards (see the game design note in
+        // domain/abilities/completeActions.ts for the alternative).
+        const fineShare = !recipe
+          ? 0
+          : useFine.value
+            ? 1
+            : fineRecipeOutputShare(
+                fineChance,
+                stepsPerCompletion.value / stepsPerRewardRoll.value,
+              );
 
         const outputs = recipe
           ? buildRecipeOutputDropInfo({
@@ -165,6 +185,7 @@ export function useCompleteActionsAbilities(
           count: spec.count,
           stepsPerActivation,
           scale,
+          fineChance,
           fineShare,
           xpPerStep: completeActionsXpPerStep(
             scale,

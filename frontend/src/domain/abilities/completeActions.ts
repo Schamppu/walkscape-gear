@@ -73,6 +73,57 @@ export function abilityFineRecipeOutcome(
   return Math.min(1, Math.max(0, chance));
 }
 
+// ---------------------------------------------------------------------------
+// Fine recipe outcome: how the chance turns into a share of the output
+// ---------------------------------------------------------------------------
+//
+// GAME DESIGN NOTE (as of 2026-11): the fine recipe outcome chance rolls once
+// per *completion* and is NOT affected by double action or double rewards.
+// A completion that yields (1 + DA)(1 + DR) reward rolls still only gets one
+// chance to produce a fine result (of the recipe's base reward amount), so the
+// extra output from those stats is always normal.
+//
+// This is an exception to how other output modifiers interact, and the
+// community (incl. the maintainer) hopes it gets changed. If the game is
+// changed so the chance applies to every reward roll like everything else,
+// switch the call site in `useCompleteActionsAbilities` from
+// `fineRecipeOutputShare` to `fineRecipeOutputShareWithModifiers` (and update
+// the tests in `completeActions.spec.ts`). Nothing else needs to change: all
+// downstream code (drop info, gold value, breakdown) works from the share.
+// ---------------------------------------------------------------------------
+
+/**
+ * CURRENT IN-GAME BEHAVIOUR. Fraction (0–1) of the completed actions' total
+ * reward output that is fine, when the fine chance rolls once per completion
+ * and double action / double rewards don't affect it.
+ *
+ * Per completion: `rewardRollsPerCompletion` (= (1 + DA)(1 + DR)) rolls of
+ * output, of which on average `fineChance` rolls' worth is fine.
+ *
+ * @param fineChance               Chance per completion (e.g. 0.03).
+ * @param rewardRollsPerCompletion `stepsPerCompletion / stepsPerRewardRoll`.
+ */
+export function fineRecipeOutputShare(
+  fineChance: number,
+  rewardRollsPerCompletion: number,
+): number {
+  if (!(fineChance > 0)) return 0;
+  const rolls = rewardRollsPerCompletion >= 1 ? rewardRollsPerCompletion : 1;
+  return Math.min(1, fineChance / rolls);
+}
+
+/**
+ * NOT USED — kept for if the game design changes (see the note above).
+ * Fraction (0–1) of output that is fine when the fine chance applies to every
+ * reward roll, so double action / double rewards scale fine output too, like
+ * other output modifiers. The share of output is then simply the chance.
+ *
+ * @param fineChance Chance per reward roll (e.g. 0.03).
+ */
+export function fineRecipeOutputShareWithModifiers(fineChance: number): number {
+  return Math.min(1, Math.max(0, fineChance));
+}
+
 /**
  * Per-step rate multiplier contributed by the ability: `count` extra
  * completions every `stepsPerActivation` steps, relative to the context's

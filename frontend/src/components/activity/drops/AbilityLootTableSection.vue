@@ -21,8 +21,10 @@ const hideSteps = computed(() => props.section.stepsPerActivation === null);
 // Complete-actions abilities carry `count` (actions completed per activation)
 // and optionally a partial fine share (e.g. Flambé's fine recipe outcome).
 const isCompleteActions = computed(() => props.section.count > 0);
-const showFineShare = computed(
-  () => props.section.fineShare > 0 && props.section.fineShare < 1,
+// Shows the ability's chance per completion (not the resulting share of all
+// output, which double action / double rewards dilute in-game).
+const showFineChance = computed(
+  () => props.section.fineChance > 0 && props.section.fineChance < 1,
 );
 </script>
 
@@ -41,8 +43,12 @@ const showFineShare = computed(
         <span v-else-if="section.rollAmount > 1" class="roll-amount">
           ×{{ section.rollAmount }}
         </span>
-        <span v-if="showFineShare" class="fine-share border-fine">
-          {{ n(section.fineShare * 100, 2) }}% fine
+        <span
+          v-if="showFineChance"
+          class="fine-share border-fine"
+          :title="`${n(section.fineChance * 100, 2)}% chance per completed action to give a fine result (not affected by double action or double rewards)`"
+        >
+          {{ n(section.fineChance * 100, 2) }}% fine
         </span>
         <span v-if="!hideSteps" class="steps-per-use">
           <ws-icon :icon-path="icons.steps" size="xs" />
