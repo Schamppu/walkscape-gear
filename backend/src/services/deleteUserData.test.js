@@ -116,7 +116,9 @@ describe("deleteUserData", () => {
     expect(mockPrisma.gearSet.deleteMany).toHaveBeenCalledWith(byUuid);
     expect(mockPrisma.playerStat.deleteMany).toHaveBeenCalledWith(byUuid);
     expect(mockPrisma.ownedItem.deleteMany).toHaveBeenCalledWith(byUuid);
-    expect(mockPrisma.factionReputation.deleteMany).toHaveBeenCalledWith(byUuid);
+    expect(mockPrisma.factionReputation.deleteMany).toHaveBeenCalledWith(
+      byUuid,
+    );
     expect(mockPrisma.userSetting.deleteMany).toHaveBeenCalledWith(byUuid);
     expect(mockPrisma.optimiserPreset.deleteMany).toHaveBeenCalledWith(byUuid);
     expect(mockPrisma.user.deleteMany).toHaveBeenCalledWith(byUuid);

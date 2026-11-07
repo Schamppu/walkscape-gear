@@ -16,7 +16,12 @@ import { filterMultislot } from "@/domain/optimiser/setRequirements";
 import type { LocationSummary } from "@/domain/types/location";
 import type { WorkerGearSet, WorkerItem } from "@/workers/optimiserWorkerTypes";
 import type { AdvancedOptimiserJob } from "@/workers/advancedOptimiserWorkerTypes";
-import { applyLocks, compareSetScores, type SetScore, type SetScorer } from "./scorer";
+import {
+  applyLocks,
+  compareSetScores,
+  type SetScore,
+  type SetScorer,
+} from "./scorer";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -38,7 +43,8 @@ export type BeamOptions = {
 
 const MULTI_SLOT_KEYS = new Set(["ring", "tool"]);
 
-export const slotKeyOf = (slotName: string): string => slotName.replace(/\d+$/, "");
+export const slotKeyOf = (slotName: string): string =>
+  slotName.replace(/\d+$/, "");
 
 /** Identity of a gear set, for de-duplicating candidates. */
 export const setSignature = (set: WorkerGearSet): string =>
@@ -83,13 +89,18 @@ export const slotOptions = (
 
   const otherKeywords = new Set(
     Object.entries(set)
-      .filter(([slot, value]) => value && slot !== slotName && slotKeyOf(slot) === slotKey)
+      .filter(
+        ([slot, value]) =>
+          value && slot !== slotName && slotKeyOf(slot) === slotKey,
+      )
       .flatMap(([, value]) => (value as WorkerItem).keywords ?? []),
   );
   return filterMultislot(set, items, slotKey, slotName, keywordsMap).filter(
     (item) =>
       !(item.keywords ?? []).some((kw) =>
-        (keywordsMap[kw]?.bannedKeywords ?? []).some((banned) => otherKeywords.has(banned)),
+        (keywordsMap[kw]?.bannedKeywords ?? []).some((banned) =>
+          otherKeywords.has(banned),
+        ),
       ),
   );
 };
@@ -111,7 +122,11 @@ export const beamSearch = (
 ): Candidate[] => {
   const ordered = slots
     .filter((slot) => !seed[slot])
-    .map((slot, index) => ({ slot, index, count: options[slotKeyOf(slot)]?.length ?? 0 }))
+    .map((slot, index) => ({
+      slot,
+      index,
+      count: options[slotKeyOf(slot)]?.length ?? 0,
+    }))
     .filter(({ count }) => count > 0)
     .sort((a, b) => a.count - b.count || a.index - b.index)
     .map(({ slot }) => slot);
@@ -143,7 +158,12 @@ const withSeed = (
 ): WorkerGearSet =>
   Object.entries(seed).reduce<WorkerGearSet>((set, [slot, item]) => {
     if (!item || set[slot]) return set;
-    const allowed = slotOptions(set, slot, { [slotKeyOf(slot)]: [item as WorkerItem] }, keywordsMap);
+    const allowed = slotOptions(
+      set,
+      slot,
+      { [slotKeyOf(slot)]: [item as WorkerItem] },
+      keywordsMap,
+    );
     return allowed.length ? { ...set, [slot]: item } : set;
   }, base);
 
@@ -159,7 +179,9 @@ export const seedCandidates = (
   const locations: (LocationSummary | null)[] = job.locations.length
     ? job.locations
     : [job.defaultLocation];
-  const requirementSeeds = job.requirementSeeds.length ? job.requirementSeeds : [{}];
+  const requirementSeeds = job.requirementSeeds.length
+    ? job.requirementSeeds
+    : [{}];
   const locked = applyLocks(job.lockedItems);
 
   const all = locations.flatMap((location) =>

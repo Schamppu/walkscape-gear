@@ -27,14 +27,18 @@ const emit = defineEmits<{
 }>();
 
 /** The other rows' targets, whose X / Y pairs row `index` can't pick. */
-const othersOf = (index: number): Target[] => props.targets.filter((_, i) => i !== index);
+const othersOf = (index: number): Target[] =>
+  props.targets.filter((_, i) => i !== index);
 
 /** Adds the row's current value so an unavailable (e.g. saved) target still shows. */
 const withCurrent = <T extends string>(values: T[], current: T): T[] =>
   values.includes(current) ? values : [current, ...values];
 
 const xOptions = (index: number): XValue[] =>
-  withCurrent(availableXValues(othersOf(index), props.context), props.targets[index].x);
+  withCurrent(
+    availableXValues(othersOf(index), props.context),
+    props.targets[index].x,
+  );
 
 const yOptions = (index: number): YValue[] =>
   withCurrent(
@@ -42,7 +46,8 @@ const yOptions = (index: number): YValue[] =>
     props.targets[index].y,
   );
 
-const isAvailable = (index: number): boolean => isTargetValid(props.targets[index], props.context);
+const isAvailable = (index: number): boolean =>
+  isTargetValid(props.targets[index], props.context);
 
 const onXChange = (index: number, event: Event): void => {
   const x = (event.target as HTMLSelectElement).value as XValue;
@@ -53,11 +58,15 @@ const onXChange = (index: number, event: Event): void => {
 };
 
 const onYChange = (index: number, event: Event): void => {
-  emit("update", index, { y: (event.target as HTMLSelectElement).value as YValue });
+  emit("update", index, {
+    y: (event.target as HTMLSelectElement).value as YValue,
+  });
 };
 
 const onWeightInput = (index: number, event: Event): void => {
-  emit("update", index, { weight: Number((event.target as HTMLInputElement).value) });
+  emit("update", index, {
+    weight: Number((event.target as HTMLInputElement).value),
+  });
 };
 </script>
 
@@ -76,7 +85,10 @@ const onWeightInput = (index: number, event: Event): void => {
         <tr
           v-for="(target, index) in targets"
           :key="index"
-          :class="{ disabled: target.weight === 0, unavailable: !isAvailable(index) }"
+          :class="{
+            disabled: target.weight === 0,
+            unavailable: !isAvailable(index),
+          }"
         >
           <td class="target-x">
             <select

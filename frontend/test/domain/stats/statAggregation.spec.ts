@@ -67,7 +67,9 @@ describe("computeApplicableTotal — missing entries", () => {
     };
     // percent key is missing from the type definition when not set,
     // but we can simulate by passing a narrowed object
-    const narrowed = { workEfficiency: { flat: totals.workEfficiency.flat } } as unknown as StatTotals;
+    const narrowed = {
+      workEfficiency: { flat: totals.workEfficiency.flat },
+    } as unknown as StatTotals;
     expect(computeApplicableTotal(narrowed, "workEfficiency", true)).toEqual({
       sum: 0,
       positive: 0,

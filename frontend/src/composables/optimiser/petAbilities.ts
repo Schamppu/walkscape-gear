@@ -15,8 +15,7 @@ export const prefetchPetAbilityDetails = async (): Promise<void> => {
   const ids = new Set<string>();
   for (const [id, owned] of Object.entries(itemsStore.ownedItems)) {
     const pet = itemsStore.petsMap[id] as unknown as
-      | { abilities?: PetAbility[] }
-      | undefined;
+      { abilities?: PetAbility[] } | undefined;
     if (!pet?.abilities?.length) continue;
     for (const aid of unlockedAbilityIds(pet, owned.petLevel ?? 0)) {
       ids.add(aid);

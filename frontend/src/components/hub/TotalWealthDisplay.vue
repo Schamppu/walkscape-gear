@@ -8,7 +8,6 @@ const store = usePlayerStore();
 
 const getWealth = () => store.totalWealth;
 const setWealth = (_, val) => store.setTotalWealth(val);
-
 </script>
 
 <template>

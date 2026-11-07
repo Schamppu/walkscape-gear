@@ -15,7 +15,9 @@ vi.mock("@/utils/axios/db_routes", () => ({
 }));
 
 const notifications = { error: vi.fn(), success: vi.fn(), debug: vi.fn() };
-vi.mock("@/store/notifications", () => ({ useNotificationStore: () => notifications }));
+vi.mock("@/store/notifications", () => ({
+  useNotificationStore: () => notifications,
+}));
 
 const dbPreset = (id: number, name = `Preset ${id}`): DbOptimiserPreset => ({
   id,
@@ -30,7 +32,10 @@ const httpError = (status: number, error: string) =>
     data: { error },
   } as AxiosResponse);
 
-const loadedStore = async (presets = [dbPreset(1), dbPreset(2)], settings = {}) => {
+const loadedStore = async (
+  presets = [dbPreset(1), dbPreset(2)],
+  settings = {},
+) => {
   vi.mocked(api.getOptimiserPresets).mockResolvedValue(presets);
   vi.mocked(api.getSettings).mockResolvedValue(settings);
   const store = useOptimiserPresetsStore();
@@ -69,7 +74,9 @@ describe("optimiser presets store", () => {
   });
 
   it("offers only the built-ins when loading fails, and retries later", async () => {
-    vi.mocked(api.getOptimiserPresets).mockRejectedValueOnce(new Error("offline"));
+    vi.mocked(api.getOptimiserPresets).mockRejectedValueOnce(
+      new Error("offline"),
+    );
     vi.mocked(api.getSettings).mockResolvedValue({});
     const store = useOptimiserPresetsStore();
     await store.ensureLoaded();
@@ -84,9 +91,17 @@ describe("optimiser presets store", () => {
 
   it("drops targets it doesn't know from a saved preset", async () => {
     const store = await loadedStore([
-      { ...dbPreset(1), targets: [{ x: "future", y: "step", weight: 5 }, { x: "xp", y: "step", weight: 3 }] },
+      {
+        ...dbPreset(1),
+        targets: [
+          { x: "future", y: "step", weight: 5 },
+          { x: "xp", y: "step", weight: 3 },
+        ],
+      },
     ]);
-    expect(store.userPresets[0].targets).toEqual([{ x: "xp", y: "step", weight: 3 }]);
+    expect(store.userPresets[0].targets).toEqual([
+      { x: "xp", y: "step", weight: 3 },
+    ]);
   });
 
   it("hides built-ins from the hide settings, but still finds them", async () => {
@@ -103,23 +118,34 @@ describe("optimiser presets store", () => {
   it("saves a new preset at the top", async () => {
     const store = await loadedStore();
     vi.mocked(api.upsertOptimiserPreset).mockResolvedValue(dbPreset(9, "New"));
-    const saved = await store.saveAsNew("New", [{ x: "chests", y: "action", weight: 5 }]);
+    const saved = await store.saveAsNew("New", [
+      { x: "chests", y: "action", weight: 5 },
+    ]);
     expect(api.upsertOptimiserPreset).toHaveBeenCalledWith({
       name: "New",
       targets: [{ x: "chests", y: "action", weight: 5 }],
     });
     expect(saved?.id).toBe("user:9");
-    expect(store.userPresets.map((p) => p.id)).toEqual(["user:9", "user:1", "user:2"]);
+    expect(store.userPresets.map((p) => p.id)).toEqual([
+      "user:9",
+      "user:1",
+      "user:2",
+    ]);
   });
 
   it("overwrites a preset in place", async () => {
     const store = await loadedStore();
-    vi.mocked(api.upsertOptimiserPreset).mockResolvedValue(dbPreset(2, "Renamed"));
+    vi.mocked(api.upsertOptimiserPreset).mockResolvedValue(
+      dbPreset(2, "Renamed"),
+    );
     await store.renamePreset("user:2", "Renamed");
     expect(api.upsertOptimiserPreset).toHaveBeenCalledWith(
       expect.objectContaining({ id: 2, name: "Renamed" }),
     );
-    expect(store.userPresets.map((p) => p.name)).toEqual(["Preset 1", "Renamed"]);
+    expect(store.userPresets.map((p) => p.name)).toEqual([
+      "Preset 1",
+      "Renamed",
+    ]);
   });
 
   it("does not overwrite a built-in", async () => {
@@ -134,7 +160,9 @@ describe("optimiser presets store", () => {
       httpError(400, "You can save up to 50 presets"),
     );
     expect(await store.saveAsNew("New", [])).toBeNull();
-    expect(notifications.error).toHaveBeenCalledWith("You can save up to 50 presets");
+    expect(notifications.error).toHaveBeenCalledWith(
+      "You can save up to 50 presets",
+    );
   });
 
   it("shows a generic message for a server error", async () => {
@@ -148,9 +176,13 @@ describe("optimiser presets store", () => {
 
   it("deletes a preset, also one already deleted elsewhere", async () => {
     const store = await loadedStore();
-    vi.mocked(api.deleteOptimiserPreset).mockResolvedValueOnce({ message: "ok" });
+    vi.mocked(api.deleteOptimiserPreset).mockResolvedValueOnce({
+      message: "ok",
+    });
     expect(await store.deletePreset("user:1")).toBe(true);
-    vi.mocked(api.deleteOptimiserPreset).mockRejectedValueOnce(httpError(404, "Not found"));
+    vi.mocked(api.deleteOptimiserPreset).mockRejectedValueOnce(
+      httpError(404, "Not found"),
+    );
     expect(await store.deletePreset("user:2")).toBe(true);
     expect(store.userPresets).toEqual([]);
     expect(notifications.error).not.toHaveBeenCalled();
@@ -158,7 +190,9 @@ describe("optimiser presets store", () => {
 
   it("keeps a preset whose delete failed", async () => {
     const store = await loadedStore();
-    vi.mocked(api.deleteOptimiserPreset).mockRejectedValue(new Error("offline"));
+    vi.mocked(api.deleteOptimiserPreset).mockRejectedValue(
+      new Error("offline"),
+    );
     expect(await store.deletePreset("user:1")).toBe(false);
     expect(store.userPresets).toHaveLength(2);
   });
@@ -167,7 +201,11 @@ describe("optimiser presets store", () => {
     const store = await loadedStore([dbPreset(1), dbPreset(2), dbPreset(3)]);
     vi.mocked(api.reorderOptimiserPresets).mockResolvedValue([]);
     await store.swapPresets("user:3", "user:1");
-    expect(store.userPresets.map((p) => p.id)).toEqual(["user:3", "user:2", "user:1"]);
+    expect(store.userPresets.map((p) => p.id)).toEqual([
+      "user:3",
+      "user:2",
+      "user:1",
+    ]);
     expect(api.reorderOptimiserPresets).toHaveBeenCalledWith([3, 2, 1]);
   });
 
@@ -181,7 +219,9 @@ describe("optimiser presets store", () => {
 
   it("reloads the saved order when a swap is rejected", async () => {
     const store = await loadedStore();
-    vi.mocked(api.reorderOptimiserPresets).mockRejectedValue(httpError(400, "out of sync"));
+    vi.mocked(api.reorderOptimiserPresets).mockRejectedValue(
+      httpError(400, "out of sync"),
+    );
     await store.swapPresets("user:2", "user:1");
     expect(api.getOptimiserPresets).toHaveBeenCalledTimes(2);
     expect(store.userPresets.map((p) => p.id)).toEqual(["user:1", "user:2"]);

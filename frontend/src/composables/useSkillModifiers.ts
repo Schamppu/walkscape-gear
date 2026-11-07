@@ -65,7 +65,7 @@ export function useSkillModifiers(ctx: SkillModifiersContext): {
       totalsByStat.value,
       ctx.source.value,
       ctx.activitySelected.value,
-    )
+    ),
   );
 
   return {

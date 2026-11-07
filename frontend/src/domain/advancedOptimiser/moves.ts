@@ -36,7 +36,11 @@ const sameItem = (a: unknown, b: WorkerItem): boolean => {
   return !!item && item.id === b.id && item.quality === b.quality;
 };
 
-const withSlot = (set: WorkerGearSet, slot: string, item: WorkerItem | null): WorkerGearSet => {
+const withSlot = (
+  set: WorkerGearSet,
+  slot: string,
+  item: WorkerItem | null,
+): WorkerGearSet => {
   const next = { ...set };
   if (item) next[slot] = item;
   else delete next[slot];
@@ -44,10 +48,17 @@ const withSlot = (set: WorkerGearSet, slot: string, item: WorkerItem | null): Wo
 };
 
 /** Options for `slot` other than what it already holds. */
-const alternatives = (set: WorkerGearSet, slot: string, ctx: MoveContext): WorkerItem[] =>
-  slotOptions(withSlot(set, slot, null), slot, ctx.options, ctx.keywordsMap).filter(
-    (item) => !sameItem(set[slot], item),
-  );
+const alternatives = (
+  set: WorkerGearSet,
+  slot: string,
+  ctx: MoveContext,
+): WorkerItem[] =>
+  slotOptions(
+    withSlot(set, slot, null),
+    slot,
+    ctx.options,
+    ctx.keywordsMap,
+  ).filter((item) => !sameItem(set[slot], item));
 
 const pick = <T>(items: readonly T[], random: () => number): T | undefined =>
   items[Math.floor(random() * items.length)];
@@ -60,14 +71,19 @@ const pick = <T>(items: readonly T[], random: () => number): T | undefined =>
  * Keywords used by `distinctKeywordItemsEquipped` or keyword-equipped
  * requirements in any option's attributes.
  */
-export const collectSetKeywords = (options: Record<string, WorkerItem[]>): string[] => {
+export const collectSetKeywords = (
+  options: Record<string, WorkerItem[]>,
+): string[] => {
   const keywords = new Set<string>();
   for (const item of Object.values(options).flat()) {
     for (const { requirements } of item._attrEntries) {
       for (const req of requirements ?? []) {
         if (req.type === "distinctKeywordItemsEquipped") {
           req.requirement.keywords.forEach((kw) => keywords.add(kw));
-        } else if (req.type === "keywordEquipped" || req.type === "keywordWithLevelEquipped") {
+        } else if (
+          req.type === "keywordEquipped" ||
+          req.type === "keywordWithLevelEquipped"
+        ) {
           keywords.add(req.requirement.keyword);
         }
       }
@@ -77,10 +93,14 @@ export const collectSetKeywords = (options: Record<string, WorkerItem[]>): strin
 };
 
 /** Every set that differs from `set` in one slot (including emptying it) or the location. */
-export function* singleMoves(set: WorkerGearSet, ctx: MoveContext): Generator<WorkerGearSet> {
+export function* singleMoves(
+  set: WorkerGearSet,
+  ctx: MoveContext,
+): Generator<WorkerGearSet> {
   for (const slot of ctx.slots) {
     if (set[slot]) yield withSlot(set, slot, null);
-    for (const item of alternatives(set, slot, ctx)) yield withSlot(set, slot, item);
+    for (const item of alternatives(set, slot, ctx))
+      yield withSlot(set, slot, item);
   }
   const currentId = (set.location as LocationSummary | null | undefined)?.id;
   for (const location of ctx.locations) {
@@ -98,7 +118,10 @@ export function* pairMoves(
   if (ctx.slots.length < 2) return;
   for (let i = 0; i < count; i++) {
     const first = pick(ctx.slots, random)!;
-    const second = pick(ctx.slots.filter((s) => s !== first), random)!;
+    const second = pick(
+      ctx.slots.filter((s) => s !== first),
+      random,
+    )!;
     const firstItem = pick(alternatives(set, first, ctx), random);
     if (!firstItem) continue;
     const afterFirst = withSlot(set, first, firstItem);
@@ -124,7 +147,10 @@ export function* setMoves(
       const pieces = alternatives(next, slot, ctx).filter((item) =>
         item.keywords?.includes(keyword),
       );
-      if (!pieces.length || (next[slot] as WorkerItem | undefined)?.keywords?.includes(keyword)) {
+      if (
+        !pieces.length ||
+        (next[slot] as WorkerItem | undefined)?.keywords?.includes(keyword)
+      ) {
         continue;
       }
       let best = pieces[0];
@@ -153,7 +179,10 @@ export const perturb = (
   let next = set;
   for (let i = 0; i < count && ctx.slots.length; i++) {
     const slot = pick(ctx.slots, random)!;
-    const choices: (WorkerItem | null)[] = [...alternatives(next, slot, ctx), null];
+    const choices: (WorkerItem | null)[] = [
+      ...alternatives(next, slot, ctx),
+      null,
+    ];
     next = withSlot(next, slot, pick(choices, random) ?? null);
   }
   if (ctx.locations.length && random() < 0.25) {
@@ -163,8 +192,11 @@ export const perturb = (
 };
 
 /** Slot types in `slots` and how many slots each has (ring: 2, tool: 4, …). */
-export const countSlots = (slots: readonly string[]): Record<string, number> => {
+export const countSlots = (
+  slots: readonly string[],
+): Record<string, number> => {
   const counts: Record<string, number> = {};
-  for (const slot of slots) counts[slotKeyOf(slot)] = (counts[slotKeyOf(slot)] ?? 0) + 1;
+  for (const slot of slots)
+    counts[slotKeyOf(slot)] = (counts[slotKeyOf(slot)] ?? 0) + 1;
   return counts;
 };

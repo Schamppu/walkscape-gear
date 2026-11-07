@@ -9,8 +9,15 @@ import {
 } from "@/domain/lootTables/contextTables";
 import { buildDropItemInfoMap } from "@/domain/lootTables/dropInfo";
 import { tokenValues } from "@/domain/constants/tokenValues";
-import { buildDropProfile, type DropProfile } from "@/domain/advancedOptimiser/targets";
-import { buildCoinDrops, findGroupsOf, type FindGroup } from "@/domain/advancedOptimiser/coins";
+import {
+  buildDropProfile,
+  type DropProfile,
+} from "@/domain/advancedOptimiser/targets";
+import {
+  buildCoinDrops,
+  findGroupsOf,
+  type FindGroup,
+} from "@/domain/advancedOptimiser/coins";
 import type { DetailedLootTable } from "@/domain/types/lootTable";
 import type { LootTableRef } from "@/domain/types/common";
 
@@ -37,7 +44,9 @@ export const buildSourceDropProfile = (
     tables: resolveLootTableWeights(
       table.tables
         .map(dataStore.getDetailedLootTable)
-        .filter((t): t is NonNullable<typeof t> => t !== null) as DetailedLootTable[],
+        .filter(
+          (t): t is NonNullable<typeof t> => t !== null,
+        ) as DetailedLootTable[],
       (skill: string) => playerStore.skillLevels[skill] ?? 1,
     ),
   }));
@@ -53,7 +62,10 @@ export const buildSourceDropProfile = (
     );
 
   // Coin value per group of tables that the same find bonuses scale.
-  const groups = new Map<string, { finds: FindGroup[]; tables: typeof tables }>();
+  const groups = new Map<
+    string,
+    { finds: FindGroup[]; tables: typeof tables }
+  >();
   for (const table of tables) {
     const finds = findGroupsOf(table.type);
     const key = finds.join("+");
@@ -61,7 +73,10 @@ export const buildSourceDropProfile = (
     groups.get(key)!.tables.push(table);
   }
   const gearQuality = Object.fromEntries(
-    Object.entries(itemsStore.allGearItems).map(([id, item]) => [id, item.quality]),
+    Object.entries(itemsStore.allGearItems).map(([id, item]) => [
+      id,
+      item.quality,
+    ]),
   );
 
   return {
@@ -78,7 +93,10 @@ export const buildSourceDropProfile = (
           dropMap: perRollDropInfo(groupTables),
         })),
         gearQuality,
-        dataStore.itemValues as unknown as Record<string, Record<string, number>>,
+        dataStore.itemValues as unknown as Record<
+          string,
+          Record<string, number>
+        >,
       ),
       recipe: null,
     },

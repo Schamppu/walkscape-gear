@@ -65,7 +65,11 @@ const {
       <section>
         <div class="section-header">
           <h3>Targets</h3>
-          <button class="border-common" :disabled="!canAddTarget" @click="addTarget">
+          <button
+            class="border-common"
+            :disabled="!canAddTarget"
+            @click="addTarget"
+          >
             + Add target
           </button>
         </div>
@@ -79,7 +83,7 @@ const {
 
       <optimiser-settings />
 
-      <locked-slots :slots="lockedSlots" :unusable="unusableLockedSlots" />
+      <LockedSlots :slots="lockedSlots" :unusable="unusableLockedSlots" />
 
       <section class="run">
         <div v-if="running" class="run-buttons">
@@ -88,8 +92,13 @@ const {
           </button>
           <button class="cancel" @click="cancel">Cancel</button>
         </div>
-        <p v-if="!running && unusableLockedSlots.length" class="warning" role="status">
-          Planning around locked items you can't equip yet. Results assume you can.
+        <p
+          v-if="!running && unusableLockedSlots.length"
+          class="warning"
+          role="status"
+        >
+          Planning around locked items you can't equip yet. Results assume you
+          can.
         </p>
         <button
           v-if="!running"
@@ -99,7 +108,11 @@ const {
         >
           Optimise
         </button>
-        <button v-if="canExportJob && !running" class="border-common" @click="exportJob">
+        <button
+          v-if="canExportJob && !running"
+          class="border-common"
+          @click="exportJob"
+        >
           Export job (debug)
         </button>
 

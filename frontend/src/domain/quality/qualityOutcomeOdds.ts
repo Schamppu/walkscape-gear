@@ -40,7 +40,7 @@ export function getOutcomeOdds(
   levelReq: number,
   qualityOutcome: number,
   fineMode: FineMaterialsMode,
-  craftsPerMaterial = 1
+  craftsPerMaterial = 1,
 ): QualityOutcomeResult[] {
   const weights: [number, number][] = [
     [1000, 4],
@@ -87,7 +87,7 @@ export function getOutcomeOdds(
             ? weightStart
             : Math.max(
                 weightEnd,
-                weightStart + slope * (qualityOutcome - bandStart)
+                weightStart + slope * (qualityOutcome - bandStart),
               ),
       };
     });

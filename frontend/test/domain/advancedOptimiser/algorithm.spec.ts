@@ -1,7 +1,11 @@
 import { describe, it, expect } from "vitest";
 import { slotOptions } from "@/domain/advancedOptimiser/beam";
 import { seedCandidates } from "@/domain/advancedOptimiser/beam";
-import { compareSetScores, createSetScorer, type SetScore } from "@/domain/advancedOptimiser/scorer";
+import {
+  compareSetScores,
+  createSetScorer,
+  type SetScore,
+} from "@/domain/advancedOptimiser/scorer";
 import {
   DEFAULT_SEARCH_SETTINGS,
   runSearch,
@@ -32,7 +36,10 @@ import {
 
 const we = (value: number): FixtureStat => ({ type: "workEfficiency", value });
 const da = (value: number): FixtureStat => ({ type: "doubleAction", value });
-const nmc = (value: number): FixtureStat => ({ type: "noMaterialsConsumed", value });
+const nmc = (value: number): FixtureStat => ({
+  type: "noMaterialsConsumed",
+  value,
+});
 const dr = (value: number): FixtureStat => ({ type: "doubleRewards", value });
 const item = (id: string, stats: FixtureStat[], keywords: string[] = []) =>
   makeWorkerItem(id, stats, { keywords });
@@ -41,7 +48,9 @@ const item = (id: string, stats: FixtureStat[], keywords: string[] = []) =>
 const bruteForce = (job: AdvancedOptimiserJob): SetScore => {
   const score = createSetScorer(job);
   let best: SetScore | null = null;
-  const locations = job.locations.length ? job.locations : [job.defaultLocation];
+  const locations = job.locations.length
+    ? job.locations
+    : [job.defaultLocation];
 
   const visit = (set: WorkerGearSet, index: number) => {
     if (index === job.searchSlots.length) {
@@ -60,10 +69,18 @@ const bruteForce = (job: AdvancedOptimiserJob): SetScore => {
   return best!;
 };
 
-const search = (job: AdvancedOptimiserJob, settings: Partial<SearchSettings> = {}) =>
+const search = (
+  job: AdvancedOptimiserJob,
+  settings: Partial<SearchSettings> = {},
+) =>
   runSearch(
     job,
-    { ...DEFAULT_SEARCH_SETTINGS, timeBudgetMs: 1e9, patience: 30, ...settings },
+    {
+      ...DEFAULT_SEARCH_SETTINGS,
+      timeBudgetMs: 1e9,
+      patience: 30,
+      ...settings,
+    },
     {
       now: tickingClock(),
       random: seededRandom(42),
@@ -82,9 +99,19 @@ const weCapJob = (): AdvancedOptimiserJob =>
     searchSlots: ["head", "chest", "legs", "ring1", "ring2"],
     options: {
       head: [item("we_hat", [we(0.6)]), item("da_hat", [da(0.15)])],
-      chest: [item("we_chest", [we(0.5)]), item("tradeoff_chest", [we(-0.2), da(0.25)])],
-      legs: [item("we_legs", [we(0.4)]), item("tradeoff_legs", [we(-0.15), da(0.2)])],
-      ring: [item("we_ring", [we(0.2)]), item("da_ring", [da(0.05)]), item("we_ring2", [we(0.15)])],
+      chest: [
+        item("we_chest", [we(0.5)]),
+        item("tradeoff_chest", [we(-0.2), da(0.25)]),
+      ],
+      legs: [
+        item("we_legs", [we(0.4)]),
+        item("tradeoff_legs", [we(-0.15), da(0.2)]),
+      ],
+      ring: [
+        item("we_ring", [we(0.2)]),
+        item("da_ring", [da(0.05)]),
+        item("we_ring2", [we(0.15)]),
+      ],
     },
   });
 
@@ -92,9 +119,17 @@ const weCapJob = (): AdvancedOptimiserJob =>
 const nmcJob = (): AdvancedOptimiserJob =>
   makeJob({
     targets: [makeTarget("rewardRolls", "material", 1)],
-    source: { maxWorkEfficiency: 2, workRequired: 100, xpRewards: { crafting: 50 } },
+    source: {
+      maxWorkEfficiency: 2,
+      workRequired: 100,
+      xpRewards: { crafting: 50 },
+    },
     activitySelected: false,
-    extraction: { activitySkills: ["crafting"], quality: null, drops: makeDropProfile() },
+    extraction: {
+      activitySkills: ["crafting"],
+      quality: null,
+      drops: makeDropProfile(),
+    },
     searchSlots: ["head", "chest", "legs", "feet"],
     options: {
       head: [item("nmc_hat", [nmc(0.2)]), item("dr_hat", [dr(0.3)])],
@@ -109,7 +144,9 @@ const setBonusJob = (): AdvancedOptimiserJob => {
   const piece = (id: string) =>
     makeWorkerItem(id, [we(0.05)], {
       keywords: ["treasure"],
-      conditional: [{ stats: [da(0.3)], requirements: [setBonusReq("treasure", 3)] }],
+      conditional: [
+        { stats: [da(0.3)], requirements: [setBonusReq("treasure", 3)] },
+      ],
     });
   return makeJob({
     searchSlots: ["head", "chest", "legs"],
@@ -125,11 +162,18 @@ const setBonusJob = (): AdvancedOptimiserJob => {
 const locationJob = (): AdvancedOptimiserJob =>
   makeJob({
     searchSlots: ["head", "chest"],
-    locations: [makeLocationSummary("town", "jarvonia"), makeLocationSummary("reef", "syrenthia")],
+    locations: [
+      makeLocationSummary("town", "jarvonia"),
+      makeLocationSummary("reef", "syrenthia"),
+    ],
     options: {
       head: [
         item("we_hat", [we(0.3)]),
-        makeWorkerItem("deep_hat", [], { conditional: [{ stats: [we(0.8)], requirements: [realmReq("syrenthia")] }] }),
+        makeWorkerItem("deep_hat", [], {
+          conditional: [
+            { stats: [we(0.8)], requirements: [realmReq("syrenthia")] },
+          ],
+        }),
       ],
       chest: [item("we_chest", [we(0.2)])],
     },
@@ -142,7 +186,9 @@ const dominatedJob = (): AdvancedOptimiserJob =>
     options: Object.fromEntries(
       ["head", "chest", "legs"].map((slot) => [
         slot,
-        [0.05, 0.1, 0.3, 0.15].map((v, i) => item(`${slot}_${i}`, [we(v), da(v / 3)])),
+        [0.05, 0.1, 0.3, 0.15].map((v, i) =>
+          item(`${slot}_${i}`, [we(v), da(v / 3)]),
+        ),
       ]),
     ),
   });
@@ -151,10 +197,16 @@ const dominatedJob = (): AdvancedOptimiserJob =>
 const requiredRodJob = (): AdvancedOptimiserJob => {
   const plainRod = item("plain_rod", [], ["fishing_rod"]);
   return makeJob({
-    activityRequirements: [keywordEquippedReq("fishing_rod") as HandledRequirement],
+    activityRequirements: [
+      keywordEquippedReq("fishing_rod") as HandledRequirement,
+    ],
     searchSlots: ["tool1", "tool2", "head"],
     options: {
-      tool: [plainRod, item("good_rod", [we(0.2)], ["fishing_rod"]), item("we_tool", [we(0.3)])],
+      tool: [
+        plainRod,
+        item("good_rod", [we(0.2)], ["fishing_rod"]),
+        item("we_tool", [we(0.3)]),
+      ],
       head: [item("we_hat", [we(0.25)])],
     },
     requirementSeeds: [{ tool1: plainRod }],
@@ -190,13 +242,17 @@ describe("advanced optimiser finds the brute-force optimum", () => {
     const result = await search(job, { beamWidth: 1 });
     expect(result.bestScore).toBeCloseTo(expected.score, 10);
     const equipped = Object.values(result.gearSet) as WorkerItem[];
-    expect(equipped.filter((i) => i?.keywords?.includes("treasure"))).toHaveLength(3);
+    expect(
+      equipped.filter((i) => i?.keywords?.includes("treasure")),
+    ).toHaveLength(3);
   });
 
   it("swaps a required item for a better one and stays valid", async () => {
     const result = await search(requiredRodJob());
     expect(result.valid).toBe(true);
-    const tools = [result.gearSet.tool1, result.gearSet.tool2].map((t) => (t as WorkerItem | undefined)?.id);
+    const tools = [result.gearSet.tool1, result.gearSet.tool2].map(
+      (t) => (t as WorkerItem | undefined)?.id,
+    );
     expect(tools).toContain("good_rod");
     expect(tools).not.toContain("plain_rod");
   });
@@ -219,7 +275,8 @@ describe("real jobs", () => {
       .map(([, value]) => (value as WorkerItem).keywords ?? []);
     expect(gearSet.tool1).toMatchObject({ id: "ice_axe" });
     for (const [i, a] of tools.entries()) {
-      for (const b of tools.slice(i + 1)) expect(keywordsClash(a, b, job.keywordsMap)).toBe(false);
+      for (const b of tools.slice(i + 1))
+        expect(keywordsClash(a, b, job.keywordsMap)).toBe(false);
     }
   }, 30_000);
 });
@@ -229,15 +286,26 @@ describe("real jobs", () => {
 describe.skipIf(!process.env.BENCH)("benchmark", () => {
   it("20 slots × 30 items finishes within 2× the budget", async () => {
     const random = seededRandom(7);
-    const types = ["workEfficiency", "doubleAction", "doubleRewards", "bonusExperience"];
-    const slots = Array.from({ length: 20 }, (_, i) => `slot${String.fromCharCode(97 + i)}`);
+    const types = [
+      "workEfficiency",
+      "doubleAction",
+      "doubleRewards",
+      "bonusExperience",
+    ];
+    const slots = Array.from(
+      { length: 20 },
+      (_, i) => `slot${String.fromCharCode(97 + i)}`,
+    );
     const options = Object.fromEntries(
       slots.map((slot) => [
         slot,
         Array.from({ length: 30 }, (_, i) =>
           item(`${slot}_${i}`, [
             { type: types[i % types.length], value: random() * 0.2 },
-            { type: types[(i + 1) % types.length], value: (random() - 0.5) * 0.1 },
+            {
+              type: types[(i + 1) % types.length],
+              value: (random() - 0.5) * 0.1,
+            },
           ]),
         ),
       ]),
@@ -245,11 +313,15 @@ describe.skipIf(!process.env.BENCH)("benchmark", () => {
     const job = makeJob({ searchSlots: slots, options });
     const budget = 10_000;
     const start = performance.now();
-    await runSearch(job, { ...DEFAULT_SEARCH_SETTINGS, timeBudgetMs: budget }, {
-      now: () => performance.now(),
-      random,
-      shouldStop: () => false,
-    });
+    await runSearch(
+      job,
+      { ...DEFAULT_SEARCH_SETTINGS, timeBudgetMs: budget },
+      {
+        now: () => performance.now(),
+        random,
+        shouldStop: () => false,
+      },
+    );
     expect(performance.now() - start).toBeLessThan(2 * budget);
   }, 30_000);
 });

@@ -77,7 +77,8 @@ export const defaultConfig = (activityId: string): AdvancedOptimiserConfig => ({
  * Identifies a source across activities and recipes, which can share ids.
  * Used as the key for per-source configs.
  */
-export const sourceKey = ({ kind, id }: OptimiserSource): string => `${kind}:${id}`;
+export const sourceKey = ({ kind, id }: OptimiserSource): string =>
+  `${kind}:${id}`;
 
 /** localStorage key a single-activity config is saved under. */
 export const configStorageKey = (source: OptimiserSource): string =>
@@ -87,9 +88,13 @@ export const configStorageKey = (source: OptimiserSource): string =>
  * Key configs were saved under before activities and recipes were told apart.
  * Read once and moved to `configStorageKey`.
  */
-export const legacyConfigStorageKey = (id: string): string => `advancedOptimiser.config.${id}`;
+export const legacyConfigStorageKey = (id: string): string =>
+  `advancedOptimiser.config.${id}`;
 
-const isOneOf = <T extends string>(values: readonly T[], value: unknown): value is T =>
+const isOneOf = <T extends string>(
+  values: readonly T[],
+  value: unknown,
+): value is T =>
   typeof value === "string" && (values as readonly string[]).includes(value);
 
 /**
@@ -101,14 +106,25 @@ export const parseTargets = (targets: unknown): Target[] => {
   const seen = new Set<string>();
   const parsedTargets: Target[] = [];
   for (const t of targets as Partial<Record<keyof Target, unknown>>[]) {
-    if (!isOneOf(X_VALUES, t?.x) || !isOneOf(Y_VALUES, t?.y) || typeof t.weight !== "number") {
+    if (
+      !isOneOf(X_VALUES, t?.x) ||
+      !isOneOf(Y_VALUES, t?.y) ||
+      typeof t.weight !== "number"
+    ) {
       continue;
     }
     const key = `${t.x}/${t.y}`;
     if (seen.has(key)) continue;
     seen.add(key);
-    const weight = Math.min(MAX_WEIGHT, Math.max(MIN_WEIGHT, Math.round(t.weight)));
-    parsedTargets.push({ x: t.x, y: t.y, weight: Number.isFinite(weight) ? weight : MIN_WEIGHT });
+    const weight = Math.min(
+      MAX_WEIGHT,
+      Math.max(MIN_WEIGHT, Math.round(t.weight)),
+    );
+    parsedTargets.push({
+      x: t.x,
+      y: t.y,
+      weight: Number.isFinite(weight) ? weight : MIN_WEIGHT,
+    });
   }
   return parsedTargets;
 };
@@ -116,14 +132,21 @@ export const parseTargets = (targets: unknown): Target[] => {
 /** Reads a stored config back, or `null` if it isn't a usable config (see `parseTargets`). */
 export const parseConfig = (raw: unknown): AdvancedOptimiserConfig | null => {
   if (!raw || typeof raw !== "object") return null;
-  const { mode, targets, presetId } = raw as Partial<Record<keyof AdvancedOptimiserConfig, unknown>>;
+  const { mode, targets, presetId } = raw as Partial<
+    Record<keyof AdvancedOptimiserConfig, unknown>
+  >;
 
-  const m = mode as Partial<{ kind: string; activityId: unknown; skillId: unknown }> | undefined;
+  const m = mode as
+    | Partial<{ kind: string; activityId: unknown; skillId: unknown }>
+    | undefined;
   let parsedMode: AdvancedOptimiserMode;
   if (m?.kind === "singleActivity" && typeof m.activityId === "string") {
     parsedMode = { kind: "singleActivity", activityId: m.activityId };
   } else if (m?.kind === "bestForSkill" && typeof m.skillId === "string") {
-    parsedMode = { kind: "bestForSkill", skillId: m.skillId as components["schemas"]["SkillsEnum"] };
+    parsedMode = {
+      kind: "bestForSkill",
+      skillId: m.skillId as components["schemas"]["SkillsEnum"],
+    };
   } else {
     return null;
   }

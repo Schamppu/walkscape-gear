@@ -1,6 +1,7 @@
 Refactor the selected code according to project standards:
 
 Rules:
+
 - Move all pure calculation logic into /domain.
 - Domain functions must be framework-independent.
 - No Vue imports.
@@ -10,6 +11,7 @@ Rules:
 - Do not change behavior.
 
 Steps:
+
 1. Identify pure logic.
 2. Create a typed function in /domain/<name>.ts.
 3. Replace inline logic with a function call.

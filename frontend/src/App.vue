@@ -1,5 +1,12 @@
 <script setup>
-import { ref, onMounted, onUnmounted, reactive, nextTick, defineAsyncComponent } from "vue";
+import {
+  ref,
+  onMounted,
+  onUnmounted,
+  reactive,
+  nextTick,
+  defineAsyncComponent,
+} from "vue";
 import { storeToRefs } from "pinia";
 import { useActivityStore } from "@/store/activity";
 import { usePlayerStore } from "@/store/player";
@@ -21,9 +28,15 @@ import WsButton from "@/components/primitives/WsButton.vue";
 import NotificationContainer from "@/components/common/NotificationContainer.vue";
 import UndoRedoButtons from "@/components/common/UndoRedoButtons.vue";
 
-const About = defineAsyncComponent(() => import("@/components/about/AboutView.vue"));
-const PrivacyPolicy = defineAsyncComponent(() => import("@/components/about/PrivacyPolicyView.vue"));
-const SettingsModal = defineAsyncComponent(() => import("@/components/settings/SettingsModal.vue"));
+const About = defineAsyncComponent(
+  () => import("@/components/about/AboutView.vue"),
+);
+const PrivacyPolicy = defineAsyncComponent(
+  () => import("@/components/about/PrivacyPolicyView.vue"),
+);
+const SettingsModal = defineAsyncComponent(
+  () => import("@/components/settings/SettingsModal.vue"),
+);
 
 const urlStore = useUrlStore();
 const settingsStore = useSettingsStore();

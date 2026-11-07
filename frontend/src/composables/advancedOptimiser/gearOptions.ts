@@ -19,6 +19,8 @@ export const getAdvancedGearOptions = (
   Object.fromEntries(
     Object.entries(getCandidateItems(slotKeys)).map(([slot, items]) => [
       slot,
-      enrichItems(items, abilityCtx).filter((item) => hasUsefulStat(item, useful)),
+      enrichItems(items, abilityCtx).filter((item) =>
+        hasUsefulStat(item, useful),
+      ),
     ]),
   );

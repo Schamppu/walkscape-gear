@@ -5,8 +5,18 @@ describe("buildGearSlotMapping", () => {
   it("reads gear sets saved with the old consumable qualities", () => {
     const mapping = buildGearSlotMapping(
       [
-        { slotType: "consumable", slotIndex: 0, itemId: "pie", quality: "consumableFine" },
-        { slotType: "ring", slotIndex: 1, itemId: "gold_ring", quality: "rare" },
+        {
+          slotType: "consumable",
+          slotIndex: 0,
+          itemId: "pie",
+          quality: "consumableFine",
+        },
+        {
+          slotType: "ring",
+          slotIndex: 1,
+          itemId: "gold_ring",
+          quality: "rare",
+        },
       ] as never,
       ["head"],
     );

@@ -4,11 +4,20 @@ import { useDataStore } from "@/store/data";
 import { useSettingsStore } from "@/store/settings";
 import { useItemsStore } from "@/store/items";
 import { usePlayerStore } from "@/store/player";
-import { useSkillModifiers, type SkillModifiersContext } from "@/composables/useSkillModifiers";
-import { useRequirements, type RequirementContext } from "@/composables/useRequirements";
+import {
+  useSkillModifiers,
+  type SkillModifiersContext,
+} from "@/composables/useSkillModifiers";
+import {
+  useRequirements,
+  type RequirementContext,
+} from "@/composables/useRequirements";
 import { useAbilityAttrContext } from "@/composables/useAbilityAttrContext";
 import { attachPetAbilityAttrs } from "@/domain/abilities/petAbilityAttrs";
-import { groupSourcesByStat, resolveLootTableWeights } from "@/domain/lootTables/lootTables";
+import {
+  groupSourcesByStat,
+  resolveLootTableWeights,
+} from "@/domain/lootTables/lootTables";
 import {
   resolveSourceContextTables,
   resolveGearContextTables,
@@ -65,7 +74,9 @@ export function useLootTables(ctx: LootTablesContext): {
   combinedItemDrops: ComputedRef<MappedTableRow[][]>;
   groupedLootTables: ComputedRef<DetailedContextLootTable[]>;
   dropItemInfoMap: ComputedRef<Record<string, DropItemInfo>>;
-  groupSourcesByStat: (sources: MappedTableRow[]) => Record<string, MappedTableRow[]>;
+  groupSourcesByStat: (
+    sources: MappedTableRow[],
+  ) => Record<string, MappedTableRow[]>;
   hasCollectibleDrops: ComputedRef<boolean>;
   hasFineDrops: ComputedRef<boolean>;
 } {
@@ -75,7 +86,9 @@ export function useLootTables(ctx: LootTablesContext): {
   const settingsStore = useSettingsStore();
   const { activitySettings } = storeToRefs(settingsStore);
 
-  const { checkRequirements } = useRequirements(ctx as unknown as RequirementContext);
+  const { checkRequirements } = useRequirements(
+    ctx as unknown as RequirementContext,
+  );
   const abilityCtx = useAbilityAttrContext();
   const {
     stepsPerRewardRoll,
@@ -100,9 +113,8 @@ export function useLootTables(ctx: LootTablesContext): {
 
   const lootTables = computed<ContextLootTable[]>(() => [
     ...resolveSourceContextTables(ctx.source.value),
-    ...resolveGearContextTables(
-      filledGearSlotsWithAbilities.value,
-      (reqs) => checkRequirements(reqs),
+    ...resolveGearContextTables(filledGearSlotsWithAbilities.value, (reqs) =>
+      checkRequirements(reqs),
     ),
   ]);
 
@@ -110,9 +122,13 @@ export function useLootTables(ctx: LootTablesContext): {
     lootTables.value.flatMap(({ tables }) => tables),
   );
 
-  watch(lootTableIds, (ids: string[]) => dataStore.fetchDetailedLootTables(ids), {
-    immediate: true,
-  });
+  watch(
+    lootTableIds,
+    (ids: string[]) => dataStore.fetchDetailedLootTables(ids),
+    {
+      immediate: true,
+    },
+  );
 
   const detailedLootTables = computed<DetailedContextLootTable[]>(() =>
     lootTables.value.map((table) => ({
@@ -121,7 +137,9 @@ export function useLootTables(ctx: LootTablesContext): {
       tables: resolveLootTableWeights(
         table.tables
           .map(dataStore.getDetailedLootTable)
-          .filter((t): t is NonNullable<typeof t> => t !== null) as DetailedLootTable[],
+          .filter(
+            (t): t is NonNullable<typeof t> => t !== null,
+          ) as DetailedLootTable[],
         (skill: string) => playerStore.skillLevels[skill] ?? 1,
       ),
     })),
@@ -169,7 +187,9 @@ export function useLootTables(ctx: LootTablesContext): {
   );
 
   const hasFineDrops = computed<boolean>(() =>
-    Object.values(dropItemInfoMap.value).some(({ stepsPerFine }) => stepsPerFine > 0),
+    Object.values(dropItemInfoMap.value).some(
+      ({ stepsPerFine }) => stepsPerFine > 0,
+    ),
   );
 
   return {

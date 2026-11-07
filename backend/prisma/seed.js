@@ -38,7 +38,7 @@ async function seedSkillTags() {
           category: "skill",
           icon: `assets/icons/text/skill_icons/${id}.png`,
         },
-      })
+      }),
     ),
     ...attributeTags.map(({ name, id }) =>
       prisma.tag.upsert({
@@ -54,7 +54,7 @@ async function seedSkillTags() {
           category: "attribute",
           icon: `assets/icons/text/stats/skilling/${id}.png`,
         },
-      })
+      }),
     ),
     ...factionTags.map(({ name, id }) =>
       prisma.tag.upsert({
@@ -70,14 +70,14 @@ async function seedSkillTags() {
           category: "faction",
           icon: `assets/icons/text/coatofarms/${id}.png`,
         },
-      })
+      }),
     ),
     ...otherTags.map(({ name, id, icon }) =>
       prisma.tag.upsert({
         where: { id },
         update: { name, category: "other", icon },
         create: { id, name, category: "other", icon },
-      })
+      }),
     ),
   ]);
 
@@ -101,13 +101,13 @@ async function seedTestData(userUuid) {
   const reputations = Object.fromEntries(
     factions
       .filter(({ reputation }) => reputation !== null)
-      .map(({ reputation }) => [reputation, baseReputation])
+      .map(({ reputation }) => [reputation, baseReputation]),
   );
   await dbService.upsertUserFactionReputations(userUuid, reputations);
   console.log(
     `added ${
       Object.keys(reputations).length
-    } factions with reputation ${baseReputation}`
+    } factions with reputation ${baseReputation}`,
   );
 
   // owned items
@@ -166,7 +166,10 @@ export async function runSeed() {
 
 // Run automatically when invoked directly (e.g. `npm run seed`),
 // but not when this module is imported by the server.
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+if (
+  process.argv[1] &&
+  import.meta.url === pathToFileURL(process.argv[1]).href
+) {
   runSeed().catch((e) => {
     console.error(e);
     process.exit(1);

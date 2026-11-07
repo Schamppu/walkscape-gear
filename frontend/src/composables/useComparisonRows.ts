@@ -12,7 +12,12 @@
  * - Access stores directly beyond what `n()` needs internally.
  */
 
-import { computed, toValue, type ComputedRef, type MaybeRefOrGetter } from "vue";
+import {
+  computed,
+  toValue,
+  type ComputedRef,
+  type MaybeRefOrGetter,
+} from "vue";
 import { n } from "@/utils/number";
 import {
   buildComparisonRow,

@@ -67,9 +67,14 @@ describe("buildStatSourceList", () => {
   });
 
   it("marks entries in effectiveAttrIds as effective=true, others as false", () => {
-    const attrs = [makeEntry("a", "work_efficiency", 10), makeEntry("b", "work_efficiency", 5)];
+    const attrs = [
+      makeEntry("a", "work_efficiency", 10),
+      makeEntry("b", "work_efficiency", 5),
+    ];
     const result = buildStatSourceList(attrs, ["a"], "work_efficiency", false);
-    const byId = Object.fromEntries(result.map((e) => [e.item.id, e.effective]));
+    const byId = Object.fromEntries(
+      result.map((e) => [e.item.id, e.effective]),
+    );
     expect(byId["item_a"]).toBe(true);
     expect(byId["item_b"]).toBe(false);
   });
@@ -79,7 +84,12 @@ describe("buildStatSourceList", () => {
       makeEntry("inactive", "work_efficiency", 100),
       makeEntry("active", "work_efficiency", 1),
     ];
-    const result = buildStatSourceList(attrs, ["active"], "work_efficiency", false);
+    const result = buildStatSourceList(
+      attrs,
+      ["active"],
+      "work_efficiency",
+      false,
+    );
     expect(result[0].effective).toBe(true);
     expect(result[1].effective).toBe(false);
   });
@@ -101,13 +111,22 @@ describe("buildStatSourceList", () => {
       makeEntry("b", "work_efficiency", 20),
       makeEntry("c", "work_efficiency", 10),
     ];
-    const result = buildStatSourceList(attrs, ["a", "b", "c"], "work_efficiency", false);
+    const result = buildStatSourceList(
+      attrs,
+      ["a", "b", "c"],
+      "work_efficiency",
+      false,
+    );
     expect(result.map((e) => e.stat.value)).toEqual([20, 10, 5]);
   });
 
   it("returns correct item shape on each entry", () => {
     const attrs = [makeEntry("x", "work_efficiency", 7)];
     const result = buildStatSourceList(attrs, ["x"], "work_efficiency", false);
-    expect(result[0].item).toEqual({ id: "item_x", name: "Item x", icon: "x.png" });
+    expect(result[0].item).toEqual({
+      id: "item_x",
+      name: "Item x",
+      icon: "x.png",
+    });
   });
 });

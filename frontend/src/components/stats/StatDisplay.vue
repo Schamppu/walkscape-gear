@@ -21,7 +21,9 @@ const isOpen = ref(false);
 
 const { allAttrs, totalsByStat } = injectEffectiveAttrs();
 
-const filterStat = (attr: { stats: Array<{ stat: string; isPercent: boolean }> }) => {
+const filterStat = (attr: {
+  stats: Array<{ stat: string; isPercent: boolean }>;
+}) => {
   const { stat: statId, isPercent: percent } = attr.stats[0];
   return statId == props.stat.id && percent === props.isPercent;
 };

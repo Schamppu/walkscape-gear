@@ -1,2 +1,9 @@
+# Normalize all text files to LF in the repo and working tree
+* text=auto eol=lf
+
+*.png binary
+*.ttf binary
+*.woff2 binary
+
 # Generated from the tools API OpenAPI spec (npm run gen:api-types)
 frontend/src/domain/types/generated/** linguist-generated=true

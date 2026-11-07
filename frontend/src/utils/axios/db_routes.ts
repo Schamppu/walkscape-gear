@@ -23,11 +23,15 @@ export const getUserBootstrap = async (): Promise<UserBootstrap> => {
   return data;
 };
 
-export const upsertPlayerStats = async (payload: DbPlayerStats): Promise<void> => {
+export const upsertPlayerStats = async (
+  payload: DbPlayerStats,
+): Promise<void> => {
   await axios.post(`${getHost()}/db/user_stats`, payload);
 };
 
-export const upsertOwnedItems = async (payload: { items: DbOwnedItem[] }): Promise<void> => {
+export const upsertOwnedItems = async (payload: {
+  items: DbOwnedItem[];
+}): Promise<void> => {
   await axios.post(`${getHost()}/db/owned_items`, payload);
 };
 
@@ -61,7 +65,9 @@ export const upsertGearSet = async (
   return data;
 };
 
-export const deleteGearSet = async (id: number): Promise<DeleteGearSetResponse> => {
+export const deleteGearSet = async (
+  id: number,
+): Promise<DeleteGearSetResponse> => {
   const { data } = await axios.delete<DeleteGearSetResponse>(
     `${getHost()}/db/gear_sets/${id}`,
   );
@@ -75,7 +81,9 @@ export const getSettings = async (): Promise<DbUserSettings> => {
   return data;
 };
 
-export const upsertSettings = async (payload: UpsertSettingEntry[]): Promise<void> => {
+export const upsertSettings = async (
+  payload: UpsertSettingEntry[],
+): Promise<void> => {
   await axios.post(`${getHost()}/db/user_settings`, payload);
 };
 

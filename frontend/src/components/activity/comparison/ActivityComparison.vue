@@ -3,7 +3,10 @@ import { computed, ref } from "vue";
 import { useActivityStore } from "@/store/activity";
 import ComparisonTableShell from "./table/ComparisonTableShell.vue";
 import EmitLocationBubble from "@/components/common/EmitLocationBubble.vue";
-import { useSkillModifiers, type SkillModifiersContext } from "@/composables/useSkillModifiers";
+import {
+  useSkillModifiers,
+  type SkillModifiersContext,
+} from "@/composables/useSkillModifiers";
 import { useComparisonRows } from "@/composables/useComparisonRows";
 import { buildXpComparisonRows } from "@/domain/comparison/comparisonRows";
 import { n } from "@/utils/number";
@@ -31,8 +34,10 @@ type LocationChangeInfo = {
 
 const activityStore = useActivityStore();
 
-const findIdx = (list: { id: string }[] | null | undefined, id: string | undefined): number =>
-  Math.max(0, list?.findIndex((item) => item.id === id) ?? 0);
+const findIdx = (
+  list: { id: string }[] | null | undefined,
+  id: string | undefined,
+): number => Math.max(0, list?.findIndex((item) => item.id === id) ?? 0);
 
 const gs1LocationIdx = ref(
   findIdx(activityStore.locations, props.gs1Ctx.location.value?.id),
@@ -48,16 +53,20 @@ const borderClass = computed(
 const sm1 = useSkillModifiers(props.gs1Ctx as unknown as SkillModifiersContext);
 const sm2 = useSkillModifiers(props.gs2Ctx as unknown as SkillModifiersContext);
 
-const basicRows = useComparisonRows(sm1 as unknown as Record<string, ComputedRef<number>>, sm2 as unknown as Record<string, ComputedRef<number>>, [
-  {
-    title: "Work Efficiency",
-    key: "workEfficiency",
-    isPercent: true,
-    negative: true,
-  },
-  { title: "Steps per action", key: "stepsPerAction" },
-  { title: "Steps per reward roll", key: "stepsPerRewardRoll" },
-]);
+const basicRows = useComparisonRows(
+  sm1 as unknown as Record<string, ComputedRef<number>>,
+  sm2 as unknown as Record<string, ComputedRef<number>>,
+  [
+    {
+      title: "Work Efficiency",
+      key: "workEfficiency",
+      isPercent: true,
+      negative: true,
+    },
+    { title: "Steps per action", key: "stepsPerAction" },
+    { title: "Steps per reward roll", key: "stepsPerRewardRoll" },
+  ],
+);
 
 const xpPerStepRows = computed(() =>
   buildXpComparisonRows(sm1.xpPerStep.value, sm2.xpPerStep.value).map(
@@ -72,7 +81,11 @@ const xpPerStepRows = computed(() =>
 
 const tableRows = computed(() => [...basicRows.value, ...xpPerStepRows.value]);
 
-const updateLocation = ({ location, index, gearSetIndex }: LocationChangeInfo) => {
+const updateLocation = ({
+  location,
+  index,
+  gearSetIndex,
+}: LocationChangeInfo) => {
   if (gearSetIndex === 0) {
     gs1LocationIdx.value = index;
     emit("update:gs1Location", location);

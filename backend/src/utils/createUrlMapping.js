@@ -4,7 +4,7 @@ export const createUrlMapping = (
   activities,
   recipes,
   locations,
-  pets
+  pets,
 ) => {
   const groupedItems = {};
   items.forEach((item) => {
@@ -17,7 +17,7 @@ export const createUrlMapping = (
   });
 
   groupedItems["consumable"] = [null].concat(
-    consumables.map((item) => item.id)
+    consumables.map((item) => item.id),
   );
   groupedItems["activity"] = [null].concat(activities.map((item) => item.id));
   groupedItems["recipe"] = [null].concat(recipes.map((item) => item.id));

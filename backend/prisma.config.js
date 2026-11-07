@@ -8,6 +8,8 @@ export default defineConfig({
     seed: "node prisma/seed.js",
   },
   datasource: {
-    url: process.env.DATABASE_URL ?? "postgresql://ws-gear:wsgear-db-password@localhost:5432/ws-gear-db",
+    url:
+      process.env.DATABASE_URL ??
+      "postgresql://ws-gear:wsgear-db-password@localhost:5432/ws-gear-db",
   },
 });

@@ -1,8 +1,5 @@
 import { describe, it, expect } from "vitest";
-import {
-  filterServices,
-  sortServicesByTier,
-} from "@/domain/services/services";
+import { filterServices, sortServicesByTier } from "@/domain/services/services";
 import type { ServiceRequirement } from "@/domain/services/services";
 import type { ServiceDetail } from "@/domain/types/service";
 
@@ -59,7 +56,10 @@ describe("filterServices", () => {
   });
 
   it("filters by serviceKeyword", () => {
-    const req: ServiceRequirement = { tier: "basic", serviceKeyword: "kitchen" };
+    const req: ServiceRequirement = {
+      tier: "basic",
+      serviceKeyword: "kitchen",
+    };
     const result = filterServices([basic, advanced, expert], req);
     expect(result.map((s) => s.id)).toContain("s1");
     expect(result.map((s) => s.id)).toContain("s2");
@@ -79,7 +79,11 @@ describe("filterServices", () => {
   });
 
   it("combines keywords and serviceKeyword (all must match)", () => {
-    const full = makeService("full", "basic", ["kitchen", "spectral", "underwater"]);
+    const full = makeService("full", "basic", [
+      "kitchen",
+      "spectral",
+      "underwater",
+    ]);
     const partial = makeService("partial", "basic", ["kitchen", "spectral"]);
     const req: ServiceRequirement = {
       tier: "basic",

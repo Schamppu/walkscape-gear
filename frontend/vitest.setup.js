@@ -22,8 +22,9 @@ vi.mock("@/components/primitives/WsIcon.vue", () => ({
   default: {
     name: "WsIcon",
     props: ["iconPath", "size"],
-    template: '<div data-testid="ws-icon" :data-icon-path="iconPath" :data-size="size">Icon</div>'
-  }
+    template:
+      '<div data-testid="ws-icon" :data-icon-path="iconPath" :data-size="size">Icon</div>',
+  },
 }));
 
 config.global.stubs = [];

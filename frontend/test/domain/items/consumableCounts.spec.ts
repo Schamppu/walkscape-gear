@@ -7,7 +7,10 @@ import {
 
 describe("consumableCounts", () => {
   it("splits the total into common and fine", () => {
-    expect(consumableCounts({ quantity: 10, quantityFine: 3 })).toEqual({ common: 7, fine: 3 });
+    expect(consumableCounts({ quantity: 10, quantityFine: 3 })).toEqual({
+      common: 7,
+      fine: 3,
+    });
   });
 
   it("treats a missing entry or fine count as 0", () => {
@@ -16,7 +19,10 @@ describe("consumableCounts", () => {
   });
 
   it("never returns a negative common count", () => {
-    expect(consumableCounts({ quantity: 1, quantityFine: 3 })).toEqual({ common: 0, fine: 3 });
+    expect(consumableCounts({ quantity: 1, quantityFine: 3 })).toEqual({
+      common: 0,
+      fine: 3,
+    });
   });
 });
 
@@ -39,7 +45,11 @@ describe("consumableEntryFields", () => {
   });
 
   it("clamps counts to whole numbers ≥ 0", () => {
-    expect(consumableEntryFields(-2, 1.7)).toMatchObject({ quantity: 1, quantityFine: 1, consumableCommon: false });
+    expect(consumableEntryFields(-2, 1.7)).toMatchObject({
+      quantity: 1,
+      quantityFine: 1,
+      consumableCommon: false,
+    });
   });
 });
 

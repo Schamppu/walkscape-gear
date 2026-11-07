@@ -22,7 +22,9 @@ const { activitySettings } = storeToRefs(settingsStore);
 const itemsStore = useItemsStore();
 const { dropItemInfoMap } = injectLootTables();
 
-const showChests = computed(() => activitySettings.value.showChestLootTables?.value === true);
+const showChests = computed(
+  () => activitySettings.value.showChestLootTables?.value === true,
+);
 
 const newItems = computed(() =>
   computeNewItems(

@@ -31,8 +31,7 @@ const itemsStore = useItemsStore();
 
 const { recipe } = storeToRefs(activityStore);
 const ctx = injectBaseContext();
-const { xpRewardsMultiplier, fineMode, useFine } =
-  injectFineMaterials();
+const { xpRewardsMultiplier, fineMode, useFine } = injectFineMaterials();
 
 const sharedModifiers = injectSkillModifiers();
 
@@ -63,13 +62,14 @@ const levelRequirement = computed(() =>
 );
 
 const borderClass = computed(
-  () => `border-${(activityStore.recipe as RecipeDetail | null)?.relatedSkills[0]}`,
+  () =>
+    `border-${(activityStore.recipe as RecipeDetail | null)?.relatedSkills[0]}`,
 );
 
 const sections = computed(() => {
-  const serviceRequirements = ((ctx.recipe.value as RecipeDetail)?.requirements ?? []).filter(
-    ({ type }: { type: string }) => type === "service",
-  );
+  const serviceRequirements = (
+    (ctx.recipe.value as RecipeDetail)?.requirements ?? []
+  ).filter(({ type }: { type: string }) => type === "service");
   if (serviceRequirements.length) {
     return [
       {
@@ -156,7 +156,9 @@ const rewardCount = computed(() => {
                 :text="`${amount}`"
                 :tooltip="`${amount}x ${name}`"
                 :iconPath="icon"
-                :border-class="useFine && itemsStore.fineMaterials[id] ? 'border-fine' : ''"
+                :border-class="
+                  useFine && itemsStore.fineMaterials[id] ? 'border-fine' : ''
+                "
               />
             </template>
           </div>

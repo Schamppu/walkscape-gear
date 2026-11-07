@@ -4,7 +4,10 @@ import ComparisonTableShell from "./table/ComparisonTableShell.vue";
 import { getOutcomeOdds } from "@/domain/quality/qualityOutcomeOdds";
 import { buildCraftingOddsComparison } from "@/domain/comparison/craftingQualityComparison";
 import { getLevelRequirementsMap } from "@/domain/requirements/requirementUtils";
-import { useSkillModifiers, type SkillModifiersContext } from "@/composables/useSkillModifiers";
+import {
+  useSkillModifiers,
+  type SkillModifiersContext,
+} from "@/composables/useSkillModifiers";
 import { n } from "@/utils/number";
 import type { FineMaterialsMode } from "@/domain/quality/qualityOutcomeOdds";
 import type { BaseContext } from "@/composables/context/useBaseContext";
@@ -22,7 +25,9 @@ const selectedComparison = ref(0);
 const changeComp = (index: number) => (selectedComparison.value = index);
 
 const craftingOdds = computed(() => {
-  const lReqs = getLevelRequirementsMap((props.gs1Ctx.recipe.value as RecipeDetail).requirements);
+  const lReqs = getLevelRequirementsMap(
+    (props.gs1Ctx.recipe.value as RecipeDetail).requirements,
+  );
   const levelReq = Object.values(lReqs)[0];
 
   const { qualityOutcome: qo1, craftsPerMaterial: cpm1 } = useSkillModifiers(

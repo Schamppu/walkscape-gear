@@ -1,9 +1,15 @@
 import { describe, it, expect } from "vitest";
-import { consumableQualityOptions, normalizeConsumableQuality } from "@/domain/constants/quality";
+import {
+  consumableQualityOptions,
+  normalizeConsumableQuality,
+} from "@/domain/constants/quality";
 
 describe("consumableQualityOptions", () => {
   it("uses the game's plain qualities", () => {
-    expect(consumableQualityOptions.map((q) => q.value)).toEqual(["common", "fine"]);
+    expect(consumableQualityOptions.map((q) => q.value)).toEqual([
+      "common",
+      "fine",
+    ]);
   });
 });
 
@@ -13,7 +19,10 @@ describe("normalizeConsumableQuality", () => {
     expect(normalizeConsumableQuality("consumableFine")).toBe("fine");
   });
 
-  it.each(["common", "fine", "rare", "3", null, undefined])("leaves %o unchanged", (quality) => {
-    expect(normalizeConsumableQuality(quality)).toBe(quality);
-  });
+  it.each(["common", "fine", "rare", "3", null, undefined])(
+    "leaves %o unchanged",
+    (quality) => {
+      expect(normalizeConsumableQuality(quality)).toBe(quality);
+    },
+  );
 });

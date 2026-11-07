@@ -53,13 +53,15 @@ const rows = computed(() =>
         Finished early, so this is the best set found so far.
       </p>
       <p v-if="!result.valid" class="warning">
-        No set met all of the activity's gear requirements. Check the equipped set.
+        No set met all of the activity's gear requirements. Check the equipped
+        set.
       </p>
       <ul class="targets">
         <li v-for="row in rows" :key="row.key">
           <span>{{ row.label }}</span>
           <span class="change">
-            {{ row.change }}<span v-if="row.ofBest" class="of-best"> ({{ row.ofBest }})</span>
+            {{ row.change
+            }}<span v-if="row.ofBest" class="of-best"> ({{ row.ofBest }})</span>
           </span>
         </li>
       </ul>

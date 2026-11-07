@@ -31,7 +31,7 @@ describe("chanceOfAtLeastOne", () => {
   it("uses the correct formula 1-(1-p)^n", () => {
     const p = 0.25;
     const n = 4;
-    expect(chanceOfAtLeastOne(p, n)).toBeCloseTo(1 - ((1 - p) ** n));
+    expect(chanceOfAtLeastOne(p, n)).toBeCloseTo(1 - (1 - p) ** n);
   });
 
   it("handles fractional n (exponentiation with non-integer n)", () => {

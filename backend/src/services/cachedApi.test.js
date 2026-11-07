@@ -15,8 +15,7 @@ const {
   parseMaxAgeMs,
   parseRetryAfterMs,
   computeTtl,
-} =
-  await import("./cachedApi.js");
+} = await import("./cachedApi.js");
 
 function jsonResponse(data, headers = {}) {
   return {
@@ -41,7 +40,8 @@ function notModified(headers = {}) {
 }
 
 function rateLimited(retryAfter) {
-  const headers = retryAfter !== undefined ? { "retry-after": String(retryAfter) } : {};
+  const headers =
+    retryAfter !== undefined ? { "retry-after": String(retryAfter) } : {};
   const error = new Error("rate limited");
   error.response = { status: 429, headers, data: { error: "rate limited" } };
   return error;
@@ -72,8 +72,12 @@ describe("cache hit/miss", () => {
       .mockResolvedValueOnce(jsonResponse([{ id: 1 }]))
       .mockResolvedValueOnce(jsonResponse([{ id: 2 }]));
 
-    const a = await cachedApi.get("/items/search", { params: { type: "loot" } });
-    const b = await cachedApi.get("/items/search", { params: { type: "crafted" } });
+    const a = await cachedApi.get("/items/search", {
+      params: { type: "loot" },
+    });
+    const b = await cachedApi.get("/items/search", {
+      params: { type: "crafted" },
+    });
 
     expect(mockApi.get).toHaveBeenCalledTimes(2);
     expect(a.data).toEqual([{ id: 1 }]);
@@ -83,8 +87,12 @@ describe("cache hit/miss", () => {
   it("treats param object key order as the same key", async () => {
     mockApi.get.mockResolvedValueOnce(jsonResponse([{ id: 1 }]));
 
-    await cachedApi.get("/items/search", { params: { type: "loot", detailed: true } });
-    await cachedApi.get("/items/search", { params: { detailed: true, type: "loot" } });
+    await cachedApi.get("/items/search", {
+      params: { type: "loot", detailed: true },
+    });
+    await cachedApi.get("/items/search", {
+      params: { detailed: true, type: "loot" },
+    });
 
     expect(mockApi.get).toHaveBeenCalledTimes(1);
   });
@@ -213,8 +221,12 @@ describe("binary responses (icons)", () => {
       },
     });
 
-    const first = await cachedApi.get("/icons/abc", { responseType: "arraybuffer" });
-    const second = await cachedApi.get("/icons/abc", { responseType: "arraybuffer" });
+    const first = await cachedApi.get("/icons/abc", {
+      responseType: "arraybuffer",
+    });
+    const second = await cachedApi.get("/icons/abc", {
+      responseType: "arraybuffer",
+    });
 
     expect(mockApi.get).toHaveBeenCalledTimes(1);
     expect(first.data).toBe(buffer);
@@ -253,7 +265,9 @@ describe("TTL parsing helpers", () => {
   });
 
   it("stableStringify produces deterministic output regardless of key order", () => {
-    expect(stableStringify({ b: 1, a: 2 })).toBe(stableStringify({ a: 2, b: 1 }));
+    expect(stableStringify({ b: 1, a: 2 })).toBe(
+      stableStringify({ a: 2, b: 1 }),
+    );
     expect(stableStringify({ a: { c: 1, b: 2 } })).toBe(
       stableStringify({ a: { b: 2, c: 1 } }),
     );
@@ -277,7 +291,11 @@ describe("stats", () => {
 
 describe("manual cache access", () => {
   it("can prime and peek a cache entry without going upstream", () => {
-    cachedApi.prime("get", "/items/iron", jsonResponse({ id: 1, name: "iron" }));
+    cachedApi.prime(
+      "get",
+      "/items/iron",
+      jsonResponse({ id: 1, name: "iron" }),
+    );
 
     const cached = cachedApi.peek("get", "/items/iron");
 

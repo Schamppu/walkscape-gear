@@ -11,7 +11,10 @@
 import { computed, watch, type ComputedRef } from "vue";
 import { useDataStore } from "@/store/data";
 import { useItemsStore } from "@/store/items";
-import { identifyChestItems, buildChestDropInfoMap } from "@/domain/lootTables/chestLootTables";
+import {
+  identifyChestItems,
+  buildChestDropInfoMap,
+} from "@/domain/lootTables/chestLootTables";
 import type { DropItemInfo } from "@/domain/lootTables/dropInfo";
 import type { LootTableRef } from "@/domain/types/common";
 import type { LootTableDetail } from "@/domain/types/lootTable";
@@ -47,12 +50,16 @@ export function useChestLootTables(
   const innerTableIds = computed<string[]>(() =>
     chestItems.value.flatMap(({ chestItemId }) => {
       const item = itemsStore.containers[chestItemId];
-      return item ? (item.tables as LootTableRef[]).flatMap((ref) => ref.tables) : [];
+      return item
+        ? (item.tables as LootTableRef[]).flatMap((ref) => ref.tables)
+        : [];
     }),
   );
 
   // Fetch inner tables whenever IDs change.
-  watch(innerTableIds, (ids) => dataStore.fetchDetailedLootTables(ids), { immediate: true });
+  watch(innerTableIds, (ids) => dataStore.fetchDetailedLootTables(ids), {
+    immediate: true,
+  });
 
   // Resolve into full ChestLootTableInfo entries.
   return computed<ChestLootTableInfo[]>(() =>
@@ -70,7 +77,11 @@ export function useChestLootTables(
         name: item?.name ?? chestItemId,
         icon: item?.icon ?? "",
         stepsPerChest,
-        dropInfoMap: buildChestDropInfoMap(stepsPerChest, detailedTables, itemsStore.fineMaterials),
+        dropInfoMap: buildChestDropInfoMap(
+          stepsPerChest,
+          detailedTables,
+          itemsStore.fineMaterials,
+        ),
       };
     }),
   );

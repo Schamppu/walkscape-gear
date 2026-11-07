@@ -16,11 +16,16 @@ const props = defineProps<{
 
 const gearStore = useGearStore();
 
-const slotLabel = (slot: string): string => slot.replace(/([a-zA-Z])(\d+)/, "$1 $2");
+const slotLabel = (slot: string): string =>
+  slot.replace(/([a-zA-Z])(\d+)/, "$1 $2");
 
 const itemIcon = (item: EquippedItem): string =>
   "egg" in item
-    ? getPetIcon(item as unknown as PetItem, item.quality, item.quality2 === "rare")
+    ? getPetIcon(
+        item as unknown as PetItem,
+        item.quality,
+        item.quality2 === "rare",
+      )
     : item.icon;
 
 const rows = computed(() =>

@@ -1,8 +1,18 @@
 import { computed, type ComputedRef } from "vue";
-import { useRouteStore, type LocationInfo, type RouteSegment } from "@/store/route";
+import {
+  useRouteStore,
+  type LocationInfo,
+  type RouteSegment,
+} from "@/store/route";
 import { usePlayerStore } from "@/store/player";
-import { useRequirements, type RequirementContext } from "@/composables/useRequirements";
-import { useSkillModifiers, type SkillModifiersContext } from "@/composables/useSkillModifiers";
+import {
+  useRequirements,
+  type RequirementContext,
+} from "@/composables/useRequirements";
+import {
+  useSkillModifiers,
+  type SkillModifiersContext,
+} from "@/composables/useSkillModifiers";
 import { argbToRgba } from "@/utils/argbToRgba";
 import {
   buildGraph,
@@ -29,13 +39,18 @@ type RouteContext = SkillModifiersContext & {
 // ---------------------------------------------------------------------------
 
 export function useRoutes(baseContext: SkillModifiersContext): {
-  getRoute: (start: string, goal: string) => PathfindResult<RouteSegment> | undefined;
+  getRoute: (
+    start: string,
+    goal: string,
+  ) => PathfindResult<RouteSegment> | undefined;
   stepsPerNode: (distance: number, stats: RouteSegmentStats) => number;
   averageStepsPerRoute: (distance: number, stats: RouteSegmentStats) => number;
 } {
   const routeStore = useRouteStore();
   const playerStore = usePlayerStore();
-  const { checkRequirement } = useRequirements(baseContext as RequirementContext);
+  const { checkRequirement } = useRequirements(
+    baseContext as RequirementContext,
+  );
 
   const graph = buildGraph(
     routeStore.locations,
@@ -49,7 +64,10 @@ export function useRoutes(baseContext: SkillModifiersContext): {
     return { id, ...data, color };
   };
 
-  const getRouteContext = (from: LocationInfo, route: GraphEdge): RouteContext => {
+  const getRouteContext = (
+    from: LocationInfo,
+    route: GraphEdge,
+  ): RouteContext => {
     return {
       ...baseContext,
       location: computed(() => ({
@@ -71,7 +89,8 @@ export function useRoutes(baseContext: SkillModifiersContext): {
       maxWorkEfficiency: skillModifiers.maxWorkEfficiency.value,
       workEfficiency: skillModifiers.workEfficiency.value,
       uncappedWorkEfficiency: skillModifiers.uncappedWorkEfficiency.value,
-      effectiveMaxWorkEfficiency: skillModifiers.effectiveMaxWorkEfficiency.value,
+      effectiveMaxWorkEfficiency:
+        skillModifiers.effectiveMaxWorkEfficiency.value,
       doubleAction: skillModifiers.doubleAction.value,
       stepsRequiredPercent: skillModifiers.stepsRequiredPercent.value,
       stepsRequiredFlat: skillModifiers.stepsRequiredFlat.value,
@@ -95,12 +114,8 @@ export function useRoutes(baseContext: SkillModifiersContext): {
     start: string,
     goal: string,
   ): PathfindResult<RouteSegment> | undefined => {
-    const result = pathfind(
-      graph,
-      start,
-      goal,
-      buildSegment,
-      (req) => checkRequirement(req, baseContext as RequirementContext),
+    const result = pathfind(graph, start, goal, buildSegment, (req) =>
+      checkRequirement(req, baseContext as RequirementContext),
     );
     if (!result) return undefined;
 
@@ -117,4 +132,3 @@ export function useRoutes(baseContext: SkillModifiersContext): {
     averageStepsPerRoute,
   };
 }
-

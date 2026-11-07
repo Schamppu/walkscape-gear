@@ -23,7 +23,9 @@ export function makeTarget(x: XValue, y: YValue, weight = 1): Target {
 }
 
 /** Builds a TargetContext for a plain activity with no special loot tables. */
-export function makeTargetContext(overrides: Partial<TargetContext> = {}): TargetContext {
+export function makeTargetContext(
+  overrides: Partial<TargetContext> = {},
+): TargetContext {
   return {
     isRecipe: false,
     producesCraftedItem: false,
@@ -78,14 +80,20 @@ export function makeSkillModifiers(
     stepsPerFineRoll: 1000,
     stepsPerCollectibleRoll: 10,
     craftsPerMaterial: 1,
-    xpRewards: [{ skill: "fishing", skillText: "fishing", base: 50, value: 50 }],
-    xpPerStep: [{ skill: "fishing", skillText: "fishing", value: 5, displayedValue: 5 }],
+    xpRewards: [
+      { skill: "fishing", skillText: "fishing", base: 50, value: 50 },
+    ],
+    xpPerStep: [
+      { skill: "fishing", skillText: "fishing", value: 5, displayedValue: 5 },
+    ],
     ...overrides,
   };
 }
 
 /** Builds a DropProfile with no chests or tokens. */
-export function makeDropProfile(overrides: Partial<DropProfile> = {}): DropProfile {
+export function makeDropProfile(
+  overrides: Partial<DropProfile> = {},
+): DropProfile {
   return {
     chestsPerRoll: 0,
     unscaledChestsPerRoll: 0,
@@ -133,10 +141,17 @@ export function makeStatTotals(
 // ---------------------------------------------------------------------------
 
 /** A stat on a fixture item: `type` is the StatTotals key (e.g. "workEfficiency"). */
-export type FixtureStat = { type: string; value: number; isPercent?: boolean; skill?: string };
+export type FixtureStat = {
+  type: string;
+  value: number;
+  isPercent?: boolean;
+  skill?: string;
+};
 
 /** Static requirement context for a fishing activity with no location set. */
-export function makeReqCtx(overrides: Partial<StaticReqCtx> = {}): StaticReqCtx {
+export function makeReqCtx(
+  overrides: Partial<StaticReqCtx> = {},
+): StaticReqCtx {
   return {
     activityId: "fixture-activity",
     activityKeywords: [],
@@ -158,7 +173,12 @@ export function makeReqCtx(overrides: Partial<StaticReqCtx> = {}): StaticReqCtx 
   };
 }
 
-const makeStat = ({ type, value, isPercent = true, skill }: FixtureStat): Stat =>
+const makeStat = ({
+  type,
+  value,
+  isPercent = true,
+  skill,
+}: FixtureStat): Stat =>
   ({
     stat: type,
     name: type,
@@ -223,7 +243,14 @@ export function makeLocationSummary(
   faction = "jarvonia",
   keywords: string[] = [],
 ): LocationSummary {
-  return { id, name: id, icon: "", faction, subFactions: [], keywords } as LocationSummary;
+  return {
+    id,
+    name: id,
+    icon: "",
+    faction,
+    subFactions: [],
+    keywords,
+  } as LocationSummary;
 }
 
 const req = <T extends Requirement["type"]>(
@@ -247,15 +274,25 @@ export const locationKeywordsReq = (keywords: string[]) =>
  * Advanced optimiser job for a fishing activity: 100 work, max 100% work
  * efficiency bonus (×2), 50 XP. Targets `xp / step` (weight 1) by default.
  */
-export function makeJob(overrides: Partial<AdvancedOptimiserJob> = {}): AdvancedOptimiserJob {
+export function makeJob(
+  overrides: Partial<AdvancedOptimiserJob> = {},
+): AdvancedOptimiserJob {
   return {
     mode: { kind: "singleActivity", activityId: "fixture-activity" },
     targets: [makeTarget("xp", "step", 1)],
     combinationRule: "weightedSum",
     staticEntries: [],
-    source: { maxWorkEfficiency: 2, workRequired: 100, xpRewardsMap: { fishing: 50 } },
+    source: {
+      maxWorkEfficiency: 2,
+      workRequired: 100,
+      xpRewardsMap: { fishing: 50 },
+    },
     activitySelected: true,
-    extraction: { activitySkills: ["fishing"], quality: null, drops: makeDropProfile() },
+    extraction: {
+      activitySkills: ["fishing"],
+      quality: null,
+      drops: makeDropProfile(),
+    },
     reqCtx: makeReqCtx(),
     activityRequirements: [],
     keywordsMap: {},

@@ -53,32 +53,32 @@ const updateVisible = (visibility) => {
     <div class="equip">
       <div class="items">
         <div class="column left">
-        <gear-slot gearType="cape" @select="handleGearSlotSelect" />
-        <gear-slot gearType="hands" @select="handleGearSlotSelect" />
-        <gear-slot
-          gearType="primary"
-          class="primary"
-          @select="handleGearSlotSelect"
-        />
-        <gear-slot gearType="ring" index="1" @select="handleGearSlotSelect" />
+          <gear-slot gearType="cape" @select="handleGearSlotSelect" />
+          <gear-slot gearType="hands" @select="handleGearSlotSelect" />
+          <gear-slot
+            gearType="primary"
+            class="primary"
+            @select="handleGearSlotSelect"
+          />
+          <gear-slot gearType="ring" index="1" @select="handleGearSlotSelect" />
+        </div>
+        <div class="column middle">
+          <gear-slot gearType="head" @select="handleGearSlotSelect" />
+          <gear-slot gearType="chest" @select="handleGearSlotSelect" />
+          <gear-slot gearType="legs" @select="handleGearSlotSelect" />
+          <gear-slot gearType="feet" @select="handleGearSlotSelect" />
+        </div>
+        <div class="column">
+          <gear-slot gearType="back" @select="handleGearSlotSelect" />
+          <gear-slot gearType="neck" @select="handleGearSlotSelect" />
+          <gear-slot
+            gearType="secondary"
+            class="secondary"
+            @select="handleGearSlotSelect"
+          />
+          <gear-slot gearType="ring" index="2" @select="handleGearSlotSelect" />
+        </div>
       </div>
-      <div class="column middle">
-        <gear-slot gearType="head" @select="handleGearSlotSelect" />
-        <gear-slot gearType="chest" @select="handleGearSlotSelect" />
-        <gear-slot gearType="legs" @select="handleGearSlotSelect" />
-        <gear-slot gearType="feet" @select="handleGearSlotSelect" />
-      </div>
-      <div class="column">
-        <gear-slot gearType="back" @select="handleGearSlotSelect" />
-        <gear-slot gearType="neck" @select="handleGearSlotSelect" />
-        <gear-slot
-          gearType="secondary"
-          class="secondary"
-          @select="handleGearSlotSelect"
-        />
-        <gear-slot gearType="ring" index="2" @select="handleGearSlotSelect" />
-      </div>
-    </div>
       <div class="tools">
         <div v-for="index in 6" :key="index" class="tool-wrapper">
           <gear-slot
@@ -183,7 +183,8 @@ const updateVisible = (visibility) => {
 
 // --- Compact: same paper-doll silhouette, smaller slots and tighter spacing.
 // Also the base for the "vertical tools" mode below.
-.tab-content.compact, .tab-content.cozy {
+.tab-content.compact,
+.tab-content.cozy {
   gap: $base;
 
   .equip {

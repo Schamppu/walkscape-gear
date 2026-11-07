@@ -43,7 +43,9 @@ watch(
 
 const nameProblem = computed(() => presetNameProblem(name.value));
 const problem = computed(() =>
-  props.mode === "save" ? (props.targetsProblem ?? nameProblem.value) : nameProblem.value,
+  props.mode === "save"
+    ? (props.targetsProblem ?? nameProblem.value)
+    : nameProblem.value,
 );
 const trimmedName = computed(() => name.value.normalize("NFC").trim());
 
@@ -73,7 +75,9 @@ const onDelete = (): void => {
     <p v-if="mode === 'save' && targetsProblem" class="problem" role="status">
       {{ targetsProblem }}
     </p>
-    <p v-else-if="name && nameProblem" class="problem" role="status">{{ nameProblem }}</p>
+    <p v-else-if="name && nameProblem" class="problem" role="status">
+      {{ nameProblem }}
+    </p>
 
     <div class="actions">
       <template v-if="mode === 'save'">
@@ -106,7 +110,12 @@ const onDelete = (): void => {
           @click="onDelete"
         />
       </template>
-      <ws-button text="Cancel" variant="secondary" :disabled="busy" @click="emit('cancel')" />
+      <ws-button
+        text="Cancel"
+        variant="secondary"
+        :disabled="busy"
+        @click="emit('cancel')"
+      />
     </div>
   </form>
 </template>

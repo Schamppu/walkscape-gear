@@ -68,7 +68,9 @@ describe("parseGameString", () => {
 
   it("parses mixed tokens in a complex string", () => {
     expect(
-      parseGameString('Complete {count} times using <skill skill="mining"/> to earn <hl>rewards</hl>.')
+      parseGameString(
+        'Complete {count} times using <skill skill="mining"/> to earn <hl>rewards</hl>.',
+      ),
     ).toEqual([
       { type: "text", value: "Complete " },
       { type: "variable", name: "count" },
@@ -95,14 +97,16 @@ describe("parseGameString", () => {
     });
 
     it("parses a paired stat tag with inner text", () => {
-      expect(parseGameString('<stat s="findGems">chance to find gems</stat>')).toEqual([
-        { type: "stat", s: "findGems", text: "chance to find gems" },
-      ]);
+      expect(
+        parseGameString('<stat s="findGems">chance to find gems</stat>'),
+      ).toEqual([{ type: "stat", s: "findGems", text: "chance to find gems" }]);
     });
 
     it("parses stat token mixed with surrounding text", () => {
       expect(
-        parseGameString('Grants <stat s="findGems">chance to find gems</stat> bonus.')
+        parseGameString(
+          'Grants <stat s="findGems">chance to find gems</stat> bonus.',
+        ),
       ).toEqual([
         { type: "text", value: "Grants " },
         { type: "stat", s: "findGems", text: "chance to find gems" },

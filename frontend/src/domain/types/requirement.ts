@@ -22,10 +22,14 @@ type Schemas = components["schemas"];
 
 export type MainSkillRequirement = Schemas["MainSkillRequirement"];
 export type MainSkillTypeRequirement = Schemas["MainSkillTypeRequirement"];
-export type LocationHasKeywordsRequirement = Schemas["LocationHasKeywordsRequirement"];
-export type AchievementPointRequirement = Schemas["AchievementPointRequirement"];
-export type DistinctKeywordItemsEquippedRequirement = Schemas["DistinctKeywordItemsEquippedRequirement"];
-export type DistinctKeywordItemInInventoryRequirement = Schemas["DistinctKeywordItemInInventoryRequirement"];
+export type LocationHasKeywordsRequirement =
+  Schemas["LocationHasKeywordsRequirement"];
+export type AchievementPointRequirement =
+  Schemas["AchievementPointRequirement"];
+export type DistinctKeywordItemsEquippedRequirement =
+  Schemas["DistinctKeywordItemsEquippedRequirement"];
+export type DistinctKeywordItemInInventoryRequirement =
+  Schemas["DistinctKeywordItemInInventoryRequirement"];
 export type HistoryDataRequirement = Schemas["HistoryDataRequirement"];
 export type RealmRequirement = Schemas["RealmRequirement"];
 export type TravelingRequirement = Schemas["TravelingRequirement"];
@@ -36,16 +40,22 @@ export type SkillLevelRequirement = Schemas["SkillLevelRequirement"];
 export type SkillTypeLevelRequirement = Schemas["SkillTypeLevelRequirement"];
 export type ActivityTypeRequirement = Schemas["ActivityTypeRequirement"];
 export type TotalSkillLevelRequirement = Schemas["TotalSkillLevelRequirement"];
-export type TotalSkillLevelUpsRequirement = Schemas["TotalSkillLevelUpsRequirement"];
-export type InputKeywordWithLevelRequirement = Schemas["InputKeywordWithLevelRequirement"];
+export type TotalSkillLevelUpsRequirement =
+  Schemas["TotalSkillLevelUpsRequirement"];
+export type InputKeywordWithLevelRequirement =
+  Schemas["InputKeywordWithLevelRequirement"];
 export type ItemAnywhereRequirement = Schemas["ItemAnywhereRequirement"];
-export type ItemAnywhereWithYouRequirement = Schemas["ItemAnywhereWithYouRequirement"];
+export type ItemAnywhereWithYouRequirement =
+  Schemas["ItemAnywhereWithYouRequirement"];
 export type KeywordEquippedRequirement = Schemas["KeywordEquippedRequirement"];
-export type KeywordWithLevelEquippedRequirement = Schemas["KeywordWithLevelEquippedRequirement"];
+export type KeywordWithLevelEquippedRequirement =
+  Schemas["KeywordWithLevelEquippedRequirement"];
 export type ItemEquippedRequirement = Schemas["ItemEquippedRequirement"];
-export type AbilityAvailableRequirement = Schemas["AbilityAvailableRequirement"];
+export type AbilityAvailableRequirement =
+  Schemas["AbilityAvailableRequirement"];
 export type HaveCoinsRequirement = Schemas["HaveCoinsRequirement"];
-export type CollectiblesOwnedRequirement = Schemas["CollectiblesOwnedRequirement"];
+export type CollectiblesOwnedRequirement =
+  Schemas["CollectiblesOwnedRequirement"];
 export type ExploreRealmRequirement = Schemas["ExploreRealmRequirement"];
 export type TotalWealthRequirement = Schemas["TotalWealthRequirement"];
 

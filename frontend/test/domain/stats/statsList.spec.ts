@@ -21,7 +21,9 @@ function makeStat(overrides: Partial<Stat> = {}): Stat {
   };
 }
 
-function makeEntry(overrides: Partial<EffectiveAttrEntry> = {}): EffectiveAttrEntry {
+function makeEntry(
+  overrides: Partial<EffectiveAttrEntry> = {},
+): EffectiveAttrEntry {
   return {
     id: "item_1",
     requirements: [],
@@ -71,17 +73,27 @@ describe("buildStatsList — empty inputs", () => {
 
 describe("buildStatsList — regular stats", () => {
   it("includes a row for a matching (stat, isPercent) pair", () => {
-    const attrs = [makeEntry({ stats: [makeStat({ type: "workEfficiency", isPercent: true })] })];
+    const attrs = [
+      makeEntry({
+        stats: [makeStat({ type: "workEfficiency", isPercent: true })],
+      }),
+    ];
     const defs = [makeStatDef({ type: "workEfficiency" })];
     const rows = buildStatsList(attrs, defs);
-    expect(rows.some((r) => r.stat.type === "workEfficiency" && r.isPercent === true)).toBe(true);
+    expect(
+      rows.some(
+        (r) => r.stat.type === "workEfficiency" && r.isPercent === true,
+      ),
+    ).toBe(true);
   });
 
   it("omits the isPercent=false row when no flat attr exists", () => {
     const attrs = [makeEntry({ stats: [makeStat({ isPercent: true })] })];
     const defs = [makeStatDef()];
     const rows = buildStatsList(attrs, defs);
-    expect(rows.filter((r) => r.stat.type === "workEfficiency")).toHaveLength(1);
+    expect(rows.filter((r) => r.stat.type === "workEfficiency")).toHaveLength(
+      1,
+    );
     expect(rows[0].isPercent).toBe(true);
   });
 
@@ -112,7 +124,13 @@ describe("buildStatsList — pseudo stats", () => {
   it("includes a pseudo-stat row for an attr whose stat ID is not a regular stat", () => {
     const attrs = [
       makeEntry({
-        stats: [makeStat({ stat: "pseudo_roll", type: "pseudo_roll", isPercent: false })],
+        stats: [
+          makeStat({
+            stat: "pseudo_roll",
+            type: "pseudo_roll",
+            isPercent: false,
+          }),
+        ],
         customText: "",
         skillText: "mining",
         statText: "pseudo stat",
@@ -127,7 +145,14 @@ describe("buildStatsList — pseudo stats", () => {
   it("uses customText as the stat name when it is non-empty", () => {
     const attrs = [
       makeEntry({
-        stats: [makeStat({ stat: "psuedo_x", name: "default name", type: "pseudo_x", isPercent: false })],
+        stats: [
+          makeStat({
+            stat: "psuedo_x",
+            name: "default name",
+            type: "pseudo_x",
+            isPercent: false,
+          }),
+        ],
         customText: "My Custom Name",
       }),
     ];
@@ -138,7 +163,14 @@ describe("buildStatsList — pseudo stats", () => {
   it("falls back to the stat name when customText is empty", () => {
     const attrs = [
       makeEntry({
-        stats: [makeStat({ stat: "pseudo_y", name: "Fallback Name", type: "pseudo_y", isPercent: false })],
+        stats: [
+          makeStat({
+            stat: "pseudo_y",
+            name: "Fallback Name",
+            type: "pseudo_y",
+            isPercent: false,
+          }),
+        ],
         customText: "",
       }),
     ];
@@ -148,8 +180,16 @@ describe("buildStatsList — pseudo stats", () => {
 
   it("deduplicates pseudo-stat rows with the same (id, isPercent)", () => {
     const attrs = [
-      makeEntry({ stats: [makeStat({ stat: "pseudo_z", type: "pseudo_z", isPercent: true })] }),
-      makeEntry({ stats: [makeStat({ stat: "pseudo_z", type: "pseudo_z", isPercent: true })] }),
+      makeEntry({
+        stats: [
+          makeStat({ stat: "pseudo_z", type: "pseudo_z", isPercent: true }),
+        ],
+      }),
+      makeEntry({
+        stats: [
+          makeStat({ stat: "pseudo_z", type: "pseudo_z", isPercent: true }),
+        ],
+      }),
     ];
     const rows = buildStatsList(attrs, []);
     expect(rows).toHaveLength(1);
@@ -157,8 +197,16 @@ describe("buildStatsList — pseudo stats", () => {
 
   it("does not deduplicate rows with same id but different isPercent", () => {
     const attrs = [
-      makeEntry({ stats: [makeStat({ stat: "pseudo_w", type: "pseudo_w", isPercent: true })] }),
-      makeEntry({ stats: [makeStat({ stat: "pseudo_w", type: "pseudo_w", isPercent: false })] }),
+      makeEntry({
+        stats: [
+          makeStat({ stat: "pseudo_w", type: "pseudo_w", isPercent: true }),
+        ],
+      }),
+      makeEntry({
+        stats: [
+          makeStat({ stat: "pseudo_w", type: "pseudo_w", isPercent: false }),
+        ],
+      }),
     ];
     const rows = buildStatsList(attrs, []);
     expect(rows).toHaveLength(2);
@@ -172,10 +220,24 @@ describe("buildStatsList — pseudo stats", () => {
 describe("buildStatsList — ordering", () => {
   it("regular rows come before pseudo rows", () => {
     const attrs = [
-      makeEntry({ stats: [makeStat({ stat: "pseudo_p", type: "pseudo_p", isPercent: false })] }),
-      makeEntry({ stats: [makeStat({ stat: "workEfficiency", type: "workEfficiency", isPercent: true })] }),
+      makeEntry({
+        stats: [
+          makeStat({ stat: "pseudo_p", type: "pseudo_p", isPercent: false }),
+        ],
+      }),
+      makeEntry({
+        stats: [
+          makeStat({
+            stat: "workEfficiency",
+            type: "workEfficiency",
+            isPercent: true,
+          }),
+        ],
+      }),
     ];
-    const defs = [makeStatDef({ id: "workEfficiency", type: "workEfficiency" })];
+    const defs = [
+      makeStatDef({ id: "workEfficiency", type: "workEfficiency" }),
+    ];
     const rows = buildStatsList(attrs, defs);
     expect(rows[0].stat.type).toBe("workEfficiency");
     expect(rows[rows.length - 1].stat.type).toBe("pseudo_p");

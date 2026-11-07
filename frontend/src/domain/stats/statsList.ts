@@ -43,12 +43,14 @@ export function buildStatsList(
   allAttrs: EffectiveAttrEntry[],
   regularStatDefs: StatDefinition[],
 ): StatsListRow[] {
-  const attrStats = allAttrs.map(({ stats, customText, statText, skillText }) => ({
-    ...stats[0],
-    customText,
-    statText,
-    skillText,
-  }));
+  const attrStats = allAttrs.map(
+    ({ stats, customText, statText, skillText }) => ({
+      ...stats[0],
+      customText,
+      statText,
+      skillText,
+    }),
+  );
 
   const regularStatIds = new Set(regularStatDefs.map(({ id }) => id));
 

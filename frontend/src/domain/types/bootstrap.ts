@@ -10,7 +10,12 @@ import type {
 } from "./db";
 import type { Faction } from "./faction";
 import type { GlobalVariable } from "./global_variable";
-import type { ItemCategoryGroup, ItemDetail, ItemValueMap, UrlMap } from "./item";
+import type {
+  ItemCategoryGroup,
+  ItemDetail,
+  ItemValueMap,
+  UrlMap,
+} from "./item";
 import type { Keyword } from "./keyword";
 import type { LocationSummary } from "./location";
 import type { LootTableSummary } from "./lootTable";

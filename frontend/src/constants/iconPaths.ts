@@ -15,12 +15,7 @@
 
 export type IconMap = Record<string, string>;
 export type BasePathKey =
-  | "general"
-  | "button"
-  | "devtools"
-  | "items"
-  | "currencies"
-  | "skilling";
+  "general" | "button" | "devtools" | "items" | "currencies" | "skilling";
 
 export const BASE_PATHS: Record<BasePathKey, string> = {
   general: "assets/icons/text/general_icons/",
@@ -33,10 +28,13 @@ export const BASE_PATHS: Record<BasePathKey, string> = {
 
 export function withBase<T extends Record<string, string>>(
   base: BasePathKey,
-  files: T
+  files: T,
 ): { [K in keyof T]: string } {
   return Object.fromEntries(
-    Object.entries(files).map(([key, file]) => [key, `${BASE_PATHS[base]}${file}`])
+    Object.entries(files).map(([key, file]) => [
+      key,
+      `${BASE_PATHS[base]}${file}`,
+    ]),
   ) as { [K in keyof T]: string };
 }
 

@@ -2,13 +2,19 @@
 import { computed } from "vue";
 import ComparisonTableShell from "./table/ComparisonTableShell.vue";
 import WsIcon from "@/components/primitives/WsIcon.vue";
-import { useLootTables, type LootTablesContext } from "@/composables/useLootTables";
+import {
+  useLootTables,
+  type LootTablesContext,
+} from "@/composables/useLootTables";
 import { useChestLootTables } from "@/composables/useChestLootTables";
 import { useAbilityLootTables } from "@/composables/useAbilityLootTables";
 import { snakeToTitle } from "@/utils/string";
 import AggregateDrops from "../drops/aggregate/AggregateDrops.vue";
 import DropStepColumn from "./table/DropStepColumn.vue";
-import { compareDrops, type DropStepValues } from "@/domain/comparison/dropsComparison";
+import {
+  compareDrops,
+  type DropStepValues,
+} from "@/domain/comparison/dropsComparison";
 import type { BaseContext } from "@/composables/context/useBaseContext";
 import { icons } from "@/constants/iconPaths";
 
@@ -17,20 +23,38 @@ const props = defineProps<{
   gs2Ctx: BaseContext;
 }>();
 
-const { dropItemInfoMap: drops1 } = useLootTables(props.gs1Ctx as unknown as LootTablesContext);
-const { dropItemInfoMap: drops2 } = useLootTables(props.gs2Ctx as unknown as LootTablesContext);
+const { dropItemInfoMap: drops1 } = useLootTables(
+  props.gs1Ctx as unknown as LootTablesContext,
+);
+const { dropItemInfoMap: drops2 } = useLootTables(
+  props.gs2Ctx as unknown as LootTablesContext,
+);
 const chests1 = useChestLootTables(drops1);
 const chests2 = useChestLootTables(drops2);
 const abilities1 = useAbilityLootTables(props.gs1Ctx);
 const abilities2 = useAbilityLootTables(props.gs2Ctx);
 
 const toData = (v: DropStepValues | null) =>
-  v ? { item: v.stepsPerItem, normal: v.stepsPerNormal, fine: v.stepsPerFine, rare: v.stepsPerRare } : {};
+  v
+    ? {
+        item: v.stepsPerItem,
+        normal: v.stepsPerNormal,
+        fine: v.stepsPerFine,
+        rare: v.stepsPerRare,
+      }
+    : {};
 
 const dropsMap = computed(() =>
   compareDrops(drops1.value, drops2.value).map(
     ({ id, icon, comp, normalComp, fineComp, rareComp, g1, g2 }) => ({
-      item: { name: snakeToTitle(id), icon, comp, normalComp, fineComp, rareComp },
+      item: {
+        name: snakeToTitle(id),
+        icon,
+        comp,
+        normalComp,
+        fineComp,
+        rareComp,
+      },
       g1: toData(g1),
       g2: toData(g2),
     }),

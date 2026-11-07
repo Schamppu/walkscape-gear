@@ -46,7 +46,9 @@ describe("WsIcon", () => {
     ];
 
     sizeTests.forEach(({ size, expected }) => {
-      const wrapper = mount(WsIcon, { props: { iconPath: uniquePath(), size } });
+      const wrapper = mount(WsIcon, {
+        props: { iconPath: uniquePath(), size },
+      });
 
       const iconDiv = wrapper.find(".ws-icon");
       expect(iconDiv.attributes("style")).toContain(`width: ${expected}`);

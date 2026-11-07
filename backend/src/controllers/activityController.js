@@ -10,5 +10,5 @@ export const getActivity = wrapController(
   },
   {
     notFoundMessage: "Activity not found",
-  }
+  },
 );

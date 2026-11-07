@@ -28,7 +28,7 @@ async function migrate() {
   // Step 4: Get all GearSetTag relationships that need to be updated
   const gearSetTags = await prisma.gearSetTag.findMany();
   console.log(
-    `Found ${gearSetTags.length} gear set tag relationships to migrate`
+    `Found ${gearSetTags.length} gear set tag relationships to migrate`,
   );
 
   // Step 6: Delete old GearSetTag relationships
@@ -53,7 +53,7 @@ async function migrate() {
       } catch (error) {
         if (error.code === "P2002") {
           console.log(
-            `GearSetTag relationship already exists for gearSet ${gearSetTag.gearSetId} and tag ${newTagId}`
+            `GearSetTag relationship already exists for gearSet ${gearSetTag.gearSetId} and tag ${newTagId}`,
           );
         } else {
           console.error(`Error creating GearSetTag:`, error.message);
@@ -61,7 +61,7 @@ async function migrate() {
       }
     } else {
       console.warn(
-        `Could not migrate GearSetTag with old tagId: ${gearSetTag.tagId}`
+        `Could not migrate GearSetTag with old tagId: ${gearSetTag.tagId}`,
       );
       skippedCount++;
     }

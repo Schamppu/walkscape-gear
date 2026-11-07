@@ -8,7 +8,9 @@ export type SimpleSegment = {
 };
 
 /** Default stats with no bonuses applied. */
-export function defaultRouteStats(overrides: Partial<RouteSegmentStats> = {}): RouteSegmentStats {
+export function defaultRouteStats(
+  overrides: Partial<RouteSegmentStats> = {},
+): RouteSegmentStats {
   return {
     maxWorkEfficiency: 1,
     workEfficiency: 0,

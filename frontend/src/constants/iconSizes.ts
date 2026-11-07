@@ -13,16 +13,7 @@
  */
 
 export type IconSizeKey =
-  | "xxxs"
-  | "xxs"
-  | "xs"
-  | "sm"
-  | "md"
-  | "mdp"
-  | "lg"
-  | "xl"
-  | "xxl"
-  | "default";
+  "xxxs" | "xxs" | "xs" | "sm" | "md" | "mdp" | "lg" | "xl" | "xxl" | "default";
 
 export const iconSizeMap: Record<IconSizeKey, string> = {
   xxxs: "8px",
@@ -37,4 +28,6 @@ export const iconSizeMap: Record<IconSizeKey, string> = {
   xxl: "96px",
 };
 
-export const iconSizeKeys: IconSizeKey[] = Object.keys(iconSizeMap) as IconSizeKey[];
+export const iconSizeKeys: IconSizeKey[] = Object.keys(
+  iconSizeMap,
+) as IconSizeKey[];

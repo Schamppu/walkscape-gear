@@ -19,7 +19,10 @@ import type { ItemDetail } from "@/domain/types/item";
 import type { PetDetail } from "@/domain/types/pet";
 import type { GearSlot } from "@/domain/constants/gear";
 import type { Command } from "./commands/types";
-import { executeCommand, initializeHistoryTracking } from "@/store/utils/historyUtils";
+import {
+  executeCommand,
+  initializeHistoryTracking,
+} from "@/store/utils/historyUtils";
 import { useNotificationStore } from "@/store/notifications";
 
 // ---------------------------------------------------------------------------
@@ -60,7 +63,10 @@ type CacheOperation = {
 
 export const useGearStore = defineStore("gearStore", {
   state: () => ({
-    gearSlots: [createEmptyGearSet(), createEmptyGearSet()] as EquippedGearSet[],
+    gearSlots: [
+      createEmptyGearSet(),
+      createEmptyGearSet(),
+    ] as EquippedGearSet[],
     gearSetIndex: 0,
     // Cache for fetched items to avoid refetching
     itemCache: new Map<string, EquippedItem>(),
@@ -73,34 +79,46 @@ export const useGearStore = defineStore("gearStore", {
     },
     bothSetsActive(state): boolean {
       return state.gearSlots.every(
-        (set) => Object.values(set).filter(Boolean).length
+        (set) => Object.values(set).filter(Boolean).length,
       );
     },
     hasGearEquipped(): boolean {
       return (
         Object.entries(this.selectedGearset).filter(
-          ([key, value]) => key !== "service" && value !== null
+          ([key, value]) => key !== "service" && value !== null,
         ).length > 0
       );
     },
     equippedGear(): EquippedItem[] {
-      return (Object.values(this.selectedGearset).filter(Boolean) as EquippedItem[]) || [];
+      return (
+        (Object.values(this.selectedGearset).filter(
+          Boolean,
+        ) as EquippedItem[]) || []
+      );
     },
     filledGearSlots(): [string, EquippedItem][] {
       return Object.entries(this.selectedGearset).filter(([, item]) =>
-        Boolean(item)
+        Boolean(item),
       ) as [string, EquippedItem][];
     },
-    isSlotLocked: (state) => (slot: GearSlot): boolean =>
-      state.lockedSlots[state.gearSetIndex]?.includes(slot) ?? false,
-    gearset: (state) => (index: number): EquippedGearSet =>
-      state.gearSlots[index] as EquippedGearSet,
-    equippedGearByIndex: (state) => (index: number): EquippedItem[] =>
-      Object.values(state.gearSlots[index]).filter(Boolean) as EquippedItem[],
-    filledGearSlotsByIndex: (state) => (index: number): [string, EquippedItem][] =>
-      Object.entries(state.gearSlots[index]).filter(([, item]) =>
-        Boolean(item)
-      ) as [string, EquippedItem][],
+    isSlotLocked:
+      (state) =>
+      (slot: GearSlot): boolean =>
+        state.lockedSlots[state.gearSetIndex]?.includes(slot) ?? false,
+    gearset:
+      (state) =>
+      (index: number): EquippedGearSet =>
+        state.gearSlots[index] as EquippedGearSet,
+    equippedGearByIndex:
+      (state) =>
+      (index: number): EquippedItem[] =>
+        Object.values(state.gearSlots[index]).filter(Boolean) as EquippedItem[],
+    filledGearSlotsByIndex:
+      (state) =>
+      (index: number): [string, EquippedItem][] =>
+        Object.entries(state.gearSlots[index]).filter(([, item]) =>
+          Boolean(item),
+        ) as [string, EquippedItem][],
   },
   actions: {
     get(slot: GearSlot): EquippedItem | null {
@@ -170,12 +188,19 @@ export const useGearStore = defineStore("gearStore", {
       return `${id}_${quality || "default"}`;
     },
 
-    _getFromCache(id: string, quality: string | null): EquippedItem | undefined {
+    _getFromCache(
+      id: string,
+      quality: string | null,
+    ): EquippedItem | undefined {
       const cacheKey = this._getCacheKey(id, quality);
       return this.itemCache.get(cacheKey);
     },
 
-    _setInCache(id: string, quality: string | null, itemData: EquippedItem): void {
+    _setInCache(
+      id: string,
+      quality: string | null,
+      itemData: EquippedItem,
+    ): void {
       const cacheKey = this._getCacheKey(id, quality);
       this.itemCache.set(cacheKey, itemData);
     },
@@ -204,11 +229,27 @@ export const useGearStore = defineStore("gearStore", {
 
     // Batch fetch items: one request for all items, skipping cached entries.
     // A gear set holds at most one pet, so pets are fetched individually alongside.
-    async _fetchMultipleItems(itemRequests: FetchRequest[]): Promise<FetchResult[]> {
+    async _fetchMultipleItems(
+      itemRequests: FetchRequest[],
+    ): Promise<FetchResult[]> {
       const itemsStore = useItemsStore();
-      const uncached = itemRequests.filter(({ id, quality }) => !this._getFromCache(id, quality));
-      const petIds = [...new Set(uncached.filter(({ id }) => id in itemsStore.petsMap).map(({ id }) => id))];
-      const itemIds = [...new Set(uncached.filter(({ id }) => !(id in itemsStore.petsMap)).map(({ id }) => id))];
+      const uncached = itemRequests.filter(
+        ({ id, quality }) => !this._getFromCache(id, quality),
+      );
+      const petIds = [
+        ...new Set(
+          uncached
+            .filter(({ id }) => id in itemsStore.petsMap)
+            .map(({ id }) => id),
+        ),
+      ];
+      const itemIds = [
+        ...new Set(
+          uncached
+            .filter(({ id }) => !(id in itemsStore.petsMap))
+            .map(({ id }) => id),
+        ),
+      ];
 
       const fetchItems = async (): Promise<Map<string, ItemDetail>> => {
         if (itemIds.length === 0) return new Map();
@@ -216,7 +257,9 @@ export const useGearStore = defineStore("gearStore", {
           const { data } = await getMultipleItems(itemIds);
           // The response is aligned with the requested ids; missing ids come back as null.
           return new Map(
-            itemIds.flatMap((id, i) => (data[i] ? [[id, data[i]] as [string, ItemDetail]] : [])),
+            itemIds.flatMap((id, i) =>
+              data[i] ? [[id, data[i]] as [string, ItemDetail]] : [],
+            ),
           );
         } catch (error) {
           console.error(`Failed to fetch ${itemIds.length} item(s):`, error);
@@ -224,7 +267,9 @@ export const useGearStore = defineStore("gearStore", {
         }
       };
 
-      const fetchPet = async (id: string): Promise<[string, PetDetail] | null> => {
+      const fetchPet = async (
+        id: string,
+      ): Promise<[string, PetDetail] | null> => {
         try {
           const { data } = await getPet({ id });
           return data ? [id, data] : null;
@@ -252,9 +297,16 @@ export const useGearStore = defineStore("gearStore", {
         if (!data) return { id, quality, data: null };
 
         const icon = pet
-          ? getPetIcon(pet as unknown as Parameters<typeof getPetIcon>[0], Number(quality) || 0)
+          ? getPetIcon(
+              pet as unknown as Parameters<typeof getPetIcon>[0],
+              Number(quality) || 0,
+            )
           : (item as ItemDetail).icon;
-        const itemData: EquippedItem = { ...data, quality, icon } as EquippedItem;
+        const itemData: EquippedItem = {
+          ...data,
+          quality,
+          icon,
+        } as EquippedItem;
         this._setInCache(id, quality, itemData);
         return { id, quality, data: itemData };
       });
@@ -276,7 +328,8 @@ export const useGearStore = defineStore("gearStore", {
       if (!(id in itemsStore.allGearItems)) return;
 
       const previousItem = this.selectedGearset[itemSlot];
-      if (previousItem?.id === id && previousItem.quality === itemQuality) return;
+      if (previousItem?.id === id && previousItem.quality === itemQuality)
+        return;
 
       const quality = itemQuality || this.determineQuality(id);
       const quality2 = itemQuality2 || this.determineQuality(id, true);
@@ -289,20 +342,30 @@ export const useGearStore = defineStore("gearStore", {
         const loadFn = isPet ? getPet : getItem;
         const { data } = await loadFn({ id });
         const icon = isPet
-          ? getPetIcon(data as unknown as Parameters<typeof getPetIcon>[0], Number(quality) || 0)
+          ? getPetIcon(
+              data as unknown as Parameters<typeof getPetIcon>[0],
+              Number(quality) || 0,
+            )
           : (data as ItemDetail).icon;
 
         if (data) {
           itemData = { ...data, icon, quality, quality2 } as EquippedItem;
           this._setInCache(id, quality, itemData);
           const notificationStore = useNotificationStore();
-          void notificationStore.debug(`Gear: fetched "${(data as ItemDetail).name}" (${id}) for slot ${itemSlot}`);
+          void notificationStore.debug(
+            `Gear: fetched "${(data as ItemDetail).name}" (${id}) for slot ${itemSlot}`,
+          );
         }
       }
 
       if (itemData) {
         // Use command system to track this change
-        const command = new EquipItemCommand(this, itemSlot, itemData, previousItem);
+        const command = new EquipItemCommand(
+          this,
+          itemSlot,
+          itemData,
+          previousItem,
+        );
         this._executeCommand(command);
       }
     },
@@ -316,34 +379,51 @@ export const useGearStore = defineStore("gearStore", {
     },
 
     // Direct setter for all slots that doesn't record history (used by commands)
-    _setAllGearSlotsDirect(gearSlots: Record<string, EquippedItem | null>): void {
+    _setAllGearSlotsDirect(
+      gearSlots: Record<string, EquippedItem | null>,
+    ): void {
       const newGearSlots = Object.fromEntries(
         Object.keys(this.selectedGearset).map((slot) => [
           slot,
           gearSlots[slot] ?? null,
-        ])
+        ]),
       ) as EquippedGearSet;
       this.gearSlots[this.gearSetIndex] = newGearSlots;
     },
 
     async equipMultiple(
-      gearSetData: Record<string, { id?: string; quality?: string | null } | null>,
+      gearSetData: Record<
+        string,
+        { id?: string; quality?: string | null } | null
+      >,
       useQuality = false,
     ): Promise<void> {
       const previousGearSlots = { ...this.selectedGearset };
 
       // Process the gear set data first
-      const processedGearSlots = await this._processGearSetData(gearSetData, useQuality);
+      const processedGearSlots = await this._processGearSetData(
+        gearSetData,
+        useQuality,
+      );
 
       // Create and execute command
-      const command = new EquipMultipleCommand(this, processedGearSlots, previousGearSlots);
+      const command = new EquipMultipleCommand(
+        this,
+        processedGearSlots,
+        previousGearSlots,
+      );
       this._executeCommand(command);
     },
 
     // Direct equip multiple that doesn't record history (used by commands)
-    async _equipMultipleDirect(gearSetData: Record<string, EquippedItem | null>): Promise<void> {
+    async _equipMultipleDirect(
+      gearSetData: Record<string, EquippedItem | null>,
+    ): Promise<void> {
       // Apply all changes at once to minimize reactive updates
-      const completeGearSlots = { ...this.selectedGearset, ...gearSetData } as EquippedGearSet;
+      const completeGearSlots = {
+        ...this.selectedGearset,
+        ...gearSetData,
+      } as EquippedGearSet;
       this.gearSlots[this.gearSetIndex] = completeGearSlots;
     },
 
@@ -360,12 +440,18 @@ export const useGearStore = defineStore("gearStore", {
       }
 
       // Apply all gear changes at once to minimize reactive updates
-      const completeGearSlots = { ...this.selectedGearset, ...gearSetData } as EquippedGearSet;
+      const completeGearSlots = {
+        ...this.selectedGearset,
+        ...gearSetData,
+      } as EquippedGearSet;
       this.gearSlots[this.gearSetIndex] = completeGearSlots;
     },
 
     async _processGearSetData(
-      gearSetData: Record<string, { id?: string; quality?: string | null } | null>,
+      gearSetData: Record<
+        string,
+        { id?: string; quality?: string | null } | null
+      >,
       useQuality = false,
     ): Promise<Record<string, EquippedItem | null>> {
       const itemsStore = useItemsStore();
@@ -396,13 +482,16 @@ export const useGearStore = defineStore("gearStore", {
           continue;
         }
 
-        const quality = useQuality ? item.quality ?? null : null;
+        const quality = useQuality ? (item.quality ?? null) : null;
         const isQ2 = slot === "ring2";
         const resolvedQuality = quality || this.determineQuality(item.id, isQ2);
 
         // Check if this item is already equipped with the same quality
         const currentItem = this.selectedGearset[slot as GearSlot];
-        if (currentItem?.id === item.id && currentItem.quality === resolvedQuality) {
+        if (
+          currentItem?.id === item.id &&
+          currentItem.quality === resolvedQuality
+        ) {
           finalGearSlots[slot] = currentItem;
           continue;
         }
@@ -420,15 +509,21 @@ export const useGearStore = defineStore("gearStore", {
       if (itemsToFetch.length > 0) {
         const uniqueRequests = itemsToFetch.filter(
           (item, index, self) =>
-            index === self.findIndex((i) => i.id === item.id && i.quality === item.quality)
+            index ===
+            self.findIndex(
+              (i) => i.id === item.id && i.quality === item.quality,
+            ),
         );
 
         const notificationStore = useNotificationStore();
         void notificationStore.debug(
           `Gear: fetching ${uniqueRequests.length} item(s) for batch equip` +
-          (uniqueRequests.length < 5
-            ? ` - ${uniqueRequests.map((r) => r.id).join(", ")}`
-            : ` - ${uniqueRequests.slice(0, 4).map((r) => r.id).join(", ")} +${uniqueRequests.length - 4} more`),
+            (uniqueRequests.length < 5
+              ? ` - ${uniqueRequests.map((r) => r.id).join(", ")}`
+              : ` - ${uniqueRequests
+                  .slice(0, 4)
+                  .map((r) => r.id)
+                  .join(", ")} +${uniqueRequests.length - 4} more`),
         );
 
         const fetchedItems = await this._fetchMultipleItems(uniqueRequests);

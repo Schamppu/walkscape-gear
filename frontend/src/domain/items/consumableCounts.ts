@@ -31,13 +31,18 @@ export const toCount = (value: unknown): number => {
 };
 
 /** Common and fine counts of an owned-item entry (missing entry: both 0). */
-export const consumableCounts = (entry: CountFields | null | undefined): ConsumableCounts => {
+export const consumableCounts = (
+  entry: CountFields | null | undefined,
+): ConsumableCounts => {
   const fine = toCount(entry?.quantityFine);
   return { common: Math.max(0, toCount(entry?.quantity) - fine), fine };
 };
 
 /** The owned-item fields to write for a consumable with these counts. */
-export const consumableEntryFields = (common: number, fine: number): ConsumableEntryFields => {
+export const consumableEntryFields = (
+  common: number,
+  fine: number,
+): ConsumableEntryFields => {
   const c = toCount(common);
   const f = toCount(fine);
   return {

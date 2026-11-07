@@ -1,8 +1,9 @@
 import { priorityValue } from "./priority";
-import {
-  getRequirementCandidates as _getRequirementCandidates,
+import { getRequirementCandidates as _getRequirementCandidates } from "@/domain/optimiser/requirements";
+import type {
+  Req,
+  RequirementCandidate,
 } from "@/domain/optimiser/requirements";
-import type { Req, RequirementCandidate } from "@/domain/optimiser/requirements";
 import type { OptimiserItem } from "@/domain/optimiser/types";
 import { usePlayerStore } from "@/store/player";
 
@@ -15,5 +16,10 @@ export const getRequirementCandidates = (
   req: Req,
 ): RequirementCandidate[] => {
   const playerStore = usePlayerStore();
-  return _getRequirementCandidates(gearOptions, req, priorityValue(), playerStore.level);
+  return _getRequirementCandidates(
+    gearOptions,
+    req,
+    priorityValue(),
+    playerStore.level,
+  );
 };

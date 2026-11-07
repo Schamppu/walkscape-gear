@@ -85,7 +85,11 @@ export function useLevelBonus(ctx: LevelBonusContext): {
     const playerLevel = ctx.skillLevels.value[skill] || 1;
 
     return buildWorkEfficiencyBonusAttr(
-      calculateWorkEfficiencyBonus({ playerLevel, levelRequirement, isTravelling }),
+      calculateWorkEfficiencyBonus({
+        playerLevel,
+        levelRequirement,
+        isTravelling,
+      }),
     );
   });
 
@@ -101,10 +105,7 @@ export function useLevelBonus(ctx: LevelBonusContext): {
     if (!item || item.type !== "crafted") return null;
 
     const [skill] = (recipe as RecipeDetail).relatedSkills;
-    const levelRequirement = getLevelRequirement(
-      recipe as RecipeDetail,
-      skill,
-    );
+    const levelRequirement = getLevelRequirement(recipe as RecipeDetail, skill);
     const playerLevel = ctx.skillLevels.value[skill] || 1;
 
     return buildQualityOutcomeBonusAttr(

@@ -36,11 +36,7 @@ describe("buildGraph", () => {
   });
 
   it("creates nodes for route locations even if not listed in locations array", () => {
-    const graph = buildGraph(
-      [],
-      [{ locations: ["X", "Y"], distance: 50 }],
-      {},
-    );
+    const graph = buildGraph([], [{ locations: ["X", "Y"], distance: 50 }], {});
     expect(graph.has("X")).toBe(true);
     expect(graph.has("Y")).toBe(true);
   });

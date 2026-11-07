@@ -66,7 +66,8 @@ export function resolveDropMultiplier(
 ): number {
   let multiplier = 1;
   if (types.includes("chestTable")) multiplier *= findModifiers.chestFind;
-  if (types.includes("collectible")) multiplier *= findModifiers.findCollectibles;
+  if (types.includes("collectible"))
+    multiplier *= findModifiers.findCollectibles;
   if (types.includes("gem")) multiplier *= findModifiers.findGems;
   if (types.includes("birdNest")) multiplier *= findModifiers.findBirdNests;
   return multiplier;

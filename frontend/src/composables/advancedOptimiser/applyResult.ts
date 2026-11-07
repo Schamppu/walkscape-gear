@@ -6,7 +6,10 @@ import type { SearchResult } from "@/domain/advancedOptimiser/search";
 export type ApplyTargets = {
   setLocation: (location: LocationDetail | null) => void | Promise<void>;
   equipMultiple: (
-    gearSetData: Record<string, { id?: string; quality?: string | null } | null>,
+    gearSetData: Record<
+      string,
+      { id?: string; quality?: string | null } | null
+    >,
     useQuality?: boolean,
   ) => Promise<void>;
 };
@@ -29,13 +32,17 @@ export const applySearchResult = async (
 ): Promise<boolean> => {
   if (result.cancelled && !applyStopped) return false;
 
-  const location = result.gearSet.location as LocationSummary | null | undefined;
+  const location = result.gearSet.location as
+    LocationSummary | null | undefined;
   if (location) await setLocation(location as unknown as LocationDetail);
 
   const payload = Object.fromEntries(
     searchSlots.map((slot) => {
       const item = result.gearSet[slot] as WorkerItem | null | undefined;
-      return [slot, item?.id ? { id: item.id, quality: item.quality ?? null } : null];
+      return [
+        slot,
+        item?.id ? { id: item.id, quality: item.quality ?? null } : null,
+      ];
     }),
   );
   await equipMultiple(payload, true);

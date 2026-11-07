@@ -12,7 +12,6 @@
  * - Contain UI logic or stateful stores
  */
 
-
 export * from "./characterLevel";
 export * from "./skillLevel";
 

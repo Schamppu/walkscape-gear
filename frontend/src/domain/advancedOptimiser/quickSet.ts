@@ -38,7 +38,9 @@ const QUICK_SET_TARGETS: Record<string, Target[]> = {
 
 /** Advanced targets for a quick-set priority. Unknown priorities fall back to reward rolls / step. */
 export const quickSetTargets = (priority: string): Target[] =>
-  (QUICK_SET_TARGETS[priority] ?? QUICK_SET_TARGETS.stepsPerRewardRoll).map((t) => ({ ...t }));
+  (QUICK_SET_TARGETS[priority] ?? QUICK_SET_TARGETS.stepsPerRewardRoll).map(
+    (t) => ({ ...t }),
+  );
 
 /** A short search: narrow beam, one climbed seed, single moves only. */
 export const QUICK_SEARCH_SETTINGS: SearchSettings = {

@@ -33,7 +33,7 @@ export function useGearContext(
     gearSlots: computed(() => gearStore.gearset(gearSetIndex)),
     equippedGear: computed(() => gearStore.equippedGearByIndex(gearSetIndex)),
     filledGearSlots: computed(() =>
-      gearStore.filledGearSlotsByIndex(gearSetIndex)
+      gearStore.filledGearSlotsByIndex(gearSetIndex),
     ),
   };
 }

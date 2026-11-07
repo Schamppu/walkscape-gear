@@ -31,7 +31,8 @@ export const selectedPriority = (): SettingOption => {
   const recipe = baseCtx.source.value as RecipeDetail;
   const recipeItemIds = Object.keys(recipe.itemRewards);
   const mainId = recipeItemIds[0];
-  const { type } = itemsStore.allGearItems[mainId] || itemsStore.materials[mainId] || {};
+  const { type } =
+    itemsStore.allGearItems[mainId] || itemsStore.materials[mainId] || {};
   const isQoRecipe = type === "crafted";
 
   return isQoRecipe

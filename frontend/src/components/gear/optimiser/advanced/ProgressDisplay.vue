@@ -10,7 +10,9 @@ const props = defineProps<{
 }>();
 
 const fraction = computed(() =>
-  props.progress ? Math.min(1, props.progress.elapsedMs / props.timeBudgetMs) : 0,
+  props.progress
+    ? Math.min(1, props.progress.elapsedMs / props.timeBudgetMs)
+    : 0,
 );
 
 const improvement = computed(() => {

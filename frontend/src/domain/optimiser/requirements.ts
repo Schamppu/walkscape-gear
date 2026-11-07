@@ -63,7 +63,9 @@ export type RequirementCandidate = {
 // Type guard
 // ---------------------------------------------------------------------------
 
-export const isHandledRequirement = (req: Requirement): req is HandledRequirement =>
+export const isHandledRequirement = (
+  req: Requirement,
+): req is HandledRequirement =>
   (handledReqTypes as ReadonlyArray<string>).includes(req.type);
 
 // ---------------------------------------------------------------------------
@@ -117,13 +119,17 @@ export function contributesToReq(
 }
 
 /** Filters `items` to those that can satisfy `req`. */
-export const filterItemsForReq = (req: Req, items: OptimiserItem[]): OptimiserItem[] =>
+export const filterItemsForReq = (
+  req: Req,
+  items: OptimiserItem[],
+): OptimiserItem[] =>
   items.filter((item) => {
     if ("keyword" in req) {
       return (
         item.keywords?.includes(req.keyword) &&
         (req.level > 1
-          ? Object.values(getLevelRequirementsMap(item.requirements))[0] >= req.level
+          ? Object.values(getLevelRequirementsMap(item.requirements))[0] >=
+            req.level
           : true)
       );
     } else if ("ability" in req && item.abilities) {
