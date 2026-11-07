@@ -9,6 +9,8 @@ import {
   completeActionsDropValue,
   completeActionsXpPerStep,
   completeActionsXpBreakdown,
+  fineRecipeOutputShare,
+  fineRecipeOutputShareWithModifiers,
 } from "@/domain/abilities/completeActions";
 import { abilityStepsPerActivation } from "@/domain/abilities/abilityLootTables";
 import {
@@ -311,5 +313,54 @@ describe("completeActionsXpBreakdown", () => {
     expect(lines).toHaveLength(1);
     expect(lines[0]).toMatchObject({ icon: "flambe.png", label: "Flambé" });
     expect(lines[0].value).toBeCloseTo(0.07);
+  });
+});
+
+describe("fineRecipeOutputShare (in-game: once per completion)", () => {
+  it("equals the chance without double action / double rewards", () => {
+    expect(fineRecipeOutputShare(0.03, 1)).toBeCloseTo(0.03);
+  });
+
+  it("is diluted by extra reward rolls per completion", () => {
+    // (1 + DA)(1 + DR) = 2 → only half the output share
+    expect(fineRecipeOutputShare(0.03, 2)).toBeCloseTo(0.015);
+  });
+
+  it("is 0 without a chance and treats < 1 roll as 1", () => {
+    expect(fineRecipeOutputShare(0, 2)).toBe(0);
+    expect(fineRecipeOutputShare(0.03, 0)).toBeCloseTo(0.03);
+  });
+
+  it("keeps fine output per step independent of double rewards", () => {
+    const scale = completeActionsScale(3, 100, 2500);
+    const base = {
+      itemRewards: { bread: 1 },
+      scale,
+      fineMaterialIds: { bread: true },
+      craftedGearIds: {},
+      iconOf: () => undefined,
+    };
+    const noDoubles = buildRecipeOutputDropInfo({
+      ...base,
+      stepsPerRewardRoll: 100,
+      fineShare: fineRecipeOutputShare(0.03, 100 / 100),
+    }).bread;
+    // 100% double rewards: stepsPerRewardRoll halves, 2 rolls per completion
+    const doubleRewards = buildRecipeOutputDropInfo({
+      ...base,
+      stepsPerRewardRoll: 50,
+      fineShare: fineRecipeOutputShare(0.03, 100 / 50),
+    }).bread;
+
+    expect(doubleRewards.stepsPerFine).toBeCloseTo(noDoubles.stepsPerFine); // ≈27.8k
+    expect(doubleRewards.stepsPerItem).toBeCloseTo(noDoubles.stepsPerItem / 2);
+    expect(doubleRewards.stepsPerNormal).toBeLessThan(noDoubles.stepsPerNormal);
+  });
+});
+
+describe("fineRecipeOutputShareWithModifiers (unused alternative)", () => {
+  it("is the chance itself, so doubles scale fine output too", () => {
+    expect(fineRecipeOutputShareWithModifiers(0.03)).toBeCloseTo(0.03);
+    expect(fineRecipeOutputShareWithModifiers(2)).toBe(1);
   });
 });

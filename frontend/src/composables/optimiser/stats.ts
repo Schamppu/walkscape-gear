@@ -21,6 +21,7 @@ import {
   calculateStatTotals,
 } from "@/domain/effectiveAttrs";
 import { attachPetAbilityAttrs } from "@/domain/abilities/petAbilityAttrs";
+import { itemCompleteActionsAbilities } from "@/domain/abilities/completeActions";
 import type { AbilityAttrContext } from "@/domain/abilities/petAbilityAttrs";
 import { buildAbilityAttrContext } from "@/composables/useAbilityAttrContext";
 import {
@@ -233,6 +234,11 @@ const enrichItem = (
     toDeepRaw(item as unknown as ItemDetail),
     abilityCtx,
   );
+  const completeActions = itemCompleteActionsAbilities(
+    raw as unknown as { abilities?: unknown; quality?: string | null },
+    abilityCtx.completeActionsById ?? {},
+    abilityCtx.disabledActiveAbilityIds,
+  );
   return {
     ...(toDeepRaw(item as unknown as Record<string, unknown>) as OptimiserItem),
     _attrEntries: buildAllAttrEntries(
@@ -241,6 +247,7 @@ const enrichItem = (
       null,
       null,
     ),
+    ...(completeActions.length ? { _completeActions: completeActions } : {}),
   };
 };
 

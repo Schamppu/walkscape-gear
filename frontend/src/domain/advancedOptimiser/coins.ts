@@ -52,6 +52,13 @@ export type RecipeCoins = {
   craftedPerRoll: Record<string, number>;
   /** Value of non-crafted outputs per reward roll. */
   materialRewardPerRoll: number;
+  /**
+   * Extra value per reward roll if all non-crafted output turned fine
+   * (fine − common), for a partial fine share such as Flambé's fine recipe
+   * outcome. 0 with fine inputs (output is already valued as fine). Missing
+   * in jobs exported before it existed.
+   */
+  materialRewardFineBonusPerRoll?: number;
   /** Value of one set of input materials, consumed per action unless NMC procs. */
   materialCostPerAction: number;
 };
@@ -104,11 +111,18 @@ const craftedValuePerRoll = (
   );
 };
 
-/** Net coin value per action for a gear set's modifiers. */
+/**
+ * Net coin value per action for a gear set's modifiers.
+ *
+ * @param fineShare Fraction (0–1) of non-crafted recipe output that is fine
+ *                  from normal inputs (complete-actions abilities such as
+ *                  Flambé; see `fineRecipeOutputShare`). Defaults to 0.
+ */
 export const coinsPerAction = (
   coins: CoinProfile | undefined,
   m: SkillModifiersResult,
   quality: { levelReq: number; fineMode: FineMaterialsMode } | null,
+  fineShare = 0,
 ): number => {
   if (!coins) return 0;
   const rolls = 1 + m.doubleRewards;
@@ -130,7 +144,8 @@ export const coinsPerAction = (
   const recipePerAction = recipe
     ? rolls *
         (craftedValuePerRoll(recipe.craftedPerRoll, m, quality) +
-          recipe.materialRewardPerRoll) -
+          recipe.materialRewardPerRoll +
+          fineShare * (recipe.materialRewardFineBonusPerRoll ?? 0)) -
       recipe.materialCostPerAction * (1 - m.noMaterialsConsumed)
     : 0;
 
@@ -209,6 +224,7 @@ export const buildRecipeCoins = ({
 }): RecipeCoins => {
   const craftedPerRoll: Record<string, number> = {};
   let materialRewardPerRoll = 0;
+  let materialRewardFineBonusPerRoll = 0;
 
   for (const [item, amount] of Object.entries(itemRewards)) {
     const values = itemValues[item] ?? {};
@@ -220,6 +236,9 @@ export const buildRecipeCoins = ({
     } else {
       materialRewardPerRoll +=
         amount * ((useFine ? values.fine : values.common) ?? 0);
+      if (!useFine && values.fine !== undefined)
+        materialRewardFineBonusPerRoll +=
+          amount * (values.fine - (values.common ?? 0));
     }
   }
 
@@ -236,5 +255,10 @@ export const buildRecipeCoins = ({
       return sum + amount * (value ?? 0);
     }, 0);
 
-  return { craftedPerRoll, materialRewardPerRoll, materialCostPerAction };
+  return {
+    craftedPerRoll,
+    materialRewardPerRoll,
+    materialRewardFineBonusPerRoll,
+    materialCostPerAction,
+  };
 };

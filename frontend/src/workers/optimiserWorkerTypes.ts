@@ -9,6 +9,7 @@
 import type { EffectiveAttrEntry } from "@/domain/effectiveAttrs";
 import type { OptimiserItem } from "@/domain/optimiser/types";
 import type { LocationSummary } from "@/domain/types/location";
+import type { CompleteActionsAbility } from "@/domain/abilities/completeActions";
 
 // ---------------------------------------------------------------------------
 // Item enrichment
@@ -20,6 +21,11 @@ import type { LocationSummary } from "@/domain/types/location";
  */
 export type WorkerItem = OptimiserItem & {
   _attrEntries: EffectiveAttrEntry[];
+  /**
+   * Complete-actions abilities the item contributes (e.g. a pet's Flambé),
+   * evaluated per gear set by the advanced scorer. Absent when none.
+   */
+  _completeActions?: CompleteActionsAbility[];
 };
 
 export type WorkerGearSet = Record<

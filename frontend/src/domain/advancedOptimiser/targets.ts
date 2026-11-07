@@ -29,6 +29,7 @@ import type { DropItemInfo } from "@/domain/lootTables/dropInfo";
 import type { TokenValuesMap } from "@/domain/constants/tokenValues";
 import type { LootTableRef } from "@/domain/types/common";
 import type { RecipeDetail } from "@/domain/types/recipe";
+import type { CompleteActionsEffect } from "@/domain/abilities/completeActions";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -77,6 +78,12 @@ export type ExtractionContext = {
   /** Only for recipes that produce a crafted item. */
   quality: RecipeQualityContext | null;
   drops: DropProfile;
+  /**
+   * Usable complete-actions abilities of the set (e.g. Flambé), set per gear
+   * set by the scorer. Their completed actions add `scale` × the per-action
+   * yield to every per-step target. Absent or scale 0: no effect.
+   */
+  completeActions?: CompleteActionsEffect;
 };
 
 // ---------------------------------------------------------------------------
@@ -195,8 +202,17 @@ const eternalChance = (
   return odds[odds.length - 1]?.value ?? 0;
 };
 
-/** How much of `x` one action yields. */
-const perAction = (x: XValue, ctx: ExtractionContext): number => {
+/**
+ * How much of `x` one action yields.
+ *
+ * @param fineShare Fine share of recipe output (complete-actions abilities);
+ *                  only the coin value uses it.
+ */
+const perAction = (
+  x: XValue,
+  ctx: ExtractionContext,
+  fineShare = 0,
+): number => {
   const { modifiers: m, drops } = ctx;
   const rolls = 1 + m.doubleRewards;
 
@@ -226,7 +242,7 @@ const perAction = (x: XValue, ctx: ExtractionContext): number => {
     case "eternalCrafts":
       return rolls * eternalChance(m, ctx.quality);
     case "coins":
-      return coinsPerAction(drops.coins, m, ctx.quality);
+      return coinsPerAction(drops.coins, m, ctx.quality, fineShare);
   }
 };
 
@@ -253,6 +269,11 @@ const yPerAction = (y: YValue, m: SkillModifiersResult): number => {
 /**
  * Value of target `x / y` for the gear set the modifiers were computed from.
  * Higher is always better. Returns 0 rather than NaN / Infinity.
+ *
+ * Complete-actions abilities (`ctx.completeActions`) only change per-step
+ * targets: their completed actions add `scale` actions' worth of yield per
+ * action's worth of steps, but cost no extra actions or materials, so
+ * per-action and per-material targets are unchanged.
  */
 export const extracted = (
   x: XValue,
@@ -261,7 +282,10 @@ export const extracted = (
 ): number => {
   const divisor = yPerAction(y, ctx.modifiers);
   if (!(divisor > 0)) return 0;
-  return finiteOrZero(perAction(x, ctx) / divisor);
+  const ca = y === "step" ? ctx.completeActions : undefined;
+  const abilityYield =
+    ca && ca.scale > 0 ? ca.scale * perAction(x, ctx, ca.fineShare) : 0;
+  return finiteOrZero((perAction(x, ctx) + abilityYield) / divisor);
 };
 
 type PerRollDropMap = Record<
