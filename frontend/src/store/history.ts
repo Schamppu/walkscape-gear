@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import { markRaw } from "vue";
 import type { Command } from "./commands/types";
 import { useNotificationStore } from "@/store/notifications";
 
@@ -59,7 +60,9 @@ export const useHistoryStore = defineStore("historyStore", {
         this.commandHistory = this.commandHistory.slice(0, this.currentIndex + 1);
       }
 
-      const recorded = command as RecordedCommand;
+      // Commands hold store references and previous state snapshots; keep them
+      // out of reactivity so recording one doesn't deep-proxy all of that.
+      const recorded = markRaw(command) as RecordedCommand;
       recorded.timestamp = Date.now();
       this.commandHistory.push(recorded);
       this.currentIndex = this.commandHistory.length - 1;

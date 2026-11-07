@@ -1,4 +1,5 @@
 import { iconService } from "../services/index.js";
+import { ICON_MAX_AGE, setPublicCache } from "../utils/cacheHeaders.js";
 
 export async function getIcon(req, res) {
   try {
@@ -7,6 +8,10 @@ export async function getIcon(req, res) {
     const response = await iconService.getIcon(iconPath);
 
     res.set("Content-Type", response.headers["content-type"]);
+    // Icons are loaded with <img> tags; helmet's default same-origin policy
+    // blocks them when the frontend runs on another origin (e.g. Vite dev server).
+    res.set("Cross-Origin-Resource-Policy", "cross-origin");
+    setPublicCache(res, ICON_MAX_AGE);
     res.send(response.data);
   } catch (error) {
     console.error(error);

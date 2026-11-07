@@ -1,9 +1,9 @@
 import type { AxiosResponse } from "axios";
 import { createProxyInstance, type ProxyRequest } from "./proxy";
+import getHost from "./getHost";
 import {
   ActivitySummary,
   ApInfo,
-  IconBatchResponse,
   ItemSummary,
   PetDetail,
   PetSummary,
@@ -38,29 +38,9 @@ export function getStaticBootstrap(): Promise<AxiosResponse<StaticBootstrap>> {
 // Icons
 // ---------------------------------------------------------------------------
 
-export function getIcon({
-  iconPath,
-}: {
-  iconPath: string;
-}): Promise<AxiosResponse<Blob>> {
-  return proxy<Blob>({
-    url: `icons/${iconPath}`,
-    options: {
-      responseType: "blob",
-    },
-  });
-}
-
-export function getIconsBatch({
-  iconPaths,
-}: {
-  iconPaths: string[];
-}): Promise<AxiosResponse<IconBatchResponse>> {
-  return proxy<IconBatchResponse>({
-    method: "POST",
-    url: "icons/batch",
-    options: { iconPaths },
-  });
+/** URL of a game icon. Served with long-lived cache headers, so plain `<img>` tags reuse it. */
+export function getIconUrl(iconPath: string): string {
+  return `${getHost()}/api/icons/${encodeURI(iconPath)}`;
 }
 
 // ---------------------------------------------------------------------------
@@ -113,6 +93,17 @@ export function getItem({
 }): Promise<AxiosResponse<ItemDetail>> {
   return proxy<ItemDetail>({
     url: `items/${id}`,
+  });
+}
+
+/** Detailed items in request order; ids the API doesn't know come back as null. */
+export function getMultipleItems(
+  ids: string[],
+): Promise<AxiosResponse<(ItemDetail | null)[]>> {
+  return proxy<(ItemDetail | null)[]>({
+    method: "POST",
+    url: "items/multiple",
+    options: { ids },
   });
 }
 

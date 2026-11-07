@@ -1,4 +1,5 @@
 import { errorHandler } from "../middleware/errorHandler.js";
+import { setPublicCache } from "../utils/cacheHeaders.js";
 
 export function wrapController(serviceFunction, options = {}) {
   const {
@@ -18,6 +19,7 @@ export function wrapController(serviceFunction, options = {}) {
       }
 
       const mappedResult = mapFunction ? mapFunction(result) : result;
+      if (req.method === "GET") setPublicCache(res);
       return res.status(successStatus).json(mappedResult);
     } catch (error) {
       return errorHandler(error, req, res, next);
