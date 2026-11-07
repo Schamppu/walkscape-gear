@@ -63,7 +63,10 @@ beforeEach(() => {
   vi.clearAllMocks();
   mockPrisma.user.findUnique.mockResolvedValue({ userUuid: USER_A });
   mockPrisma.user.updateMany.mockResolvedValue({ count: 1 });
-  mockPrisma.optimiserPreset.create.mockImplementation(({ data }) => ({ id: 1, ...data }));
+  mockPrisma.optimiserPreset.create.mockImplementation(({ data }) => ({
+    id: 1,
+    ...data,
+  }));
   mockPrisma.optimiserPreset.findMany.mockResolvedValue([]);
   mockPrisma.optimiserPreset.count.mockResolvedValue(0);
   mockPrisma.userSetting.findMany.mockResolvedValue([]);
@@ -75,14 +78,38 @@ describe("upsertOptimiserPreset validation", () => {
     ["a missing name", { ...validPreset(), name: "   " }],
     ["a long name", { ...validPreset(), name: "x".repeat(51) }],
     ["no targets", { ...validPreset(), targets: [] }],
-    ["too many targets", { ...validPreset(), targets: Array(9).fill({ x: "xp", y: "step", weight: 1 }) }],
-    ["an unknown x", { ...validPreset(), targets: [{ x: "gold", y: "step", weight: 1 }] }],
-    ["an unknown y", { ...validPreset(), targets: [{ x: "xp", y: "hour", weight: 1 }] }],
-    ["a weight over 10", { ...validPreset(), targets: [{ x: "xp", y: "step", weight: 11 }] }],
-    ["a fractional weight", { ...validPreset(), targets: [{ x: "xp", y: "step", weight: 2.5 }] }],
+    [
+      "too many targets",
+      {
+        ...validPreset(),
+        targets: Array(9).fill({ x: "xp", y: "step", weight: 1 }),
+      },
+    ],
+    [
+      "an unknown x",
+      { ...validPreset(), targets: [{ x: "gold", y: "step", weight: 1 }] },
+    ],
+    [
+      "an unknown y",
+      { ...validPreset(), targets: [{ x: "xp", y: "hour", weight: 1 }] },
+    ],
+    [
+      "a weight over 10",
+      { ...validPreset(), targets: [{ x: "xp", y: "step", weight: 11 }] },
+    ],
+    [
+      "a fractional weight",
+      { ...validPreset(), targets: [{ x: "xp", y: "step", weight: 2.5 }] },
+    ],
     [
       "duplicate targets",
-      { ...validPreset(), targets: [{ x: "xp", y: "step", weight: 1 }, { x: "xp", y: "step", weight: 2 }] },
+      {
+        ...validPreset(),
+        targets: [
+          { x: "xp", y: "step", weight: 1 },
+          { x: "xp", y: "step", weight: 2 },
+        ],
+      },
     ],
     ["an invalid id", { ...validPreset(), id: "1" }],
     ["an id beyond INT4", { ...validPreset(), id: 2147483648 }],
@@ -91,7 +118,9 @@ describe("upsertOptimiserPreset validation", () => {
     ["a newline", { ...validPreset(), name: "a\nb" }],
     ["a null byte", { ...validPreset(), name: "a\u0000b" }],
   ])("rejects %s", async (_, payload) => {
-    await expect(upsertOptimiserPreset(USER_A, payload)).rejects.toMatchObject({ status: 400 });
+    await expect(upsertOptimiserPreset(USER_A, payload)).rejects.toMatchObject({
+      status: 400,
+    });
     expect(mockPrisma.optimiserPreset.create).not.toHaveBeenCalled();
     expect(mockPrisma.optimiserPreset.updateMany).not.toHaveBeenCalled();
   });
@@ -110,7 +139,9 @@ describe("upsertOptimiserPreset validation", () => {
 
   it("accepts emoji and accented names, normalised to NFC", async () => {
     await upsertOptimiserPreset(USER_A, { ...validPreset(), name: "Café ⚔️" });
-    expect(mockPrisma.optimiserPreset.create.mock.calls[0][0].data.name).toBe("Café ⚔️");
+    expect(mockPrisma.optimiserPreset.create.mock.calls[0][0].data.name).toBe(
+      "Café ⚔️",
+    );
   });
 });
 
@@ -121,7 +152,9 @@ describe("upsertOptimiserPreset", () => {
     expect(mockPrisma.optimiserPreset.findFirst).toHaveBeenCalledWith(
       expect.objectContaining({ where: { userUuid: USER_A } }),
     );
-    expect(mockPrisma.optimiserPreset.create.mock.calls[0][0].data).toMatchObject({
+    expect(
+      mockPrisma.optimiserPreset.create.mock.calls[0][0].data,
+    ).toMatchObject({
       userUuid: USER_A,
       sortOrder: -3,
     });
@@ -129,8 +162,12 @@ describe("upsertOptimiserPreset", () => {
 
   it("refuses to create beyond the per-user cap", async () => {
     mockPrisma.optimiserPreset.count.mockResolvedValue(50);
-    await expect(upsertOptimiserPreset(USER_A, validPreset())).rejects.toMatchObject({ status: 400 });
-    expect(mockPrisma.optimiserPreset.count).toHaveBeenCalledWith({ where: { userUuid: USER_A } });
+    await expect(
+      upsertOptimiserPreset(USER_A, validPreset()),
+    ).rejects.toMatchObject({ status: 400 });
+    expect(mockPrisma.optimiserPreset.count).toHaveBeenCalledWith({
+      where: { userUuid: USER_A },
+    });
     expect(mockPrisma.optimiserPreset.create).not.toHaveBeenCalled();
   });
 
@@ -138,13 +175,17 @@ describe("upsertOptimiserPreset", () => {
     mockPrisma.optimiserPreset.count.mockResolvedValue(50);
     mockPrisma.optimiserPreset.updateMany.mockResolvedValue({ count: 1 });
     mockPrisma.optimiserPreset.findUnique.mockResolvedValue({ id: 5 });
-    await expect(upsertOptimiserPreset(USER_A, { ...validPreset(), id: 5 })).resolves.toEqual({ id: 5 });
+    await expect(
+      upsertOptimiserPreset(USER_A, { ...validPreset(), id: 5 }),
+    ).resolves.toEqual({ id: 5 });
   });
 
   it("starts the first preset at sort order 0", async () => {
     mockPrisma.optimiserPreset.findFirst.mockResolvedValue(null);
     await upsertOptimiserPreset(USER_A, validPreset());
-    expect(mockPrisma.optimiserPreset.create.mock.calls[0][0].data.sortOrder).toBe(0);
+    expect(
+      mockPrisma.optimiserPreset.create.mock.calls[0][0].data.sortOrder,
+    ).toBe(0);
   });
 
   it("updates only the user's own preset", async () => {
@@ -158,7 +199,9 @@ describe("upsertOptimiserPreset", () => {
 
   it("reports another user's preset as not found", async () => {
     mockPrisma.optimiserPreset.updateMany.mockResolvedValue({ count: 0 });
-    await expect(upsertOptimiserPreset(USER_A, { ...validPreset(), id: 5 })).rejects.toMatchObject({
+    await expect(
+      upsertOptimiserPreset(USER_A, { ...validPreset(), id: 5 }),
+    ).rejects.toMatchObject({
       status: 404,
       message: "Optimiser preset not found",
     });
@@ -176,18 +219,29 @@ describe("deleteOptimiserPreset", () => {
 
   it("reports a missing preset as not found", async () => {
     mockPrisma.optimiserPreset.deleteMany.mockResolvedValue({ count: 0 });
-    await expect(deleteOptimiserPreset(USER_A, 5)).rejects.toMatchObject({ status: 404 });
+    await expect(deleteOptimiserPreset(USER_A, 5)).rejects.toMatchObject({
+      status: 404,
+    });
   });
 
-  it.each([NaN, 0, 2147483648])("rejects id %s without querying", async (id) => {
-    await expect(deleteOptimiserPreset(USER_A, id)).rejects.toMatchObject({ status: 400 });
-    expect(mockPrisma.optimiserPreset.deleteMany).not.toHaveBeenCalled();
-  });
+  it.each([NaN, 0, 2147483648])(
+    "rejects id %s without querying",
+    async (id) => {
+      await expect(deleteOptimiserPreset(USER_A, id)).rejects.toMatchObject({
+        status: 400,
+      });
+      expect(mockPrisma.optimiserPreset.deleteMany).not.toHaveBeenCalled();
+    },
+  );
 });
 
 describe("reorderOptimiserPresets", () => {
   beforeEach(() => {
-    mockPrisma.optimiserPreset.findMany.mockResolvedValue([{ id: 1 }, { id: 2 }, { id: 3 }]);
+    mockPrisma.optimiserPreset.findMany.mockResolvedValue([
+      { id: 1 },
+      { id: 2 },
+      { id: 3 },
+    ]);
   });
 
   it("sets the sort order from the list position", async () => {
@@ -208,7 +262,9 @@ describe("reorderOptimiserPresets", () => {
     ["an id beyond INT4", [1, 2, 2147483648]],
     ["no list", undefined],
   ])("rejects an order with %s", async (_, ids) => {
-    await expect(reorderOptimiserPresets(USER_A, ids)).rejects.toMatchObject({ status: 400 });
+    await expect(reorderOptimiserPresets(USER_A, ids)).rejects.toMatchObject({
+      status: 400,
+    });
     expect(mockPrisma.$transaction).not.toHaveBeenCalled();
   });
 });
@@ -221,34 +277,44 @@ describe("hidden built-in preset settings", () => {
     expect(mockPrisma.userSetting.upsert).toHaveBeenCalledOnce();
   });
 
-  it.each(["hideOptimiserPreset:", "hideOptimiserPreset:Max XP", "hideOptimiserPresetmax-xp"])(
-    "rejects %s",
-    async (setting) => {
-      await expect(
-        upsertUserSettings(USER_A, [{ setting, value: true, display: 0 }]),
-      ).rejects.toThrow("No valid settings provided");
-    },
-  );
+  it.each([
+    "hideOptimiserPreset:",
+    "hideOptimiserPreset:Max XP",
+    "hideOptimiserPresetmax-xp",
+  ])("rejects %s", async (setting) => {
+    await expect(
+      upsertUserSettings(USER_A, [{ setting, value: true, display: 0 }]),
+    ).rejects.toThrow("No valid settings provided");
+  });
 
   const hidden = (n, from = 0) =>
-    Array.from({ length: n }, (_, i) => ({ setting: `hideOptimiserPreset:p${from + i}` }));
+    Array.from({ length: n }, (_, i) => ({
+      setting: `hideOptimiserPreset:p${from + i}`,
+    }));
 
   it("rejects going beyond 20 hidden presets", async () => {
     mockPrisma.userSetting.findMany.mockResolvedValue(hidden(19));
     await expect(
-      upsertUserSettings(USER_A, hidden(2, 19).map((s) => ({ ...s, value: true, display: 0 }))),
+      upsertUserSettings(
+        USER_A,
+        hidden(2, 19).map((s) => ({ ...s, value: true, display: 0 })),
+      ),
     ).rejects.toMatchObject({ status: 400 });
     expect(mockPrisma.userSetting.upsert).not.toHaveBeenCalled();
   });
 
   it("allows re-saving an already-hidden preset at the cap", async () => {
     mockPrisma.userSetting.findMany.mockResolvedValue(hidden(20));
-    await upsertUserSettings(USER_A, [{ setting: "hideOptimiserPreset:p0", value: false, display: 0 }]);
+    await upsertUserSettings(USER_A, [
+      { setting: "hideOptimiserPreset:p0", value: false, display: 0 },
+    ]);
     expect(mockPrisma.userSetting.upsert).toHaveBeenCalledOnce();
   });
 
   it("does not look up hidden presets for other settings", async () => {
-    await upsertUserSettings(USER_A, [{ setting: "showOwned", value: true, display: 0 }]);
+    await upsertUserSettings(USER_A, [
+      { setting: "showOwned", value: true, display: 0 },
+    ]);
     expect(mockPrisma.userSetting.findMany).not.toHaveBeenCalled();
   });
 });

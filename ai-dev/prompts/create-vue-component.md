@@ -4,6 +4,7 @@ Purpose:
 <what it does>
 
 Rules:
+
 - No business logic inside component.
 - All calculations must be imported from /domain.
 - Strongly typed props.

@@ -81,7 +81,8 @@ export function useFactionInfo(): {
     ),
   );
 
-  const getRealm = (id: string): Realm | null => dataStore.realmsMap[id] ?? null;
+  const getRealm = (id: string): Realm | null =>
+    dataStore.realmsMap[id] ?? null;
 
   /** Total locations the realm contains, i.e. the maximum a player can discover. */
   const getLocationCount = (id: string): number =>

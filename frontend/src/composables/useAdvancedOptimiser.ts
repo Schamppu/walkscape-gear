@@ -14,7 +14,10 @@ import {
   injectRequirements,
 } from "@/composables/context/injectShared";
 import { prepareAdvancedJob } from "@/composables/advancedOptimiser/buildJob";
-import { runAdvancedJob, type RunningJob } from "@/composables/advancedOptimiser/runWorker";
+import {
+  runAdvancedJob,
+  type RunningJob,
+} from "@/composables/advancedOptimiser/runWorker";
 import { applySearchResult } from "@/composables/advancedOptimiser/applyResult";
 import { gearSlots } from "@/domain/constants/gear";
 import {
@@ -72,11 +75,16 @@ export function useAdvancedOptimiser() {
   const presetsStore = useOptimiserPresetsStore();
   void presetsStore.ensureLoaded();
 
-  const activityId = computed<string | null>(() => baseCtx.source.value?.id ?? null);
+  const activityId = computed<string | null>(
+    () => baseCtx.source.value?.id ?? null,
+  );
 
   const optimiserSource = computed<OptimiserSource | null>(() =>
     activityId.value
-      ? { kind: baseCtx.recipeSelected.value ? "recipe" : "activity", id: activityId.value }
+      ? {
+          kind: baseCtx.recipeSelected.value ? "recipe" : "activity",
+          id: activityId.value,
+        }
       : null,
   );
 
@@ -94,7 +102,8 @@ export function useAdvancedOptimiser() {
   watch(
     optimiserSource,
     (source, previous) => {
-      if (source && previous && sourceKey(source) === sourceKey(previous)) return;
+      if (source && previous && sourceKey(source) === sourceKey(previous))
+        return;
       lastRun.value = null;
       if (source) store.load(source);
     },
@@ -102,9 +111,9 @@ export function useAdvancedOptimiser() {
   );
 
   const targetContext = computed<TargetContext>(() => {
-    const source = baseCtx.source.value as
-      | { tables?: LootTableRef[] | null }
-      | null;
+    const source = baseCtx.source.value as {
+      tables?: LootTableRef[] | null;
+    } | null;
     const isRecipe = baseCtx.recipeSelected.value;
     const producesCraftedItem =
       isRecipe &&
@@ -118,22 +127,30 @@ export function useAdvancedOptimiser() {
       producesCraftedItem,
       ...sourceTableFlags(source?.tables),
       hasFineMaterials: hasFineDrops.value,
-      hasTokens: Object.keys(dropItemInfoMap.value).some((id) => id in tokenValues),
+      hasTokens: Object.keys(dropItemInfoMap.value).some(
+        (id) => id in tokenValues,
+      ),
       hasCoins:
         isRecipe ||
-        Object.keys(dropItemInfoMap.value).some((id) => id === "gold" || id in dataStore.itemValues),
+        Object.keys(dropItemInfoMap.value).some(
+          (id) => id === "gold" || id in dataStore.itemValues,
+        ),
     };
   });
 
   /** Presets to offer for this activity, in display order. */
   const applicablePresets = computed<OptimiserPreset[]>(() =>
-    presetsStore.presets.filter((p) => isPresetApplicable(p, targetContext.value)),
+    presetsStore.presets.filter((p) =>
+      isPresetApplicable(p, targetContext.value),
+    ),
   );
 
   /** Hidden built-ins that would apply here, so they can be shown again. */
   const hiddenPresets = computed<OptimiserPreset[]>(() =>
     presetsStore.allPresets.filter(
-      (p) => presetsStore.isHidden(p.id) && isPresetApplicable(p, targetContext.value),
+      (p) =>
+        presetsStore.isHidden(p.id) &&
+        isPresetApplicable(p, targetContext.value),
     ),
   );
 
@@ -145,7 +162,9 @@ export function useAdvancedOptimiser() {
     const stored = store.configs[sourceKey(source)];
     if (stored) return stored;
     const preset = pickDefaultPreset(presetsStore.presets, targetContext.value);
-    return preset ? configFromPreset(preset, source.id) : defaultConfig(source.id);
+    return preset
+      ? configFromPreset(preset, source.id)
+      : defaultConfig(source.id);
   });
 
   /** The preset the config came from, even if it has been hidden since. */
@@ -164,13 +183,15 @@ export function useAdvancedOptimiser() {
 
   /** Saves the shown config before its first change, so the change lands on it. */
   const ensureStored = (source: OptimiserSource): void => {
-    if (!store.configs[sourceKey(source)] && config.value) store.setConfig(source, config.value);
+    if (!store.configs[sourceKey(source)] && config.value)
+      store.setConfig(source, config.value);
   };
 
   const applyPreset = (presetId: string): void => {
     const source = optimiserSource.value;
     const preset = presetsStore.findPreset(presetId);
-    if (source && preset) store.setConfig(source, configFromPreset(preset, source.id));
+    if (source && preset)
+      store.setConfig(source, configFromPreset(preset, source.id));
   };
 
   /** Overwrites the selected user preset with the current targets. Returns whether it saved. */
@@ -179,7 +200,11 @@ export function useAdvancedOptimiser() {
     const preset = selectedPreset.value;
     if (!source || !config.value || !preset || preset.builtin) return false;
     ensureStored(source);
-    const saved = await presetsStore.savePreset(preset.id, name, config.value.targets);
+    const saved = await presetsStore.savePreset(
+      preset.id,
+      name,
+      config.value.targets,
+    );
     if (saved) store.setPresetId(source, saved.id);
     return !!saved;
   };
@@ -194,7 +219,9 @@ export function useAdvancedOptimiser() {
     return !!saved;
   };
 
-  const lockedSlots = computed(() => gearSlots.filter((slot) => gearStore.isSlotLocked(slot)));
+  const lockedSlots = computed(() =>
+    gearSlots.filter((slot) => gearStore.isSlotLocked(slot)),
+  );
 
   /**
    * Locked slots whose item the player can't equip yet (requirements unmet).
@@ -204,7 +231,9 @@ export function useAdvancedOptimiser() {
   const unusableLockedSlots = computed(() =>
     lockedSlots.value.filter((slot) => {
       const item = gearStore.selectedGearset[slot];
-      return !!item && !canBeEquipped(item as Parameters<typeof canBeEquipped>[0]);
+      return (
+        !!item && !canBeEquipped(item as Parameters<typeof canBeEquipped>[0])
+      );
     }),
   );
 
@@ -214,7 +243,9 @@ export function useAdvancedOptimiser() {
   );
 
   const canAddTarget = computed<boolean>(
-    () => !!config.value && nextUnusedTarget(config.value.targets, targetContext.value) !== null,
+    () =>
+      !!config.value &&
+      nextUnusedTarget(config.value.targets, targetContext.value) !== null,
   );
 
   const addTarget = (): void => {
@@ -256,7 +287,9 @@ export function useAdvancedOptimiser() {
       (t) => t.weight > 0 && isTargetValid(t, targetContext.value),
     );
     if (!targets.length) {
-      notificationStore.warning("Give at least one available target a weight above 0");
+      notificationStore.warning(
+        "Give at least one available target a weight above 0",
+      );
       return null;
     }
 
@@ -275,20 +308,29 @@ export function useAdvancedOptimiser() {
       if (!job) return;
       await notificationStore.debug("Advanced optimiser: built job", [job]);
 
-      current = runAdvancedJob(job, { onProgress: (p) => (progress.value = p) });
+      current = runAdvancedJob(job, {
+        onProgress: (p) => (progress.value = p),
+      });
       const result = await current.result;
       await notificationStore.debug("Advanced optimiser: result", [result]);
 
-      const applied = await applySearchResult(result, job.searchSlots, {
-        setLocation: (location) => activityStore.setLocation(location),
-        equipMultiple: (data, useQuality) => gearStore.equipMultiple(data, useQuality),
-      }, { applyStopped: stoppedWith === "finish" });
+      const applied = await applySearchResult(
+        result,
+        job.searchSlots,
+        {
+          setLocation: (location) => activityStore.setLocation(location),
+          equipMultiple: (data, useQuality) =>
+            gearStore.equipMultiple(data, useQuality),
+        },
+        { applyStopped: stoppedWith === "finish" },
+      );
       if (applied) {
         urlStore.encodeAndPushToUrl();
         notificationStore.success("Optimised gear set equipped");
       }
 
-      const location = result.gearSet.location as LocationSummary | null | undefined;
+      const location = result.gearSet.location as
+        LocationSummary | null | undefined;
       lastRun.value = {
         result,
         targets: job.targets,
@@ -313,7 +355,9 @@ export function useAdvancedOptimiser() {
     try {
       const job = await prepareJob();
       if (!job) return;
-      const blob = new Blob([JSON.stringify(job)], { type: "application/json" });
+      const blob = new Blob([JSON.stringify(job)], {
+        type: "application/json",
+      });
       const url = URL.createObjectURL(blob);
       const anchor = document.createElement("a");
       anchor.href = url;

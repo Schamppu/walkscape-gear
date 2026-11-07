@@ -57,20 +57,29 @@ describe("singleMoves", () => {
   it("tries other locations", () => {
     const town = makeLocationSummary("town");
     const reef = makeLocationSummary("reef", "syrenthia");
-    const moves = [...singleMoves({ location: town }, ctx({ slots: [], locations: [town, reef] }))];
+    const moves = [
+      ...singleMoves(
+        { location: town },
+        ctx({ slots: [], locations: [town, reef] }),
+      ),
+    ];
     expect(moves).toEqual([{ location: reef }]);
   });
 
   it("never touches slots outside the search", () => {
     const locked = makeWorkerItem("locked_hat");
-    for (const set of singleMoves({ head: locked }, ctx({ slots: ["ring1"] }))) {
+    for (const set of singleMoves(
+      { head: locked },
+      ctx({ slots: ["ring1"] }),
+    )) {
       expect(set.head).toBe(locked);
     }
   });
 });
 
 describe("setMoves", () => {
-  const piece = (id: string) => makeWorkerItem(id, [], { keywords: ["treasure"] });
+  const piece = (id: string) =>
+    makeWorkerItem(id, [], { keywords: ["treasure"] });
 
   it("equips a piece of the set in every slot that has one", () => {
     const context = ctx({
@@ -92,7 +101,9 @@ describe("setMoves", () => {
       options: { head: [piece("t_hat")] },
       setKeywords: ["treasure"],
     });
-    expect([...setMoves({ head: piece("t_hat") }, context, () => 0)]).toEqual([]);
+    expect([...setMoves({ head: piece("t_hat") }, context, () => 0)]).toEqual(
+      [],
+    );
   });
 });
 
@@ -101,10 +112,20 @@ describe("collectSetKeywords", () => {
     const options = {
       head: [
         makeWorkerItem("t_hat", [], {
-          conditional: [{ stats: [{ type: "doubleAction", value: 0.1 }], requirements: [setBonusReq("treasure", 3)] }],
+          conditional: [
+            {
+              stats: [{ type: "doubleAction", value: 0.1 }],
+              requirements: [setBonusReq("treasure", 3)],
+            },
+          ],
         }),
         makeWorkerItem("lamp", [], {
-          conditional: [{ stats: [{ type: "workEfficiency", value: 0.1 }], requirements: [keywordEquippedReq("light")] }],
+          conditional: [
+            {
+              stats: [{ type: "workEfficiency", value: 0.1 }],
+              requirements: [keywordEquippedReq("light")],
+            },
+          ],
         }),
       ],
     };
@@ -116,20 +137,31 @@ describe("pairMoves and perturb", () => {
   it("pair moves change exactly two slots", () => {
     const set = { head: hatA, ring1: ringA };
     for (const move of pairMoves(set, ctx(), 20, seededRandom(3))) {
-      const changed = ["head", "ring1", "ring2"].filter((s) => move[s] !== set[s as keyof typeof set]);
+      const changed = ["head", "ring1", "ring2"].filter(
+        (s) => move[s] !== set[s as keyof typeof set],
+      );
       expect(changed).toHaveLength(2);
     }
   });
 
   it("perturb only changes search slots", () => {
     const locked = makeWorkerItem("locked_hat");
-    const next = perturb({ head: locked }, ctx({ slots: ["ring1", "ring2"] }), 5, seededRandom(7));
+    const next = perturb(
+      { head: locked },
+      ctx({ slots: ["ring1", "ring2"] }),
+      5,
+      seededRandom(7),
+    );
     expect(next.head).toBe(locked);
   });
 });
 
 describe("countSlots", () => {
   it("counts slots per type", () => {
-    expect(countSlots(["head", "ring1", "ring2", "tool1"])).toEqual({ head: 1, ring: 2, tool: 1 });
+    expect(countSlots(["head", "ring1", "ring2", "tool1"])).toEqual({
+      head: 1,
+      ring: 2,
+      tool: 1,
+    });
   });
 });

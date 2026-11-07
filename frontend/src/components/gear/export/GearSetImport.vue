@@ -9,7 +9,9 @@ import { useGearStore } from "@/store/gear";
 import { useUrlStore } from "@/store/url";
 import { getNewItemIds } from "@/utils/axios/api_routes";
 
-const GearSetImportModal = defineAsyncComponent(() => import("./GearSetImportModal.vue"));
+const GearSetImportModal = defineAsyncComponent(
+  () => import("./GearSetImportModal.vue"),
+);
 
 const ctx = injectBaseContext();
 const { importCode } = useGearSetExport(ctx);

@@ -17,7 +17,10 @@
  * - Import Vue / reactive APIs or access stores.
  */
 
-import { getOutcomeOdds, type FineMaterialsMode } from "@/domain/quality/qualityOutcomeOdds";
+import {
+  getOutcomeOdds,
+  type FineMaterialsMode,
+} from "@/domain/quality/qualityOutcomeOdds";
 import type { SkillModifiersResult } from "@/domain/skillModifiers";
 import type { DropItemInfo } from "@/domain/lootTables/dropInfo";
 
@@ -26,7 +29,12 @@ import type { DropItemInfo } from "@/domain/lootTables/dropInfo";
 // ---------------------------------------------------------------------------
 
 /** Loot table types that a find bonus scales (see `resolveDropMultiplier`). */
-export const FIND_GROUPS = ["chestTable", "collectible", "gem", "birdNest"] as const;
+export const FIND_GROUPS = [
+  "chestTable",
+  "collectible",
+  "gem",
+  "birdNest",
+] as const;
 export type FindGroup = (typeof FIND_GROUPS)[number];
 
 /** Coin value per reward roll of the drops from tables with the same find bonuses. */
@@ -53,7 +61,10 @@ export type CoinProfile = {
   recipe: RecipeCoins | null;
 };
 
-type PerRollDropMap = Record<string, Pick<DropItemInfo, "stepsPerItem" | "stepsPerFine">>;
+type PerRollDropMap = Record<
+  string,
+  Pick<DropItemInfo, "stepsPerItem" | "stepsPerFine">
+>;
 
 type ValueMap = Record<string, Record<string, number | undefined>>;
 
@@ -82,8 +93,13 @@ const craftedValuePerRoll = (
 ): number => {
   if (!Object.keys(craftedPerRoll).length) return 0;
   if (!quality) return craftedPerRoll.common ?? 0;
-  return getOutcomeOdds(quality.levelReq, m.qualityOutcome, quality.fineMode).reduce(
-    (sum, { qualityValue, value }) => sum + value * (craftedPerRoll[qualityValue] ?? 0),
+  return getOutcomeOdds(
+    quality.levelReq,
+    m.qualityOutcome,
+    quality.fineMode,
+  ).reduce(
+    (sum, { qualityValue, value }) =>
+      sum + value * (craftedPerRoll[qualityValue] ?? 0),
     0,
   );
 };
@@ -97,15 +113,24 @@ export const coinsPerAction = (
   if (!coins) return 0;
   const rolls = 1 + m.doubleRewards;
 
-  const dropsPerRoll = coins.drops.reduce((sum, { finds, basePerRoll, fineBonusPerRoll }) => {
-    const multiplier = finds.reduce((product, find) => product * findMultiplier(find, m), 1);
-    return sum + multiplier * (basePerRoll + fineBonusPerRoll * m.fineMaterialFind);
-  }, 0);
+  const dropsPerRoll = coins.drops.reduce(
+    (sum, { finds, basePerRoll, fineBonusPerRoll }) => {
+      const multiplier = finds.reduce(
+        (product, find) => product * findMultiplier(find, m),
+        1,
+      );
+      return (
+        sum + multiplier * (basePerRoll + fineBonusPerRoll * m.fineMaterialFind)
+      );
+    },
+    0,
+  );
 
   const recipe = coins.recipe;
   const recipePerAction = recipe
     ? rolls *
-        (craftedValuePerRoll(recipe.craftedPerRoll, m, quality) + recipe.materialRewardPerRoll) -
+        (craftedValuePerRoll(recipe.craftedPerRoll, m, quality) +
+          recipe.materialRewardPerRoll) -
       recipe.materialCostPerAction * (1 - m.noMaterialsConsumed)
     : 0;
 
@@ -137,7 +162,9 @@ export const buildCoinDrops = (
     .map(({ finds, dropMap }) => {
       let basePerRoll = 0;
       let fineBonusPerRoll = 0;
-      for (const [id, { stepsPerItem, stepsPerFine }] of Object.entries(dropMap)) {
+      for (const [id, { stepsPerItem, stepsPerFine }] of Object.entries(
+        dropMap,
+      )) {
         const perRoll = 1 / stepsPerItem;
         if (!Number.isFinite(perRoll) || perRoll <= 0) continue;
 
@@ -149,12 +176,16 @@ export const buildCoinDrops = (
           const common = itemValues[id].common ?? 0;
           basePerRoll += perRoll * common;
           const fine = itemValues[id].fine;
-          if (stepsPerFine && fine !== undefined) fineBonusPerRoll += perRoll * (fine - common);
+          if (stepsPerFine && fine !== undefined)
+            fineBonusPerRoll += perRoll * (fine - common);
         }
       }
       return { finds, basePerRoll, fineBonusPerRoll };
     })
-    .filter(({ basePerRoll, fineBonusPerRoll }) => basePerRoll !== 0 || fineBonusPerRoll !== 0);
+    .filter(
+      ({ basePerRoll, fineBonusPerRoll }) =>
+        basePerRoll !== 0 || fineBonusPerRoll !== 0,
+    );
 
 /**
  * A recipe's coin values, valued like `computeRecipeValue`: crafted rewards by
@@ -183,10 +214,12 @@ export const buildRecipeCoins = ({
     const values = itemValues[item] ?? {};
     if (isCrafted(item)) {
       for (const [quality, value] of Object.entries(values)) {
-        craftedPerRoll[quality] = (craftedPerRoll[quality] ?? 0) + amount * (value ?? 0);
+        craftedPerRoll[quality] =
+          (craftedPerRoll[quality] ?? 0) + amount * (value ?? 0);
       }
     } else {
-      materialRewardPerRoll += amount * ((useFine ? values.fine : values.common) ?? 0);
+      materialRewardPerRoll +=
+        amount * ((useFine ? values.fine : values.common) ?? 0);
     }
   }
 

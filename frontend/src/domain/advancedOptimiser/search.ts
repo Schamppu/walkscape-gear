@@ -113,7 +113,8 @@ type ClimbContext = {
 // Climbing
 // ---------------------------------------------------------------------------
 
-const better = (a: Candidate, b: Candidate): boolean => compareSetScores(a.result, b.result) < 0;
+const better = (a: Candidate, b: Candidate): boolean =>
+  compareSetScores(a.result, b.result) < 0;
 
 const bestOf = (
   current: Candidate,
@@ -132,7 +133,10 @@ const bestOf = (
  * One hill-climb step: the best single move, else the best set move, else
  * the best sampled pair move. Returns `null` at a local optimum.
  */
-export const climbRound = (current: Candidate, ctx: ClimbContext): Candidate | null => {
+export const climbRound = (
+  current: Candidate,
+  ctx: ClimbContext,
+): Candidate | null => {
   const { moves, score } = ctx;
   const rank = (set: WorkerGearSet) => score(set).score;
 
@@ -161,7 +165,12 @@ export const fillFallback = (
   let current = start;
   for (const slot of slots) {
     if (current.gearSet[slot]) continue;
-    for (const item of slotOptions(current.gearSet, slot, fallback, keywordsMap)) {
+    for (const item of slotOptions(
+      current.gearSet,
+      slot,
+      fallback,
+      keywordsMap,
+    )) {
       const gearSet = { ...current.gearSet, [slot]: item };
       const result = score(gearSet);
       if (compareSetScores(result, current.result) <= 0) {
@@ -176,7 +185,11 @@ export const fillFallback = (
 /** Climbs until a local optimum (sync; for tests and small searches). */
 export const climb = (start: Candidate, ctx: ClimbContext): Candidate => {
   let current = start;
-  for (let next = climbRound(current, ctx); next; next = climbRound(current, ctx)) {
+  for (
+    let next = climbRound(current, ctx);
+    next;
+    next = climbRound(current, ctx)
+  ) {
     current = next;
   }
   return current;
@@ -186,7 +199,8 @@ export const climb = (start: Candidate, ctx: ClimbContext): Candidate => {
 // Runner
 // ---------------------------------------------------------------------------
 
-const defaultYield = () => new Promise<void>((resolve) => setTimeout(resolve, 0));
+const defaultYield = () =>
+  new Promise<void>((resolve) => setTimeout(resolve, 0));
 
 export const runSearch = async (
   job: AdvancedOptimiserJob,
@@ -218,7 +232,11 @@ export const runSearch = async (
       if (hooks.shouldStop()) break;
       const key = `${target.x}/${target.y}`;
       const alone = await runSearch(
-        { ...job, targets: [{ ...target, weight: 1 }], fallbackOptions: undefined },
+        {
+          ...job,
+          targets: [{ ...target, weight: 1 }],
+          fallbackOptions: undefined,
+        },
         {
           ...settings,
           normaliseToBest: false,
@@ -283,7 +301,10 @@ export const runSearch = async (
       await yieldToEventLoop();
       lastYield = hooks.now();
     }
-    if (hooks.onProgress && hooks.now() - lastProgress >= settings.progressEveryMs) {
+    if (
+      hooks.onProgress &&
+      hooks.now() - lastProgress >= settings.progressEveryMs
+    ) {
       hooks.onProgress(progress());
       lastProgress = hooks.now();
     }
@@ -310,8 +331,16 @@ export const runSearch = async (
 
   let sinceImprovement = 0;
   while (sinceImprovement < settings.patience && (await checkpoint())) {
-    const restart = perturb(best.gearSet, ctx.moves, settings.perturbSlots, hooks.random);
-    const climbed = await climbAsync({ gearSet: restart, result: score(restart) });
+    const restart = perturb(
+      best.gearSet,
+      ctx.moves,
+      settings.perturbSlots,
+      hooks.random,
+    );
+    const climbed = await climbAsync({
+      gearSet: restart,
+      result: score(restart),
+    });
     if (better(climbed, best)) {
       best = climbed;
       sinceImprovement = 0;
@@ -321,7 +350,13 @@ export const runSearch = async (
   }
 
   if (job.fallbackOptions) {
-    best = fillFallback(best, job.searchSlots, job.fallbackOptions, job.keywordsMap, score);
+    best = fillFallback(
+      best,
+      job.searchSlots,
+      job.fallbackOptions,
+      job.keywordsMap,
+      score,
+    );
   }
 
   return {

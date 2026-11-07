@@ -134,12 +134,30 @@ export function compareDrops(
 
   const aOnlyRows: DropComparisonRow[] = onlyA.map((key) => {
     const a = toSteps(A[key]);
-    return { id: a.id, icon: a.icon, comp: 0, normalComp: 0, fineComp: 0, rareComp: 0, g1: a, g2: null };
+    return {
+      id: a.id,
+      icon: a.icon,
+      comp: 0,
+      normalComp: 0,
+      fineComp: 0,
+      rareComp: 0,
+      g1: a,
+      g2: null,
+    };
   });
 
   const bOnlyRows: DropComparisonRow[] = onlyB.map((key) => {
     const b = toSteps(B[key]);
-    return { id: b.id, icon: b.icon, comp: 0, normalComp: 0, fineComp: 0, rareComp: 0, g1: null, g2: b };
+    return {
+      id: b.id,
+      icon: b.icon,
+      comp: 0,
+      normalComp: 0,
+      fineComp: 0,
+      rareComp: 0,
+      g1: null,
+      g2: b,
+    };
   });
 
   return [...bothRows, ...aOnlyRows, ...bOnlyRows];

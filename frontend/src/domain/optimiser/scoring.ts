@@ -23,7 +23,11 @@ export const LOW_STATS = [
   "averageEternalCrafts",
 ] as const;
 
-export const HIGH_STATS = ["xpPerStep", "craftsPerMaterial", "balancedRecipe"] as const;
+export const HIGH_STATS = [
+  "xpPerStep",
+  "craftsPerMaterial",
+  "balancedRecipe",
+] as const;
 
 // ---------------------------------------------------------------------------
 // Exported functions
@@ -50,7 +54,11 @@ export const startScore = (prio: string): number => {
  *
  * Usage: `array.sort((a, b) => compareScore(b.score, a.score, prio))`
  */
-export const compareScore = (value: number, best: number, prio: string): number => {
+export const compareScore = (
+  value: number,
+  best: number,
+  prio: string,
+): number => {
   if ((LOW_STATS as ReadonlyArray<string>).includes(prio)) return best - value;
   if ((HIGH_STATS as ReadonlyArray<string>).includes(prio)) return value - best;
   return best - value;

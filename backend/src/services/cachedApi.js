@@ -5,9 +5,18 @@ import api from "./api.js";
 const DEFAULT_RATE_LIMIT_PER_MINUTE = 120;
 const DEFAULT_BURST_CAPACITY = DEFAULT_RATE_LIMIT_PER_MINUTE;
 const DEFAULT_MAX_CONCURRENT_UPSTREAM = 8;
-const configuredRateLimit = Number.parseInt(process.env.API_RATE_LIMIT_PER_MINUTE || "", 10);
-const configuredBurstCapacity = Number.parseInt(process.env.API_RATE_LIMIT_BURST || "", 10);
-const configuredMaxConcurrent = Number.parseInt(process.env.API_MAX_CONCURRENT_UPSTREAM || "", 10);
+const configuredRateLimit = Number.parseInt(
+  process.env.API_RATE_LIMIT_PER_MINUTE || "",
+  10,
+);
+const configuredBurstCapacity = Number.parseInt(
+  process.env.API_RATE_LIMIT_BURST || "",
+  10,
+);
+const configuredMaxConcurrent = Number.parseInt(
+  process.env.API_MAX_CONCURRENT_UPSTREAM || "",
+  10,
+);
 const RATE_LIMIT_PER_MINUTE =
   Number.isFinite(configuredRateLimit) && configuredRateLimit > 0
     ? configuredRateLimit
@@ -17,8 +26,14 @@ const BOTTLENECK_RESERVOIR =
     ? configuredBurstCapacity
     : DEFAULT_BURST_CAPACITY;
 const BOTTLENECK_INCREASE_INTERVAL_MS = 1000;
-const BOTTLENECK_INCREASE_AMOUNT = Math.max(1, Math.floor(RATE_LIMIT_PER_MINUTE / 60));
-const BOTTLENECK_INCREASE_MAX = Math.max(BOTTLENECK_RESERVOIR, RATE_LIMIT_PER_MINUTE);
+const BOTTLENECK_INCREASE_AMOUNT = Math.max(
+  1,
+  Math.floor(RATE_LIMIT_PER_MINUTE / 60),
+);
+const BOTTLENECK_INCREASE_MAX = Math.max(
+  BOTTLENECK_RESERVOIR,
+  RATE_LIMIT_PER_MINUTE,
+);
 const BOTTLENECK_MAX_CONCURRENT =
   Number.isFinite(configuredMaxConcurrent) && configuredMaxConcurrent > 0
     ? configuredMaxConcurrent
@@ -81,7 +96,9 @@ function stableStringify(value) {
   const keys = Object.keys(value).sort();
   return (
     "{" +
-    keys.map((k) => JSON.stringify(k) + ":" + stableStringify(value[k])).join(",") +
+    keys
+      .map((k) => JSON.stringify(k) + ":" + stableStringify(value[k]))
+      .join(",") +
     "}"
   );
 }
@@ -233,7 +250,8 @@ async function fetchWithCache(method, url, config = {}, body) {
         };
         const userValidateStatus = requestConfig.validateStatus;
         requestConfig.validateStatus = (s) =>
-          s === 304 || (userValidateStatus ? userValidateStatus(s) : s >= 200 && s < 300);
+          s === 304 ||
+          (userValidateStatus ? userValidateStatus(s) : s >= 200 && s < 300);
       }
 
       const response = await limiter.schedule(() =>
@@ -310,5 +328,21 @@ function resetStats() {
   stats.upstreamCalls = 0;
 }
 
-export default { get, post, peek, prime, getCacheStats, clearCache, resetStats };
-export { stableStringify, parseMaxAgeMs, parseRetryAfterMs, computeTtl, cacheKey, peek, prime };
+export default {
+  get,
+  post,
+  peek,
+  prime,
+  getCacheStats,
+  clearCache,
+  resetStats,
+};
+export {
+  stableStringify,
+  parseMaxAgeMs,
+  parseRetryAfterMs,
+  computeTtl,
+  cacheKey,
+  peek,
+  prime,
+};

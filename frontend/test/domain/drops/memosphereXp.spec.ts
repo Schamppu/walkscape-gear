@@ -12,7 +12,10 @@ import type { AbilityDetail } from "@/domain/types/ability";
 // Helpers
 // ---------------------------------------------------------------------------
 
-function memosphereAbility(skill: string, timesLevel = 20): Pick<AbilityDetail, "data"> {
+function memosphereAbility(
+  skill: string,
+  timesLevel = 20,
+): Pick<AbilityDetail, "data"> {
   return {
     data: [
       {
@@ -142,7 +145,10 @@ describe("computeMemosphereXp", () => {
   it("sums rates across drop maps and ignores non-memospheres", () => {
     const { total, breakdown } = computeMemosphereXp(
       [
-        { woodcutting_memosphere: dropInfo("woodcutting_memosphere", 2000), log: dropInfo("log", 10) },
+        {
+          woodcutting_memosphere: dropInfo("woodcutting_memosphere", 2000),
+          log: dropInfo("log", 10),
+        },
         { woodcutting_memosphere: dropInfo("woodcutting_memosphere", 2000) },
         { trinketry_memosphere: dropInfo("trinketry_memosphere", 4000) },
       ],
@@ -172,7 +178,9 @@ describe("computeMemosphereXp", () => {
     const { total, breakdown } = computeMemosphereXp(
       [
         { trinketry_memosphere: dropInfo("trinketry_memosphere", 0) },
-        { woodcutting_memosphere: dropInfo("woodcutting_memosphere", Infinity) },
+        {
+          woodcutting_memosphere: dropInfo("woodcutting_memosphere", Infinity),
+        },
       ],
       defs,
       { trinketry: 10, woodcutting: 10 },

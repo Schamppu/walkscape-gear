@@ -8,7 +8,10 @@ import { priorityName, priorityValue } from "@/composables/optimiser/priority";
 import { prepareAdvancedJob } from "@/composables/advancedOptimiser/buildJob";
 import { runAdvancedJob } from "@/composables/advancedOptimiser/runWorker";
 import { applySearchResult } from "@/composables/advancedOptimiser/applyResult";
-import { QUICK_SEARCH_SETTINGS, quickSetTargets } from "@/domain/advancedOptimiser/quickSet";
+import {
+  QUICK_SEARCH_SETTINGS,
+  quickSetTargets,
+} from "@/domain/advancedOptimiser/quickSet";
 
 /**
  * Quick set: builds a gear set for the selected activity or recipe, targeting
@@ -33,7 +36,9 @@ export function useOptimiser() {
     }
 
     try {
-      await notificationStore.success(`Generating gear set with target ${priorityName()}`);
+      await notificationStore.success(
+        `Generating gear set with target ${priorityName()}`,
+      );
       const t0 = performance.now();
 
       const job = await prepareAdvancedJob({
@@ -47,7 +52,9 @@ export function useOptimiser() {
       if (!job) return;
       await notificationStore.debug("Optimiser: built quick set job", [job]);
 
-      const result = await runAdvancedJob(job, { settings: QUICK_SEARCH_SETTINGS }).result;
+      const result = await runAdvancedJob(job, {
+        settings: QUICK_SEARCH_SETTINGS,
+      }).result;
       await notificationStore.debug(
         `Optimiser: [total: ${(performance.now() - t0).toFixed(1)}ms] Done`,
         [result],
@@ -55,10 +62,13 @@ export function useOptimiser() {
 
       const applied = await applySearchResult(result, job.searchSlots, {
         setLocation: (location) => activityStore.setLocation(location),
-        equipMultiple: (data, useQuality) => gearStore.equipMultiple(data, useQuality),
+        equipMultiple: (data, useQuality) =>
+          gearStore.equipMultiple(data, useQuality),
       });
       if (applied) urlStore.encodeAndPushToUrl();
-      await notificationStore.debug("Optimiser: Equipped gear set", [result.gearSet]);
+      await notificationStore.debug("Optimiser: Equipped gear set", [
+        result.gearSet,
+      ]);
     } catch (e) {
       notificationStore.error("Error during gear set creation");
       console.error(e);

@@ -32,7 +32,10 @@ function subFactor(weight: number): number {
   return 0.5 * (weight / TOTAL_SUB_WEIGHT);
 }
 
-const MAIN_TABLE_WEIGHT = wcTable.tableRows.reduce((s, r) => s + r.rowWeight, 0); // 59
+const MAIN_TABLE_WEIGHT = wcTable.tableRows.reduce(
+  (s, r) => s + r.rowWeight,
+  0,
+); // 59
 
 const STEPS_PER_CHEST = 10_000;
 
@@ -111,11 +114,15 @@ describe("identifyChestItems", () => {
   });
 
   it("returns empty array when no containers are in the drop map", () => {
-    expect(identifyChestItems({ raw_fish: makeDropInfo() }, { wood_chest: {} })).toHaveLength(0);
+    expect(
+      identifyChestItems({ raw_fish: makeDropInfo() }, { wood_chest: {} }),
+    ).toHaveLength(0);
   });
 
   it("returns empty array when containers dict is empty", () => {
-    expect(identifyChestItems({ wood_chest: makeDropInfo() }, {})).toHaveLength(0);
+    expect(identifyChestItems({ wood_chest: makeDropInfo() }, {})).toHaveLength(
+      0,
+    );
   });
 
   it("returns multiple chests when present", () => {
@@ -124,7 +131,9 @@ describe("identifyChestItems", () => {
       chest_b: makeDropInfo({ id: "chest_b", stepsPerItem: 2000 }),
       other: makeDropInfo(),
     };
-    expect(identifyChestItems(dropMap, { chest_a: {}, chest_b: {} })).toHaveLength(2);
+    expect(
+      identifyChestItems(dropMap, { chest_a: {}, chest_b: {} }),
+    ).toHaveLength(2);
   });
 });
 
@@ -138,7 +147,10 @@ describe("buildChestDropInfoMap - woodcutting chest fixture: main table factor",
     // The ethereal sub-table (weight=0.0001, empty) falls back to main.
     // mainFactor = 0.5 + 0.5 * (0.0001 / 0.5) = 0.5001.
     expect(TOTAL_SUB_WEIGHT).toBeCloseTo(0.5, 4);
-    expect(MAIN_FACTOR).toBeCloseTo(0.5 + 0.5 * (EMPTY_SUB_WEIGHT / TOTAL_SUB_WEIGHT), 10);
+    expect(MAIN_FACTOR).toBeCloseTo(
+      0.5 + 0.5 * (EMPTY_SUB_WEIGHT / TOTAL_SUB_WEIGHT),
+      10,
+    );
   });
 
   it("computes stepsPerItem for a main-table item using the correct factor", () => {
@@ -165,7 +177,9 @@ describe("buildChestDropInfoMap - woodcutting chest fixture: main table factor",
     // schnitzel (w=2) should have more steps than birch_logs (w=11)
     const SCHNITZEL = "schnitzel";
     const result = buildChestDropInfoMap(STEPS_PER_CHEST, [wcTable], {});
-    expect(result[SCHNITZEL].stepsPerItem).toBeGreaterThan(result[BIRCH_LOGS].stepsPerItem);
+    expect(result[SCHNITZEL].stepsPerItem).toBeGreaterThan(
+      result[BIRCH_LOGS].stepsPerItem,
+    );
   });
 });
 
@@ -210,7 +224,10 @@ describe("buildChestDropInfoMap - woodcutting chest fixture: sub-tables", () => 
     const result = buildChestDropInfoMap(STEPS_PER_CHEST, [wcTable], {});
     const rollChance = subFactor(0.025) * (10 / 20);
     const effectiveChance = 1 - Math.pow(1 - rollChance, CHEST_ROLLS);
-    expect(result[LOG_SPLITTER].stepsPerItem).toBeCloseTo(STEPS_PER_CHEST / effectiveChance, 1);
+    expect(result[LOG_SPLITTER].stepsPerItem).toBeCloseTo(
+      STEPS_PER_CHEST / effectiveChance,
+      1,
+    );
   });
 
   it("includes the legendary item (weight=0.001)", () => {
@@ -226,13 +243,18 @@ describe("buildChestDropInfoMap - woodcutting chest fixture: sub-tables", () => 
 
   it("rarer sub-table items have more steps than common sub-table items", () => {
     const result = buildChestDropInfoMap(STEPS_PER_CHEST, [wcTable], {});
-    expect(result[LOG_SPLITTER].stepsPerItem).toBeGreaterThan(result[LUMBERJACK_SANDALS].stepsPerItem);
+    expect(result[LOG_SPLITTER].stepsPerItem).toBeGreaterThan(
+      result[LUMBERJACK_SANDALS].stepsPerItem,
+    );
   });
 
   it("totalDropChance times stepsPerItem approximates stepsPerChest for simple items", () => {
     const result = buildChestDropInfoMap(STEPS_PER_CHEST, [wcTable], {});
     const sandals = result[LUMBERJACK_SANDALS];
-    expect(sandals.stepsPerItem * (sandals.totalDropChance / 100)).toBeCloseTo(STEPS_PER_CHEST, 1);
+    expect(sandals.stepsPerItem * (sandals.totalDropChance / 100)).toBeCloseTo(
+      STEPS_PER_CHEST,
+      1,
+    );
   });
 });
 
@@ -258,16 +280,46 @@ describe("buildChestDropInfoMap - edge cases", () => {
 
   it("returns empty result for a table with zero total row weight", () => {
     const table: LootTableDetail = {
-      id: "t", category: "chest", noDropChance: 0, subTables: [],
-      tableRows: [{ rowItemID: "item_01", rowWeight: 0, minWeightScale: 1, rowMinimumAmount: 1, rowMaximumAmount: 1 }],
+      id: "t",
+      category: "chest",
+      noDropChance: 0,
+      subTables: [],
+      tableRows: [
+        {
+          rowItemID: "item_01",
+          rowWeight: 0,
+          minWeightScale: 1,
+          rowMinimumAmount: 1,
+          rowMaximumAmount: 1,
+        },
+      ],
     };
-    expect(Object.keys(buildChestDropInfoMap(10000, [table], {}))).toHaveLength(0);
+    expect(Object.keys(buildChestDropInfoMap(10000, [table], {}))).toHaveLength(
+      0,
+    );
   });
 
   it("sub-table with weight=0 is skipped even when it has rows", () => {
     const table: LootTableDetail = {
-      id: "t", category: "chest", noDropChance: 0,
-      subTables: [{ id: "s", weight: 0, type: "ethereal", tableRows: [{ rowItemID: "eth_item", rowWeight: 100, minWeightScale: 0, rowMinimumAmount: 1, rowMaximumAmount: 1 }] }],
+      id: "t",
+      category: "chest",
+      noDropChance: 0,
+      subTables: [
+        {
+          id: "s",
+          weight: 0,
+          type: "ethereal",
+          tableRows: [
+            {
+              rowItemID: "eth_item",
+              rowWeight: 100,
+              minWeightScale: 0,
+              rowMinimumAmount: 1,
+              rowMaximumAmount: 1,
+            },
+          ],
+        },
+      ],
       tableRows: [],
     };
     expect("eth_item" in buildChestDropInfoMap(10000, [table], {})).toBe(false);
@@ -277,42 +329,85 @@ describe("buildChestDropInfoMap - edge cases", () => {
     // Only one sub-table, weight irrelevant beyond normalisation.
     // subFactor = 0.5 * (w / w) = 0.5, mainFactor = 0.5 (no empty subs).
     const table: LootTableDetail = {
-      id: "t", category: "chest", noDropChance: 0,
+      id: "t",
+      category: "chest",
+      noDropChance: 0,
       subTables: [
-        { id: "s", weight: 0.2, type: "common", tableRows: [{ rowItemID: "gear_item", rowWeight: 100, minWeightScale: 0, rowMinimumAmount: 1, rowMaximumAmount: 1 }] },
+        {
+          id: "s",
+          weight: 0.2,
+          type: "common",
+          tableRows: [
+            {
+              rowItemID: "gear_item",
+              rowWeight: 100,
+              minWeightScale: 0,
+              rowMinimumAmount: 1,
+              rowMaximumAmount: 1,
+            },
+          ],
+        },
       ],
       tableRows: [],
     };
     const result = buildChestDropInfoMap(10000, [table], {});
     const factor = 0.5; // 0.5 * (0.2 / 0.2)
     const effectiveChance = 1 - Math.pow(1 - factor, CHEST_ROLLS);
-    expect(result["gear_item"].stepsPerItem).toBeCloseTo(10000 / effectiveChance, 1);
+    expect(result["gear_item"].stepsPerItem).toBeCloseTo(
+      10000 / effectiveChance,
+      1,
+    );
   });
 
   it("keys money rows as 'gold'", () => {
     const table: LootTableDetail = {
-      id: "t", category: "chest", noDropChance: 0, subTables: [],
-      tableRows: [{ rowItemID: null, rowWeight: 100, minWeightScale: 1, rowMinimumAmount: 1, rowMaximumAmount: 1, isMoney: true }],
+      id: "t",
+      category: "chest",
+      noDropChance: 0,
+      subTables: [],
+      tableRows: [
+        {
+          rowItemID: null,
+          rowWeight: 100,
+          minWeightScale: 1,
+          rowMinimumAmount: 1,
+          rowMaximumAmount: 1,
+          isMoney: true,
+        },
+      ],
     };
     expect("gold" in buildChestDropInfoMap(10000, [table], {})).toBe(true);
   });
 
   it("formats single-amount dropCounts as plain number", () => {
-    const table = makeSimpleTable([{ rowItemID: "item_01", rowMinimumAmount: 3, rowMaximumAmount: 3 }]);
-    expect(buildChestDropInfoMap(1000, [table], {})["item_01"].dropCounts).toBe("3");
+    const table = makeSimpleTable([
+      { rowItemID: "item_01", rowMinimumAmount: 3, rowMaximumAmount: 3 },
+    ]);
+    expect(buildChestDropInfoMap(1000, [table], {})["item_01"].dropCounts).toBe(
+      "3",
+    );
   });
 
   it("always sets stepsPerRare to 0 (chests don't drop pet eggs)", () => {
     const table = makeSimpleTable([{ rowItemID: "oak_log" }]);
-    expect(buildChestDropInfoMap(10000, [table], { oak_log: true })["oak_log"].stepsPerRare).toBe(0);
+    expect(
+      buildChestDropInfoMap(10000, [table], { oak_log: true })["oak_log"]
+        .stepsPerRare,
+    ).toBe(0);
   });
 
   it("sets stepsPerFine and adjusted stepsPerNormal for fine-able items", () => {
     const table = makeSimpleTable([{ rowItemID: "oak_log" }]);
     const result = buildChestDropInfoMap(10000, [table], { oak_log: true });
     const info = result["oak_log"];
-    expect(info.stepsPerFine).toBeCloseTo(info.stepsPerItem / CHEST_FINE_CHANCE, 1);
-    expect(info.stepsPerNormal).toBeCloseTo(info.stepsPerItem / (1 - CHEST_FINE_CHANCE), 1);
+    expect(info.stepsPerFine).toBeCloseTo(
+      info.stepsPerItem / CHEST_FINE_CHANCE,
+      1,
+    );
+    expect(info.stepsPerNormal).toBeCloseTo(
+      info.stepsPerItem / (1 - CHEST_FINE_CHANCE),
+      1,
+    );
   });
 
   it("sets stepsPerFine=0 for non-fine items", () => {
@@ -323,9 +418,15 @@ describe("buildChestDropInfoMap - edge cases", () => {
   });
 
   it("scales stepsPerItem by average amount when min !== max", () => {
-    const table = makeSimpleTable([{ rowItemID: "item_01", rowMinimumAmount: 1, rowMaximumAmount: 3 }]);
-    const single = makeSimpleTable([{ rowItemID: "item_01", rowMinimumAmount: 2, rowMaximumAmount: 2 }]);
-    expect(buildChestDropInfoMap(20000, [table], {})["item_01"].stepsPerItem).toBeCloseTo(
+    const table = makeSimpleTable([
+      { rowItemID: "item_01", rowMinimumAmount: 1, rowMaximumAmount: 3 },
+    ]);
+    const single = makeSimpleTable([
+      { rowItemID: "item_01", rowMinimumAmount: 2, rowMaximumAmount: 2 },
+    ]);
+    expect(
+      buildChestDropInfoMap(20000, [table], {})["item_01"].stepsPerItem,
+    ).toBeCloseTo(
       buildChestDropInfoMap(20000, [single], {})["item_01"].stepsPerItem,
       1,
     );
@@ -337,11 +438,34 @@ describe("buildChestDropInfoMap - edge cases", () => {
     // Sub  effectiveChance = 1-(1-0.5)^4 = 0.9375, stepsPerItem = 10000/0.9375
     // Combined (same source → harmonic mean of identical values = same value)
     const table: LootTableDetail = {
-      id: "t", category: "chest", noDropChance: 0,
+      id: "t",
+      category: "chest",
+      noDropChance: 0,
       subTables: [
-        { id: "s", weight: 0.5, type: "common", tableRows: [{ rowItemID: "shared_item", rowWeight: 100, minWeightScale: 0, rowMinimumAmount: 1, rowMaximumAmount: 1 }] },
+        {
+          id: "s",
+          weight: 0.5,
+          type: "common",
+          tableRows: [
+            {
+              rowItemID: "shared_item",
+              rowWeight: 100,
+              minWeightScale: 0,
+              rowMinimumAmount: 1,
+              rowMaximumAmount: 1,
+            },
+          ],
+        },
       ],
-      tableRows: [{ rowItemID: "shared_item", rowWeight: 100, minWeightScale: 1, rowMinimumAmount: 1, rowMaximumAmount: 1 }],
+      tableRows: [
+        {
+          rowItemID: "shared_item",
+          rowWeight: 100,
+          minWeightScale: 1,
+          rowMinimumAmount: 1,
+          rowMaximumAmount: 1,
+        },
+      ],
     };
     const result = buildChestDropInfoMap(10000, [table], {});
     // Both mainFactor and subFactor = 0.5 (one sub-table, no empty subs)
@@ -349,7 +473,8 @@ describe("buildChestDropInfoMap - edge cases", () => {
     const subFactorV = 0.5; // 0.5 * (0.5/0.5)
     const mainChance = 1 - Math.pow(1 - mainFactor, CHEST_ROLLS);
     const subChance = 1 - Math.pow(1 - subFactorV, CHEST_ROLLS);
-    const combinedSteps = 1 / (1 / (10000 / mainChance) + 1 / (10000 / subChance));
+    const combinedSteps =
+      1 / (1 / (10000 / mainChance) + 1 / (10000 / subChance));
     expect(result["shared_item"].stepsPerItem).toBeCloseTo(combinedSteps, 1);
   });
 });

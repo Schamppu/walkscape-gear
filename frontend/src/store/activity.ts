@@ -12,7 +12,10 @@ import {
   sortServicesByTier,
   type ServiceRequirement,
 } from "@/domain/services/services";
-import { activityNone, type ActivityNone } from "@/domain/constants/activityNone";
+import {
+  activityNone,
+  type ActivityNone,
+} from "@/domain/constants/activityNone";
 import {
   SetActivityCommand,
   SetRecipeCommand,
@@ -27,7 +30,10 @@ import type { SkillLevelRequirement } from "@/domain/types/requirement";
 import type { LocationDetail } from "@/domain/types/location";
 import type { StaticBootstrap } from "@/domain/types/bootstrap";
 import { useNotificationStore } from "@/store/notifications";
-import { executeCommand, initializeHistoryTracking } from "@/store/utils/historyUtils";
+import {
+  executeCommand,
+  initializeHistoryTracking,
+} from "@/store/utils/historyUtils";
 
 /**
  * Activity Store
@@ -80,21 +86,27 @@ export const useActivityStore = defineStore("activityStore", {
       recipes,
     }: Pick<StaticBootstrap, "activities" | "recipes">): void {
       this.activities = markRaw(activities);
-      this.activitiesMap = markRaw(Object.fromEntries(
-        activities.map(({ id, name, icon, requirements }) => [
-          id,
-          {
-            name,
-            icon,
-            skillLevelRequirements: (requirements ?? [])
-              .filter((r): r is SkillLevelRequirement => r.type === "skillLevel")
-              .map(({ requirement }) => requirement),
-          },
-        ]),
-      ));
-      this.embargoedActivities = markRaw(new Set(
-        activities.filter((item) => "embargo" in item).map(({ id }) => id),
-      ));
+      this.activitiesMap = markRaw(
+        Object.fromEntries(
+          activities.map(({ id, name, icon, requirements }) => [
+            id,
+            {
+              name,
+              icon,
+              skillLevelRequirements: (requirements ?? [])
+                .filter(
+                  (r): r is SkillLevelRequirement => r.type === "skillLevel",
+                )
+                .map(({ requirement }) => requirement),
+            },
+          ]),
+        ),
+      );
+      this.embargoedActivities = markRaw(
+        new Set(
+          activities.filter((item) => "embargo" in item).map(({ id }) => id),
+        ),
+      );
       this.recipes = markRaw(recipes);
 
       this.isLoaded = true;
@@ -142,7 +154,6 @@ export const useActivityStore = defineStore("activityStore", {
       const previousLocations = this.locations;
       const previousService = this.service;
       const previousServices = this.services;
-
 
       // ActivityNone is the sentinel for "no recipe selected"; the command treats null the same way.
       const recipeForCommand: RecipeDetail | null =
@@ -226,10 +237,16 @@ export const useActivityStore = defineStore("activityStore", {
 
       if ("activity" in updates) newState.activity = updates.activity ?? null;
       if ("recipe" in updates) newState.recipe = updates.recipe ?? null;
-      if ("service" in updates) newState.service = updates.service as ServiceDetail | null ?? null;
-      if ("services" in updates) newState.services = updates.services as ServiceDetail[] | null ?? null;
-      if ("location" in updates) newState.location = updates.location as LocationDetail | null ?? null;
-      if ("locations" in updates) newState.locations = updates.locations as LocationDetail[] | null ?? null;
+      if ("service" in updates)
+        newState.service = (updates.service as ServiceDetail | null) ?? null;
+      if ("services" in updates)
+        newState.services =
+          (updates.services as ServiceDetail[] | null) ?? null;
+      if ("location" in updates)
+        newState.location = (updates.location as LocationDetail | null) ?? null;
+      if ("locations" in updates)
+        newState.locations =
+          (updates.locations as LocationDetail[] | null) ?? null;
       if ("_isUndoRedoOperation" in updates)
         newState._isUndoRedoOperation = updates._isUndoRedoOperation ?? false;
 
@@ -241,10 +258,13 @@ export const useActivityStore = defineStore("activityStore", {
       const { data: activity } = await getActivity({ id });
       this.setActivity(activity as unknown as ActivityDetail);
     },
-    async loadActivityLocations(id: string, skipAutoSelect = false): Promise<void> {
-      const { data: locations } = await searchLocations(
-        { activityList: id } as { activityList: string; serviceList: string },
-      );
+    async loadActivityLocations(
+      id: string,
+      skipAutoSelect = false,
+    ): Promise<void> {
+      const { data: locations } = await searchLocations({
+        activityList: id,
+      } as { activityList: string; serviceList: string });
       this.setLocations(locations);
       if (locations.length && !skipAutoSelect && !this._isUndoRedoOperation)
         this._setLocationDirect(locations[0]);
@@ -299,9 +319,10 @@ export const useActivityStore = defineStore("activityStore", {
       noService = false,
     ): Promise<LocationDetail[]> {
       const { data: locations } = !noService
-        ? await searchLocations(
-            { serviceList: id } as { activityList: string; serviceList: string },
-          )
+        ? await searchLocations({ serviceList: id } as {
+            activityList: string;
+            serviceList: string;
+          })
         : await getRealmDefaultLocations();
       this.setLocations(locations);
       if (locations.length && !skipAutoSelect && !this._isUndoRedoOperation)
@@ -310,7 +331,9 @@ export const useActivityStore = defineStore("activityStore", {
     },
 
     // Command execution and history management
-    async _executeCommand(command: { execute(): Promise<void> } & object): Promise<void> {
+    async _executeCommand(
+      command: { execute(): Promise<void> } & object,
+    ): Promise<void> {
       await executeCommand(command as Command, "activity");
     },
 

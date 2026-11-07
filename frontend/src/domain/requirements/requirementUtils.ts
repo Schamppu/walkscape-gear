@@ -110,8 +110,7 @@ export function getMainSkillRequirement(
 ): string | null {
   if (!requirements) return null;
   const mainSkillReq = requirements.find((req) => req.type === "mainSkill") as
-    | MainSkillRequirement
-    | undefined;
+    MainSkillRequirement | undefined;
   return mainSkillReq ? mainSkillReq.requirement.skill : null;
 }
 

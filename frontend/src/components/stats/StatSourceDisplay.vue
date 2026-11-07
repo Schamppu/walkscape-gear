@@ -15,7 +15,12 @@ const { effectiveAttrs, allAttrs } = injectEffectiveAttrs();
 
 const statList = computed(() => {
   const effectiveAttrIds = effectiveAttrs.value.map((attr) => attr.id);
-  return buildStatSourceList(allAttrs.value, effectiveAttrIds, props.stat.id, props.isPercent ?? false);
+  return buildStatSourceList(
+    allAttrs.value,
+    effectiveAttrIds,
+    props.stat.id,
+    props.isPercent ?? false,
+  );
 });
 </script>
 

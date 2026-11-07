@@ -29,7 +29,11 @@ const keywords =
         .filter((k): k is Keyword => !!k?.icon);
 
 const attrs = computed(() =>
-  resolveDisplayAttrs(toDeepRaw(props.item), props.quality ?? "", props.filterStat),
+  resolveDisplayAttrs(
+    toDeepRaw(props.item),
+    props.quality ?? "",
+    props.filterStat,
+  ),
 );
 </script>
 

@@ -1,6 +1,10 @@
 import { computed, type ComputedRef } from "vue";
 import { useActivityStore } from "@/store/activity";
-import { useGearStore, type EquippedGearSet, type EquippedItem } from "@/store/gear";
+import {
+  useGearStore,
+  type EquippedGearSet,
+  type EquippedItem,
+} from "@/store/gear";
 import { useItemsStore, type OwnedItemState } from "@/store/items";
 import { usePlayerStore } from "@/store/player";
 import { useRouteStore, type RouteSegment } from "@/store/route";

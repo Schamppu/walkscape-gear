@@ -21,7 +21,9 @@ import type {
   AdvancedOptimiserOutbound,
 } from "./advancedOptimiserWorkerTypes";
 
-export type SessionOptions = Partial<Pick<SearchHooks, "now" | "random" | "yieldToEventLoop">>;
+export type SessionOptions = Partial<
+  Pick<SearchHooks, "now" | "random" | "yieldToEventLoop">
+>;
 
 /**
  * Returns the `onmessage` handler. It resolves once a started search has
@@ -54,7 +56,10 @@ export const createSession = (
       );
       post({ type: "result", result });
     } catch (err) {
-      post({ type: "error", message: err instanceof Error ? err.message : String(err) });
+      post({
+        type: "error",
+        message: err instanceof Error ? err.message : String(err),
+      });
     }
   };
 };

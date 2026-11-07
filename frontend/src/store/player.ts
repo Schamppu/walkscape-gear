@@ -31,35 +31,48 @@ export const usePlayerStore = defineStore("playerStore", {
     isLoaded: false,
   }),
   actions: {
-    hydrate({ skills, factions }: Pick<StaticBootstrap, "skills" | "factions">): void {
-      this.skills = markRaw(skills
-        .map(({ id, ...rest }) => {
-          return { id, ...rest, value: id };
-        })
-        .sort((a, b) => a.name.localeCompare(b.name)));
-      this.skillsMap = markRaw(Object.fromEntries(
-        skills.map(({ id, icon, name, type, typeIcon }) => [
-          id,
-          { icon, name, type, typeIcon },
-        ]),
-      ));
+    hydrate({
+      skills,
+      factions,
+    }: Pick<StaticBootstrap, "skills" | "factions">): void {
+      this.skills = markRaw(
+        skills
+          .map(({ id, ...rest }) => {
+            return { id, ...rest, value: id };
+          })
+          .sort((a, b) => a.name.localeCompare(b.name)),
+      );
+      this.skillsMap = markRaw(
+        Object.fromEntries(
+          skills.map(({ id, icon, name, type, typeIcon }) => [
+            id,
+            { icon, name, type, typeIcon },
+          ]),
+        ),
+      );
 
       // Copy before sorting: the bundle's factions array is shared with the data store.
-      this.factions = markRaw([...factions].sort((a, b) => a.name.localeCompare(b.name)));
+      this.factions = markRaw(
+        [...factions].sort((a, b) => a.name.localeCompare(b.name)),
+      );
       const hiddenReputation = new Set([
         "wallisiaReputation",
         "wrentmarkReputation",
       ]);
-      this.reputationFactions = markRaw(this.factions.filter(
-        ({ reputation }) =>
-          reputation !== null && !hiddenReputation.has(reputation),
-      ));
-      this.factionsMap = markRaw(Object.fromEntries(
-        factions.map(({ id, icon, name, color, reputation }) => [
-          id,
-          { icon, name, color, reputation },
-        ]),
-      ));
+      this.reputationFactions = markRaw(
+        this.factions.filter(
+          ({ reputation }) =>
+            reputation !== null && !hiddenReputation.has(reputation),
+        ),
+      );
+      this.factionsMap = markRaw(
+        Object.fromEntries(
+          factions.map(({ id, icon, name, color, reputation }) => [
+            id,
+            { icon, name, color, reputation },
+          ]),
+        ),
+      );
     },
     /** Applies the player's saved stats. Requires `hydrate` to have run first. */
     hydrateUser({

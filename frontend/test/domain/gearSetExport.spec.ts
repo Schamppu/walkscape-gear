@@ -15,31 +15,51 @@ describe("buildExportedSlot", () => {
   const idMap: Record<string, string> = { item_a: "old_a", item_b: "old_b" };
 
   it("parses a numbered slot: type is the alpha part, index is (number - 1)", () => {
-    const slot = buildExportedSlot("ring1", { id: "item_a", quality: "common" }, idMap);
+    const slot = buildExportedSlot(
+      "ring1",
+      { id: "item_a", quality: "common" },
+      idMap,
+    );
     expect(slot.type).toBe("ring");
     expect(slot.index).toBe(0);
   });
 
   it("parses ring2 as index 1", () => {
-    const slot = buildExportedSlot("ring2", { id: "item_a", quality: "common" }, idMap);
+    const slot = buildExportedSlot(
+      "ring2",
+      { id: "item_a", quality: "common" },
+      idMap,
+    );
     expect(slot.type).toBe("ring");
     expect(slot.index).toBe(1);
   });
 
   it("parses tool3 as type=tool, index=2", () => {
-    const slot = buildExportedSlot("tool3", { id: "item_a", quality: "common" }, idMap);
+    const slot = buildExportedSlot(
+      "tool3",
+      { id: "item_a", quality: "common" },
+      idMap,
+    );
     expect(slot.type).toBe("tool");
     expect(slot.index).toBe(2);
   });
 
   it("parses a non-numbered slot: type is full name, index is 0", () => {
-    const slot = buildExportedSlot("head", { id: "item_a", quality: "common" }, idMap);
+    const slot = buildExportedSlot(
+      "head",
+      { id: "item_a", quality: "common" },
+      idMap,
+    );
     expect(slot.type).toBe("head");
     expect(slot.index).toBe(0);
   });
 
   it("maps the item id through the itemIdMap", () => {
-    const slot = buildExportedSlot("head", { id: "item_a", quality: "common" }, idMap);
+    const slot = buildExportedSlot(
+      "head",
+      { id: "item_a", quality: "common" },
+      idMap,
+    );
     const parsed = JSON.parse(slot.item);
     expect(parsed.id).toBe("old_a");
   });

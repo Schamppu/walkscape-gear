@@ -139,7 +139,9 @@ describe("buildAllAttrEntries", () => {
   it("sticky_finger_shorts rollSpecialTable becomes trashTable pseudo-stat", () => {
     const result = buildAllAttrEntries(resolvedGear, null, null, null);
     const entry = result.find(
-      (e) => e.item.id === "sticky_finger_shorts" && e.stats[0]?.type !== "chestFind",
+      (e) =>
+        e.item.id === "sticky_finger_shorts" &&
+        e.stats[0]?.type !== "chestFind",
     );
     expect(entry).toBeDefined();
     expect(entry!.stats[0].type).toBe("trashTable");
@@ -210,14 +212,34 @@ describe("buildAllAttrEntries", () => {
       requirements: [],
       tables: null,
       item: { id: "wb", name: "Work Bonus", icon: "" },
-      stats: [{ stat: "we", name: "", type: "workEfficiency", isPercent: true, value: 0.01, isNegative: false, isMultiplicative: true }],
+      stats: [
+        {
+          stat: "we",
+          name: "",
+          type: "workEfficiency",
+          isPercent: true,
+          value: 0.01,
+          isNegative: false,
+          isMultiplicative: true,
+        },
+      ],
     };
     const qoBonus: LevelBonusAttr = {
       id: "qob",
       requirements: [],
       tables: null,
       item: { id: "qob", name: "QO Bonus", icon: "" },
-      stats: [{ stat: "qo", name: "", type: "qualityOutcome", isPercent: false, value: 5, isNegative: false, isMultiplicative: true }],
+      stats: [
+        {
+          stat: "qo",
+          name: "",
+          type: "qualityOutcome",
+          isPercent: false,
+          value: 5,
+          isNegative: false,
+          isMultiplicative: true,
+        },
+      ],
     };
     const result = buildAllAttrEntries(resolvedGear, workBonus, qoBonus, null);
     expect(result).toHaveLength(54);
@@ -294,7 +316,9 @@ describe("calculateStatTotals", () => {
   });
 
   it("accumulates a single flat positive stat correctly", () => {
-    const totals = calculateStatTotals([makeEntry("stepsRequired", 1, false, false)]);
+    const totals = calculateStatTotals([
+      makeEntry("stepsRequired", 1, false, false),
+    ]);
     expect(totals.stepsRequired.flat.sum).toBe(1);
     expect(totals.stepsRequired.flat.positive).toBe(1);
     expect(totals.stepsRequired.flat.negative).toBe(0);
@@ -302,7 +326,9 @@ describe("calculateStatTotals", () => {
   });
 
   it("accumulates a single percent positive stat correctly", () => {
-    const totals = calculateStatTotals([makeEntry("workEfficiency", 0.2, true, false)]);
+    const totals = calculateStatTotals([
+      makeEntry("workEfficiency", 0.2, true, false),
+    ]);
     expect(totals.workEfficiency.percent.sum).toBeCloseTo(0.2);
     expect(totals.workEfficiency.percent.positive).toBeCloseTo(0.2);
     expect(totals.workEfficiency.percent.negative).toBe(0);
@@ -310,7 +336,9 @@ describe("calculateStatTotals", () => {
   });
 
   it("routes isNegative=true entries to the negative bucket", () => {
-    const totals = calculateStatTotals([makeEntry("workEfficiency", -0.7, true, true)]);
+    const totals = calculateStatTotals([
+      makeEntry("workEfficiency", -0.7, true, true),
+    ]);
     expect(totals.workEfficiency.percent.negative).toBeCloseTo(-0.7);
     expect(totals.workEfficiency.percent.positive).toBe(0);
     expect(totals.workEfficiency.percent.sum).toBeCloseTo(-0.7);
@@ -330,8 +358,8 @@ describe("calculateStatTotals", () => {
 
   it("keeps flat and percent buckets separate for the same stat type", () => {
     const entries = [
-      makeEntry("workEfficiency", 1, false, false),  // flat
-      makeEntry("workEfficiency", 0.5, true, false),  // percent
+      makeEntry("workEfficiency", 1, false, false), // flat
+      makeEntry("workEfficiency", 0.5, true, false), // percent
     ];
     const totals = calculateStatTotals(entries);
     expect(totals.workEfficiency.flat.sum).toBeCloseTo(1);

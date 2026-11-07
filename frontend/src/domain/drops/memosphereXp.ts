@@ -49,7 +49,8 @@ export function extractExperienceAction(
   for (const dataBlock of detail?.data ?? []) {
     for (const action of dataBlock.actions ?? []) {
       if (action.type !== "experience") continue;
-      if (action.experienceType === "timesLevel" && action.timesLevel) return action;
+      if (action.experienceType === "timesLevel" && action.timesLevel)
+        return action;
     }
   }
   return null;

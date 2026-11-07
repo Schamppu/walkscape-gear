@@ -55,7 +55,9 @@ function isNewItemCandidate(
 ): boolean {
   const itemType = allGearItems[id]?.type;
   if (itemType === "loot" || itemType === "collectible") return true;
-  return info.sources.some((s) => s.type.some((t) => NEW_ITEM_TABLE_TYPES.has(t)));
+  return info.sources.some((s) =>
+    s.type.some((t) => NEW_ITEM_TABLE_TYPES.has(t)),
+  );
 }
 
 /** Returns true when the player already owns this item (or its hatched pet). */
@@ -108,7 +110,11 @@ export function computeNewItems(
     for (const [id, info] of Object.entries(chest.dropInfoMap)) {
       if (!isNewItemCandidate(id, info, allGearItems)) continue;
       if (ownsDrop(id, info, ownedItems)) continue;
-      chestNewItems.push({ id, icon: info.icon, stepsPerItem: info.stepsPerItem });
+      chestNewItems.push({
+        id,
+        icon: info.icon,
+        stepsPerItem: info.stepsPerItem,
+      });
     }
     if (chestNewItems.length === 0) continue;
     result.push({
@@ -131,6 +137,9 @@ export function computeNewItems(
  */
 export function computeStepsPerAnyNewItem(items: NewItemEntry[]): number {
   if (items.length === 0) return 0;
-  const rateSum = items.reduce((sum, { stepsPerItem }) => sum + 1 / stepsPerItem, 0);
+  const rateSum = items.reduce(
+    (sum, { stepsPerItem }) => sum + 1 / stepsPerItem,
+    0,
+  );
   return 1 / rateSum;
 }

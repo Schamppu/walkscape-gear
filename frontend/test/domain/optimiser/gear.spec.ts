@@ -62,21 +62,31 @@ describe("filterDirectUpgrades", () => {
   });
 
   it("keeps a single item unchanged", () => {
-    const item = makeOptimiserItem("a", [{ stat: "work_efficiency", value: 0.1 }]);
+    const item = makeOptimiserItem("a", [
+      { stat: "work_efficiency", value: 0.1 },
+    ]);
     expect(filterDirectUpgrades([item])).toHaveLength(1);
   });
 
   it("removes an item dominated by a strictly better item (same stat, higher value)", () => {
-    const strong = makeOptimiserItem("strong", [{ stat: "work_efficiency", isPercent: true, value: 0.2 }]);
-    const weak = makeOptimiserItem("weak", [{ stat: "work_efficiency", isPercent: true, value: 0.1 }]);
+    const strong = makeOptimiserItem("strong", [
+      { stat: "work_efficiency", isPercent: true, value: 0.2 },
+    ]);
+    const weak = makeOptimiserItem("weak", [
+      { stat: "work_efficiency", isPercent: true, value: 0.1 },
+    ]);
     const result = filterDirectUpgrades([strong, weak]);
     expect(result.map((i) => i.id)).toContain("strong");
     expect(result.map((i) => i.id)).not.toContain("weak");
   });
 
   it("keeps both items when they have different stats (neither dominates)", () => {
-    const a = makeOptimiserItem("a", [{ stat: "work_efficiency", isPercent: true, value: 0.2 }]);
-    const b = makeOptimiserItem("b", [{ stat: "double_action", isPercent: true, value: 0.1 }]);
+    const a = makeOptimiserItem("a", [
+      { stat: "work_efficiency", isPercent: true, value: 0.2 },
+    ]);
+    const b = makeOptimiserItem("b", [
+      { stat: "double_action", isPercent: true, value: 0.1 },
+    ]);
     const result = filterDirectUpgrades([a, b]);
     expect(result).toHaveLength(2);
   });
@@ -86,7 +96,9 @@ describe("filterDirectUpgrades", () => {
       { stat: "work_efficiency", isPercent: true, value: 0.2 },
       { stat: "double_action", isPercent: true, value: 0.1 },
     ]);
-    const b = makeOptimiserItem("b", [{ stat: "work_efficiency", isPercent: true, value: 0.2 }]);
+    const b = makeOptimiserItem("b", [
+      { stat: "work_efficiency", isPercent: true, value: 0.2 },
+    ]);
     // a dominates b: a has all of b's stats with equal/higher values, and at least one strictly greater
     const result = filterDirectUpgrades([a, b]);
     expect(result.map((i) => i.id)).toContain("a");
@@ -94,7 +106,9 @@ describe("filterDirectUpgrades", () => {
   });
 
   it("removes an item with zero stats when any other item has at least one stat", () => {
-    const withStats = makeOptimiserItem("a", [{ stat: "work_efficiency", isPercent: true, value: 0.1 }]);
+    const withStats = makeOptimiserItem("a", [
+      { stat: "work_efficiency", isPercent: true, value: 0.1 },
+    ]);
     const empty = makeOptimiserItem("empty", []);
     const result = filterDirectUpgrades([withStats, empty]);
     expect(result.map((i) => i.id)).toContain("a");
@@ -102,8 +116,12 @@ describe("filterDirectUpgrades", () => {
   });
 
   it("keeps equal items (neither dominates the other when values are identical)", () => {
-    const a = makeOptimiserItem("a", [{ stat: "work_efficiency", isPercent: true, value: 0.1 }]);
-    const b = makeOptimiserItem("b", [{ stat: "work_efficiency", isPercent: true, value: 0.1 }]);
+    const a = makeOptimiserItem("a", [
+      { stat: "work_efficiency", isPercent: true, value: 0.1 },
+    ]);
+    const b = makeOptimiserItem("b", [
+      { stat: "work_efficiency", isPercent: true, value: 0.1 },
+    ]);
     const result = filterDirectUpgrades([a, b]);
     expect(result).toHaveLength(2);
   });
@@ -111,16 +129,24 @@ describe("filterDirectUpgrades", () => {
   it("respects the areMutuallyExclusive guard: non-exclusive items are never filtered", () => {
     // Even if a dominates b statistically, if they are NOT mutually exclusive
     // (i.e. both could be equipped at once), neither should be removed.
-    const strong = makeOptimiserItem("strong", [{ stat: "work_efficiency", isPercent: true, value: 0.5 }]);
-    const weak = makeOptimiserItem("weak", [{ stat: "work_efficiency", isPercent: true, value: 0.1 }]);
+    const strong = makeOptimiserItem("strong", [
+      { stat: "work_efficiency", isPercent: true, value: 0.5 },
+    ]);
+    const weak = makeOptimiserItem("weak", [
+      { stat: "work_efficiency", isPercent: true, value: 0.1 },
+    ]);
     const notExclusive = () => false; // they can co-exist
     const result = filterDirectUpgrades([strong, weak], notExclusive);
     expect(result).toHaveLength(2);
   });
 
   it("filters dominated item when areMutuallyExclusive returns true", () => {
-    const strong = makeOptimiserItem("strong", [{ stat: "work_efficiency", isPercent: true, value: 0.5 }]);
-    const weak = makeOptimiserItem("weak", [{ stat: "work_efficiency", isPercent: true, value: 0.1 }]);
+    const strong = makeOptimiserItem("strong", [
+      { stat: "work_efficiency", isPercent: true, value: 0.5 },
+    ]);
+    const weak = makeOptimiserItem("weak", [
+      { stat: "work_efficiency", isPercent: true, value: 0.1 },
+    ]);
     const alwaysExclusive = () => true;
     const result = filterDirectUpgrades([strong, weak], alwaysExclusive);
     expect(result.map((i) => i.id)).not.toContain("weak");

@@ -80,8 +80,7 @@ function migrateRow(row) {
       const q2 = row.quality2;
       update.consumableCommon =
         q === "consumableCommon" || q2 === "consumableCommon";
-      update.consumableFine =
-        q === "consumableFine" || q2 === "consumableFine";
+      update.consumableFine = q === "consumableFine" || q2 === "consumableFine";
       update.quantity =
         (update.consumableCommon ? 1 : 0) + (update.consumableFine ? 1 : 0);
       break;
@@ -151,8 +150,9 @@ async function main() {
     for (let i = 0; i < updates.length; i += BATCH_SIZE) {
       const batch = updates.slice(i, i + BATCH_SIZE);
       await prisma.$transaction(
-        batch.map((u) =>
-          prisma.$executeRaw`
+        batch.map(
+          (u) =>
+            prisma.$executeRaw`
             UPDATE "OwnedItem"
             SET "quantity" = ${u.quantity},
                 "craftedTier" = ${u.craftedTier},

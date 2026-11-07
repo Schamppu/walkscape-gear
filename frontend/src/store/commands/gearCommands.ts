@@ -1,4 +1,10 @@
-import type { Command, IGearStore, IGearSetStore, GearSlots, GearSetMapping } from "./types";
+import type {
+  Command,
+  IGearStore,
+  IGearSetStore,
+  GearSlots,
+  GearSetMapping,
+} from "./types";
 
 // ---------------------------------------------------------------------------
 // EquipItemCommand
@@ -115,8 +121,12 @@ export class LoadGearSetCommand implements Command {
   ) {
     this.gearSetData = gearSetData ? { ...gearSetData } : null;
     this.gearSetMapping = { ...gearSetMapping };
-    this.previousGearSetData = previousGearSetData ? { ...previousGearSetData } : null;
-    this.previousGearSlots = previousGearSlots ? { ...previousGearSlots } : null;
+    this.previousGearSetData = previousGearSetData
+      ? { ...previousGearSetData }
+      : null;
+    this.previousGearSlots = previousGearSlots
+      ? { ...previousGearSlots }
+      : null;
     this.description =
       typeof gearSetData?.name === "string" && gearSetData.name
         ? `Load gear set: ${gearSetData.name}`
@@ -131,7 +141,10 @@ export class LoadGearSetCommand implements Command {
     }
 
     if (this.gearSetMapping && Object.keys(this.gearSetMapping).length > 0) {
-      const processedGearSlots = await this.gearStore._processGearSetData(this.gearSetMapping, true);
+      const processedGearSlots = await this.gearStore._processGearSetData(
+        this.gearSetMapping,
+        true,
+      );
       await this.gearStore._batchUpdateGearState(processedGearSlots);
     } else {
       await this.gearStore._batchUpdateGearState({});

@@ -22,8 +22,7 @@
   }
 
   .outline-#{$name} {
-    filter:
-      drop-shadow(1px 0 0 $color)
+    filter: drop-shadow(1px 0 0 $color)
       drop-shadow(-1px 0 0 $color)
       drop-shadow(0 1px 0 $color)
       drop-shadow(0 -1px 0 $color);
@@ -34,7 +33,7 @@
   .color-#{$name} {
     color: $color !important;
   }
-  
+
   .bg-#{$name} {
     background: $color !important;
   }
@@ -48,7 +47,7 @@
   .color-#{$name} {
     color: $color !important;
   }
-  
+
   .bg-#{$name} {
     background: $color !important;
   }
@@ -60,7 +59,7 @@
 
 .negative {
   color: $txNegative !important;
-  
+
   &.disabled {
     color: $txNegativeDark !important;
   }

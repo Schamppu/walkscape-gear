@@ -131,9 +131,7 @@ const getCrafts = () =>
     : actionsFrom() * (1 + doubleRewards.value);
 
 const getGainedXp = (skill) =>
-  isAnchor("gain", skill)
-    ? anchor.value.value
-    : steps.value * perStep(skill);
+  isAnchor("gain", skill) ? anchor.value.value : steps.value * perStep(skill);
 const getTargetXp = (skill) =>
   isAnchor("target", skill)
     ? anchor.value.value
@@ -146,9 +144,7 @@ const getEndLvl = (skill) =>
 
 // Consumable steps = active steps scaled down by the double-action chance.
 const getConsumableSteps = () =>
-  isAnchor("consumableSteps")
-    ? anchor.value.value
-    : steps.value;
+  isAnchor("consumableSteps") ? anchor.value.value : steps.value;
 // Count is always derived: how many consumables the consumable-steps cover.
 // Editing it sets a consumableSteps anchor (val * duration) so it never needs
 // the duration to recover the underlying steps.
@@ -284,7 +280,10 @@ watchEffect(() => {
               :setValue="() => {}"
               @input="
                 (val) =>
-                  setAnchor('consumableSteps', val * (consumableDurationSteps ?? 0))
+                  setAnchor(
+                    'consumableSteps',
+                    val * (consumableDurationSteps ?? 0),
+                  )
               "
             />
           </div>

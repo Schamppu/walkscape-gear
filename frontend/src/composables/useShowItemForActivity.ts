@@ -87,7 +87,10 @@ export function useShowItemForActivity(ctx: LootTablesContext): {
     source: SourceLike | null,
   ): string[] | false => {
     if (!source || !item.abilities) return false;
-    return filterUsefulAbilities(item as unknown as Parameters<typeof filterUsefulAbilities>[0], source);
+    return filterUsefulAbilities(
+      item as unknown as Parameters<typeof filterUsefulAbilities>[0],
+      source,
+    );
   };
 
   const usefulKeywords = (
@@ -110,7 +113,10 @@ export function useShowItemForActivity(ctx: LootTablesContext): {
       ...travelReqs,
     ];
 
-    return filterUsefulKeywords(item as unknown as Parameters<typeof filterUsefulKeywords>[0], allRequirements);
+    return filterUsefulKeywords(
+      item as unknown as Parameters<typeof filterUsefulKeywords>[0],
+      allRequirements,
+    );
   };
 
   const usefulAttrs = (

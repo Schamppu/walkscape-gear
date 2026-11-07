@@ -5,7 +5,10 @@ import {
   injectLootTables,
   type BaseContext,
 } from "@/composables/context/injectShared";
-import { useLootTables, type LootTablesContext } from "@/composables/useLootTables";
+import {
+  useLootTables,
+  type LootTablesContext,
+} from "@/composables/useLootTables";
 import { useMemosphereXp } from "@/composables/useMemosphereXp";
 import type { ChestLootTableInfo } from "@/composables/useChestLootTables";
 import type { AbilityLootTableInfo } from "@/composables/useAbilityLootTables";
@@ -32,7 +35,9 @@ const memosphereXp = useMemosphereXp(
 );
 
 const displayValue = computed(() => n(memosphereXp.value.total, 2));
-const tooltip = computed(() => `${displayValue.value} XP per step from memospheres`);
+const tooltip = computed(
+  () => `${displayValue.value} XP per step from memospheres`,
+);
 </script>
 
 <template>

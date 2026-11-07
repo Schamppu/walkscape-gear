@@ -46,7 +46,10 @@ function onCountChange(quality, event) {
   const value = toCount(event.target.value);
   event.target.value = String(value);
   const { common, fine } = counts.value;
-  emitChange(quality === "common" ? value : common, quality === "fine" ? value : fine);
+  emitChange(
+    quality === "common" ? value : common,
+    quality === "fine" ? value : fine,
+  );
 }
 
 function toggleHidden(e) {

@@ -1,4 +1,8 @@
-import type { SearchProgress, SearchResult, SearchSettings } from "@/domain/advancedOptimiser/search";
+import type {
+  SearchProgress,
+  SearchResult,
+  SearchSettings,
+} from "@/domain/advancedOptimiser/search";
 import type {
   AdvancedOptimiserInbound,
   AdvancedOptimiserJob,
@@ -20,9 +24,12 @@ export type RunningJob = {
 };
 
 export const createAdvancedWorker = (): WorkerLike =>
-  new Worker(new URL("../../workers/advancedOptimiser.worker.ts", import.meta.url), {
-    type: "module",
-  }) as unknown as WorkerLike;
+  new Worker(
+    new URL("../../workers/advancedOptimiser.worker.ts", import.meta.url),
+    {
+      type: "module",
+    },
+  ) as unknown as WorkerLike;
 
 /**
  * Starts `job` on a new worker. Progress messages go to `onProgress`; the

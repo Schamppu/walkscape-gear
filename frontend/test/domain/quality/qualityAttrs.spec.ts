@@ -284,10 +284,7 @@ describe("sumAttrs", () => {
 
 describe("sumBuffAttrs", () => {
   it("returns normal attributes for common quality", () => {
-    const result = sumBuffAttrs(
-      cookedSquid.buffs as Buff[],
-      "common",
-    );
+    const result = sumBuffAttrs(cookedSquid.buffs as Buff[], "common");
     expect(result).toHaveLength(1);
     expect(result[0].stats[0].type).toBe("doubleAction");
     expect(result[0].stats[0].value).toBeCloseTo(0.08, 5);
@@ -341,7 +338,7 @@ describe("usedAttrs", () => {
       expect(result[0].stats[0].value).toBeCloseTo(0.08, 5);
     });
 
-    it("gives a consumable its buffs even with the catalog's default \"common\" quality", () => {
+    it('gives a consumable its buffs even with the catalog\'s default "common" quality', () => {
       // Gear also has "common"; the item type, not the quality string, decides.
       const result = usedAttrs(cookedSquid as GearItem, "common");
       expect(result).toHaveLength(1);

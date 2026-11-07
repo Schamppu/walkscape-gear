@@ -3,13 +3,19 @@ import { useActivityStore } from "@/store/activity";
 import { useDataStore } from "@/store/data";
 import { useGearStore } from "@/store/gear";
 import { usePlayerStore } from "@/store/player";
-import { getFallbackGearOptions, getRequiredGearOptions } from "@/composables/optimiser/gear";
+import {
+  getFallbackGearOptions,
+  getRequiredGearOptions,
+} from "@/composables/optimiser/gear";
 import { useItemsStore } from "@/store/items";
 import {
   useFineMaterials,
   type FineMaterialsContext,
 } from "@/composables/useFineMaterialsCalculations";
-import { recipeProducesCraftedItem, type DropProfile } from "@/domain/advancedOptimiser/targets";
+import {
+  recipeProducesCraftedItem,
+  type DropProfile,
+} from "@/domain/advancedOptimiser/targets";
 import { buildRecipeCoins } from "@/domain/advancedOptimiser/coins";
 import type { RecipeDetail } from "@/domain/types/recipe";
 import {
@@ -66,11 +72,15 @@ export const prepareAdvancedJob = async (
 ): Promise<AdvancedOptimiserJob | null> => {
   const baseCtx = useBaseContext();
   const dataStore = useDataStore();
-  const source = baseCtx.source.value as { tables?: LootTableRef[] | null } | null;
+  const source = baseCtx.source.value as {
+    tables?: LootTableRef[] | null;
+  } | null;
 
   await Promise.all([
     prefetchPetAbilityDetails(),
-    dataStore.fetchDetailedLootTables((source?.tables ?? []).flatMap(({ tables }) => tables)),
+    dataStore.fetchDetailedLootTables(
+      (source?.tables ?? []).flatMap(({ tables }) => tables),
+    ),
   ]);
 
   const uninstallScorer = installScorer();
@@ -111,7 +121,9 @@ export const buildAdvancedJob = ({
   const source = baseCtx.source.value as JobSource | null;
   if (!source) return null;
   const activitySelected = baseCtx.activitySelected.value;
-  const { fineMode, useFine } = useFineMaterials(baseCtx as unknown as FineMaterialsContext);
+  const { fineMode, useFine } = useFineMaterials(
+    baseCtx as unknown as FineMaterialsContext,
+  );
   const producesCraftedItem =
     !activitySelected &&
     recipeProducesCraftedItem(
@@ -123,15 +135,26 @@ export const buildAdvancedJob = ({
   // --- Slots and locks -------------------------------------------------------
   // Only slots holding an item type (not "service"), so applying the result
   // never writes to anything else.
-  const optionTypes = new Set<string>(gearTypes.filter((t) => t !== "location"));
-  const slots = usableSlots(playerStore.level).filter((slot) => optionTypes.has(slotKeyOf(slot)));
-  const locked = new Set(slots.filter((slot) => gearStore.isSlotLocked(slot as never)));
+  const optionTypes = new Set<string>(
+    gearTypes.filter((t) => t !== "location"),
+  );
+  const slots = usableSlots(playerStore.level).filter((slot) =>
+    optionTypes.has(slotKeyOf(slot)),
+  );
+  const locked = new Set(
+    slots.filter((slot) => gearStore.isSlotLocked(slot as never)),
+  );
   const searchSlots = slots.filter((slot) => !locked.has(slot));
 
   const lockedItems: Record<string, WorkerItem> = {};
   for (const slot of locked) {
-    const item = gearStore.selectedGearset[slot as keyof typeof gearStore.selectedGearset];
-    if (item) [lockedItems[slot]] = enrichItems([item as unknown as OptimiserItem], abilityCtx);
+    const item =
+      gearStore.selectedGearset[slot as keyof typeof gearStore.selectedGearset];
+    if (item)
+      [lockedItems[slot]] = enrichItems(
+        [item as unknown as OptimiserItem],
+        abilityCtx,
+      );
   }
 
   // --- Item options ----------------------------------------------------------
@@ -151,7 +174,10 @@ export const buildAdvancedJob = ({
     slotKeys.map((key) => {
       const items = [...(usefulOptions[key] ?? [])];
       const seen = new Set(items.map((i) => `${i.id}:${i.quality}`));
-      for (const item of enrichItems(requiredOptions[key]?.required ?? [], abilityCtx)) {
+      for (const item of enrichItems(
+        requiredOptions[key]?.required ?? [],
+        abilityCtx,
+      )) {
         if (!seen.has(`${item.id}:${item.quality}`)) {
           seen.add(`${item.id}:${item.quality}`);
           items.push(item);
@@ -166,7 +192,9 @@ export const buildAdvancedJob = ({
     abilityCtx,
   )
     .map(({ gearSet }) =>
-      Object.fromEntries(Object.entries(gearSet).filter(([slot]) => searchSlots.includes(slot))),
+      Object.fromEntries(
+        Object.entries(gearSet).filter(([slot]) => searchSlots.includes(slot)),
+      ),
     )
     .filter((set) => Object.keys(set).length > 0);
 
@@ -183,16 +211,22 @@ export const buildAdvancedJob = ({
           materials: recipe.materials ?? [],
           itemRewards: recipe.itemRewards ?? {},
           isGear,
-          isCrafted: (id) => isGear(id) && itemsStore.allGearItems[id].type === "crafted",
-          itemValues: dataStore.itemValues as unknown as Record<string, Record<string, number>>,
+          isCrafted: (id) =>
+            isGear(id) && itemsStore.allGearItems[id].type === "crafted",
+          itemValues: dataStore.itemValues as unknown as Record<
+            string,
+            Record<string, number>
+          >,
           useFine: useFine.value,
         }),
       },
     };
   };
 
-  const xpMap = (activitySelected ? source.xpRewardsMap : source.xpRewards) ?? {};
-  const levelReq = Object.values(getLevelRequirementsMap(source.requirements))[0] ?? 1;
+  const xpMap =
+    (activitySelected ? source.xpRewardsMap : source.xpRewards) ?? {};
+  const levelReq =
+    Object.values(getLevelRequirementsMap(source.requirements))[0] ?? 1;
 
   return toDeepRaw({
     mode: config.mode,
@@ -203,7 +237,9 @@ export const buildAdvancedJob = ({
     activitySelected,
     extraction: {
       activitySkills: Object.keys(xpMap),
-      quality: producesCraftedItem ? { levelReq, fineMode: fineMode.value } : null,
+      quality: producesCraftedItem
+        ? { levelReq, fineMode: fineMode.value }
+        : null,
       drops: withRecipeCoins(buildSourceDropProfile(source)),
     },
     reqCtx: buildStaticReqCtx(),
@@ -213,7 +249,8 @@ export const buildAdvancedJob = ({
     locations: (activityStore.locations
       ? filterLocations(activityStore.locations)
       : []) as unknown as LocationSummary[],
-    defaultLocation: baseCtx.location.value as unknown as LocationSummary | null,
+    defaultLocation: baseCtx.location
+      .value as unknown as LocationSummary | null,
     searchSlots,
     lockedItems,
     requirementSeeds,
@@ -222,8 +259,13 @@ export const buildAdvancedJob = ({
           fallbackOptions: Object.fromEntries(
             Object.entries(
               // The consumable slot is never filled just for the sake of it.
-              getFallbackGearOptions(new Set(slotKeys.filter((key) => key !== "consumable"))),
-            ).map(([key, opts]) => [key, enrichItems(opts.fallback, abilityCtx)]),
+              getFallbackGearOptions(
+                new Set(slotKeys.filter((key) => key !== "consumable")),
+              ),
+            ).map(([key, opts]) => [
+              key,
+              enrichItems(opts.fallback, abilityCtx),
+            ]),
           ),
         }
       : {}),

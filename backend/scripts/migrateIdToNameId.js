@@ -20,8 +20,8 @@ async function processInBatches(items, batchSize, delayMs, processFn) {
     let batch = items.slice(i, i + batchSize);
     console.log(
       `Processing batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(
-        items.length / batchSize
-      )}`
+        items.length / batchSize,
+      )}`,
     );
 
     let batchResults = [];
@@ -45,7 +45,7 @@ async function processInBatches(items, batchSize, delayMs, processFn) {
           console.warn(
             `Item ${batch[index]} failed, will retry. Error: ${
               result.reason?.message || "Unknown error"
-            }`
+            }`,
           );
         }
       });
@@ -59,7 +59,7 @@ async function processInBatches(items, batchSize, delayMs, processFn) {
         console.log(
           `Retrying ${batch.length} failed items (attempt ${
             retryCount + 1
-          }/${maxRetries})...`
+          }/${maxRetries})...`,
         );
         await delay(1000);
       }
@@ -69,7 +69,7 @@ async function processInBatches(items, batchSize, delayMs, processFn) {
     if (batch.length > 0) {
       console.error(
         `${batch.length} items failed after ${maxRetries} retries:`,
-        batch
+        batch,
       );
       // Add failed items as failed results
       batch.forEach((failedItem) => {
@@ -117,7 +117,7 @@ async function migrate() {
   const uniqueOldIds = [...new Set(validOldIds)];
   console.log(`Found ${uniqueOldIds.length} unique valid old item IDs`);
   console.log(
-    `Filtered out ${allItemIds.length - validOldIds.length} invalid IDs`
+    `Filtered out ${allItemIds.length - validOldIds.length} invalid IDs`,
   );
 
   // Fetch new IDs in batches with retry logic
@@ -131,7 +131,7 @@ async function migrate() {
       } catch (error) {
         if (attempt === maxRetries) {
           console.error(
-            `Failed to fetch item for old ID: ${oldId} after ${maxRetries} attempts`
+            `Failed to fetch item for old ID: ${oldId} after ${maxRetries} attempts`,
           );
           return { oldId, newId: null, success: false, error: error.message };
         }
@@ -205,7 +205,7 @@ async function migrate() {
       } catch (error) {
         console.error(
           `Failed to update record for ${ownedItem.userUuid}:${ownedItem.itemId}`,
-          error.message
+          error.message,
         );
       }
     } else {
@@ -213,7 +213,7 @@ async function migrate() {
       const wasAlreadyMigrated =
         uniqueOldIds.includes(ownedItem.itemId) &&
         results.find(
-          (r) => r.oldId === ownedItem.itemId && r.oldId === r.newId
+          (r) => r.oldId === ownedItem.itemId && r.oldId === r.newId,
         );
 
       if (wasAlreadyMigrated) {
@@ -221,7 +221,7 @@ async function migrate() {
       } else {
         skippedCount++;
         console.warn(
-          `Skipping ${ownedItem.userUuid}:${ownedItem.itemId} - no new ID found`
+          `Skipping ${ownedItem.userUuid}:${ownedItem.itemId} - no new ID found`,
         );
       }
     }

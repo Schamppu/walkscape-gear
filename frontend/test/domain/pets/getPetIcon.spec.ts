@@ -26,8 +26,16 @@ const pet: PetItem = {
     {
       id: "default",
       sprites: [
-        { sprite: "baby_shiny.png", sheet: "baby_shiny_sheet.png", stage: "juvenile" },
-        { sprite: "adult_shiny.png", sheet: "adult_shiny_sheet.png", stage: "adult" },
+        {
+          sprite: "baby_shiny.png",
+          sheet: "baby_shiny_sheet.png",
+          stage: "juvenile",
+        },
+        {
+          sprite: "adult_shiny.png",
+          sheet: "adult_shiny_sheet.png",
+          stage: "adult",
+        },
       ],
     },
   ],

@@ -167,8 +167,8 @@ export function useRequirements(ctx: RequirementContext) {
         const { keywords } = req.requirement;
         if (context.location.value) {
           value =
-            intersect(context.location.value.keywords ?? [], keywords).length ===
-            keywords.length;
+            intersect(context.location.value.keywords ?? [], keywords)
+              .length === keywords.length;
         } else if (context.activity.value) {
           const locationKeywords = context.segments.value.map(
             ({ from }) => from.keywords,
@@ -345,11 +345,9 @@ export function useRequirements(ctx: RequirementContext) {
       }
 
       case "inputKeywordWithLevel": {
-        if (
-          !(
-            context.inputItem.value && "requirements" in context.inputItem.value
-          )
-        )
+        if (!(
+          context.inputItem.value && "requirements" in context.inputItem.value
+        ))
           break;
 
         const { skill, level } = req.requirement;

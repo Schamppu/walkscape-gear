@@ -3,7 +3,9 @@ import { ref, defineAsyncComponent } from "vue";
 import OptimiserButtons from "./OptimiserButtons.vue";
 import { useOptimiser } from "@/composables/useOptimiser";
 
-const OptimiserModal = defineAsyncComponent(() => import("./OptimiserModal.vue"));
+const OptimiserModal = defineAsyncComponent(
+  () => import("./OptimiserModal.vue"),
+);
 
 const { optimise } = useOptimiser();
 

@@ -6,7 +6,9 @@ import { icons } from "@/constants/iconPaths";
 import { useNotificationStore } from "@/store/notifications";
 import WsButton from "@/components/primitives/WsButton.vue";
 
-const ExportCodeModal = defineAsyncComponent(() => import("./ExportCodeModal.vue"));
+const ExportCodeModal = defineAsyncComponent(
+  () => import("./ExportCodeModal.vue"),
+);
 
 const ctx = injectBaseContext();
 const { exportCode } = useGearSetExport(ctx);

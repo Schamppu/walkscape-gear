@@ -56,13 +56,21 @@ describe("resolveRowWeight", () => {
   const LEVEL_MAX = 50;
 
   it("returns 0 when level is below levelRequirement", () => {
-    expect(resolveRowWeight(ROW_WEIGHT, MIN_WEIGHT_SCALE, LEVEL_REQ, LEVEL_MAX, 1)).toBe(0);
-    expect(resolveRowWeight(ROW_WEIGHT, MIN_WEIGHT_SCALE, LEVEL_REQ, LEVEL_MAX, 19)).toBe(0);
+    expect(
+      resolveRowWeight(ROW_WEIGHT, MIN_WEIGHT_SCALE, LEVEL_REQ, LEVEL_MAX, 1),
+    ).toBe(0);
+    expect(
+      resolveRowWeight(ROW_WEIGHT, MIN_WEIGHT_SCALE, LEVEL_REQ, LEVEL_MAX, 19),
+    ).toBe(0);
   });
 
   it("returns full rowWeight when level >= levelMaxScaling", () => {
-    expect(resolveRowWeight(ROW_WEIGHT, MIN_WEIGHT_SCALE, LEVEL_REQ, LEVEL_MAX, 50)).toBe(10);
-    expect(resolveRowWeight(ROW_WEIGHT, MIN_WEIGHT_SCALE, LEVEL_REQ, LEVEL_MAX, 99)).toBe(10);
+    expect(
+      resolveRowWeight(ROW_WEIGHT, MIN_WEIGHT_SCALE, LEVEL_REQ, LEVEL_MAX, 50),
+    ).toBe(10);
+    expect(
+      resolveRowWeight(ROW_WEIGHT, MIN_WEIGHT_SCALE, LEVEL_REQ, LEVEL_MAX, 99),
+    ).toBe(10);
   });
 
   it("applies minWeightScale when rowWeight per step < 1 and level === levelRequirement", () => {
@@ -75,13 +83,25 @@ describe("resolveRowWeight", () => {
   it("scales linearly between levelRequirement and levelMaxScaling (else branch)", () => {
     // rowWeight=10, steps=31, increment=10/31, level=25
     // weight = (10/31) * (25 - 19) = 60/31 ≈ 1.935, rounded to 1 decimal → 1.9
-    const result = resolveRowWeight(ROW_WEIGHT, MIN_WEIGHT_SCALE, LEVEL_REQ, LEVEL_MAX, 25);
+    const result = resolveRowWeight(
+      ROW_WEIGHT,
+      MIN_WEIGHT_SCALE,
+      LEVEL_REQ,
+      LEVEL_MAX,
+      25,
+    );
     expect(result).toBeCloseTo(1.9, 1);
   });
 
   it("returns full weight one step before max scaling", () => {
     // level = levelMaxScaling - 1 should be < levelMaxScaling, uses else branch
-    const result = resolveRowWeight(ROW_WEIGHT, MIN_WEIGHT_SCALE, LEVEL_REQ, LEVEL_MAX, 49);
+    const result = resolveRowWeight(
+      ROW_WEIGHT,
+      MIN_WEIGHT_SCALE,
+      LEVEL_REQ,
+      LEVEL_MAX,
+      49,
+    );
     // increment = 10/31, weight = (10/31)*(49-19) = 300/31 ≈ 9.677, rounded → 9.7
     expect(result).toBeCloseTo(9.7, 1);
   });
@@ -121,7 +141,11 @@ describe("resolveLootTableWeights", () => {
             rowMinimumAmount: 1,
             rowMaximumAmount: 1,
             requirementsBonuses: [
-              { levelRequirement: 30, levelMaxScaling: 60, relatedSkill: "fishing" },
+              {
+                levelRequirement: 30,
+                levelMaxScaling: 60,
+                relatedSkill: "fishing",
+              },
             ],
           },
         ],
@@ -143,7 +167,11 @@ describe("resolveLootTableWeights", () => {
             rowMinimumAmount: 1,
             rowMaximumAmount: 1,
             requirementsBonuses: [
-              { levelRequirement: 30, levelMaxScaling: 60, relatedSkill: "fishing" },
+              {
+                levelRequirement: 30,
+                levelMaxScaling: 60,
+                relatedSkill: "fishing",
+              },
             ],
           },
         ],
@@ -219,7 +247,9 @@ describe("mapTableToItems", () => {
 // ---------------------------------------------------------------------------
 
 describe("groupSourcesByStat", () => {
-  const makeSources = (stats: (string | null | undefined)[]): MappedTableRow[] =>
+  const makeSources = (
+    stats: (string | null | undefined)[],
+  ): MappedTableRow[] =>
     stats.map(
       (stat, i) =>
         ({
@@ -289,7 +319,10 @@ describe("getCombinedRollChance", () => {
 
   it("returns 1 per source when rollChance is missing (defaults to 1)", () => {
     // @ts-expect-error intentionally omitting rollChance
-    const sources = [{ tableSource: "test" }, { tableSource: "test" }] as MappedTableRow[];
+    const sources = [
+      { tableSource: "test" },
+      { tableSource: "test" },
+    ] as MappedTableRow[];
     expect(getCombinedRollChance(sources)).toBe(2);
   });
 });
@@ -339,7 +372,9 @@ describe("computeRollChance", () => {
   });
 
   it("returns 0 when noDropChance is 1", () => {
-    expect(computeRollChance({ ...baseSource, noDropChance: 1 }, null, 1)).toBe(0);
+    expect(computeRollChance({ ...baseSource, noDropChance: 1 }, null, 1)).toBe(
+      0,
+    );
   });
 });
 
@@ -364,12 +399,19 @@ describe("computeSourceDropChance", () => {
 
   it("equals computeRollChance for rollAmount=1", () => {
     const rc = computeRollChance(singleRollSource, null, 1);
-    expect(computeSourceDropChance(singleRollSource, null, 1)).toBeCloseTo(rc, 8);
+    expect(computeSourceDropChance(singleRollSource, null, 1)).toBeCloseTo(
+      rc,
+      8,
+    );
   });
 
   it("increases drop chance with higher rollAmount", () => {
     const one = computeSourceDropChance(singleRollSource, null, 1);
-    const five = computeSourceDropChance({ ...singleRollSource, rollAmount: 5 }, null, 1);
+    const five = computeSourceDropChance(
+      { ...singleRollSource, rollAmount: 5 },
+      null,
+      1,
+    );
     expect(five).toBeGreaterThan(one);
   });
 
@@ -515,7 +557,11 @@ describe("getStepsPerItem", () => {
       statB: [uniformSource],
     };
     const combined = getStepsPerItem(grouped, 100, noMultiplier);
-    const single = getStepsPerItem({ statA: [uniformSource] }, 100, noMultiplier);
+    const single = getStepsPerItem(
+      { statA: [uniformSource] },
+      100,
+      noMultiplier,
+    );
     // Two independent identical sources → half the steps
     expect(combined).toBeCloseTo(single / 2, 5);
   });
@@ -551,7 +597,14 @@ describe("getDropCounts", () => {
   });
 
   it("joins multiple stat groups with ', '", () => {
-    expect(getDropCounts(makeGrouped([[1, 1], [2, 5]]))).toBe("1, 2-5");
+    expect(
+      getDropCounts(
+        makeGrouped([
+          [1, 1],
+          [2, 5],
+        ]),
+      ),
+    ).toBe("1, 2-5");
   });
 
   it("reflects swimming intermediate row amounts correctly", () => {

@@ -52,7 +52,10 @@ defineEmits(["back", "privacy-policy"]);
         </p>
         <h3>Known issues</h3>
         <ul>
-          <li>Optimiser does not consider items with loot tables (rollSpecialTable)</li>
+          <li>
+            Optimiser does not consider items with loot tables
+            (rollSpecialTable)
+          </li>
           <li>Missing handling for certain pet abilities</li>
         </ul>
         <h3>Planned features</h3>
@@ -83,7 +86,9 @@ defineEmits(["back", "privacy-policy"]);
     </details>
 
     <div class="footer-links">
-      <button class="privacy-link" @click="$emit('privacy-policy')">Privacy Policy</button>
+      <button class="privacy-link" @click="$emit('privacy-policy')">
+        Privacy Policy
+      </button>
     </div>
   </div>
 </template>

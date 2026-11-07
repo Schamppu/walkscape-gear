@@ -16,7 +16,9 @@ import ActivityComparison from "./comparison/ActivityComparison.vue";
 import RecipeComparison from "./comparison/RecipeComparison.vue";
 import DropsComparison from "./comparison/DropsComparison.vue";
 
-const RecipeCalculator = defineAsyncComponent(() => import("./calculator/ActivityCalculator.vue"));
+const RecipeCalculator = defineAsyncComponent(
+  () => import("./calculator/ActivityCalculator.vue"),
+);
 
 const activityStore = useActivityStore();
 const playerStore = usePlayerStore();
@@ -45,15 +47,22 @@ watch(useComparisonView, (open) => {
   }
 });
 
-const gs1Ctx = useGearContext(0, { service: gs1Service, location: gs1Location });
-const gs2Ctx = useGearContext(1, { service: gs2Service, location: gs2Location });
+const gs1Ctx = useGearContext(0, {
+  service: gs1Service,
+  location: gs1Location,
+});
+const gs2Ctx = useGearContext(1, {
+  service: gs2Service,
+  location: gs2Location,
+});
 
 const isLoading = computed(() => !activityStore.isLoaded);
 
-const noneActivity = computed(() =>
-  activityStore.activities
-    .filter(({ id }) => id === "none")
-    .map((item) => ({ ...item, value: item.name, items: [] }))[0],
+const noneActivity = computed(
+  () =>
+    activityStore.activities
+      .filter(({ id }) => id === "none")
+      .map((item) => ({ ...item, value: item.name, items: [] }))[0],
 );
 
 const categorize = (source) =>

@@ -66,7 +66,9 @@ describe("materialValue", () => {
 
   it("includes fine component when stepsPerFine > 0", () => {
     const info = makeValueInfo(1000, 2000);
-    const result = materialValue("ore", info, { ore: { common: 10, fine: 50 } });
+    const result = materialValue("ore", info, {
+      ore: { common: 10, fine: 50 },
+    });
     // (1000/1000)*10 + (1000/2000)*50 = 10 + 25 = 35
     expect(result).toBeCloseTo(35);
   });
@@ -80,7 +82,9 @@ describe("materialValue", () => {
 
   it("returns 0 normal contribution when stepsPerNormal is 0", () => {
     const info = makeValueInfo(0, 2000);
-    const result = materialValue("ore", info, { ore: { common: 10, fine: 50 } });
+    const result = materialValue("ore", info, {
+      ore: { common: 10, fine: 50 },
+    });
     // 0*10 + (1000/2000)*50 = 25
     expect(result).toBeCloseTo(25);
   });
@@ -100,10 +104,21 @@ describe("computeGoldTotal", () => {
   it("uses quality-based price for gear items present in both registries", () => {
     const gearItem: GearItemRef = { type: "tool", quality: "common" };
     const dropMap = {
-      axe_01: makeDropInfo("axe_01", { itemsPerStep: 2, stepsPerNormal: 500, stepsPerFine: 0 }),
+      axe_01: makeDropInfo("axe_01", {
+        itemsPerStep: 2,
+        stepsPerNormal: 500,
+        stepsPerFine: 0,
+      }),
     };
     const itemValues = {
-      axe_01: { common: 10, uncommon: 20, rare: 40, epic: 80, legendary: 160, ethereal: 320 },
+      axe_01: {
+        common: 10,
+        uncommon: 20,
+        rare: 40,
+        epic: 80,
+        legendary: 160,
+        ethereal: 320,
+      },
     };
     const result = computeGoldTotal(
       dropMap,
@@ -139,7 +154,10 @@ describe("computeGoldTotal", () => {
   it("sums multiple drop sources", () => {
     const dropMap = {
       gold: makeDropInfo("gold", { itemsPerStep: 3 }),
-      fish_01: makeDropInfo("fish_01", { stepsPerNormal: 1000, stepsPerFine: 0 }),
+      fish_01: makeDropInfo("fish_01", {
+        stepsPerNormal: 1000,
+        stepsPerFine: 0,
+      }),
     };
     const itemValues = {
       fish_01: { common: 2 } as unknown as ItemValueMap[string],
@@ -203,7 +221,10 @@ describe("buildGoldBreakdown", () => {
 
   it("returns a Drops line for material items with value", () => {
     const dropMap = {
-      fish_01: makeDropInfo("fish_01", { stepsPerNormal: 500, stepsPerFine: 0 }),
+      fish_01: makeDropInfo("fish_01", {
+        stepsPerNormal: 500,
+        stepsPerFine: 0,
+      }),
     };
     const itemValues = {
       fish_01: { common: 4 } as unknown as ItemValueMap[string],
@@ -242,8 +263,14 @@ describe("buildTokenBreakdown", () => {
 
   it("returns one line per matching token item", () => {
     const dropMap = {
-      token_a: makeDropInfo("token_a", { stepsPerNormal: 500, stepsPerFine: 0 }),
-      token_b: makeDropInfo("token_b", { stepsPerNormal: 1000, stepsPerFine: 0 }),
+      token_a: makeDropInfo("token_a", {
+        stepsPerNormal: 500,
+        stepsPerFine: 0,
+      }),
+      token_b: makeDropInfo("token_b", {
+        stepsPerNormal: 1000,
+        stepsPerFine: 0,
+      }),
     };
     const tokenValues: TokenValuesMap = {
       token_a: { common: 1 },
@@ -255,7 +282,11 @@ describe("buildTokenBreakdown", () => {
 
   it("line values match materialValue calculations", () => {
     const dropMap = {
-      token: makeDropInfo("token", { stepsPerNormal: 500, stepsPerFine: 0, icon: "icons/t.png" }),
+      token: makeDropInfo("token", {
+        stepsPerNormal: 500,
+        stepsPerFine: 0,
+        icon: "icons/t.png",
+      }),
     };
     const tokenValues: TokenValuesMap = { token: { common: 1 } };
     const lines = buildTokenBreakdown(dropMap, tokenValues);

@@ -16,7 +16,11 @@ const mountEntry = () =>
   mount(ConsumableEntry, {
     props: { item, selected: true },
     global: {
-      provide: { [BaseContextKey as symbol]: { embargoedItems: computed(() => new Set()) } },
+      provide: {
+        [BaseContextKey as symbol]: {
+          embargoedItems: computed(() => new Set()),
+        },
+      },
       stubs: { WsIcon: true, StatsDisplay: true },
     },
   });
@@ -69,6 +73,9 @@ describe("ConsumableEntry", () => {
     const common = wrapper.findAll("input.count")[0];
     await common.setValue("-3");
     expect((common.element as HTMLInputElement).value).toBe("0");
-    expect(wrapper.emitted("change")?.[0]?.[0]).toMatchObject({ quantity: 2, consumableCommon: false });
+    expect(wrapper.emitted("change")?.[0]?.[0]).toMatchObject({
+      quantity: 2,
+      consumableCommon: false,
+    });
   });
 });

@@ -39,9 +39,9 @@ describe("resolveSourceContextTables", () => {
   });
 
   it("returns [] when tables array is empty", () => {
-    expect(
-      resolveSourceContextTables({ name: "fishing", tables: [] }),
-    ).toEqual([]);
+    expect(resolveSourceContextTables({ name: "fishing", tables: [] })).toEqual(
+      [],
+    );
   });
 
   it("maps each table ref to a ContextLootTable with the activity-prefixed tableSource", () => {
@@ -89,7 +89,10 @@ describe("filterDetailedTables", () => {
     const table = makeDetailedContextTable({
       type: ["collectible"],
       tables: [
-        { noDropChance: 0, tableRows: [makeLootTableRow({ rowItemID: "coll_01" })] },
+        {
+          noDropChance: 0,
+          tableRows: [makeLootTableRow({ rowItemID: "coll_01" })],
+        },
       ],
     });
     const result = filterDetailedTables([table], true, ["coll_01"]);
@@ -100,7 +103,10 @@ describe("filterDetailedTables", () => {
     const table = makeDetailedContextTable({
       type: ["collectible"],
       tables: [
-        { noDropChance: 0, tableRows: [makeLootTableRow({ rowItemID: "coll_02" })] },
+        {
+          noDropChance: 0,
+          tableRows: [makeLootTableRow({ rowItemID: "coll_02" })],
+        },
       ],
     });
     const result = filterDetailedTables([table], true, ["coll_01"]);
@@ -138,11 +144,21 @@ describe("deduplicateAndGroupDrops", () => {
   it("groups rows with the same rowItemID from different sources into one group", () => {
     const tableA = makeDetailedContextTable({
       tableSource: "activity-fishing",
-      tables: [{ noDropChance: 0, tableRows: [makeLootTableRow({ rowItemID: "fish_01" })] }],
+      tables: [
+        {
+          noDropChance: 0,
+          tableRows: [makeLootTableRow({ rowItemID: "fish_01" })],
+        },
+      ],
     });
     const tableB = makeDetailedContextTable({
       tableSource: "gear-rod",
-      tables: [{ noDropChance: 0, tableRows: [makeLootTableRow({ rowItemID: "fish_01" })] }],
+      tables: [
+        {
+          noDropChance: 0,
+          tableRows: [makeLootTableRow({ rowItemID: "fish_01" })],
+        },
+      ],
     });
     const groups = deduplicateAndGroupDrops([tableA, tableB]);
     expect(groups).toHaveLength(1);
@@ -171,7 +187,10 @@ describe("deduplicateAndGroupDrops", () => {
   it("groups isMoney rows under the 'gold' key", () => {
     const table = makeDetailedContextTable({
       tables: [
-        { noDropChance: 0, tableRows: [makeLootTableRow({ rowItemID: null, isMoney: true })] },
+        {
+          noDropChance: 0,
+          tableRows: [makeLootTableRow({ rowItemID: null, isMoney: true })],
+        },
       ],
     });
     const groups = deduplicateAndGroupDrops([table]);
@@ -182,7 +201,10 @@ describe("deduplicateAndGroupDrops", () => {
   it("skips rows with no rowItemID that are not money", () => {
     const table = makeDetailedContextTable({
       tables: [
-        { noDropChance: 0, tableRows: [makeLootTableRow({ rowItemID: null, isMoney: false })] },
+        {
+          noDropChance: 0,
+          tableRows: [makeLootTableRow({ rowItemID: null, isMoney: false })],
+        },
       ],
     });
     const groups = deduplicateAndGroupDrops([table]);
@@ -237,8 +259,14 @@ describe("mergeTableGroups", () => {
   });
 
   it("concatenates sub-tables for non-stat (activity) tables with the same key", () => {
-    const subTableA = { noDropChance: 0, tableRows: [makeLootTableRow({ rowItemID: "item_a" })] };
-    const subTableB = { noDropChance: 0, tableRows: [makeLootTableRow({ rowItemID: "item_b" })] };
+    const subTableA = {
+      noDropChance: 0,
+      tableRows: [makeLootTableRow({ rowItemID: "item_a" })],
+    };
+    const subTableB = {
+      noDropChance: 0,
+      tableRows: [makeLootTableRow({ rowItemID: "item_b" })],
+    };
     const tableA = makeDetailedContextTable({ tables: [subTableA] });
     const tableB = makeDetailedContextTable({ tables: [subTableB] });
     const result = mergeTableGroups([tableA, tableB]);

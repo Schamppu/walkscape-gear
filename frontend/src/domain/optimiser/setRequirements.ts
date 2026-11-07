@@ -43,18 +43,26 @@ export function requirementsMet(
   return requirements.every((req) => checkRequirement(req, sCtx, dCtx));
 }
 
-function checkRequirement(req: Requirement, sCtx: StaticReqCtx, dCtx: DynCtx): boolean {
+function checkRequirement(
+  req: Requirement,
+  sCtx: StaticReqCtx,
+  dCtx: DynCtx,
+): boolean {
   const { opposite } = req;
   let value = false;
 
   switch (req.type) {
     case "mainSkill": {
-      const skills = sCtx.isActivity ? sCtx.activityRelatedSkills : sCtx.recipeRelatedSkills;
+      const skills = sCtx.isActivity
+        ? sCtx.activityRelatedSkills
+        : sCtx.recipeRelatedSkills;
       value = skills[0] === req.requirement.skill;
       break;
     }
     case "mainSkillType": {
-      const skills = sCtx.isActivity ? sCtx.activityRelatedSkills : sCtx.recipeRelatedSkills;
+      const skills = sCtx.isActivity
+        ? sCtx.activityRelatedSkills
+        : sCtx.recipeRelatedSkills;
       value = sCtx.skillsMap[skills[0]]?.type === req.requirement.type;
       break;
     }
@@ -63,7 +71,9 @@ function checkRequirement(req: Requirement, sCtx: StaticReqCtx, dCtx: DynCtx): b
       if (dCtx.locationKeywords.length) {
         value = keywords.every((kw) => dCtx.locationKeywords.includes(kw));
       } else {
-        value = sCtx.segments.some((s) => keywords.every((kw) => s.keywords.includes(kw)));
+        value = sCtx.segments.some((s) =>
+          keywords.every((kw) => s.keywords.includes(kw)),
+        );
       }
       break;
     }
@@ -72,7 +82,9 @@ function checkRequirement(req: Requirement, sCtx: StaticReqCtx, dCtx: DynCtx): b
       break;
     case "distinctKeywordItemsEquipped": {
       const { keywords, quantity } = req.requirement;
-      value = keywords.every((kw) => (dCtx.equippedKeywordCounts[kw] ?? 0) >= quantity);
+      value = keywords.every(
+        (kw) => (dCtx.equippedKeywordCounts[kw] ?? 0) >= quantity,
+      );
       break;
     }
     case "historyData":
@@ -108,7 +120,9 @@ function checkRequirement(req: Requirement, sCtx: StaticReqCtx, dCtx: DynCtx): b
       const selectedTierIndex = serviceTiers.indexOf(
         selectedTier as (typeof serviceTiers)[number],
       );
-      const reqTierIndex = serviceTiers.indexOf(tier as (typeof serviceTiers)[number]);
+      const reqTierIndex = serviceTiers.indexOf(
+        tier as (typeof serviceTiers)[number],
+      );
 
       const tierOk =
         selectedTierIndex >= 0 && reqTierIndex >= 0
@@ -128,7 +142,8 @@ function checkRequirement(req: Requirement, sCtx: StaticReqCtx, dCtx: DynCtx): b
       break;
     }
     case "skillLevel":
-      value = (sCtx.skillLevels[req.requirement.skill] ?? 0) >= req.requirement.level;
+      value =
+        (sCtx.skillLevels[req.requirement.skill] ?? 0) >= req.requirement.level;
       break;
     case "activityType": {
       const { activity: reqActivity, keywords: reqKeywords } = req.requirement;
@@ -153,7 +168,9 @@ function checkRequirement(req: Requirement, sCtx: StaticReqCtx, dCtx: DynCtx): b
       value = sCtx.ownedItemIds.includes(req.requirement.item);
       break;
     case "keywordEquipped":
-      value = dCtx.equippedGear.some((g) => g.keywords?.includes(req.requirement.keyword));
+      value = dCtx.equippedGear.some((g) =>
+        g.keywords?.includes(req.requirement.keyword),
+      );
       break;
     case "keywordWithLevelEquipped": {
       const { keyword, skill, level } = req.requirement;
@@ -170,7 +187,9 @@ function checkRequirement(req: Requirement, sCtx: StaticReqCtx, dCtx: DynCtx): b
     case "abilityAvailable": {
       const { ability } = req.requirement;
       value = dCtx.equippedGear.some(({ abilities }) =>
-        abilities?.flatMap((a) => (typeof a === "object" ? a.ability : a)).includes(ability),
+        abilities
+          ?.flatMap((a) => (typeof a === "object" ? a.ability : a))
+          .includes(ability),
       );
       break;
     }
@@ -223,8 +242,8 @@ export function preFilterStaticEntries(
     locationFaction: sCtx.locationFaction,
     locationSubFactions: sCtx.locationSubFactions,
   };
-  return staticEntries.filter(
-    (e) => requirementsMet(e.requirements, sCtx, emptyDynCtx),
+  return staticEntries.filter((e) =>
+    requirementsMet(e.requirements, sCtx, emptyDynCtx),
   );
 }
 
@@ -242,7 +261,11 @@ export function keywordsClash(
   keywordsMap: Record<string, { bannedKeywords: string[] }>,
 ): boolean {
   const bans = (from: readonly string[], to: readonly string[]) =>
-    from.some((kw) => (keywordsMap[kw]?.bannedKeywords ?? []).some((banned) => to.includes(banned)));
+    from.some((kw) =>
+      (keywordsMap[kw]?.bannedKeywords ?? []).some((banned) =>
+        to.includes(banned),
+      ),
+    );
   return bans(a, b) || bans(b, a);
 }
 

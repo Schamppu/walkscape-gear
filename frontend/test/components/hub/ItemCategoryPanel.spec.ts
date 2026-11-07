@@ -17,9 +17,18 @@ const consumables = [
 
 const mountPanel = () =>
   mount(ItemCategoryPanel, {
-    props: { group: "Consumables", title: "Consumables", itemCategory: "consumables", isOpen: false },
+    props: {
+      group: "Consumables",
+      title: "Consumables",
+      itemCategory: "consumables",
+      isOpen: false,
+    },
     global: {
-      provide: { [BaseContextKey as symbol]: { embargoedItems: computed(() => new Set()) } },
+      provide: {
+        [BaseContextKey as symbol]: {
+          embargoedItems: computed(() => new Set()),
+        },
+      },
     },
   });
 
@@ -28,15 +37,29 @@ describe("ItemCategoryPanel consumables select all", () => {
     setActivePinia(createPinia());
     const store = useItemsStore();
     store.itemsByCategory = { consumables } as never;
-    store.toggleItem({ itemId: "stew", hidden: false, owned: true, quantity: 9, quantityFine: 4 });
+    store.toggleItem({
+      itemId: "stew",
+      hidden: false,
+      owned: true,
+      quantity: 9,
+      quantityFine: 4,
+    });
   });
 
   it("gives consumables you have none of a normal count of 1 and keeps existing counts", async () => {
     const wrapper = mountPanel();
     await wrapper.find('input[aria-label="Select all"]').setValue(true);
     const store = useItemsStore();
-    expect(store.ownedItems.pie).toMatchObject({ owned: true, quantity: 1, quantityFine: 0, consumableCommon: true });
-    expect(store.ownedItems.stew).toMatchObject({ quantity: 9, quantityFine: 4 });
+    expect(store.ownedItems.pie).toMatchObject({
+      owned: true,
+      quantity: 1,
+      quantityFine: 0,
+      consumableCommon: true,
+    });
+    expect(store.ownedItems.stew).toMatchObject({
+      quantity: 9,
+      quantityFine: 4,
+    });
   });
 
   it("sets every count to 0 when unchecked", async () => {
@@ -46,7 +69,12 @@ describe("ItemCategoryPanel consumables select all", () => {
     await selectAll.setValue(false);
     const store = useItemsStore();
     for (const id of ["pie", "stew"]) {
-      expect(store.ownedItems[id]).toMatchObject({ owned: false, quantity: 0, quantityFine: 0, consumableFine: false });
+      expect(store.ownedItems[id]).toMatchObject({
+        owned: false,
+        quantity: 0,
+        quantityFine: 0,
+        consumableFine: false,
+      });
     }
   });
 });

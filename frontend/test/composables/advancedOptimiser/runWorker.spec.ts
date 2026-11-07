@@ -1,5 +1,8 @@
 import { describe, it, expect, vi } from "vitest";
-import { runAdvancedJob, type WorkerLike } from "@/composables/advancedOptimiser/runWorker";
+import {
+  runAdvancedJob,
+  type WorkerLike,
+} from "@/composables/advancedOptimiser/runWorker";
 import { applySearchResult } from "@/composables/advancedOptimiser/applyResult";
 import { createSession } from "@/workers/advancedOptimiserSession";
 import type { SearchResult } from "@/domain/advancedOptimiser/search";
@@ -18,9 +21,13 @@ import {
 const job = makeJob({
   searchSlots: ["head", "chest"],
   options: {
-    head: [makeWorkerItem("small_hat", [{ type: "workEfficiency", value: 0.1 }]),
-      makeWorkerItem("big_hat", [{ type: "workEfficiency", value: 0.4 }])],
-    chest: [makeWorkerItem("big_chest", [{ type: "workEfficiency", value: 0.3 }])],
+    head: [
+      makeWorkerItem("small_hat", [{ type: "workEfficiency", value: 0.1 }]),
+      makeWorkerItem("big_hat", [{ type: "workEfficiency", value: 0.4 }]),
+    ],
+    chest: [
+      makeWorkerItem("big_chest", [{ type: "workEfficiency", value: 0.3 }]),
+    ],
   },
 });
 
@@ -47,8 +54,15 @@ class InProcessWorker implements WorkerLike {
   onerror: WorkerLike["onerror"] = null;
   terminated = false;
   private handle = createSession(
-    (data) => queueMicrotask(() => this.onmessage?.({ data } as MessageEvent<AdvancedOptimiserOutbound>)),
-    { now: tickingClock(10), random: seededRandom(1), yieldToEventLoop: () => Promise.resolve() },
+    (data) =>
+      queueMicrotask(() =>
+        this.onmessage?.({ data } as MessageEvent<AdvancedOptimiserOutbound>),
+      ),
+    {
+      now: tickingClock(10),
+      random: seededRandom(1),
+      yieldToEventLoop: () => Promise.resolve(),
+    },
   );
   postMessage(message: AdvancedOptimiserInbound) {
     void this.handle(message);
@@ -76,14 +90,28 @@ describe("runAdvancedJob", () => {
   it("starts the job, forwards progress and resolves with the result", async () => {
     const worker = new ScriptedWorker();
     const onProgress = vi.fn();
-    const running = runAdvancedJob(job, { createWorker: () => worker, onProgress });
+    const running = runAdvancedJob(job, {
+      createWorker: () => worker,
+      onProgress,
+    });
 
     expect(worker.sent).toEqual([{ type: "start", job, settings: undefined }]);
-    worker.emit({ type: "progress", progress: { bestScore: 1.5, improvement: 0.5, valid: true, elapsedMs: 5, evaluations: 3 } });
+    worker.emit({
+      type: "progress",
+      progress: {
+        bestScore: 1.5,
+        improvement: 0.5,
+        valid: true,
+        elapsedMs: 5,
+        evaluations: 3,
+      },
+    });
     worker.emit({ type: "result", result: fakeResult() });
 
     await expect(running.result).resolves.toEqual(fakeResult());
-    expect(onProgress).toHaveBeenCalledWith(expect.objectContaining({ bestScore: 1.5 }));
+    expect(onProgress).toHaveBeenCalledWith(
+      expect.objectContaining({ bestScore: 1.5 }),
+    );
     expect(worker.terminated).toBe(true);
   });
 
@@ -129,7 +157,11 @@ describe("applySearchResult", () => {
   it("equips every search slot, emptying ones the result leaves empty", async () => {
     const t = targets();
     const hat = makeWorkerItem("big_hat");
-    const applied = await applySearchResult(fakeResult({ gearSet: { head: hat } }), ["head", "chest"], t);
+    const applied = await applySearchResult(
+      fakeResult({ gearSet: { head: hat } }),
+      ["head", "chest"],
+      t,
+    );
     expect(applied).toBe(true);
     expect(t.equipMultiple).toHaveBeenCalledWith(
       { head: { id: "big_hat", quality: "common" }, chest: null },
@@ -140,7 +172,11 @@ describe("applySearchResult", () => {
   it("never touches slots outside the search (locked slots)", async () => {
     const t = targets();
     const locked = makeWorkerItem("locked_hat");
-    await applySearchResult(fakeResult({ gearSet: { head: locked } }), ["chest"], t);
+    await applySearchResult(
+      fakeResult({ gearSet: { head: locked } }),
+      ["chest"],
+      t,
+    );
     expect(t.equipMultiple).toHaveBeenCalledWith({ chest: null }, true);
   });
 
@@ -161,12 +197,19 @@ describe("applySearchResult", () => {
       { applyStopped: true },
     );
     expect(applied).toBe(true);
-    expect(t.equipMultiple).toHaveBeenCalledWith({ head: { id: "big_hat", quality: "common" } }, true);
+    expect(t.equipMultiple).toHaveBeenCalledWith(
+      { head: { id: "big_hat", quality: "common" } },
+      true,
+    );
   });
 
   it("leaves the gear set alone for a cancelled run", async () => {
     const t = targets();
-    const applied = await applySearchResult(fakeResult({ cancelled: true }), ["head"], t);
+    const applied = await applySearchResult(
+      fakeResult({ cancelled: true }),
+      ["head"],
+      t,
+    );
     expect(applied).toBe(false);
     expect(t.equipMultiple).not.toHaveBeenCalled();
     expect(t.setLocation).not.toHaveBeenCalled();

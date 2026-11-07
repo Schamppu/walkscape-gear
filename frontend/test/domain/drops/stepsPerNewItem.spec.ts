@@ -84,7 +84,9 @@ describe("computeNewItems - activity drops", () => {
   });
 
   it("includes petEgg table-type items not in ownedItems", () => {
-    const dropMap = { blue_dragon_egg: makeInfo("blue_dragon_egg", 50000, ["petEgg"]) };
+    const dropMap = {
+      blue_dragon_egg: makeInfo("blue_dragon_egg", 50000, ["petEgg"]),
+    };
     const result = computeNewItems(dropMap, [], {}, allItems);
     expect(result.map((i) => i.id)).toContain("blue_dragon_egg");
   });
@@ -100,7 +102,9 @@ describe("computeNewItems - activity drops", () => {
 
   it("excludes items already in ownedItems", () => {
     const dropMap = { rusty_sword: makeInfo("rusty_sword", 500) };
-    expect(computeNewItems(dropMap, [], { rusty_sword: { owned: true } }, allItems)).toHaveLength(0);
+    expect(
+      computeNewItems(dropMap, [], { rusty_sword: { owned: true } }, allItems),
+    ).toHaveLength(0);
   });
 
   it("includes items whose entry is kept but no longer owned", () => {
@@ -111,12 +115,18 @@ describe("computeNewItems - activity drops", () => {
   });
 
   it("excludes pet egg when the pet (without _egg) is owned", () => {
-    const dropMap = { blue_dragon_egg: makeInfo("blue_dragon_egg", 50000, ["petEgg"]) };
-    expect(computeNewItems(dropMap, [], { blue_dragon: { owned: true } }, allItems)).toHaveLength(0);
+    const dropMap = {
+      blue_dragon_egg: makeInfo("blue_dragon_egg", 50000, ["petEgg"]),
+    };
+    expect(
+      computeNewItems(dropMap, [], { blue_dragon: { owned: true } }, allItems),
+    ).toHaveLength(0);
   });
 
   it("includes pet egg when the pet (without _egg) is not owned", () => {
-    const dropMap = { blue_dragon_egg: makeInfo("blue_dragon_egg", 50000, ["petEgg"]) };
+    const dropMap = {
+      blue_dragon_egg: makeInfo("blue_dragon_egg", 50000, ["petEgg"]),
+    };
     expect(computeNewItems(dropMap, [], {}, allItems)).toHaveLength(1);
   });
 });
@@ -137,9 +147,13 @@ describe("computeNewItems - chest grouping", () => {
   });
 
   it("uses the chest icon as the entry icon", () => {
-    const chest = makeChest("wood_chest", {
-      chest_loot_a: makeInfo("chest_loot_a", 10000),
-    }, "chest_icon.png");
+    const chest = makeChest(
+      "wood_chest",
+      {
+        chest_loot_a: makeInfo("chest_loot_a", 10000),
+      },
+      "chest_icon.png",
+    );
     const result = computeNewItems({}, [chest], {}, allItems);
     expect(result[0].icon).toBe("chest_icon.png");
   });
@@ -159,7 +173,12 @@ describe("computeNewItems - chest grouping", () => {
     const chest = makeChest("wood_chest", {
       chest_loot_a: makeInfo("chest_loot_a", 10000),
     });
-    const result = computeNewItems({}, [chest], { chest_loot_a: { owned: true } }, allItems);
+    const result = computeNewItems(
+      {},
+      [chest],
+      { chest_loot_a: { owned: true } },
+      allItems,
+    );
     expect(result).toHaveLength(0);
   });
 
@@ -169,14 +188,23 @@ describe("computeNewItems - chest grouping", () => {
       chest_loot_a: makeInfo("chest_loot_a", 10000),
       chest_loot_b: makeInfo("chest_loot_b", 20000),
     });
-    const result = computeNewItems({}, [chest], { chest_loot_a: { owned: true } }, allItems);
+    const result = computeNewItems(
+      {},
+      [chest],
+      { chest_loot_a: { owned: true } },
+      allItems,
+    );
     expect(result).toHaveLength(1);
     expect(result[0].stepsPerItem).toBeCloseTo(20000, 1);
   });
 
   it("returns separate entries for two chests that both have new items", () => {
-    const chest1 = makeChest("chest_a", { chest_loot_a: makeInfo("chest_loot_a", 10000) });
-    const chest2 = makeChest("chest_b", { chest_loot_b: makeInfo("chest_loot_b", 20000) });
+    const chest1 = makeChest("chest_a", {
+      chest_loot_a: makeInfo("chest_loot_a", 10000),
+    });
+    const chest2 = makeChest("chest_b", {
+      chest_loot_b: makeInfo("chest_loot_b", 20000),
+    });
     const result = computeNewItems({}, [chest1, chest2], {}, allItems);
     expect(result).toHaveLength(2);
     expect(result.map((r) => r.id)).toContain("chest_a");
@@ -211,7 +239,9 @@ describe("computeStepsPerAnyNewItem", () => {
   });
 
   it("returns the item's own steps for a single item", () => {
-    const items: NewItemEntry[] = [{ id: "a", icon: undefined, stepsPerItem: 20000 }];
+    const items: NewItemEntry[] = [
+      { id: "a", icon: undefined, stepsPerItem: 20000 },
+    ];
     expect(computeStepsPerAnyNewItem(items)).toBeCloseTo(20000, 5);
   });
 

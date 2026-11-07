@@ -102,7 +102,9 @@ export function requirementsFill(
 ): Candidate[] {
   const reqs = requirements.filter(isHandledRequirement);
 
-  let candidates: Candidate[] = [{ gearSet: {}, score: startScore(), slotCounts: {} }];
+  let candidates: Candidate[] = [
+    { gearSet: {}, score: startScore(), slotCounts: {} },
+  ];
 
   const requiredOptions = getItemOptions(gearOptions, "required");
   reqs.forEach((requirement) => {

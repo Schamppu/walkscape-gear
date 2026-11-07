@@ -25,9 +25,9 @@ function makeAttr(overrides: Partial<Attribute> = {}): Attribute {
     customIcon: null,
     customTextLocalizationKey:
       "attributes.singulars.custom.findTreasureChest.text",
-    customText: "Chance to find <hl>1</hl> <object id=\"skilling_chest\" />",
+    customText: 'Chance to find <hl>1</hl> <object id="skilling_chest" />',
     textLocalizationKey: "attributes.singulars.custom.findTreasureChest.text",
-    text: "Chance to find <hl>1</hl> <object id=\"skilling_chest\" />",
+    text: 'Chance to find <hl>1</hl> <object id="skilling_chest" />',
     statText: "Roll special table",
     skillText: "",
     tables: [

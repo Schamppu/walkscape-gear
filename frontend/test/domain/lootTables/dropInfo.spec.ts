@@ -21,7 +21,9 @@ function makeModifiers(overrides: Partial<FindModifiers> = {}): FindModifiers {
   };
 }
 
-function makeMappedRow(overrides: Partial<MappedTableRow> = {}): MappedTableRow {
+function makeMappedRow(
+  overrides: Partial<MappedTableRow> = {},
+): MappedTableRow {
   return {
     ...makeLootTableRow(),
     noDropChance: 0,
@@ -76,7 +78,10 @@ describe("resolveDropMultiplier", () => {
 
   it("ignores unrelated type strings", () => {
     expect(
-      resolveDropMultiplier(["normal", "rare"], makeModifiers({ chestFind: 5 })),
+      resolveDropMultiplier(
+        ["normal", "rare"],
+        makeModifiers({ chestFind: 5 }),
+      ),
     ).toBe(1);
   });
 });
@@ -121,7 +126,11 @@ describe("getVariableRequirement", () => {
   it("defaults icon to empty string when skill is not in skillsMap", () => {
     const row = makeMappedRow({
       requirementsBonuses: [
-        { levelRequirement: 20, levelMaxScaling: 50, relatedSkill: "unknown_skill" },
+        {
+          levelRequirement: 20,
+          levelMaxScaling: 50,
+          relatedSkill: "unknown_skill",
+        },
       ],
     });
     const result = getVariableRequirement(row, {});

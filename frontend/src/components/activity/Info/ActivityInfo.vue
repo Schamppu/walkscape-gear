@@ -147,7 +147,10 @@ const sections = computed(() => {
   if (showRewards) {
     const factionReward = rewards[0];
     const rewardsFaction = playerStore.factionsMap[factionReward.faction];
-    const stepsPerRep = n(computeStepsPerRep(factionReward.amount, stepsPerAction.value), 0);
+    const stepsPerRep = n(
+      computeStepsPerRep(factionReward.amount, stepsPerAction.value),
+      0,
+    );
 
     statsRow.items.push({
       text: `+${factionReward.amount} / ${stepsPerRep}`,

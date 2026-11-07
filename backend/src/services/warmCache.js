@@ -69,8 +69,9 @@ export async function warmCache() {
     ["items.getItemValueMapping", () => itemService.getItemValueMapping()],
     ["items.getFineMaterials", () => itemService.getFineMaterials()],
     ["pets.fetchPets", () => petService.fetchPets()],
-    ["locations.getRealmDefaultLocations", () =>
-      locationService.getRealmDefaultLocations(),
+    [
+      "locations.getRealmDefaultLocations",
+      () => locationService.getRealmDefaultLocations(),
     ],
   ];
 

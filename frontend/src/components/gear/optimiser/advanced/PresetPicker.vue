@@ -3,7 +3,10 @@ import { computed, ref, watch } from "vue";
 import WsButton from "@/components/primitives/WsButton.vue";
 import PresetSavePanel from "./PresetSavePanel.vue";
 import { useOptimiserPresetsStore } from "@/store/optimiserPresets";
-import { presetTargetsProblem, type OptimiserPreset } from "@/domain/advancedOptimiser/presets";
+import {
+  presetTargetsProblem,
+  type OptimiserPreset,
+} from "@/domain/advancedOptimiser/presets";
 import type { Target } from "@/domain/advancedOptimiser/config";
 
 /**
@@ -51,7 +54,10 @@ const label = computed(() => props.selected?.name ?? "Custom targets");
 /** The player's presets shown here; ▲ / ▼ swap with the neighbour in this list. */
 const userPresets = computed(() => props.presets.filter((p) => !p.builtin));
 
-const neighbour = (preset: OptimiserPreset, offset: -1 | 1): OptimiserPreset | null =>
+const neighbour = (
+  preset: OptimiserPreset,
+  offset: -1 | 1,
+): OptimiserPreset | null =>
   userPresets.value[userPresets.value.indexOf(preset) + offset] ?? null;
 
 const close = (): void => {
@@ -85,14 +91,17 @@ const runAction = async (action: () => Promise<boolean>): Promise<void> => {
 };
 
 const onRename = (name: string): Promise<void> =>
-  runAction(async () =>
-    !!selectedUserPreset.value &&
-    !!(await presetsStore.renamePreset(selectedUserPreset.value.id, name)),
+  runAction(
+    async () =>
+      !!selectedUserPreset.value &&
+      !!(await presetsStore.renamePreset(selectedUserPreset.value.id, name)),
   );
 
 const onDelete = (): Promise<void> =>
-  runAction(async () =>
-    !!selectedUserPreset.value && presetsStore.deletePreset(selectedUserPreset.value.id),
+  runAction(
+    async () =>
+      !!selectedUserPreset.value &&
+      presetsStore.deletePreset(selectedUserPreset.value.id),
   );
 </script>
 
@@ -109,7 +118,9 @@ const onDelete = (): Promise<void> =>
           <span class="label">
             {{ label }}<span v-if="modified" class="modified"> (modified)</span>
           </span>
-          <span class="chevron" :class="{ open: isOpen }" aria-hidden="true">▼</span>
+          <span class="chevron" :class="{ open: isOpen }" aria-hidden="true"
+            >▼</span
+          >
         </button>
 
         <ul v-if="isOpen" class="menu" aria-label="Presets">
@@ -155,7 +166,9 @@ const onDelete = (): Promise<void> =>
               />
             </span>
           </li>
-          <li v-if="!presets.length" class="empty">No presets for this activity</li>
+          <li v-if="!presets.length" class="empty">
+            No presets for this activity
+          </li>
 
           <template v-if="hiddenPresets.length">
             <li class="group-heading">
@@ -166,11 +179,20 @@ const onDelete = (): Promise<void> =>
                 @click.stop="showHidden = !showHidden"
               >
                 <span>Hidden ({{ hiddenPresets.length }})</span>
-                <span class="chevron" :class="{ open: showHidden }" aria-hidden="true">▼</span>
+                <span
+                  class="chevron"
+                  :class="{ open: showHidden }"
+                  aria-hidden="true"
+                  >▼</span
+                >
               </button>
             </li>
             <template v-if="showHidden">
-              <li v-for="preset in hiddenPresets" :key="preset.id" class="item hidden">
+              <li
+                v-for="preset in hiddenPresets"
+                :key="preset.id"
+                class="item hidden"
+              >
                 <span class="choose">
                   <span class="name">{{ preset.name }}</span>
                 </span>
@@ -179,7 +201,9 @@ const onDelete = (): Promise<void> =>
                     text="Show"
                     variant="secondary"
                     :aria-label="`Show ${preset.name}`"
-                    @click.stop="presetsStore.setBuiltinHidden(preset.id, false)"
+                    @click.stop="
+                      presetsStore.setBuiltinHidden(preset.id, false)
+                    "
                   />
                 </span>
               </li>
@@ -202,7 +226,9 @@ const onDelete = (): Promise<void> =>
       />
     </div>
 
-    <p v-if="selected?.description" class="description">{{ selected.description }}</p>
+    <p v-if="selected?.description" class="description">
+      {{ selected.description }}
+    </p>
 
     <preset-save-panel
       v-if="panel"

@@ -117,13 +117,24 @@ describe("resolveMaterials — edge cases", () => {
 describe("resolveMaterials — resolution", () => {
   it("resolves name, icon, id, and amount for a known item", () => {
     const materials = [{ options: [{ item: "oak_log", amount: 3 }] }];
-    const [[opt]] = resolveMaterials(materials, makeLookups({ oak_log: itemA }));
-    expect(opt).toEqual({ id: "oak_log", name: "Oak Log", icon: "icons/oak.png", amount: 3 });
+    const [[opt]] = resolveMaterials(
+      materials,
+      makeLookups({ oak_log: itemA }),
+    );
+    expect(opt).toEqual({
+      id: "oak_log",
+      name: "Oak Log",
+      icon: "icons/oak.png",
+      amount: 3,
+    });
   });
 
   it("preserves the amount from the raw option", () => {
     const materials = [{ options: [{ item: "oak_log", amount: 7 }] }];
-    const [[opt]] = resolveMaterials(materials, makeLookups({ oak_log: itemA }));
+    const [[opt]] = resolveMaterials(
+      materials,
+      makeLookups({ oak_log: itemA }),
+    );
     expect(opt.amount).toBe(7);
   });
 
@@ -154,7 +165,10 @@ describe("resolveMaterials — resolution", () => {
         ],
       },
     ];
-    const [group] = resolveMaterials(materials, makeLookups({ oak_log: itemA }));
+    const [group] = resolveMaterials(
+      materials,
+      makeLookups({ oak_log: itemA }),
+    );
     expect(group).toHaveLength(1);
     expect(group[0].id).toBe("oak_log");
   });

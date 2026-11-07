@@ -1,5 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { applyLocks, compareSetScores, createSetScorer } from "@/domain/advancedOptimiser/scorer";
+import {
+  applyLocks,
+  compareSetScores,
+  createSetScorer,
+} from "@/domain/advancedOptimiser/scorer";
 import type { HandledRequirement } from "@/domain/optimiser/requirements";
 import {
   keywordEquippedReq,
@@ -20,7 +24,12 @@ const weItem = (id: string, value: number) =>
 describe("createSetScorer", () => {
   it("scores naked gear as the sum of weights (every target = baseline)", () => {
     const score = createSetScorer(
-      makeJob({ targets: [makeTarget("xp", "step", 3), makeTarget("rewardRolls", "step", 2)] }),
+      makeJob({
+        targets: [
+          makeTarget("xp", "step", 3),
+          makeTarget("rewardRolls", "step", 2),
+        ],
+      }),
     );
     const result = score({});
     expect(result.valid).toBe(true);
@@ -45,7 +54,10 @@ describe("createSetScorer", () => {
       makeWorkerItem(id, [], {
         keywords: ["treasure"],
         conditional: [
-          { stats: [{ type: "workEfficiency", value: 0.5 }], requirements: [setBonusReq("treasure", 3)] },
+          {
+            stats: [{ type: "workEfficiency", value: 0.5 }],
+            requirements: [setBonusReq("treasure", 3)],
+          },
         ],
       });
     const score = createSetScorer(makeJob());
@@ -58,23 +70,34 @@ describe("createSetScorer", () => {
   it("only counts realm-only stats at a location in that realm", () => {
     const deepItem = makeWorkerItem("deep_hat", [], {
       conditional: [
-        { stats: [{ type: "workEfficiency", value: 1 }], requirements: [realmReq("syrenthia")] },
+        {
+          stats: [{ type: "workEfficiency", value: 1 }],
+          requirements: [realmReq("syrenthia")],
+        },
       ],
     });
     const score = createSetScorer(makeJob());
     const syrenthia = makeLocationSummary("reef", "syrenthia");
     const jarvonia = makeLocationSummary("town", "jarvonia");
-    expect(score({ head: deepItem, location: syrenthia }).score).toBeCloseTo(2, 10);
-    expect(score({ head: deepItem, location: jarvonia }).score).toBeCloseTo(1, 10);
+    expect(score({ head: deepItem, location: syrenthia }).score).toBeCloseTo(
+      2,
+      10,
+    );
+    expect(score({ head: deepItem, location: jarvonia }).score).toBeCloseTo(
+      1,
+      10,
+    );
   });
 
   it("normalises against each location's own naked baseline", () => {
     // A collectible that only works in Syrenthia raises naked gear there.
     const job = makeJob({
       staticEntries: [
-        makeAttrEntry("deep_collectible", [{ type: "workEfficiency", value: 1 }], [
-          realmReq("syrenthia"),
-        ]),
+        makeAttrEntry(
+          "deep_collectible",
+          [{ type: "workEfficiency", value: 1 }],
+          [realmReq("syrenthia")],
+        ),
       ],
     });
     const score = createSetScorer(job);
@@ -89,7 +112,9 @@ describe("createSetScorer", () => {
 
   it("marks sets missing a required keyword invalid but still scores them", () => {
     const job = makeJob({
-      activityRequirements: [keywordEquippedReq("fishing_rod") as HandledRequirement],
+      activityRequirements: [
+        keywordEquippedReq("fishing_rod") as HandledRequirement,
+      ],
     });
     const score = createSetScorer(job);
     const rod = makeWorkerItem("rod", [], { keywords: ["fishing_rod"] });

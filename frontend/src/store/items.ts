@@ -96,32 +96,40 @@ export const useItemsStore = defineStore("itemStore", {
       const categories = categorizedItems.flatMap(
         ({ categories }) => categories,
       );
-      this.itemsByCategory = markRaw(Object.fromEntries(
-        categories.map(({ key, items }) => [key, items]),
-      ));
-      this.allGearItems = markRaw(Object.fromEntries(
-        categories.flatMap(({ items }) => items).map((item) => [item.id, item]),
-      ));
-      this.embargoedItems = markRaw(new Set(
-        Object.values(this.allGearItems)
-          .filter((item) => "embargo" in item)
-          .map(({ id }) => id),
-      ));
-      this.materials = markRaw(Object.fromEntries(
-        materials.map((item) => [item.id, item]),
-      ));
-      this.containers = markRaw(Object.fromEntries(
-        containers.map((item) => [item.id, item]),
-      ));
-      this.memospheres = markRaw(Object.fromEntries(
-        memospheres.map((item) => [item.id, item]),
-      ));
-      this.fineMaterials = markRaw(Object.fromEntries(
-        fineMaterials.map((id) => [id, true]),
-      ));
-      this.petsMap = markRaw(Object.fromEntries(
-        this.itemsByCategory["pets"].map((pet) => [pet.id, pet]),
-      ));
+      this.itemsByCategory = markRaw(
+        Object.fromEntries(categories.map(({ key, items }) => [key, items])),
+      );
+      this.allGearItems = markRaw(
+        Object.fromEntries(
+          categories
+            .flatMap(({ items }) => items)
+            .map((item) => [item.id, item]),
+        ),
+      );
+      this.embargoedItems = markRaw(
+        new Set(
+          Object.values(this.allGearItems)
+            .filter((item) => "embargo" in item)
+            .map(({ id }) => id),
+        ),
+      );
+      this.materials = markRaw(
+        Object.fromEntries(materials.map((item) => [item.id, item])),
+      );
+      this.containers = markRaw(
+        Object.fromEntries(containers.map((item) => [item.id, item])),
+      );
+      this.memospheres = markRaw(
+        Object.fromEntries(memospheres.map((item) => [item.id, item])),
+      );
+      this.fineMaterials = markRaw(
+        Object.fromEntries(fineMaterials.map((id) => [id, true])),
+      );
+      this.petsMap = markRaw(
+        Object.fromEntries(
+          this.itemsByCategory["pets"].map((pet) => [pet.id, pet]),
+        ),
+      );
 
       this.isLoaded = true;
       const notificationStore = useNotificationStore();
@@ -159,7 +167,11 @@ export const useItemsStore = defineStore("itemStore", {
       const given = Object.fromEntries(
         Object.entries(payload).filter(([, value]) => value !== undefined),
       ) as Partial<OwnedItemState>;
-      const entry: OwnedItemState = { ...defaults, ...this.ownedItems[itemId], ...given };
+      const entry: OwnedItemState = {
+        ...defaults,
+        ...this.ownedItems[itemId],
+        ...given,
+      };
       this.ownedItems[itemId] = entry;
       this.changedOwnedItems[itemId] = entry;
       this.scheduleOwnedItemsFlush();
@@ -185,7 +197,9 @@ export const useItemsStore = defineStore("itemStore", {
           }
           flushed += batch.length;
         }
-        void notificationStore.debug(`Items: flushed ${flushed} owned item change(s) to DB`);
+        void notificationStore.debug(
+          `Items: flushed ${flushed} owned item change(s) to DB`,
+        );
       } catch (error) {
         // Unflushed changes stay in changedOwnedItems and are retried on the next flush
         console.error("error updating owned items", error);
@@ -195,12 +209,11 @@ export const useItemsStore = defineStore("itemStore", {
         );
       }
     },
-    scheduleOwnedItemsFlush: debounce(
-      function (this: { flushChangedOwnedItems(): Promise<void> }) {
-        this.flushChangedOwnedItems();
-      },
-      5000,
-    ),
+    scheduleOwnedItemsFlush: debounce(function (this: {
+      flushChangedOwnedItems(): Promise<void>;
+    }) {
+      this.flushChangedOwnedItems();
+    }, 5000),
 
     batchUpdateOwnedItems(itemsToUpdate: Record<string, OwnedItemState>): void {
       // Update the ownedItems state

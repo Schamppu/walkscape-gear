@@ -50,7 +50,13 @@ describe("climb", () => {
     const result = climb(
       { gearSet: {}, result: score({}) },
       {
-        moves: { slots: job.searchSlots, options: job.options, locations: [], keywordsMap: {}, setKeywords: [] },
+        moves: {
+          slots: job.searchSlots,
+          options: job.options,
+          locations: [],
+          keywordsMap: {},
+          setKeywords: [],
+        },
         score,
         pairSamples: 10,
         setMoves: true,
@@ -64,12 +70,20 @@ describe("climb", () => {
 
 describe("fillFallback", () => {
   const score = createSetScorer(job);
-  const start = { gearSet: { head: item("big_hat", [we(0.4)]) }, result: score({}) };
+  const start = {
+    gearSet: { head: item("big_hat", [we(0.4)]) },
+    result: score({}),
+  };
   start.result = score(start.gearSet);
 
   it("fills empty slots with the first item that doesn't lower the score", () => {
     const fallback = {
-      chest: [item("cursed_chest", [we(-0.2)]), makeWorkerItem("inventory_chest", [{ type: "inventorySpace", value: 4, isPercent: false }])],
+      chest: [
+        item("cursed_chest", [we(-0.2)]),
+        makeWorkerItem("inventory_chest", [
+          { type: "inventorySpace", value: 4, isPercent: false },
+        ]),
+      ],
     };
     const filled = fillFallback(start, ["head", "chest"], fallback, {}, score);
     expect((filled.gearSet.chest as { id: string }).id).toBe("inventory_chest");
@@ -87,7 +101,13 @@ describe("fillFallback", () => {
       ...job,
       options: { head: job.options.head },
       searchSlots: ["head", "chest"],
-      fallbackOptions: { chest: [makeWorkerItem("inventory_chest", [{ type: "inventorySpace", value: 4, isPercent: false }])] },
+      fallbackOptions: {
+        chest: [
+          makeWorkerItem("inventory_chest", [
+            { type: "inventorySpace", value: 4, isPercent: false },
+          ]),
+        ],
+      },
     };
     const result = await runSearch(withFallback, settings(), hooks());
     expect((result.gearSet.chest as { id: string }).id).toBe("inventory_chest");
@@ -96,12 +116,21 @@ describe("fillFallback", () => {
 
 describe("runSearch", () => {
   it("refuses best-for-skill mode, which isn't implemented", async () => {
-    const bestForSkill = { ...job, mode: { kind: "bestForSkill" as const, skillId: "fishing" as const } };
-    await expect(runSearch(bestForSkill, settings(), hooks())).rejects.toThrow("not implemented");
+    const bestForSkill = {
+      ...job,
+      mode: { kind: "bestForSkill" as const, skillId: "fishing" as const },
+    };
+    await expect(runSearch(bestForSkill, settings(), hooks())).rejects.toThrow(
+      "not implemented",
+    );
   });
 
   it("stops once the time budget is used up", async () => {
-    const result = await runSearch(job, settings({ timeBudgetMs: 50, patience: 1e9 }), hooks());
+    const result = await runSearch(
+      job,
+      settings({ timeBudgetMs: 50, patience: 1e9 }),
+      hooks(),
+    );
     expect(result.cancelled).toBe(false);
     expect(result.elapsedMs).toBeGreaterThanOrEqual(50);
     expect(result.elapsedMs).toBeLessThan(500);
@@ -115,7 +144,11 @@ describe("runSearch", () => {
 
   it("returns the best set so far when stopped", async () => {
     let checks = 0;
-    const result = await runSearch(job, settings({ patience: 1e9 }), hooks({ shouldStop: () => ++checks > 3 }));
+    const result = await runSearch(
+      job,
+      settings({ patience: 1e9 }),
+      hooks({ shouldStop: () => ++checks > 3 }),
+    );
     expect(result.cancelled).toBe(true);
     expect(result.bestScore).toBeGreaterThan(0);
   });
@@ -125,7 +158,10 @@ describe("runSearch", () => {
     await runSearch(
       job,
       settings({ timeBudgetMs: 1000, patience: 1e9, progressEveryMs: 200 }),
-      hooks({ now: tickingClock(10), onProgress: (p: { elapsedMs: number }) => reports.push(p.elapsedMs) }),
+      hooks({
+        now: tickingClock(10),
+        onProgress: (p: { elapsedMs: number }) => reports.push(p.elapsedMs),
+      }),
     );
     expect(reports.length).toBeGreaterThanOrEqual(3);
     for (let i = 1; i < reports.length; i++) {
@@ -144,7 +180,11 @@ describe("normalising to each target's best", () => {
       { x: "xp", y: "step", weight: 10 },
       { x: "chests", y: "step", weight: 1 },
     ],
-    extraction: { activitySkills: ["fishing"], quality: null, drops: makeDropProfile({ chestsPerRoll: 0.01 }) },
+    extraction: {
+      activitySkills: ["fishing"],
+      quality: null,
+      drops: makeDropProfile({ chestsPerRoll: 0.01 }),
+    },
     searchSlots: ["head"],
     options: {
       head: [
@@ -161,7 +201,11 @@ describe("normalising to each target's best", () => {
   });
 
   it("scores by ratio to naked gear when turned off", async () => {
-    const result = await runSearch(scaleJob, settings({ normaliseToBest: false }), hooks());
+    const result = await runSearch(
+      scaleJob,
+      settings({ normaliseToBest: false }),
+      hooks(),
+    );
     expect((result.gearSet.head as { id: string }).id).toBe("chest_hat");
     expect(result.shares).toEqual({});
   });
@@ -175,11 +219,17 @@ describe("worker session", () => {
       random: seededRandom(1),
       yieldToEventLoop: async () => {},
     });
-    await handle({ type: "start", job, settings: { timeBudgetMs: 2000, patience: 1e9 } });
+    await handle({
+      type: "start",
+      job,
+      settings: { timeBudgetMs: 2000, patience: 1e9 },
+    });
 
     const last = messages[messages.length - 1];
     expect(last.type).toBe("result");
-    expect(messages.slice(0, -1).every((m) => m.type === "progress")).toBe(true);
+    expect(messages.slice(0, -1).every((m) => m.type === "progress")).toBe(
+      true,
+    );
     expect(messages.length).toBeGreaterThan(1);
   });
 
@@ -195,7 +245,11 @@ describe("worker session", () => {
         if (++yields === 2) await handle({ type: "cancel" });
       },
     });
-    await handle({ type: "start", job, settings: { timeBudgetMs: 1e9, patience: 1e9 } });
+    await handle({
+      type: "start",
+      job,
+      settings: { timeBudgetMs: 1e9, patience: 1e9 },
+    });
 
     const last = messages[messages.length - 1];
     expect(last.type).toBe("result");
@@ -209,7 +263,10 @@ describe("worker session", () => {
   it("posts an error instead of throwing", async () => {
     const messages: AdvancedOptimiserOutbound[] = [];
     const handle = createSession((m) => messages.push(m));
-    await handle({ type: "start", job: { ...job, combinationRule: "missing" as never } });
+    await handle({
+      type: "start",
+      job: { ...job, combinationRule: "missing" as never },
+    });
     expect(messages).toEqual([{ type: "error", message: expect.any(String) }]);
   });
 });

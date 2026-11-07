@@ -1,15 +1,15 @@
 /**
  * Purpose:
  * Utility functions for calculating character levels based on user steps.
-*
-* Responsibilities:
-* - Calculate the toolbelt size based on character level
-* - Convert steps to character level using a pre-calculated XP table
-*
+ *
+ * Responsibilities:
+ * - Calculate the toolbelt size based on character level
+ * - Convert steps to character level using a pre-calculated XP table
+ *
  * Does NOT:
  * - Handle any UI logic or state management related to character levels
  * - Calculate XP for levels above 99 (max level in Walkscape)
-*/
+ */
 
 import { levelEquate } from "./levelUtils";
 

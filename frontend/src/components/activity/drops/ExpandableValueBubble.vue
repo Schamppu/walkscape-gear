@@ -26,7 +26,9 @@ const visibleBreakdown = computed(() => {
   return props.breakdown.filter((line) => Math.abs(line.value) >= 0.005);
 });
 
-const hasBreakdown = computed(() => visibleBreakdown.value.length > 0 || !!slots.breakdown);
+const hasBreakdown = computed(
+  () => visibleBreakdown.value.length > 0 || !!slots.breakdown,
+);
 
 function toggle() {
   if (hasBreakdown.value) expanded.value = !expanded.value;

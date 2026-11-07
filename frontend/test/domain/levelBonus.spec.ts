@@ -58,7 +58,9 @@ describe("calculateWorkEfficiencyBonus", () => {
         levelRequirement: 10,
         isTravelling: false,
       });
-      expect(atCap).toBeCloseTo(EFFICIENCY_MAX_LEVEL_CAP * EFFICIENCY_PER_LEVEL);
+      expect(atCap).toBeCloseTo(
+        EFFICIENCY_MAX_LEVEL_CAP * EFFICIENCY_PER_LEVEL,
+      );
       expect(beyondCap).toBe(atCap);
     });
   });

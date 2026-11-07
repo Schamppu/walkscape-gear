@@ -40,9 +40,7 @@ import type {
 // ---------------------------------------------------------------------------
 
 export type SettingsGroupName =
-  | "gearSettings"
-  | "activitySettings"
-  | "toolSettings";
+  "gearSettings" | "activitySettings" | "toolSettings";
 export type SettingsRecord = Record<string, Setting>;
 
 /** Snapshot of the original persisted value for a setting, used to detect reverts. */

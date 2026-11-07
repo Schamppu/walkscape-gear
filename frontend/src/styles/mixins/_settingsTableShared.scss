@@ -6,7 +6,11 @@
   color: colors.$txPrimary;
 }
 
-@mixin settings-table($label-width: 60%, $control-width: 20%, $striped-rows: true) {
+@mixin settings-table(
+  $label-width: 60%,
+  $control-width: 20%,
+  $striped-rows: true
+) {
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;

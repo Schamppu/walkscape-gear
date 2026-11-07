@@ -11,7 +11,9 @@ const wsButtonVariantClassMap: Record<WsButtonVariant, string> = {
 export function useWsButton(variant: Ref<WsButtonVariant>): {
   variantClass: ComputedRef<string>;
 } {
-  const variantClass = computed<string>(() => wsButtonVariantClassMap[variant.value]);
+  const variantClass = computed<string>(
+    () => wsButtonVariantClassMap[variant.value],
+  );
 
   return {
     variantClass,

@@ -19,7 +19,10 @@
 
 import { X_VALUES, Y_VALUES } from "./config";
 import type { Target, XValue, YValue } from "./config";
-import { getOutcomeOdds, type FineMaterialsMode } from "@/domain/quality/qualityOutcomeOdds";
+import {
+  getOutcomeOdds,
+  type FineMaterialsMode,
+} from "@/domain/quality/qualityOutcomeOdds";
 import type { SkillModifiersResult } from "@/domain/skillModifiers";
 import { coinsPerAction, type CoinProfile } from "./coins";
 import type { DropItemInfo } from "@/domain/lootTables/dropInfo";
@@ -113,13 +116,15 @@ export const availableYValues = (
   x: XValue,
   others: readonly Target[],
   ctx: TargetContext,
-): YValue[] => validYValues(ctx).filter((y) => !others.some((t) => t.x === x && t.y === y));
+): YValue[] =>
+  validYValues(ctx).filter((y) => !others.some((t) => t.x === x && t.y === y));
 
 /** Valid X values that still have at least one Y not used by `others`. */
 export const availableXValues = (
   others: readonly Target[],
   ctx: TargetContext,
-): XValue[] => validXValues(ctx).filter((x) => availableYValues(x, others, ctx).length > 0);
+): XValue[] =>
+  validXValues(ctx).filter((x) => availableYValues(x, others, ctx).length > 0);
 
 /**
  * Returns the target a new row starts with, with weight 0 so it doesn't
@@ -142,7 +147,8 @@ export const nextUnusedTarget = (
 
   for (const y of ys) {
     for (const x of xs) {
-      if (!targets.some((t) => t.x === x && t.y === y)) return { x, y, weight: 0 };
+      if (!targets.some((t) => t.x === x && t.y === y))
+        return { x, y, weight: 0 };
     }
   }
   return null;
@@ -153,7 +159,9 @@ export const sourceTableFlags = (
   tables: readonly LootTableRef[] | null | undefined,
 ): Pick<TargetContext, "hasChests" | "hasCollectibles"> => ({
   hasChests: (tables ?? []).some(({ type }) => type.includes("chestTable")),
-  hasCollectibles: (tables ?? []).some(({ type }) => type.includes("collectible")),
+  hasCollectibles: (tables ?? []).some(({ type }) =>
+    type.includes("collectible"),
+  ),
 });
 
 /** True when the recipe's main reward item has type `crafted`. */
@@ -170,12 +178,20 @@ export const recipeProducesCraftedItem = (
 // ---------------------------------------------------------------------------
 
 /** Returns `value` when it is a finite number, otherwise 0. */
-const finiteOrZero = (value: number): number => (Number.isFinite(value) ? value : 0);
+const finiteOrZero = (value: number): number =>
+  Number.isFinite(value) ? value : 0;
 
 /** Probability of an Eternal outcome per craft, or 0 without quality inputs. */
-const eternalChance = (m: SkillModifiersResult, quality: RecipeQualityContext | null): number => {
+const eternalChance = (
+  m: SkillModifiersResult,
+  quality: RecipeQualityContext | null,
+): number => {
   if (!quality) return 0;
-  const odds = getOutcomeOdds(quality.levelReq, m.qualityOutcome, quality.fineMode);
+  const odds = getOutcomeOdds(
+    quality.levelReq,
+    m.qualityOutcome,
+    quality.fineMode,
+  );
   return odds[odds.length - 1]?.value ?? 0;
 };
 
@@ -197,9 +213,16 @@ const perAction = (x: XValue, ctx: ExtractionContext): number => {
       return rolls * m.findCollectibles;
     case "chests":
       // `?? 0`: jobs exported before the field existed don't have it.
-      return rolls * (m.chestFind * drops.chestsPerRoll + (drops.unscaledChestsPerRoll ?? 0));
+      return (
+        rolls *
+        (m.chestFind * drops.chestsPerRoll + (drops.unscaledChestsPerRoll ?? 0))
+      );
     case "tokens":
-      return rolls * (drops.tokenBasePerRoll + drops.tokenFineBonusPerRoll * m.fineMaterialFind);
+      return (
+        rolls *
+        (drops.tokenBasePerRoll +
+          drops.tokenFineBonusPerRoll * m.fineMaterialFind)
+      );
     case "eternalCrafts":
       return rolls * eternalChance(m, ctx.quality);
     case "coins":
@@ -231,19 +254,29 @@ const yPerAction = (y: YValue, m: SkillModifiersResult): number => {
  * Value of target `x / y` for the gear set the modifiers were computed from.
  * Higher is always better. Returns 0 rather than NaN / Infinity.
  */
-export const extracted = (x: XValue, y: YValue, ctx: ExtractionContext): number => {
+export const extracted = (
+  x: XValue,
+  y: YValue,
+  ctx: ExtractionContext,
+): number => {
   const divisor = yPerAction(y, ctx.modifiers);
   if (!(divisor > 0)) return 0;
   return finiteOrZero(perAction(x, ctx) / divisor);
 };
 
-type PerRollDropMap = Record<string, Pick<DropItemInfo, "stepsPerItem" | "stepsPerFine">>;
+type PerRollDropMap = Record<
+  string,
+  Pick<DropItemInfo, "stepsPerItem" | "stepsPerFine">
+>;
 
 const perRollOf = ({ stepsPerItem }: { stepsPerItem: number }): number =>
   finiteOrZero(1 / stepsPerItem);
 
 /** Chests per roll in a drop map. */
-const chestsIn = (dropMap: PerRollDropMap, containers: Record<string, unknown>): number =>
+const chestsIn = (
+  dropMap: PerRollDropMap,
+  containers: Record<string, unknown>,
+): number =>
   Object.entries(dropMap)
     .filter(([id]) => id in containers)
     .reduce((sum, [, info]) => sum + perRollOf(info), 0);
@@ -269,7 +302,10 @@ export const buildDropProfile = (
   const profile: DropProfile = {
     chestsPerRoll: scaledChests,
     // Rates per roll add up across tables, so the rest came from other tables.
-    unscaledChestsPerRoll: Math.max(0, chestsIn(dropItemInfoMap, containers) - scaledChests),
+    unscaledChestsPerRoll: Math.max(
+      0,
+      chestsIn(dropItemInfoMap, containers) - scaledChests,
+    ),
     tokenBasePerRoll: 0,
     tokenFineBonusPerRoll: 0,
   };

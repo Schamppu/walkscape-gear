@@ -271,34 +271,39 @@ const getScoredItemsForSlot = (
     );
   });
 
-  const qualityItems: QualityItem[] = items.flatMap((item): QualityItem | QualityItem[] => {
-    if (!(item.id in baseCtx.ownedItems.value)) {
-      return item;
-    }
-    const owned = baseCtx.ownedItems.value[item.id];
+  const qualityItems: QualityItem[] = items.flatMap(
+    (item): QualityItem | QualityItem[] => {
+      if (!(item.id in baseCtx.ownedItems.value)) {
+        return item;
+      }
+      const owned = baseCtx.ownedItems.value[item.id];
 
-    if (item.type === "crafted") {
-      return {
-        ...item,
-        quality: owned.craftedTier ?? item.quality,
-        quality2: owned.craftedTier2,
-      };
-    }
-    if (item.type === "consumable") {
-      // One candidate per quality the settings allow (fine can be switched
-      // off; low stock excludes the consumable).
-      const qualities = suggestableConsumableQualities(owned, optimiserSettings);
-      if (qualities === null) return item;
-      return qualities.map((quality) => ({ ...item, quality }));
-    }
-    if (slot === "pet") {
-      return {
-        ...item,
-        quality: String(owned.petLevel ?? 0),
-      };
-    }
-    return item;
-  });
+      if (item.type === "crafted") {
+        return {
+          ...item,
+          quality: owned.craftedTier ?? item.quality,
+          quality2: owned.craftedTier2,
+        };
+      }
+      if (item.type === "consumable") {
+        // One candidate per quality the settings allow (fine can be switched
+        // off; low stock excludes the consumable).
+        const qualities = suggestableConsumableQualities(
+          owned,
+          optimiserSettings,
+        );
+        if (qualities === null) return item;
+        return qualities.map((quality) => ({ ...item, quality }));
+      }
+      if (slot === "pet") {
+        return {
+          ...item,
+          quality: String(owned.petLevel ?? 0),
+        };
+      }
+      return item;
+    },
+  );
 
   const filteredItems = filterItems(qualityItems);
   const rawMappedItems: MappedItem[] = filteredItems.flatMap((item) =>
@@ -459,7 +464,10 @@ export const getCandidateItems = (
 ): Record<string, OptimiserItem[]> => {
   const ctx = makeGearCtx();
   return Object.fromEntries(
-    slotKeys.map((slot) => [slot, getScoredItemsForSlot(slot, ctx).scoredItems]),
+    slotKeys.map((slot) => [
+      slot,
+      getScoredItemsForSlot(slot, ctx).scoredItems,
+    ]),
   );
 };
 
