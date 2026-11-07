@@ -131,9 +131,7 @@ export function useLootTables(ctx: LootTablesContext): {
     const hideOwnedCollectibles = (
       activitySettings.value.hideOwnedCollectibles as Setting<boolean>
     ).value;
-    const ownedCollectibleIds = ctx
-      .ownedItemsByCategory("collectible")
-      .map(({ id }) => id);
+    const ownedCollectibleIds = ctx.ownedCollectibles.value.map(({ id }) => id);
     return filterDetailedTables(
       detailedLootTables.value,
       hideOwnedCollectibles,

@@ -377,9 +377,7 @@ export function useRequirements(ctx: RequirementContext) {
 
       case "collectiblesOwned": {
         const { amount } = req.requirement;
-        const ownedCollectibles =
-          itemsStore.ownedItemsByCategory("collectible");
-        value = ownedCollectibles.length >= amount;
+        value = itemsStore.ownedCollectibles.length >= amount;
         break;
       }
 
@@ -710,8 +708,7 @@ export function useRequirements(ctx: RequirementContext) {
         }
 
         case "collectiblesOwned": {
-          const ownedCollectibles =
-            itemsStore.ownedItemsByCategory("collectible");
+          const { ownedCollectibles } = itemsStore;
           const { amount } = req.requirement;
           out = {
             prefix: "Obtain",

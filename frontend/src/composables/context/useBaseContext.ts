@@ -39,7 +39,7 @@ export type BaseContext = {
 
   segments: ComputedRef<RouteSegment[]>;
 
-  ownedItemsByCategory: (category: string) => ItemDetail[];
+  ownedCollectibles: ComputedRef<ItemDetail[]>;
 };
 
 function useBaseContext(): BaseContext {
@@ -85,7 +85,7 @@ function useBaseContext(): BaseContext {
 
     segments: computed(() => routeStore.segments),
 
-    ownedItemsByCategory: itemsStore.ownedItemsByCategory,
+    ownedCollectibles: computed(() => itemsStore.ownedCollectibles),
   };
 }
 

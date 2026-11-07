@@ -37,7 +37,7 @@ export type { EffectiveAttrEntry, StatTotals };
 // ---------------------------------------------------------------------------
 
 export type EffectiveAttrsContext = LevelBonusContext & {
-  ownedItemsByCategory: (category: string) => ItemDetail[];
+  ownedCollectibles: Ref<ItemDetail[]>;
   service: Ref<ServiceDetail | null>;
 };
 
@@ -61,7 +61,7 @@ export function useEffectiveAttrs(ctx: EffectiveAttrsContext): {
   // state here keeps totals reactive to enabling/disabling active abilities.
   const allEquippedItems = computed(() => {
     const rawItems = toDeepRaw([
-      ...ctx.ownedItemsByCategory("collectibles"),
+      ...ctx.ownedCollectibles.value,
       ...(ctx.equippedGear.value as ItemDetail[]),
     ]).map((item) => attachPetAbilityAttrs(item, abilityCtx.value));
     return resolveItemAttrs(rawItems);

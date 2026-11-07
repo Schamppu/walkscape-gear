@@ -130,7 +130,7 @@ const makeScorer = (): ((set: GearSet) => number) => {
 
   // Resolve collectibles once — they don't change during a run.
   const collectibles = toDeepRaw(
-    baseCtx.ownedItemsByCategory("collectibles") as ItemDetail[],
+    baseCtx.ownedCollectibles.value,
   );
   const staticEntries = buildAllAttrEntries(
     resolveItemAttrs(collectibles),
@@ -252,7 +252,7 @@ export const buildStaticEntries = () => {
     baseCtx as unknown as LevelBonusContext,
   );
   const collectibles = toDeepRaw(
-    baseCtx.ownedItemsByCategory("collectibles") as ItemDetail[],
+    baseCtx.ownedCollectibles.value,
   );
   return buildAllAttrEntries(
     resolveItemAttrs(collectibles),
