@@ -32,21 +32,23 @@ const showFineShare = computed(
     class="ability-loot-table"
   >
     <template #header>
-      <ws-icon :icon-path="section.icon" size="sm" />
-      <span class="ability-name">{{ section.name }}</span>
-      <span v-if="isCompleteActions" class="roll-amount">
-        ×{{ section.count }} actions
-      </span>
-      <span v-else-if="section.rollAmount > 1" class="roll-amount">
-        ×{{ section.rollAmount }}
-      </span>
-      <span v-if="showFineShare" class="fine-share border-fine">
-        {{ n(section.fineShare * 100, 2) }}% fine
-      </span>
-      <span v-if="!hideSteps" class="steps-per-use">
-        <ws-icon :icon-path="icons.steps" size="xs" />
-        {{ n(section.stepsPerActivation, 0) }}
-      </span>
+      <div class="ability-header">
+        <ws-icon :icon-path="section.icon" size="sm" />
+        <span class="ability-name">{{ section.name }}</span>
+        <span v-if="isCompleteActions" class="roll-amount">
+          ×{{ section.count }} actions
+        </span>
+        <span v-else-if="section.rollAmount > 1" class="roll-amount">
+          ×{{ section.rollAmount }}
+        </span>
+        <span v-if="showFineShare" class="fine-share border-fine">
+          {{ n(section.fineShare * 100, 2) }}% fine
+        </span>
+        <span v-if="!hideSteps" class="steps-per-use">
+          <ws-icon :icon-path="icons.steps" size="xs" />
+          {{ n(section.stepsPerActivation, 0) }}
+        </span>
+      </div>
     </template>
     <div class="ability-loot-table">
       <drop-item-display
@@ -79,17 +81,29 @@ const showFineShare = computed(
   }
 }
 
-.ability-name {
-  font-weight: 500;
-  margin-left: $xs;
+.ability-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+  column-gap: $xs;
+  row-gap: $xxxxs;
+  min-width: 0;
+  flex: 1;
+  text-align: left;
+
+  // Short labels stay whole and move to the next line as a unit; only a long
+  // ability name may wrap within itself.
+  > *:not(.ability-name) {
+    white-space: nowrap;
+  }
 }
 
-.roll-amount {
-  margin-left: $xs;
+.ability-name {
+  font-weight: 500;
 }
 
 .fine-share {
-  margin-left: $xs;
   padding: 0 $xxxs;
   border-radius: $sm;
   font-size: 0.75rem;
@@ -99,6 +113,5 @@ const showFineShare = computed(
   display: flex;
   align-items: center;
   gap: $xxxxs;
-  margin-left: $sm;
 }
 </style>
