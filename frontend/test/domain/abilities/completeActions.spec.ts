@@ -6,10 +6,12 @@ import {
   scaleDropInfoMap,
   buildRecipeOutputDropInfo,
   completeActionsGoldValue,
+  completeActionsDropValue,
 } from "@/domain/abilities/completeActions";
 import { abilityStepsPerActivation } from "@/domain/abilities/abilityLootTables";
 import {
   computeRecipeValue,
+  buildGoldBreakdown,
   type RecipeValueParams,
 } from "@/domain/drops/aggregateDropValue";
 import type { AbilityDetail } from "@/domain/types/ability";
@@ -244,5 +246,31 @@ describe("completeActionsGoldValue", () => {
 
   it("is 0 without a valid scale", () => {
     expect(completeActionsGoldValue(0, 40, recipeParams, 0.03)).toBe(0);
+  });
+});
+
+describe("completeActionsDropValue", () => {
+  it("scales a context value by the ability rate", () => {
+    expect(completeActionsDropValue(0.12, 50)).toBeCloseTo(6);
+    expect(completeActionsDropValue(0, 50)).toBe(0);
+  });
+});
+
+describe("buildGoldBreakdown extra lines", () => {
+  it("appends non-zero extra lines (e.g. one per ability)", () => {
+    const lines = buildGoldBreakdown(
+      {},
+      {},
+      {},
+      {} as ItemValueMap,
+      undefined,
+      [
+        { icon: "flambe.png", label: "Flambé", value: 12.8 },
+        { icon: "x.png", label: "Nothing", value: 0 },
+      ],
+    );
+    expect(lines).toEqual([
+      { icon: "flambe.png", label: "Flambé", value: 12.8 },
+    ]);
   });
 });

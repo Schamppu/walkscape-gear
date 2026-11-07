@@ -8,6 +8,7 @@ import {
 } from "@/composables/useLootTables";
 import { useChestLootTables } from "@/composables/useChestLootTables";
 import { useAbilityLootTables } from "@/composables/useAbilityLootTables";
+import { useCompleteActionsAbilities } from "@/composables/useCompleteActionsAbilities";
 import { snakeToTitle } from "@/utils/string";
 import AggregateDrops from "../drops/aggregate/AggregateDrops.vue";
 import DropStepColumn from "./table/DropStepColumn.vue";
@@ -33,6 +34,8 @@ const chests1 = useChestLootTables(drops1);
 const chests2 = useChestLootTables(drops2);
 const abilities1 = useAbilityLootTables(props.gs1Ctx);
 const abilities2 = useAbilityLootTables(props.gs2Ctx);
+const completeActions1 = useCompleteActionsAbilities(props.gs1Ctx, drops1);
+const completeActions2 = useCompleteActionsAbilities(props.gs2Ctx, drops2);
 
 const toData = (v: DropStepValues | null) =>
   v
@@ -77,6 +80,7 @@ const dropsMap = computed(() =>
           :compact="true"
           :chest-loot-tables="chests1"
           :ability-loot-tables="abilities1"
+          :complete-actions-abilities="completeActions1"
         />
       </td>
       <td>
@@ -85,6 +89,7 @@ const dropsMap = computed(() =>
           :compact="true"
           :chest-loot-tables="chests2"
           :ability-loot-tables="abilities2"
+          :complete-actions-abilities="completeActions2"
         />
       </td>
     </tr>

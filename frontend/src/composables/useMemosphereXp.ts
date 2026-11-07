@@ -28,7 +28,9 @@ import type { AbilityLootTableInfo } from "@/composables/useAbilityLootTables";
 export function useMemosphereXp(
   dropItemInfoMap: ComputedRef<Record<string, DropItemInfo>>,
   chestLootTables: ComputedRef<ChestLootTableInfo[]>,
-  abilityLootTables: ComputedRef<AbilityLootTableInfo[]>,
+  abilityLootTables: ComputedRef<
+    Pick<AbilityLootTableInfo, "stepsPerActivation" | "dropInfoMap">[]
+  >,
 ): ComputedRef<MemosphereXp> {
   const dataStore = useDataStore();
   const itemsStore = useItemsStore();

@@ -77,6 +77,7 @@ const visibleLootTables = computed(() => {
       <aggregate-drops
         :chest-loot-tables="chestLootTables"
         :ability-loot-tables="abilityLootTables"
+        :complete-actions-abilities="completeActionsAbilities"
       />
       <section class="drops-info">
         <template v-if="activitySettings.showCombined.value">

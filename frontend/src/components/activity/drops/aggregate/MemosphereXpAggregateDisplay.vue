@@ -12,6 +12,7 @@ import {
 import { useMemosphereXp } from "@/composables/useMemosphereXp";
 import type { ChestLootTableInfo } from "@/composables/useChestLootTables";
 import type { AbilityLootTableInfo } from "@/composables/useAbilityLootTables";
+import type { CompleteActionsAbilityInfo } from "@/composables/useCompleteActionsAbilities";
 import { n } from "@/utils/number";
 import { icons } from "@/constants/iconPaths";
 
@@ -20,8 +21,14 @@ const props = withDefaults(
     context?: BaseContext | null;
     chestLootTables?: ChestLootTableInfo[];
     abilityLootTables?: AbilityLootTableInfo[];
+    completeActionsAbilities?: CompleteActionsAbilityInfo[];
   }>(),
-  { context: null, chestLootTables: () => [], abilityLootTables: () => [] },
+  {
+    context: null,
+    chestLootTables: () => [],
+    abilityLootTables: () => [],
+    completeActionsAbilities: () => [],
+  },
 );
 
 const { dropItemInfoMap } = props.context
@@ -31,7 +38,10 @@ const { dropItemInfoMap } = props.context
 const memosphereXp = useMemosphereXp(
   dropItemInfoMap,
   computed(() => props.chestLootTables),
-  computed(() => props.abilityLootTables),
+  computed(() => [
+    ...props.abilityLootTables,
+    ...props.completeActionsAbilities,
+  ]),
 );
 
 const displayValue = computed(() => n(memosphereXp.value.total, 2));

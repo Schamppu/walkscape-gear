@@ -198,5 +198,16 @@ export function completeActionsGoldValue(
   const recipeValue = recipeParams
     ? computeRecipeValue({ ...recipeParams, fineShare })
     : 0;
-  return scale * (dropGold + recipeValue);
+  return completeActionsDropValue(scale, dropGold + recipeValue);
+}
+
+/**
+ * Per-1k-steps value of a plain drop-based total (e.g. tokens) contributed by
+ * the ability: the context's value scaled by the ability's rate.
+ */
+export function completeActionsDropValue(
+  scale: number,
+  contextValue: number,
+): number {
+  return scale > 0 ? scale * contextValue : 0;
 }

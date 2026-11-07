@@ -23,17 +23,28 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  completeActionsAbilities: {
+    type: Array,
+    default: () => [],
+  },
 });
 </script>
 
 <template>
   <section :class="['aggregate-drops', { compact: props.compact }]">
-    <money-aggregate-display :context="props.context" />
-    <token-aggregate-display :context="props.context" />
+    <money-aggregate-display
+      :context="props.context"
+      :complete-actions-abilities="props.completeActionsAbilities"
+    />
+    <token-aggregate-display
+      :context="props.context"
+      :complete-actions-abilities="props.completeActionsAbilities"
+    />
     <memosphere-xp-aggregate-display
       :context="props.context"
       :chest-loot-tables="props.chestLootTables"
       :ability-loot-tables="props.abilityLootTables"
+      :complete-actions-abilities="props.completeActionsAbilities"
     />
     <p v-if="!compact" class="title">
       /1k
