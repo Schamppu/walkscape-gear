@@ -27,7 +27,7 @@ import type { LocationSummary } from "@/domain/types/location";
 const playerStore = usePlayerStore();
 const routeStore = useRouteStore();
 const ctx = injectBaseContext();
-const { getRoute, averageStepsPerRoute, stepsPerNode } = useRoutes(
+const { getRoute, averageStepsPerRoute } = useRoutes(
   ctx as unknown as SkillModifiersContext,
 );
 const { checkRequirements, mapRequirementsText, mergeRequirements } =

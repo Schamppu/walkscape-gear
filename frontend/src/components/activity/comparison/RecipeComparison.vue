@@ -83,7 +83,7 @@ onMounted(async () => {
   gs2LocationIdx.value = findIdx(locs2, props.gs2Ctx.location.value?.id);
 });
 
-const { xpRewardsMultiplier, fineMode, useFine } = useFineMaterials(
+const { xpRewardsMultiplier, fineMode } = useFineMaterials(
   props.gs1Ctx as unknown as FineMaterialsContext,
 );
 

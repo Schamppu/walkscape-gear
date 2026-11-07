@@ -6,6 +6,7 @@ import {
   type ExportedSlot,
   type ExportableSlotItem,
 } from "@/domain/gearSetExport";
+import pako from "pako";
 
 // ---------------------------------------------------------------------------
 // buildExportedSlot
@@ -160,7 +161,6 @@ describe("decodeGearSet error handling", () => {
 
   it("returns failure for gear set JSON missing the items array", () => {
     // Manually encode JSON without items
-    const pako = require("pako");
     const bad = Buffer.from(
       pako.gzip(JSON.stringify({ notItems: [] })),
     ).toString("base64");

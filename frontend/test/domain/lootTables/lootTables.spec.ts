@@ -611,7 +611,6 @@ describe("getDropCounts", () => {
     // First row of swimming: min=1, max=4
     const ctx = makeCtxTable([swimming[0]]);
     const rows = mapTableToItems(ctx);
-    const grouped = groupSourcesByStat(rows);
     // All from "default" stat group, show the first source's amounts
     // swimming[0] first row: 1-4
     const counts = getDropCounts({ default: [rows[0]] });

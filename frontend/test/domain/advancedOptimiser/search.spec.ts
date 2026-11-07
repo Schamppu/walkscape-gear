@@ -235,9 +235,8 @@ describe("worker session", () => {
 
   it("stops at the next checkpoint after a cancel message", async () => {
     const messages: AdvancedOptimiserOutbound[] = [];
-    let handle: ReturnType<typeof createSession>;
     let yields = 0;
-    handle = createSession((m) => messages.push(m), {
+    const handle = createSession((m) => messages.push(m), {
       now: tickingClock(100),
       random: seededRandom(1),
       // The cancel arrives while the search is yielding to the event loop.

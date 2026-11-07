@@ -1,5 +1,5 @@
 import { useActivityStore } from "@/store/activity";
-import { useGearStore, type EquippedItem } from "@/store/gear";
+import { useGearStore } from "@/store/gear";
 import { useDataStore } from "@/store/data";
 import { useSettingsStore } from "@/store/settings";
 import { useAdvancedOptimiserStore } from "@/store/advancedOptimiser";

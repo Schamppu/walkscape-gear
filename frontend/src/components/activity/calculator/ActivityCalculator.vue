@@ -15,13 +15,8 @@ import WsLabel from "@/components/primitives/WsLabel.vue";
 import CalculatorQualityOutcomeTable from "./CalculatorQualityOutcomeTable.vue";
 import { skillLevelFromXp, xpToSkillLevel } from "@/domain/character";
 
-const {
-  stepsPerAction,
-  xpPerStep,
-  noMaterialsConsumed,
-  doubleRewards,
-  doubleAction,
-} = injectSkillModifiers();
+const { stepsPerAction, xpPerStep, noMaterialsConsumed, doubleRewards } =
+  injectSkillModifiers();
 const { xpRewardsMultiplier } = injectFineMaterials();
 const playerStore = usePlayerStore();
 const itemsStore = useItemsStore();

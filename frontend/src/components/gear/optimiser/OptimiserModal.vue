@@ -83,7 +83,7 @@ const {
 
       <optimiser-settings />
 
-      <locked-slots :slots="lockedSlots" :unusable="unusableLockedSlots" />
+      <LockedSlots :slots="lockedSlots" :unusable="unusableLockedSlots" />
 
       <section class="run">
         <div v-if="running" class="run-buttons">

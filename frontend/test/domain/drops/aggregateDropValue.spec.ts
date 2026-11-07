@@ -9,7 +9,6 @@ import {
 } from "@/domain/drops/aggregateDropValue";
 import type {
   MaterialValueInfo,
-  MaterialValueSource,
   GearItemRef,
   BreakdownLine,
 } from "@/domain/drops/aggregateDropValue";
