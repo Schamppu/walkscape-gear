@@ -1,0 +1,12 @@
+**/node_modules
+**/dist
+**/package-lock.json
+**/*.snap
+frontend/test/fixtures/**/*.json
+
+# Generated code
+frontend/src/domain/types/generated/**
+backend/src/generated
+
+backend/prisma/migrations/**
+frontend/public/**
