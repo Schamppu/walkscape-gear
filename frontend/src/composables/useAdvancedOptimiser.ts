@@ -5,6 +5,7 @@ import { useSettingsStore } from "@/store/settings";
 import { useGearStore } from "@/store/gear";
 import { useItemsStore } from "@/store/items";
 import { useNotificationStore } from "@/store/notifications";
+import { useUrlStore } from "@/store/url";
 import { useAdvancedOptimiserStore } from "@/store/advancedOptimiser";
 import { useOptimiserPresetsStore } from "@/store/optimiserPresets";
 import {
@@ -66,6 +67,7 @@ export function useAdvancedOptimiser() {
   const gearStore = useGearStore();
   const itemsStore = useItemsStore();
   const notificationStore = useNotificationStore();
+  const urlStore = useUrlStore();
   const store = useAdvancedOptimiserStore();
   const presetsStore = useOptimiserPresetsStore();
   void presetsStore.ensureLoaded();
@@ -281,7 +283,10 @@ export function useAdvancedOptimiser() {
         setLocation: (location) => activityStore.setLocation(location),
         equipMultiple: (data, useQuality) => gearStore.equipMultiple(data, useQuality),
       }, { applyStopped: stoppedWith === "finish" });
-      if (applied) notificationStore.success("Optimised gear set equipped");
+      if (applied) {
+        urlStore.encodeAndPushToUrl();
+        notificationStore.success("Optimised gear set equipped");
+      }
 
       const location = result.gearSet.location as LocationSummary | null | undefined;
       lastRun.value = {

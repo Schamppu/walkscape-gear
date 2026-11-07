@@ -1,6 +1,7 @@
 import { useGearStore } from "@/store/gear";
 import { useActivityStore } from "@/store/activity";
 import { useNotificationStore } from "@/store/notifications";
+import { useUrlStore } from "@/store/url";
 
 import { injectBaseContext } from "@/composables/context/injectShared";
 import { priorityName, priorityValue } from "@/composables/optimiser/priority";
@@ -22,6 +23,7 @@ export function useOptimiser() {
   const gearStore = useGearStore();
   const activityStore = useActivityStore();
   const notificationStore = useNotificationStore();
+  const urlStore = useUrlStore();
 
   const optimise = async (): Promise<void> => {
     const source = baseCtx.source.value;
@@ -51,10 +53,11 @@ export function useOptimiser() {
         [result],
       );
 
-      await applySearchResult(result, job.searchSlots, {
+      const applied = await applySearchResult(result, job.searchSlots, {
         setLocation: (location) => activityStore.setLocation(location),
         equipMultiple: (data, useQuality) => gearStore.equipMultiple(data, useQuality),
       });
+      if (applied) urlStore.encodeAndPushToUrl();
       await notificationStore.debug("Optimiser: Equipped gear set", [result.gearSet]);
     } catch (e) {
       notificationStore.error("Error during gear set creation");
