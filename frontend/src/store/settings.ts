@@ -64,6 +64,7 @@ export const GEAR_SETTING_KEYS = [
   "recipeOptimiserPriority",
   "qoRecipeOptimiserPriority",
   "gearLayout",
+  "showGearSets",
 ] as const;
 
 export const ACTIVITY_SETTING_KEYS = [
@@ -417,6 +418,7 @@ export const useSettingsStore = defineStore("settingsStore", {
             "gearLayout",
             makeDisplaySetting("Gear layout", gearLayoutOptions, 0, true),
           ],
+          ["showGearSets", makeBoolSetting("Show gear set saving", true)],
         ]),
 
         activitySettings: Object.fromEntries([
