@@ -31,12 +31,18 @@ import {
   buildGoldBreakdown,
   type RecipeValueParams,
 } from "@/domain/drops/aggregateDropValue";
+import { completeActionsGoldValue } from "@/domain/abilities/completeActions";
+import type { CompleteActionsAbilityInfo } from "@/composables/useCompleteActionsAbilities";
 import { n } from "@/utils/number";
 import { icons } from "@/constants/iconPaths";
 
-const props = withDefaults(defineProps<{ context?: BaseContext | null }>(), {
-  context: null,
-});
+const props = withDefaults(
+  defineProps<{
+    context?: BaseContext | null;
+    completeActionsAbilities?: CompleteActionsAbilityInfo[];
+  }>(),
+  { context: null, completeActionsAbilities: () => [] },
+);
 
 const ctx = props.context || injectBaseContext();
 const { dropItemInfoMap } = props.context
@@ -93,6 +99,24 @@ const goldTotal = computed(() =>
   ),
 );
 
+// Extra gold from abilities that instantly complete actions (e.g. Flambé).
+const abilityLines = computed(() =>
+  props.completeActionsAbilities.map((ability) => ({
+    icon: ability.icon,
+    label: ability.name,
+    value: completeActionsGoldValue(
+      ability.scale,
+      goldTotal.value,
+      recipeParams.value,
+      ability.fineShare,
+    ),
+  })),
+);
+
+const abilityValue = computed(() =>
+  abilityLines.value.reduce((sum, line) => sum + line.value, 0),
+);
+
 const goldBreakdown = computed(() =>
   buildGoldBreakdown(
     dropItemInfoMap.value,
@@ -100,10 +124,13 @@ const goldBreakdown = computed(() =>
     itemsStore.materials,
     dataStore.itemValues,
     recipeParams.value,
+    abilityLines.value,
   ),
 );
 
-const displayValue = computed(() => n(goldTotal.value + recipeValue.value, 2));
+const displayValue = computed(() =>
+  n(goldTotal.value + recipeValue.value + abilityValue.value, 2),
+);
 const tooltip = computed(() => `${displayValue.value} money per 1k steps`);
 </script>
 

@@ -78,6 +78,12 @@ export type RecipeValueParams = {
   noMaterialsConsumed: number;
   /** Whether fine materials are in use. */
   useFine: boolean;
+  /**
+   * Fraction (0–1) of non-gear reward output that turns out fine when normal
+   * materials are used (e.g. Flambé's fine recipe outcome). Ignored when
+   * `useFine` is set (all output is fine). Defaults to 0.
+   */
+  fineShare?: number;
   /** Lookup of gear items; used to distinguish gear vs material rewards. */
   allGearItems: Record<string, GearItemRef>;
   /** Full item value map from the data store. */
@@ -186,63 +192,81 @@ export function computeTokenTotal(
  * @param params All inputs required for the calculation.
  */
 export function computeRecipeValue(params: RecipeValueParams): number {
+  const rewardValue1k = Object.entries(params.itemRewards).reduce(
+    (sum, [item, amount]) => sum + recipeRewardValue(item, amount, params),
+    0,
+  );
+  return rewardValue1k - recipeMaterialCost1k(params);
+}
+
+/**
+ * Per-1k-steps value of one recipe reward item. Crafted gear is weighted by
+ * its quality-tier odds; other rewards are split into normal/fine output by
+ * the effective fine share (all fine when `useFine`).
+ */
+function recipeRewardValue(
+  item: string,
+  amount: number,
+  params: RecipeValueParams,
+): number {
+  const { stepsPerRewardRoll, useFine, allGearItems, itemValues } = params;
+
+  if (item in allGearItems && allGearItems[item].type === "crafted") {
+    // Crafted gear: weight each quality tier by its value
+    const weightedValue = params.craftingOdds.reduce(
+      (total, { qualityValue, value }) =>
+        total +
+        value * (itemValues[item] as Record<string, number>)[qualityValue],
+      0,
+    );
+    return weightedValue * (1000 / stepsPerRewardRoll);
+  }
+
+  const entry = (itemValues as unknown as MaterialValueSource)[item];
+  if (!entry) return 0;
+
+  // Fine-recipe-outcome only applies to outputs that have a fine value.
+  const fineShare = useFine
+    ? 1
+    : entry.fine === undefined
+      ? 0
+      : Math.min(1, Math.max(0, params.fineShare ?? 0));
+
+  // Material reward: compute per-step value using reward-roll cadence
+  const info: MaterialValueInfo = {
+    stepsPerNormal: fineShare < 1 ? stepsPerRewardRoll / (1 - fineShare) : 0,
+    stepsPerFine: fineShare > 0 ? stepsPerRewardRoll / fineShare : 0,
+  };
+  return (
+    amount *
+    (materialValue(item, info, itemValues as unknown as MaterialValueSource) ??
+      0)
+  );
+}
+
+/** Per-1k-steps cost of the recipe's (first-option) materials. */
+function recipeMaterialCost1k(params: RecipeValueParams): number {
   const {
     materials,
-    itemRewards,
-    stepsPerRewardRoll,
     stepsPerAction,
     noMaterialsConsumed,
     useFine,
     allGearItems,
     itemValues,
-    craftingOdds,
   } = params;
 
-  const rewardValues = Object.entries(itemRewards).map(([item, amount]) => {
-    if (item in allGearItems && allGearItems[item].type === "crafted") {
-      // Crafted gear: weight each quality tier by its value
-      const weightedValue = craftingOdds.reduce(
-        (total, { qualityValue, value }) =>
-          total +
-          value * (itemValues[item] as Record<string, number>)[qualityValue],
-        0,
-      );
-      return weightedValue * (1000 / stepsPerRewardRoll);
-    } else {
-      // Material reward: compute per-step value using reward-roll cadence
-      const info: MaterialValueInfo = {
-        stepsPerNormal: useFine ? 0 : stepsPerRewardRoll,
-        stepsPerFine: useFine ? stepsPerRewardRoll : 0,
-      };
-      return (
-        amount *
-        (materialValue(
-          item,
-          info,
-          itemValues as unknown as MaterialValueSource,
-        ) ?? 0)
-      );
-    }
-  });
-
-  const rewardValue1k = rewardValues.reduce((a, b) => a + b, 0);
-
   const allMaterialOptions = materials.flatMap(({ options }) => options[0]);
-  const materialCosts = allMaterialOptions.map(({ amount, item }) => {
+  const totalCost = allMaterialOptions.reduce((sum, { amount, item }) => {
     if (item in allGearItems) {
       // Gear material: use first available quality value
-      return amount * Object.values(itemValues[item])[0];
-    } else {
-      const quality = useFine ? "fine" : "common";
-      return amount * (itemValues[item] as Record<string, number>)[quality];
+      return sum + amount * Object.values(itemValues[item])[0];
     }
-  });
+    const quality = useFine ? "fine" : "common";
+    return sum + amount * (itemValues[item] as Record<string, number>)[quality];
+  }, 0);
 
   const materialsPer1k = 1000 / (stepsPerAction / (1 - noMaterialsConsumed));
-  const materialCost1k =
-    materialCosts.reduce((a, b) => a + b, 0) * materialsPer1k;
-
-  return rewardValue1k - materialCost1k;
+  return totalCost * materialsPer1k;
 }
 
 // ---------------------------------------------------------------------------
@@ -269,6 +293,8 @@ export function computeRecipeValue(params: RecipeValueParams): number {
  * @param itemValues      Full item value map from the data store.
  * @param recipeParams    Optional recipe params — when present, recipe
  *                        reward and material-cost lines are included.
+ * @param extraLines      Optional extra lines appended as-is (zero values
+ *                        skipped), e.g. one per complete-actions ability.
  */
 export function buildGoldBreakdown(
   dropItemInfoMap: Record<string, DropItemInfo>,
@@ -276,6 +302,7 @@ export function buildGoldBreakdown(
   allMaterialItems: Record<string, ItemDetail>,
   itemValues: ItemValueMap,
   recipeParams?: RecipeValueParams,
+  extraLines: BreakdownLine[] = [],
 ): BreakdownLine[] {
   const lines: BreakdownLine[] = [];
 
@@ -336,40 +363,17 @@ export function buildGoldBreakdown(
     const {
       itemRewards,
       materials,
-      stepsPerRewardRoll,
-      stepsPerAction,
-      noMaterialsConsumed,
-      useFine,
       allGearItems: recipeGearItems,
-      itemValues: recipeItemValues,
-      craftingOdds,
     } = recipeParams;
 
     const resolveIcon = (id: string): string | undefined =>
       recipeGearItems[id]?.icon ?? allMaterialItems?.[id]?.icon;
 
     // Single combined material-cost line, icon from the first material.
-    const allMaterialOptions = materials.flatMap(({ options }) => options[0]);
-    const firstMatId = allMaterialOptions[0]?.item;
-    const materialsCostIcon = firstMatId
-      ? (recipeGearItems[firstMatId]?.icon ??
-        allMaterialItems?.[firstMatId]?.icon)
-      : undefined;
+    const firstMatId = materials.flatMap(({ options }) => options[0])[0]?.item;
+    const materialsCostIcon = firstMatId ? resolveIcon(firstMatId) : undefined;
 
-    const totalCost = allMaterialOptions.reduce((sum, { amount, item }) => {
-      if (item in recipeGearItems) {
-        return sum + amount * Object.values(recipeItemValues[item])[0];
-      }
-      const quality = useFine ? "fine" : "common";
-      return (
-        sum +
-        amount * (recipeItemValues[item] as Record<string, number>)[quality]
-      );
-    }, 0);
-
-    const materialsPer1k = 1000 / (stepsPerAction / (1 - noMaterialsConsumed));
-    const costPer1k = totalCost * materialsPer1k;
-
+    const costPer1k = recipeMaterialCost1k(recipeParams);
     if (costPer1k !== 0) {
       lines.unshift({
         icon: materialsCostIcon,
@@ -380,39 +384,15 @@ export function buildGoldBreakdown(
 
     // One line per reward item.
     for (const [item, amount] of Object.entries(itemRewards)) {
-      let value: number;
-
-      if (item in recipeGearItems && recipeGearItems[item].type === "crafted") {
-        const weightedValue = craftingOdds.reduce(
-          (total, { qualityValue, value: v }) =>
-            total +
-            v *
-              (recipeItemValues[item] as Record<string, number>)[qualityValue],
-          0,
-        );
-        value = weightedValue * (1000 / stepsPerRewardRoll);
-      } else {
-        const info: MaterialValueInfo = {
-          stepsPerNormal: useFine ? 0 : stepsPerRewardRoll,
-          stepsPerFine: useFine ? stepsPerRewardRoll : 0,
-        };
-        value =
-          amount *
-          (materialValue(
-            item,
-            info,
-            recipeItemValues as unknown as MaterialValueSource,
-          ) ?? 0);
-      }
-
+      const value = recipeRewardValue(item, amount, recipeParams);
       if (value === 0) continue;
-
-      lines.unshift({
-        icon: resolveIcon(item),
-        label: item,
-        value,
-      });
+      lines.unshift({ icon: resolveIcon(item), label: item, value });
     }
+  }
+
+  // Extra per-source lines (e.g. complete-actions abilities), appended last.
+  for (const line of extraLines) {
+    if (line.value !== 0) lines.push(line);
   }
 
   return lines;
