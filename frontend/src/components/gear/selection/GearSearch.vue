@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import { storeToRefs } from "pinia";
 import { consumableCounts } from "@/domain/items/consumableCounts";
 import { useDataStore } from "@/store/data";
@@ -13,6 +13,7 @@ import { consumableQualityOptions } from "@/domain/constants/quality";
 import { itemQualityNameSort } from "@/domain/gear/sorting";
 import { usedAttrs } from "@/domain/quality/qualityAttrs";
 import { intersect } from "@/utils/intersect";
+import debounce from "@/utils/debounce";
 import WsIcon from "@/components/primitives/WsIcon.vue";
 import SearchItemDisplay from "./SearchItemDisplay.vue";
 
@@ -38,6 +39,16 @@ const { checkRequirements } = injectRequirements();
 const { showItemForActivity } = useShowItemForActivity(ctx);
 
 const searchTerm = ref("");
+// Filter on a debounced copy of the input so fast typing doesn't re-filter on every keystroke.
+const appliedSearchTerm = ref("");
+const applySearchTerm = debounce((term) => {
+  appliedSearchTerm.value = term;
+}, 150);
+watch(searchTerm, (term) => applySearchTerm(term));
+
+// Long lists (rings, tools) render in pages; the rest appear on demand.
+const PAGE_SIZE = 50;
+const visibleCount = ref(PAGE_SIZE);
 
 const slotItems =
   props.gearType === "activityInput"
@@ -68,8 +79,19 @@ const otherSlotIds = computed(() => {
     .map((slot) => ctx.gearSlots.value[slot]?.id || null);
 });
 
+// Keywords banned by the items equipped in the other slots of this gear type.
+const bannedKeywords = computed(() =>
+  Object.entries(ctx.gearSlots.value)
+    .filter(
+      ([slot, item]) =>
+        item && slot !== props.slotName && slot.includes(props.gearType),
+    )
+    .flatMap(([, item]) => item.keywords)
+    .flatMap((keyword) => dataStore.keywordsMap[keyword]?.bannedKeywords || []),
+);
+
 const filteredItems = computed(() => {
-  const term = searchTerm.value.trim().toLowerCase();
+  const term = appliedSearchTerm.value.trim().toLowerCase();
   const showOwned = gearSettings.value.showOwned.value;
   const showUseful = gearSettings.value.showUseful.value;
 
@@ -98,20 +120,8 @@ const filteredItems = computed(() => {
       );
     });
   };
-  const filterBannedKeywords = (item) => {
-    const otherSlotsItems = Object.entries(ctx.gearSlots.value)
-      .filter(
-        ([slot, item]) =>
-          item && slot !== props.slotName && slot.includes(props.gearType),
-      )
-      .map(([, item]) => item);
-    const equippedKeywords = otherSlotsItems.flatMap((item) => item.keywords);
-    const bannedKeywords = equippedKeywords.flatMap(
-      (keyword) => dataStore.keywordsMap[keyword]?.bannedKeywords || [],
-    );
-    const commonKeywords = intersect(item.keywords, bannedKeywords);
-    return commonKeywords.length === 0;
-  };
+  const filterBannedKeywords = (item) =>
+    intersect(item.keywords, bannedKeywords.value).length === 0;
   const filterHidden = (item) => !item.hidden;
   const filterEmbargo = (item) =>
     !(
@@ -140,12 +150,22 @@ const filteredItems = computed(() => {
       .filter((item) =>
         checkRequirements(optionRequirements, {
           ...ctx,
-          inputItem: computed(() => item),
+          inputItem: { value: item },
         }),
       );
   }
 
+  // Filters that only look at the base item run first, so the per-item
+  // quality/attr work below is only done for items that can still match.
   return slotItems
+    .filter(
+      (item) =>
+        filterSearch(item) &&
+        filterOwned(item) &&
+        filterEquipped(item) &&
+        filterEmbargo(item) &&
+        filterBannedKeywords(item),
+    )
     .map((item) => {
       const { id, type, gearType, egg } = item;
       const isCrafted = type === "crafted";
@@ -218,15 +238,7 @@ const filteredItems = computed(() => {
     })
     .flat()
     .filter(
-      (item) =>
-        filterActivity(item) &&
-        filterSearch(item) &&
-        filterOwned(item) &&
-        filterEquipped(item) &&
-        filterStat(item) &&
-        filterBannedKeywords(item) &&
-        filterHidden(item) &&
-        filterEmbargo(item),
+      (item) => filterHidden(item) && filterStat(item) && filterActivity(item),
     )
     .sort((a, b) => {
       if (dataStore.selectedStat === "none")
@@ -245,6 +257,13 @@ const filteredItems = computed(() => {
         : Math.abs(bStat.value);
       return bValue - aValue;
     });
+});
+
+const visibleItems = computed(() =>
+  filteredItems.value.slice(0, visibleCount.value),
+);
+watch(filteredItems, () => {
+  visibleCount.value = PAGE_SIZE;
 });
 
 const handleClick = (item) => {
@@ -282,13 +301,20 @@ const handleClick = (item) => {
     />
     <div class="items-wrapper">
       <search-item-display
-        v-for="(item, index) in filteredItems"
-        :key="`${item.id}-${index}`"
+        v-for="item in visibleItems"
+        :key="`${item.id}-${item.quality}`"
         :item="item"
         :highlight-stat="dataStore.selectedStat"
         :slot-name="slotName"
         @click="handleClick(item)"
       />
+      <button
+        v-if="filteredItems.length > visibleItems.length"
+        class="show-more"
+        @click="visibleCount += PAGE_SIZE"
+      >
+        Show more ({{ filteredItems.length - visibleItems.length }} remaining)
+      </button>
     </div>
   </div>
 </template>
@@ -337,6 +363,18 @@ const handleClick = (item) => {
     &:focus {
       outline: 1px solid $chipOutline;
     }
+  }
+}
+
+.show-more {
+  padding: $xs;
+  background-color: $boxDarkBackground;
+  border: 1px solid $boxPrimaryOutline;
+  color: $txPrimary;
+  cursor: pointer;
+
+  &:hover {
+    color: $txLighter;
   }
 }
 
