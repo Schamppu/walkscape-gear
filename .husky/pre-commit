@@ -1,5 +1,6 @@
 cd frontend
 npx eslint .
+npm run typecheck
 cd ..
 
 # Check formatting of staged files only

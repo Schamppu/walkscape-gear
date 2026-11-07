@@ -8,4 +8,4 @@ To add one:
 2. Select an activity or recipe, set up targets in the Optimiser modal and press **Export job (debug)**.
 3. Save the downloaded `optimiser-job-<id>.json` here.
 
-Run the benchmark with `BENCH=1 npx vitest run benchmark`. It prints a table per job.
+Run the benchmark with `BENCH=1 npm run test -- benchmark`. It prints a table per job.
