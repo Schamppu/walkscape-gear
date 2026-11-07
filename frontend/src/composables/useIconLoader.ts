@@ -1,14 +1,14 @@
-import { ref, watch, type Ref } from "vue";
-import { useIconStore } from "@/store/icon";
+import { computed, ref, watch, type Ref } from "vue";
+import { getIconUrl } from "@/utils/axios/api_routes";
 
 /**
  * Purpose:
- * Loads and tracks icon URLs from the icon store for a reactive icon path.
+ * Resolves an icon path to its URL and tracks the image's loading state.
  *
  * Responsibilities:
- * - Keep icon loading state reactive
- * - Resolve icon URLs through the icon store
- * - Reset state safely when icon path is empty
+ * - Map icon paths to cacheable `/api/icons/...` URLs (the browser does the caching)
+ * - Track loading/failed state from the `<img>` load and error events
+ * - Skip the loading state for icons already loaded this session
  *
  * Does NOT:
  * - Perform rendering
@@ -17,32 +17,46 @@ import { useIconStore } from "@/store/icon";
 
 export type IconPathValue = string | null | undefined;
 
+// URLs that have finished loading once; the browser serves them from cache after that.
+const loadedUrls = new Set<string>();
+
 export function useIconLoader(iconPath: Ref<IconPathValue>): {
   iconUrl: Ref<string | null>;
   loading: Ref<boolean>;
+  failed: Ref<boolean>;
+  onLoad: () => void;
+  onError: () => void;
 } {
-  const iconStore = useIconStore();
-  const iconUrl = ref<string | null>(null);
+  const iconUrl = computed<string | null>(() =>
+    iconPath.value ? getIconUrl(iconPath.value) : null,
+  );
   const loading = ref<boolean>(false);
+  const failed = ref<boolean>(false);
 
   watch(
-    iconPath,
-    async (path) => {
-      if (!path) {
-        iconUrl.value = null;
-        loading.value = false;
-        return;
-      }
-
-      loading.value = true;
-      iconUrl.value = await iconStore.loadIcon(path);
-      loading.value = false;
+    iconUrl,
+    (url) => {
+      failed.value = false;
+      loading.value = url !== null && !loadedUrls.has(url);
     },
     { immediate: true },
   );
 
+  const onLoad = (): void => {
+    if (iconUrl.value) loadedUrls.add(iconUrl.value);
+    loading.value = false;
+  };
+
+  const onError = (): void => {
+    loading.value = false;
+    failed.value = true;
+  };
+
   return {
     iconUrl,
     loading,
+    failed,
+    onLoad,
+    onError,
   };
 }

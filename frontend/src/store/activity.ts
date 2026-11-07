@@ -22,7 +22,6 @@ import type { ActivityStateUpdate, Command } from "./commands/types";
 import type { ActivityDetail, ActivitySummary } from "@/domain/types/activity";
 import type { RecipeDetail, RecipeSummary } from "@/domain/types/recipe";
 import type { ServiceDetail } from "@/domain/types/service";
-import type { Requirement } from "@/domain/types/common";
 import type { SkillLevelRequirement } from "@/domain/types/requirement";
 import type { LocationDetail } from "@/domain/types/location";
 import type { StaticBootstrap } from "@/domain/types/bootstrap";
@@ -132,7 +131,8 @@ export const useActivityStore = defineStore("activityStore", {
       this.activity = activity;
     },
 
-    setRecipe(recipe: RecipeDetail | ActivityNone): void {
+    /** Resolves once the recipe's services and locations have loaded. */
+    setRecipe(recipe: RecipeDetail | ActivityNone): Promise<void> {
       const previousActivity =
         this.activity?.id !== "none" ? (this.activity as ActivityDetail) : null;
       const previousRecipe =
@@ -158,7 +158,7 @@ export const useActivityStore = defineStore("activityStore", {
         previousService,
         previousServices,
       );
-      this._executeCommand(command);
+      return this._executeCommand(command);
     },
 
     // Direct setter that doesn't record history (used by commands)
@@ -250,19 +250,12 @@ export const useActivityStore = defineStore("activityStore", {
     },
     async loadRecipe(id: string): Promise<void> {
       if (id === "none") {
-        this.setRecipe(activityNone);
+        await this.setRecipe(activityNone);
         return;
       }
       const { data: recipe } = await getRecipe({ id });
-      const recipeDetail = recipe as unknown as RecipeDetail;
-      this.setRecipe(recipeDetail);
-
-      const [skill = null] = recipeDetail.relatedSkills ?? [];
-
-      const serviceRequirements = recipeDetail.requirements
-        .filter(({ type }: Requirement) => type === "service")
-        .map(({ requirement }: Requirement) => requirement);
-      await this.loadRecipeServices(skill, serviceRequirements);
+      // SetRecipeCommand loads the recipe's services and locations.
+      await this.setRecipe(recipe as unknown as RecipeDetail);
     },
     async loadRecipeServices(
       skill: string | null,

@@ -1,4 +1,5 @@
 import { achievementService, itemService } from "../services/index.js";
+import { setPublicCache } from "../utils/cacheHeaders.js";
 
 export const fetchAchievementRewards = () =>
   achievementService
@@ -38,6 +39,7 @@ export async function getAchievementPointsMax(req, res) {
       Object.values(apByDifficulty).reduce((sum, value) => sum + value, 0) +
       collectibleAP;
 
+    setPublicCache(res);
     return res.json({
       total,
       collectibles: collectibleAP,

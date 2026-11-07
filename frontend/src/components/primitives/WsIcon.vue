@@ -22,7 +22,9 @@ const props = withDefaults(
   },
 );
 
-const { iconUrl, loading } = useIconLoader(toRef(props, "iconPath"));
+const { iconUrl, loading, failed, onLoad, onError } = useIconLoader(
+  toRef(props, "iconPath"),
+);
 
 const iconSize = computed<string>(() => iconSizeMap[props.size]);
 const imgAlt = computed<string>(() =>
@@ -45,11 +47,14 @@ const isAriaHidden = computed<boolean>(() => props.decorative);
   >
     <loading-throbber v-if="loading" aria-hidden="true" />
     <img
-      v-if="iconUrl"
+      v-if="iconUrl && !failed"
+      v-show="!loading"
       :src="iconUrl"
       :alt="imgAlt"
       :style="{ width: '100%', height: '100%', objectFit: 'contain' }"
       :class="[outlineClass, ...extraClasses]"
+      @load="onLoad"
+      @error="onError"
     />
   </div>
 </template>

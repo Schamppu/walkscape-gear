@@ -1,5 +1,6 @@
 import { itemService } from "../services/index.js";
 import { wrapController } from "./wrapController.js";
+import { setPublicCache } from "../utils/cacheHeaders.js";
 
 export const listItems = wrapController(() => itemService.list());
 
@@ -18,6 +19,7 @@ export const fetchCollectibles = () => itemService.fetchCollectibles();
 export async function getCategorizedItems(req, res) {
   try {
     const categorized = await itemService.getCategorizedItems();
+    setPublicCache(res);
     res.json(categorized);
   } catch (error) {
     console.error("Error fetching categorized items:", error);
@@ -28,6 +30,7 @@ export async function getCategorizedItems(req, res) {
 export async function getUrlMapping(req, res) {
   try {
     const urlMapping = await itemService.getUrlMapping();
+    setPublicCache(res);
     res.json(urlMapping);
   } catch (error) {
     console.error("Error fetching URL mapping:", error);
@@ -38,6 +41,7 @@ export async function getUrlMapping(req, res) {
 export async function getItemValueMapping(req, res) {
   try {
     const urlMapping = await itemService.getItemValueMapping();
+    setPublicCache(res);
     res.json(urlMapping);
   } catch (error) {
     console.error("Error fetching Item value mapping:", error);
@@ -48,6 +52,7 @@ export async function getItemValueMapping(req, res) {
 export async function getFineMaterials(req, res) {
   try {
     const fineMaterials = await itemService.getFineMaterials();
+    setPublicCache(res);
     res.json(fineMaterials);
   } catch (error) {
     console.error("Error fetching fine materials:", error);

@@ -1,6 +1,11 @@
 import { defineStore } from "pinia";
 import { consumableCounts } from "@/domain/items/consumableCounts";
-import { getItem, searchItems, getPet } from "@/utils/axios/api_routes";
+import {
+  getItem,
+  getMultipleItems,
+  getPet,
+  searchItems,
+} from "@/utils/axios/api_routes";
 import { useItemsStore } from "./items";
 import {
   EquipItemCommand,
@@ -196,39 +201,62 @@ export const useGearStore = defineStore("gearStore", {
       return null;
     },
 
-    // Batch fetch items (ready for future bulk endpoint)
+    // Batch fetch items: one request for all items, skipping cached entries.
+    // A gear set holds at most one pet, so pets are fetched individually alongside.
     async _fetchMultipleItems(itemRequests: FetchRequest[]): Promise<FetchResult[]> {
-      // For now, we'll use Promise.all with individual calls
-      // TODO: Replace with bulk endpoint when available
-      const fetchPromises = itemRequests.map(async ({ id, quality }): Promise<FetchResult> => {
-        // Check cache first
+      const itemsStore = useItemsStore();
+      const uncached = itemRequests.filter(({ id, quality }) => !this._getFromCache(id, quality));
+      const petIds = [...new Set(uncached.filter(({ id }) => id in itemsStore.petsMap).map(({ id }) => id))];
+      const itemIds = [...new Set(uncached.filter(({ id }) => !(id in itemsStore.petsMap)).map(({ id }) => id))];
+
+      const fetchItems = async (): Promise<Map<string, ItemDetail>> => {
+        if (itemIds.length === 0) return new Map();
+        try {
+          const { data } = await getMultipleItems(itemIds);
+          // The response is aligned with the requested ids; missing ids come back as null.
+          return new Map(
+            itemIds.flatMap((id, i) => (data[i] ? [[id, data[i]] as [string, ItemDetail]] : [])),
+          );
+        } catch (error) {
+          console.error(`Failed to fetch ${itemIds.length} item(s):`, error);
+          return new Map();
+        }
+      };
+
+      const fetchPet = async (id: string): Promise<[string, PetDetail] | null> => {
+        try {
+          const { data } = await getPet({ id });
+          return data ? [id, data] : null;
+        } catch (error) {
+          console.error(`Failed to fetch pet ${id}:`, error);
+          return null;
+        }
+      };
+
+      const [itemsById, petEntries] = await Promise.all([
+        fetchItems(),
+        Promise.all(petIds.map(fetchPet)),
+      ]);
+      const petsById = new Map(petEntries.filter((entry) => entry !== null));
+
+      return itemRequests.map(({ id, quality }): FetchResult => {
         const cachedItem = this._getFromCache(id, quality);
         if (cachedItem) {
           return { id, quality, data: cachedItem };
         }
 
-        // Fetch from API
-        try {
-          const itemsStore = useItemsStore();
-          const isPet = id in itemsStore.petsMap;
-          const loadFn = isPet ? getPet : getItem;
-          const { data } = await loadFn({ id });
-          const icon = isPet
-            ? getPetIcon(data as unknown as Parameters<typeof getPetIcon>[0], Number(quality) || 0)
-            : (data as ItemDetail).icon;
+        const pet = petsById.get(id);
+        const item = itemsById.get(id);
+        const data = pet ?? item;
+        if (!data) return { id, quality, data: null };
 
-          if (data) {
-            const itemData: EquippedItem = { ...data, quality, icon } as EquippedItem;
-            this._setInCache(id, quality, itemData);
-            return { id, quality, data: itemData };
-          }
-        } catch (error) {
-          console.error(`Failed to fetch item ${id}:`, error);
-        }
-        return { id, quality, data: null };
+        const icon = pet
+          ? getPetIcon(pet as unknown as Parameters<typeof getPetIcon>[0], Number(quality) || 0)
+          : (item as ItemDetail).icon;
+        const itemData: EquippedItem = { ...data, quality, icon } as EquippedItem;
+        this._setInCache(id, quality, itemData);
+        return { id, quality, data: itemData };
       });
-
-      return Promise.all(fetchPromises);
     },
 
     async loadItem(
