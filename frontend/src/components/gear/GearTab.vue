@@ -35,6 +35,15 @@ onMounted(async () => {
       <section class="gear-set">
         <gear-optimiser />
         <gear-sets v-if="gearSettings.showGearSets.value" />
+        <undo-redo-buttons
+          v-if="gearSettings.undoRedo.display === 1"
+          size="small"
+          variant="minimal"
+          direction="horizontal"
+          class="undo-redo"
+        />
+        <gear-selection />
+        <gear-buttons />
         <div class="options">
           <label v-if="gearSettings.showOwned.display === 1">
             <input type="checkbox" v-model="gearSettings.showOwned.value" />
@@ -45,15 +54,6 @@ onMounted(async () => {
             Show items with applicable stats
           </label>
         </div>
-        <undo-redo-buttons
-          v-if="gearSettings.undoRedo.display === 1"
-          size="small"
-          variant="minimal"
-          direction="horizontal"
-          class="undo-redo"
-        />
-        <gear-selection />
-        <gear-buttons />
       </section>
     </details>
     <equipped-abilities />
