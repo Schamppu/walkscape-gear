@@ -12,6 +12,8 @@ import {
 import { useMemosphereXp } from "@/composables/useMemosphereXp";
 import type { ChestLootTableInfo } from "@/composables/useChestLootTables";
 import type { AbilityLootTableInfo } from "@/composables/useAbilityLootTables";
+import type { CompleteActionsAbilityInfo } from "@/composables/useCompleteActionsAbilities";
+import { completeActionsXpBreakdown } from "@/domain/abilities/completeActions";
 import { n } from "@/utils/number";
 import { icons } from "@/constants/iconPaths";
 
@@ -20,8 +22,14 @@ const props = withDefaults(
     context?: BaseContext | null;
     chestLootTables?: ChestLootTableInfo[];
     abilityLootTables?: AbilityLootTableInfo[];
+    completeActionsAbilities?: CompleteActionsAbilityInfo[];
   }>(),
-  { context: null, chestLootTables: () => [], abilityLootTables: () => [] },
+  {
+    context: null,
+    chestLootTables: () => [],
+    abilityLootTables: () => [],
+    completeActionsAbilities: () => [],
+  },
 );
 
 const { dropItemInfoMap } = props.context
@@ -31,12 +39,32 @@ const { dropItemInfoMap } = props.context
 const memosphereXp = useMemosphereXp(
   dropItemInfoMap,
   computed(() => props.chestLootTables),
-  computed(() => props.abilityLootTables),
+  computed(() => [
+    ...props.abilityLootTables,
+    ...props.completeActionsAbilities,
+  ]),
 );
 
-const displayValue = computed(() => n(memosphereXp.value.total, 2));
-const tooltip = computed(
-  () => `${displayValue.value} XP per step from memospheres`,
+// XP from abilities that instantly complete actions, one line per ability.
+const abilityXpLines = computed(() =>
+  completeActionsXpBreakdown(props.completeActionsAbilities),
+);
+
+const total = computed(
+  () =>
+    memosphereXp.value.total +
+    abilityXpLines.value.reduce((sum, line) => sum + line.value, 0),
+);
+const breakdown = computed(() => [
+  ...memosphereXp.value.breakdown,
+  ...abilityXpLines.value,
+]);
+
+const displayValue = computed(() => n(total.value, 2));
+const tooltip = computed(() =>
+  abilityXpLines.value.length
+    ? `${displayValue.value} XP per step from memospheres and abilities`
+    : `${displayValue.value} XP per step from memospheres`,
 );
 </script>
 
@@ -47,6 +75,6 @@ const tooltip = computed(
     :icon-path="icons.xp"
     label="/step"
     :tooltip="tooltip"
-    :breakdown="memosphereXp.breakdown"
+    :breakdown="breakdown"
   />
 </template>

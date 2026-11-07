@@ -9,6 +9,7 @@ import {
 } from "@/composables/context/injectShared";
 import { useChestLootTables } from "@/composables/useChestLootTables";
 import { useAbilityLootTables } from "@/composables/useAbilityLootTables";
+import { useCompleteActionsAbilities } from "@/composables/useCompleteActionsAbilities";
 import DropItemDisplay from "./DropItemDisplay.vue";
 import LootTableDisplay from "./LootTableDisplay.vue";
 import AggregateDrops from "./aggregate/AggregateDrops.vue";
@@ -24,6 +25,15 @@ const { groupedLootTables, dropItemInfoMap } = injectLootTables();
 const itemsStore = useItemsStore();
 const chestLootTables = useChestLootTables(dropItemInfoMap);
 const abilityLootTables = useAbilityLootTables(ctx);
+const completeActionsAbilities = useCompleteActionsAbilities(
+  ctx,
+  dropItemInfoMap,
+);
+
+const abilitySections = computed(() => [
+  ...abilityLootTables.value,
+  ...completeActionsAbilities.value,
+]);
 
 const showChests = computed(
   () => activitySettings.value.showChestLootTables?.value === true,
@@ -67,6 +77,7 @@ const visibleLootTables = computed(() => {
       <aggregate-drops
         :chest-loot-tables="chestLootTables"
         :ability-loot-tables="abilityLootTables"
+        :complete-actions-abilities="completeActionsAbilities"
       />
       <section class="drops-info">
         <template v-if="activitySettings.showCombined.value">
@@ -94,9 +105,9 @@ const visibleLootTables = computed(() => {
           :chest-info="chestInfo"
         />
       </section>
-      <section v-if="abilityLootTables.length > 0" class="ability-sections">
+      <section v-if="abilitySections.length > 0" class="ability-sections">
         <ability-loot-table-section
-          v-for="abilityInfo in abilityLootTables"
+          v-for="abilityInfo in abilitySections"
           :key="abilityInfo.abilityId"
           :section="abilityInfo"
         />
