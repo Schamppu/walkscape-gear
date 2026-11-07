@@ -1,5 +1,7 @@
-#!/bin/sh
-. "$(dirname "$0")/_/husky.sh"
-
 cd frontend
 npx eslint .
+cd ..
+
+# Check formatting of staged files only
+git diff --cached --name-only --diff-filter=ACMR -z \
+  | xargs -0 -r frontend/node_modules/.bin/prettier --check --ignore-unknown
