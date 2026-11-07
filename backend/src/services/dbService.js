@@ -69,6 +69,7 @@ const ALLOWED_SETTINGS = new Set([
   "recipeOptimiserPriority",
   "qoRecipeOptimiserPriority",
   "gearLayout",
+  "showGearSets",
   "showCombined",
   "hideOwnedCollectibles",
   "hideUnmetLevelActivities",

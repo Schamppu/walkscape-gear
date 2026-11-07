@@ -34,7 +34,7 @@ onMounted(async () => {
       <summary>Gear Set</summary>
       <section class="gear-set">
         <gear-optimiser />
-        <gear-sets />
+        <gear-sets v-if="gearSettings.showGearSets.value" />
         <div class="options">
           <label v-if="gearSettings.showOwned.display === 1">
             <input type="checkbox" v-model="gearSettings.showOwned.value" />
