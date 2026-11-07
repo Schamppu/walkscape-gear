@@ -3,7 +3,7 @@ import axios from "axios";
 const isProd = process.env.NODE_ENV === "production";
 
 console.log(
-  `API base URL: ${process.env.API_BASE_URL || "http://localhost:3000"}`
+  `API base URL: ${process.env.API_BASE_URL || "http://localhost:3000"}`,
 );
 
 const api = axios.create({

@@ -13,7 +13,9 @@ describe("toDeepRaw", () => {
     expect(isReactive(copy)).toBe(false);
     expect(isReactive(copy.item)).toBe(false);
     expect(isReactive(copy.item.attrs[0])).toBe(false);
-    expect(copy).toEqual({ item: { id: "ring", attrs: [{ stat: "luck", value: 2 }] } });
+    expect(copy).toEqual({
+      item: { id: "ring", attrs: [{ stat: "luck", value: 2 }] },
+    });
   });
 
   it("does not modify or alias the source", () => {
@@ -39,7 +41,13 @@ describe("toDeepRaw", () => {
   });
 
   it("copies Maps, Sets and primitives", () => {
-    const data = { map: new Map([["a", 1]]), set: new Set([1]), n: 3, s: "x", none: null };
+    const data = {
+      map: new Map([["a", 1]]),
+      set: new Set([1]),
+      n: 3,
+      s: "x",
+      none: null,
+    };
     const copy = toDeepRaw(data);
 
     expect(copy.map).not.toBe(data.map);

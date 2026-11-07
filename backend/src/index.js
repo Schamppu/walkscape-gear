@@ -17,7 +17,7 @@ app.use(helmet());
 app.use(
   cors({
     origin: ["http://localhost:5173", "https://gear.dev.walkscape.app/"],
-  })
+  }),
 );
 app.use(compression());
 app.use(morgan("dev"));

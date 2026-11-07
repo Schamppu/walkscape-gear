@@ -63,5 +63,7 @@ export const usefulStatsFor = ({ x, y }: Pick<Target, "x" | "y">): StatId[] => [
 
 /** Useful stats across all targets that have a weight above 0. */
 export const unionUsefulStats = (targets: readonly Target[]): StatId[] => [
-  ...new Set(targets.filter(({ weight }) => weight > 0).flatMap(usefulStatsFor)),
+  ...new Set(
+    targets.filter(({ weight }) => weight > 0).flatMap(usefulStatsFor),
+  ),
 ];

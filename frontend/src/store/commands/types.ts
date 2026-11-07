@@ -56,7 +56,10 @@ export interface IActivityStore {
   _setServicesDirect(services: ServiceSummary[]): void;
   _batchUpdateActivityState(updates: ActivityStateUpdate): void;
   loadActivityLocations(id: string): Promise<void>;
-  loadRecipeServices(skill: string | null, requirements: Record<string, unknown>[]): Promise<void>;
+  loadRecipeServices(
+    skill: string | null,
+    requirements: Record<string, unknown>[],
+  ): Promise<void>;
   loadServiceLocations(id: string): Promise<LocationDetail[]>;
 }
 
@@ -71,7 +74,10 @@ export interface IGearStore {
   _setGearSlotDirect(slot: string, item: unknown): void;
   _setAllGearSlotsDirect(slots: GearSlots): void;
   _equipMultipleDirect(gearSetData: GearSlots): Promise<void>;
-  _processGearSetData(gearSetData: GearSetMapping, useQuality?: boolean): Promise<GearSlots>;
+  _processGearSetData(
+    gearSetData: GearSetMapping,
+    useQuality?: boolean,
+  ): Promise<GearSlots>;
   _batchUpdateGearState(gearSlots: GearSlots): Promise<void>;
   isSlotLocked(slot: string): boolean;
 }

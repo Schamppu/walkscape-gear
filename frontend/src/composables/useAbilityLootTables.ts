@@ -31,7 +31,10 @@ import {
 } from "@/domain/abilities/abilityLootTables";
 import { resolveLootTableWeights } from "@/domain/lootTables/lootTables";
 import { deduplicateAndGroupDrops } from "@/domain/lootTables/contextTables";
-import { buildDropItemInfoMap, type DropItemInfo } from "@/domain/lootTables/dropInfo";
+import {
+  buildDropItemInfoMap,
+  type DropItemInfo,
+} from "@/domain/lootTables/dropInfo";
 import type { EquippedItem } from "@/store/gear";
 import type {
   DetailedContextLootTable,
@@ -66,7 +69,9 @@ export function useAbilityLootTables(
   const itemsStore = useItemsStore();
   const playerStore = usePlayerStore();
 
-  const { checkRequirements } = useRequirements(ctx as unknown as RequirementContext);
+  const { checkRequirements } = useRequirements(
+    ctx as unknown as RequirementContext,
+  );
   const { stepsPerAction, fineMaterialFind } = useSkillModifiers(
     ctx as unknown as SkillModifiersContext,
   );
@@ -128,7 +133,9 @@ export function useAbilityLootTables(
           tables: resolveLootTableWeights(
             spec.tableIds
               .map(dataStore.getDetailedLootTable)
-              .filter((t): t is NonNullable<typeof t> => t !== null) as DetailedLootTable[],
+              .filter(
+                (t): t is NonNullable<typeof t> => t !== null,
+              ) as DetailedLootTable[],
             (skill: string) => playerStore.skillLevels[skill] ?? 1,
           ),
         }));

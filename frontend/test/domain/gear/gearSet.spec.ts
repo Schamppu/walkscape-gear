@@ -1,5 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { createEmptyGearSet, createEmptyGearSetSelection } from "@/domain/gear/gearSet";
+import {
+  createEmptyGearSet,
+  createEmptyGearSetSelection,
+} from "@/domain/gear/gearSet";
 import { gearSlots } from "@/domain/constants/gear";
 
 // ---------------------------------------------------------------------------

@@ -10,7 +10,7 @@ export const getRecipe = wrapController(
   },
   {
     notFoundMessage: "Recipe not found",
-  }
+  },
 );
 
 export const fetchCraftingRecipes = () => recipeService.fetchCraftingRecipes();

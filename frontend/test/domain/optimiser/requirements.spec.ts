@@ -2,7 +2,6 @@ import { describe, it, expect } from "vitest";
 import {
   getReq,
   contributesToReq,
-  filterItemsForReq,
   getRequirementCandidates,
 } from "@/domain/optimiser/requirements";
 import { makeOptimiserItem } from "../../fixtures/optimiser";

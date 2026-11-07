@@ -14,7 +14,11 @@ import {
 describe("computeBaseline", () => {
   it("extracts each distinct target once from the naked context", () => {
     const baseline = computeBaseline(
-      [makeTarget("xp", "step", 3), makeTarget("xp", "step", 7), makeTarget("xp", "action")],
+      [
+        makeTarget("xp", "step", 3),
+        makeTarget("xp", "step", 7),
+        makeTarget("xp", "action"),
+      ],
       makeExtractionContext(),
     );
     expect(baseline.size).toBe(2);
@@ -32,7 +36,9 @@ describe("normalise", () => {
   });
 
   it("returns null for a zero baseline", () => {
-    const naked = makeExtractionContext({ modifiers: makeSkillModifiers({ xpRewards: [] }) });
+    const naked = makeExtractionContext({
+      modifiers: makeSkillModifiers({ xpRewards: [] }),
+    });
     const baseline = computeBaseline([target], naked);
     expect(normalise(baseline, target, 5)).toBeNull();
   });

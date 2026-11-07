@@ -120,22 +120,26 @@ export const useDataStore = defineStore("dataStore", {
       | "globalVariables"
     >): void {
       this.abilities = markRaw(abilities);
-      this.abilitiesMap = markRaw(Object.fromEntries(
-        abilities.map((ability) => [ability.id, ability]),
-      ));
+      this.abilitiesMap = markRaw(
+        Object.fromEntries(abilities.map((ability) => [ability.id, ability])),
+      );
 
       this.globalVariables = markRaw(globalVariables);
-      this.globalVariablesMap = markRaw(Object.fromEntries(
-        globalVariables.map((variable) => [variable.id, variable]),
-      ));
+      this.globalVariablesMap = markRaw(
+        Object.fromEntries(
+          globalVariables.map((variable) => [variable.id, variable]),
+        ),
+      );
 
       this.keywords = markRaw(keywords);
-      this.keywordsMap = markRaw(Object.fromEntries(
-        keywords.map(({ id, name, icon, bannedKeywords }) => [
-          id,
-          { id, name, icon, bannedKeywords },
-        ]),
-      ));
+      this.keywordsMap = markRaw(
+        Object.fromEntries(
+          keywords.map(({ id, name, icon, bannedKeywords }) => [
+            id,
+            { id, name, icon, bannedKeywords },
+          ]),
+        ),
+      );
 
       this.locations = markRaw(locations);
       const locationsByFaction = locations.reduce(
@@ -159,13 +163,15 @@ export const useDataStore = defineStore("dataStore", {
           },
         ]),
       );
-      this.realmsMap = markRaw(Array.from(
-        new Set(locations.map((loc) => loc.faction)),
-      ).reduce<Record<string, Realm>>((acc, realmId) => {
-        const realm = factionsMap[realmId];
-        if (realm) acc[realmId] = realm;
-        return acc;
-      }, {}));
+      this.realmsMap = markRaw(
+        Array.from(new Set(locations.map((loc) => loc.faction))).reduce<
+          Record<string, Realm>
+        >((acc, realmId) => {
+          const realm = factionsMap[realmId];
+          if (realm) acc[realmId] = realm;
+          return acc;
+        }, {}),
+      );
 
       const hiddenStatTypes = new Set([
         "skillLevel",
@@ -176,12 +182,14 @@ export const useDataStore = defineStore("dataStore", {
         "dropAsFine",
       ]);
       this.stats = markRaw(statList);
-      this.mainStats = markRaw(statList.filter(
-        ({ type }) => !hiddenStatTypes.has(type),
-      ));
-      this.statsMap = markRaw(Object.fromEntries(
-        statList.map(({ type, name, icon }) => [type, { name, icon }]),
-      ));
+      this.mainStats = markRaw(
+        statList.filter(({ type }) => !hiddenStatTypes.has(type)),
+      );
+      this.statsMap = markRaw(
+        Object.fromEntries(
+          statList.map(({ type, name, icon }) => [type, { name, icon }]),
+        ),
+      );
       for (const [alias, canonical] of Object.entries(STAT_REDIRECTS)) {
         if (canonical in this.statsMap) {
           this.statsMap[alias] = this.statsMap[canonical];

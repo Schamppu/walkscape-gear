@@ -22,7 +22,10 @@ export type WorkerItem = OptimiserItem & {
   _attrEntries: EffectiveAttrEntry[];
 };
 
-export type WorkerGearSet = Record<string, WorkerItem | LocationSummary | null | undefined>;
+export type WorkerGearSet = Record<
+  string,
+  WorkerItem | LocationSummary | null | undefined
+>;
 
 export type WorkerCandidate = {
   gearSet: WorkerGearSet;
@@ -52,7 +55,11 @@ export type StaticReqCtx = {
   locationKeywords: string[];
   locationFaction: string | null;
   locationSubFactions: string[];
-  segments: Array<{ keywords: string[]; faction: string; subFactions?: string[] }>;
+  segments: Array<{
+    keywords: string[];
+    faction: string;
+    subFactions?: string[];
+  }>;
 
   selectedServiceTier: string | null;
   selectedServiceKeywords: string[];

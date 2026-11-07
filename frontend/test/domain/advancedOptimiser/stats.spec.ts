@@ -21,7 +21,9 @@ describe("usefulStatsFor", () => {
   );
 
   it("per-action (per completion) targets care about double action", () => {
-    expect(usefulStatsFor({ x: "rewardRolls", y: "action" })).toContain("double_action");
+    expect(usefulStatsFor({ x: "rewardRolls", y: "action" })).toContain(
+      "double_action",
+    );
   });
 
   it("per-action targets don't care about step cost", () => {
@@ -39,7 +41,11 @@ describe("unionUsefulStats", () => {
     ]);
     expect(stats.filter((s) => s === "double_rewards")).toHaveLength(1);
     expect(stats).toEqual(
-      expect.arrayContaining(["fine_material_finding", "find_collectibles", "work_efficiency"]),
+      expect.arrayContaining([
+        "fine_material_finding",
+        "find_collectibles",
+        "work_efficiency",
+      ]),
     );
   });
 

@@ -54,7 +54,9 @@ const summary = (
 
 const pet = (abilities: PetAbility[]) => ({ abilities });
 
-const makeCtx = (over: Partial<AbilityAttrContext> = {}): AbilityAttrContext => ({
+const makeCtx = (
+  over: Partial<AbilityAttrContext> = {},
+): AbilityAttrContext => ({
   attrsById: {},
   summaryById: {},
   disabledActiveAbilityIds: new Set<string>(),
@@ -96,7 +98,11 @@ describe("resolvePetAbilityAttrs", () => {
       attrsById: { active_a: [makeAttr()] },
     });
     expect(
-      resolvePetAbilityAttrs(pet([{ unlockLevel: 1, ability: "active_a" }]), 5, ctx),
+      resolvePetAbilityAttrs(
+        pet([{ unlockLevel: 1, ability: "active_a" }]),
+        5,
+        ctx,
+      ),
     ).toHaveLength(1);
   });
 
@@ -107,7 +113,11 @@ describe("resolvePetAbilityAttrs", () => {
       disabledActiveAbilityIds: new Set(["active_a"]),
     });
     expect(
-      resolvePetAbilityAttrs(pet([{ unlockLevel: 1, ability: "active_a" }]), 5, ctx),
+      resolvePetAbilityAttrs(
+        pet([{ unlockLevel: 1, ability: "active_a" }]),
+        5,
+        ctx,
+      ),
     ).toEqual([]);
   });
 
@@ -118,7 +128,11 @@ describe("resolvePetAbilityAttrs", () => {
       disabledActiveAbilityIds: new Set(["passive_a"]),
     });
     expect(
-      resolvePetAbilityAttrs(pet([{ unlockLevel: 1, ability: "passive_a" }]), 5, ctx),
+      resolvePetAbilityAttrs(
+        pet([{ unlockLevel: 1, ability: "passive_a" }]),
+        5,
+        ctx,
+      ),
     ).toHaveLength(1);
   });
 
@@ -128,14 +142,22 @@ describe("resolvePetAbilityAttrs", () => {
       attrsById: { passive_a: [makeAttr()] },
     });
     expect(
-      resolvePetAbilityAttrs(pet([{ unlockLevel: 8, ability: "passive_a" }]), 5, ctx),
+      resolvePetAbilityAttrs(
+        pet([{ unlockLevel: 8, ability: "passive_a" }]),
+        5,
+        ctx,
+      ),
     ).toEqual([]);
   });
 
   it("skips abilities missing a summary", () => {
     const ctx = makeCtx({ attrsById: { ghost: [makeAttr()] } });
     expect(
-      resolvePetAbilityAttrs(pet([{ unlockLevel: 1, ability: "ghost" }]), 5, ctx),
+      resolvePetAbilityAttrs(
+        pet([{ unlockLevel: 1, ability: "ghost" }]),
+        5,
+        ctx,
+      ),
     ).toEqual([]);
   });
 
@@ -223,8 +245,16 @@ describe("abilityAttributes", () => {
         {
           dataType: "abilityData",
           actions: [
-            { type: "other", runtimeType: "x", attributes: [makeAttr({ id: "ignored" })] },
-            { type: "effect", runtimeType: "y", attributes: [makeAttr({ id: "eff1" })] },
+            {
+              type: "other",
+              runtimeType: "x",
+              attributes: [makeAttr({ id: "ignored" })],
+            },
+            {
+              type: "effect",
+              runtimeType: "y",
+              attributes: [makeAttr({ id: "eff1" })],
+            },
           ],
         },
       ],
@@ -239,11 +269,20 @@ describe("abilityAttributes", () => {
       data: [
         {
           dataType: "abilityData",
-          actions: [{ type: "effect", runtimeType: "y", attributes: [makeAttr({ id: "eff1" })] }],
+          actions: [
+            {
+              type: "effect",
+              runtimeType: "y",
+              attributes: [makeAttr({ id: "eff1" })],
+            },
+          ],
         },
       ],
     };
-    expect(abilityAttributes(detail).map((a) => a.id)).toEqual(["root", "eff1"]);
+    expect(abilityAttributes(detail).map((a) => a.id)).toEqual([
+      "root",
+      "eff1",
+    ]);
   });
 });
 

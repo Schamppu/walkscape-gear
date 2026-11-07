@@ -29,9 +29,9 @@ export const fetchChestItems = () =>
         items: tableRows
           .map(mapTableRows)
           .concat(
-            subTables.flatMap(({ tableRows }) => tableRows.map(mapTableRows))
+            subTables.flatMap(({ tableRows }) => tableRows.map(mapTableRows)),
           )
           .filter((item) => item),
       };
-    })
+    }),
   );

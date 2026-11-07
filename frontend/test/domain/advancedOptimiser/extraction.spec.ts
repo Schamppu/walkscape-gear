@@ -1,5 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { buildDropProfile, extracted } from "@/domain/advancedOptimiser/targets";
+import {
+  buildDropProfile,
+  extracted,
+} from "@/domain/advancedOptimiser/targets";
 import { getOutcomeOdds } from "@/domain/quality/qualityOutcomeOdds";
 import { materialValue } from "@/domain/drops/aggregateDropValue";
 import {
@@ -25,7 +28,9 @@ describe("extracted — Y conversion", () => {
   });
 
   it("counts per completion: a double action's bonus action is free", () => {
-    const ctx = makeExtractionContext({ modifiers: makeSkillModifiers({ doubleAction: 0.25 }) });
+    const ctx = makeExtractionContext({
+      modifiers: makeSkillModifiers({ doubleAction: 0.25 }),
+    });
     expect(extracted("xp", "action", ctx)).toBeCloseTo(50 * 1.25, 10);
     expect(extracted("rewardRolls", "action", ctx)).toBeCloseTo(1.25, 10);
   });
@@ -35,9 +40,14 @@ describe("extracted — Y conversion", () => {
       modifiers: makeSkillModifiers({ noMaterialsConsumed: 0.25 }),
     });
     const withDr = makeExtractionContext({
-      modifiers: makeSkillModifiers({ noMaterialsConsumed: 0.25, doubleRewards: 0.5 }),
+      modifiers: makeSkillModifiers({
+        noMaterialsConsumed: 0.25,
+        doubleRewards: 0.5,
+      }),
     });
-    expect(extracted("xp", "material", withDr)).toBe(extracted("xp", "material", withoutDr));
+    expect(extracted("xp", "material", withDr)).toBe(
+      extracted("xp", "material", withoutDr),
+    );
   });
 
   it("reward rolls per material equals craftsPerMaterial", () => {
@@ -47,7 +57,10 @@ describe("extracted — Y conversion", () => {
       craftsPerMaterial: 1.5 / 0.75,
     });
     const ctx = makeExtractionContext({ modifiers });
-    expect(extracted("rewardRolls", "material", ctx)).toBeCloseTo(modifiers.craftsPerMaterial, 10);
+    expect(extracted("rewardRolls", "material", ctx)).toBeCloseTo(
+      modifiers.craftsPerMaterial,
+      10,
+    );
   });
 });
 
@@ -57,20 +70,27 @@ describe("extracted — Y conversion", () => {
 
 describe("extracted — X values per action", () => {
   it("reward rolls = 1 + double rewards", () => {
-    const ctx = makeExtractionContext({ modifiers: makeSkillModifiers({ doubleRewards: 0.5 }) });
+    const ctx = makeExtractionContext({
+      modifiers: makeSkillModifiers({ doubleRewards: 0.5 }),
+    });
     expect(extracted("rewardRolls", "action", ctx)).toBe(1.5);
     expect(extracted("rewardRolls", "step", ctx)).toBeCloseTo(0.15, 10);
   });
 
   it("fine materials = reward rolls × fine chance", () => {
     const ctx = makeExtractionContext({
-      modifiers: makeSkillModifiers({ doubleRewards: 1, fineMaterialFind: 0.02 }),
+      modifiers: makeSkillModifiers({
+        doubleRewards: 1,
+        fineMaterialFind: 0.02,
+      }),
     });
     expect(extracted("fineMaterials", "action", ctx)).toBeCloseTo(0.04, 10);
   });
 
   it("collectibles = reward rolls × find collectibles", () => {
-    const ctx = makeExtractionContext({ modifiers: makeSkillModifiers({ findCollectibles: 1.2 }) });
+    const ctx = makeExtractionContext({
+      modifiers: makeSkillModifiers({ findCollectibles: 1.2 }),
+    });
     expect(extracted("collectibles", "action", ctx)).toBeCloseTo(1.2, 10);
   });
 
@@ -86,14 +106,23 @@ describe("extracted — X values per action", () => {
   it("chest find only scales chests from chest tables", () => {
     const ctx = makeExtractionContext({
       modifiers: makeSkillModifiers({ chestFind: 2 }),
-      drops: makeDropProfile({ chestsPerRoll: 0.002, unscaledChestsPerRoll: 0.001 }),
+      drops: makeDropProfile({
+        chestsPerRoll: 0.002,
+        unscaledChestsPerRoll: 0.001,
+      }),
     });
-    expect(extracted("chests", "action", ctx)).toBeCloseTo(0.002 * 2 + 0.001, 10);
+    expect(extracted("chests", "action", ctx)).toBeCloseTo(
+      0.002 * 2 + 0.001,
+      10,
+    );
   });
 
   it("tokens add the fine bonus scaled by fine chance", () => {
     const ctx = makeExtractionContext({
-      drops: makeDropProfile({ tokenBasePerRoll: 0.1, tokenFineBonusPerRoll: 2 }),
+      drops: makeDropProfile({
+        tokenBasePerRoll: 0.1,
+        tokenFineBonusPerRoll: 2,
+      }),
     });
     expect(extracted("tokens", "action", ctx)).toBeCloseTo(0.12, 10);
   });
@@ -135,21 +164,29 @@ describe("extracted — X values per action", () => {
 
 describe("extracted — guards", () => {
   it("returns 0 when the activity gives no XP", () => {
-    const ctx = makeExtractionContext({ modifiers: makeSkillModifiers({ xpRewards: [] }) });
+    const ctx = makeExtractionContext({
+      modifiers: makeSkillModifiers({ xpRewards: [] }),
+    });
     expect(extracted("xp", "step", ctx)).toBe(0);
   });
 
   it("returns 0 for eternal crafts without quality inputs", () => {
-    expect(extracted("eternalCrafts", "material", makeExtractionContext())).toBe(0);
+    expect(
+      extracted("eternalCrafts", "material", makeExtractionContext()),
+    ).toBe(0);
   });
 
   it("returns 0 per material when no materials are ever consumed", () => {
-    const ctx = makeExtractionContext({ modifiers: makeSkillModifiers({ noMaterialsConsumed: 1 }) });
+    const ctx = makeExtractionContext({
+      modifiers: makeSkillModifiers({ noMaterialsConsumed: 1 }),
+    });
     expect(extracted("rewardRolls", "material", ctx)).toBe(0);
   });
 
   it("returns 0 per step when there is no step cost", () => {
-    const ctx = makeExtractionContext({ modifiers: makeSkillModifiers({ stepsPerAction: 0 }) });
+    const ctx = makeExtractionContext({
+      modifiers: makeSkillModifiers({ stepsPerAction: 0 }),
+    });
     expect(extracted("xp", "step", ctx)).toBe(0);
   });
 });
@@ -166,10 +203,18 @@ describe("buildDropProfile", () => {
     never_drops: { stepsPerItem: Infinity, stepsPerFine: 0 },
   };
   const containers = { small_chest: {} };
-  const tokens = { adventurers_guild_token: { common: 1 }, pin: { common: 2, fine: 10 } };
+  const tokens = {
+    adventurers_guild_token: { common: 1 },
+    pin: { common: 2, fine: 10 },
+  };
 
   it("sums chests and token values per roll", () => {
-    const profile = buildDropProfile(dropMap, { small_chest: dropMap.small_chest }, containers, tokens);
+    const profile = buildDropProfile(
+      dropMap,
+      { small_chest: dropMap.small_chest },
+      containers,
+      tokens,
+    );
     expect(profile.chestsPerRoll).toBeCloseTo(0.002, 10);
     expect(profile.unscaledChestsPerRoll).toBeCloseTo(0, 10);
     expect(profile.tokenBasePerRoll).toBeCloseTo(0.01 * 1 + 0.02 * 2, 10);
@@ -183,7 +228,9 @@ describe("buildDropProfile", () => {
   });
 
   it("returns an empty profile for no drops", () => {
-    expect(buildDropProfile({}, {}, containers, tokens)).toEqual(makeDropProfile());
+    expect(buildDropProfile({}, {}, containers, tokens)).toEqual(
+      makeDropProfile(),
+    );
   });
 
   it("gives the same token value as the drops panel's materialValue", () => {
@@ -191,7 +238,10 @@ describe("buildDropProfile", () => {
     const stepsPerRewardRoll = 10;
     const fine = 0.05;
     const ctx = makeExtractionContext({
-      modifiers: makeSkillModifiers({ stepsPerAction: stepsPerRewardRoll, fineMaterialFind: fine }),
+      modifiers: makeSkillModifiers({
+        stepsPerAction: stepsPerRewardRoll,
+        fineMaterialFind: fine,
+      }),
       drops: profile,
     });
 
@@ -199,10 +249,16 @@ describe("buildDropProfile", () => {
     const stepsPerItem = dropMap.pin.stepsPerItem * stepsPerRewardRoll;
     const panelValue = materialValue(
       "pin",
-      { stepsPerNormal: stepsPerItem / (1 - fine), stepsPerFine: stepsPerItem / fine },
+      {
+        stepsPerNormal: stepsPerItem / (1 - fine),
+        stepsPerFine: stepsPerItem / fine,
+      },
       tokens,
     );
 
-    expect(extracted("tokens", "step", ctx) * 1000).toBeCloseTo(panelValue!, 10);
+    expect(extracted("tokens", "step", ctx) * 1000).toBeCloseTo(
+      panelValue!,
+      10,
+    );
   });
 });

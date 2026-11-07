@@ -5,7 +5,12 @@ import { useUrlMap } from "@/composables/useUrlMap";
 import { useActivityStore } from "./activity";
 import { useGearStore } from "./gear";
 import type { UrlMap } from "@/domain/types/item";
-import { buildReverseMapping, type ReverseMapping, type SlotOrder, type DecodedLoadout } from "@/utils/urlEncoding";
+import {
+  buildReverseMapping,
+  type ReverseMapping,
+  type SlotOrder,
+  type DecodedLoadout,
+} from "@/utils/urlEncoding";
 import { parseGearSetId } from "@/store/utils/urlUtils";
 import { useNotificationStore } from "@/store/notifications";
 
@@ -50,7 +55,9 @@ export const useUrlStore = defineStore("url", {
       this.reverseMapping = markRaw(buildReverseMapping(urlMapping));
       this.isLoaded = true;
       const notificationStore = useNotificationStore();
-      void notificationStore.debug(`URL: loaded mapping with ${Object.keys(urlMapping).length} entries`);
+      void notificationStore.debug(
+        `URL: loaded mapping with ${Object.keys(urlMapping).length} entries`,
+      );
     },
 
     encodeAndPushToUrl(): void {
@@ -137,8 +144,8 @@ export const useUrlStore = defineStore("url", {
       const notificationStore = useNotificationStore();
       void notificationStore.debug(
         `URL: applying encoded loadout  ${gearSlotCount} gear slot(s)` +
-        (hasActivity ? ", activity" : "") +
-        (hasRecipe ? ", recipe" : ""),
+          (hasActivity ? ", activity" : "") +
+          (hasRecipe ? ", recipe" : ""),
       );
 
       const promises: Promise<unknown>[] = [];
@@ -164,7 +171,9 @@ export const useUrlStore = defineStore("url", {
 
       if (gearSetExists) {
         const notificationStore = useNotificationStore();
-        void notificationStore.debug(`URL: applying gear set ${gearSetId} from URL`);
+        void notificationStore.debug(
+          `URL: applying gear set ${gearSetId} from URL`,
+        );
         await gearSetStore.selectAndEquipSet(gearSetId);
       } else {
         console.warn(`Gear set ${gearSetId} not found, removing from URL`);

@@ -6,7 +6,7 @@ export const createBaseRouter = (name, service, additionalRoutes = []) => {
 
   router.get(
     "/",
-    wrapController(() => service.list())
+    wrapController(() => service.list()),
   );
 
   router.get(
@@ -14,7 +14,7 @@ export const createBaseRouter = (name, service, additionalRoutes = []) => {
     wrapController((req) => {
       const params = req.query;
       return service.search(params);
-    })
+    }),
   );
 
   router.post(
@@ -25,7 +25,7 @@ export const createBaseRouter = (name, service, additionalRoutes = []) => {
         throw new Error("ids must be an array");
       }
       return service.getIds(ids, target);
-    })
+    }),
   );
 
   router.post(
@@ -36,7 +36,7 @@ export const createBaseRouter = (name, service, additionalRoutes = []) => {
         throw new Error("ids must be an array");
       }
       return service.getMultiple(ids);
-    })
+    }),
   );
 
   // Add additional routes before the catch-all /:id route
@@ -53,8 +53,8 @@ export const createBaseRouter = (name, service, additionalRoutes = []) => {
       },
       {
         notFoundMessage: `${name} not found`,
-      }
-    )
+      },
+    ),
   );
 
   return router;

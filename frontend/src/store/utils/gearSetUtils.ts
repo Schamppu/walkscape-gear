@@ -40,7 +40,10 @@ export function resolveSlotName(slotType: string, slotIndex: number): string {
 // ---------------------------------------------------------------------------
 
 /** Resolve an array of tag ID strings into full DbTag objects, skipping any unknown IDs. */
-export function resolveTagsFromIds(tagIds: string[], allTags: DbTag[]): DbTag[] {
+export function resolveTagsFromIds(
+  tagIds: string[],
+  allTags: DbTag[],
+): DbTag[] {
   return tagIds
     .map((id) => allTags.find((tag) => tag.id === id))
     .filter((tag): tag is DbTag => tag !== undefined);
@@ -51,7 +54,10 @@ export function resolveTagsFromIds(tagIds: string[], allTags: DbTag[]): DbTag[] 
 // ---------------------------------------------------------------------------
 
 /** The item-level fields needed when building a slot mapping. */
-type GearSetItem = Pick<DbGearSetItem, "slotType" | "slotIndex" | "itemId" | "quality">;
+type GearSetItem = Pick<
+  DbGearSetItem,
+  "slotType" | "slotIndex" | "itemId" | "quality"
+>;
 
 /** A slot map entry: the item that should be equipped, or null to unequip. */
 export type SlotEntry = { id: string; quality: string | null } | null;
@@ -76,7 +82,10 @@ export function buildGearSlotMapping(
 
   for (const { slotType, slotIndex, itemId, quality } of items) {
     const slotName = resolveSlotName(slotType, slotIndex);
-    mapping[slotName] = { id: itemId, quality: normalizeConsumableQuality(quality ?? null) };
+    mapping[slotName] = {
+      id: itemId,
+      quality: normalizeConsumableQuality(quality ?? null),
+    };
   }
 
   for (const key of existingSlotKeys) {

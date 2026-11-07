@@ -41,7 +41,9 @@ describe("RealmLocationCountDisplay", () => {
     expect(input.element.value).toBe("3");
     expect(input.attributes("max")).toBe("12");
     expect(input.attributes("min")).toBe("0");
-    expect(w.find(".wrapper").attributes("style")).toContain("rgba(17, 34, 51, 1)");
+    expect(w.find(".wrapper").attributes("style")).toContain(
+      "rgba(17, 34, 51, 1)",
+    );
   });
 
   it("points up below max and clicking jumps to max", async () => {

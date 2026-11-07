@@ -20,7 +20,10 @@ import { makeTargetContext } from "../../fixtures/advancedOptimiser";
 
 const ACTIVITY = makeTargetContext();
 const RECIPE = makeTargetContext({ isRecipe: true });
-const CRAFTED_RECIPE = makeTargetContext({ isRecipe: true, producesCraftedItem: true });
+const CRAFTED_RECIPE = makeTargetContext({
+  isRecipe: true,
+  producesCraftedItem: true,
+});
 
 const applicableIds = (ctx: typeof ACTIVITY) =>
   BUILTIN_PRESETS.filter((p) => isPresetApplicable(p, ctx)).map((p) => p.id);
@@ -51,7 +54,11 @@ describe("BUILTIN_PRESETS", () => {
     [
       "a crafted recipe",
       CRAFTED_RECIPE,
-      ["builtin:eternal-per-material", "builtin:items-per-material", "builtin:balanced"],
+      [
+        "builtin:eternal-per-material",
+        "builtin:items-per-material",
+        "builtin:balanced",
+      ],
     ],
   ])("offers the right presets for %s", (_, ctx, expected) => {
     expect(applicableIds(ctx)).toEqual(expected);
@@ -69,7 +76,9 @@ describe("isPresetApplicable", () => {
       { x: "chests", y: "step", weight: 3 },
     ]);
     expect(isPresetApplicable(p, ACTIVITY)).toBe(false);
-    expect(isPresetApplicable(p, makeTargetContext({ hasChests: true }))).toBe(true);
+    expect(isPresetApplicable(p, makeTargetContext({ hasChests: true }))).toBe(
+      true,
+    );
   });
 });
 
@@ -89,14 +98,22 @@ describe("targetsEqual", () => {
 
 describe("pickDefaultPreset", () => {
   it("picks the first preset that applies", () => {
-    const recipeOnly = { ...preset([{ x: "rewardRolls", y: "material", weight: 10 }]), id: "user:2" };
+    const recipeOnly = {
+      ...preset([{ x: "rewardRolls", y: "material", weight: 10 }]),
+      id: "user:2",
+    };
     const presets = [recipeOnly, ...BUILTIN_PRESETS];
     expect(pickDefaultPreset(presets, RECIPE)?.id).toBe("user:2");
     expect(pickDefaultPreset(presets, ACTIVITY)?.id).toBe("builtin:balanced");
   });
 
   it("returns null when nothing applies", () => {
-    expect(pickDefaultPreset([preset([{ x: "chests", y: "step", weight: 1 }])], ACTIVITY)).toBeNull();
+    expect(
+      pickDefaultPreset(
+        [preset([{ x: "chests", y: "step", weight: 1 }])],
+        ACTIVITY,
+      ),
+    ).toBeNull();
   });
 });
 
@@ -104,7 +121,10 @@ describe("configFromPreset", () => {
   it("copies the targets and remembers the preset", () => {
     const [p] = BUILTIN_PRESETS;
     const config = configFromPreset(p, "act_1");
-    expect(config.mode).toEqual({ kind: "singleActivity", activityId: "act_1" });
+    expect(config.mode).toEqual({
+      kind: "singleActivity",
+      activityId: "act_1",
+    });
     expect(config.presetId).toBe(p.id);
     expect(config.targets).toEqual(p.targets);
     expect(config.targets[0]).not.toBe(p.targets[0]);
@@ -112,19 +132,25 @@ describe("configFromPreset", () => {
 });
 
 describe("presetNameProblem", () => {
-  it.each(["Mine", "  Fishing 🎣  ", "Café", "x".repeat(MAX_PRESET_NAME_LENGTH)])(
-    "accepts %j",
-    (name) => {
-      expect(presetNameProblem(name)).toBeNull();
-    },
-  );
+  it.each([
+    "Mine",
+    "  Fishing 🎣  ",
+    "Café",
+    "x".repeat(MAX_PRESET_NAME_LENGTH),
+  ])("accepts %j", (name) => {
+    expect(presetNameProblem(name)).toBeNull();
+  });
 
-  it.each(["", "   ", "x".repeat(MAX_PRESET_NAME_LENGTH + 1), "a​b", "a\nb", "‮abc"])(
-    "rejects %j",
-    (name) => {
-      expect(presetNameProblem(name)).not.toBeNull();
-    },
-  );
+  it.each([
+    "",
+    "   ",
+    "x".repeat(MAX_PRESET_NAME_LENGTH + 1),
+    "a​b",
+    "a\nb",
+    "‮abc",
+  ])("rejects %j", (name) => {
+    expect(presetNameProblem(name)).not.toBeNull();
+  });
 });
 
 describe("presetTargetsProblem", () => {
@@ -133,7 +159,9 @@ describe("presetTargetsProblem", () => {
     expect(presetTargetsProblem([])).not.toBeNull();
     expect(presetTargetsProblem([xp])).toBeNull();
     expect(presetTargetsProblem(Array(MAX_PRESET_TARGETS).fill(xp))).toBeNull();
-    expect(presetTargetsProblem(Array(MAX_PRESET_TARGETS + 1).fill(xp))).not.toBeNull();
+    expect(
+      presetTargetsProblem(Array(MAX_PRESET_TARGETS + 1).fill(xp)),
+    ).not.toBeNull();
   });
 });
 
@@ -164,9 +192,12 @@ describe("preset ids", () => {
     expect(userPresetDbId(userPresetId(12))).toBe(12);
   });
 
-  it.each(["builtin:balanced", "user:abc", "user:0", "12"])("has no database id for %s", (id) => {
-    expect(userPresetDbId(id)).toBeNull();
-  });
+  it.each(["builtin:balanced", "user:abc", "user:0", "12"])(
+    "has no database id for %s",
+    (id) => {
+      expect(userPresetDbId(id)).toBeNull();
+    },
+  );
 
   it("reads built-in slugs", () => {
     expect(builtinPresetSlug("builtin:balanced")).toBe("balanced");

@@ -29,30 +29,30 @@ describe("Skill Level Calculations", () => {
 
     // Halfway to level 2
     expect(xpProgressInSkillLevel(41.5)).toBeCloseTo(0.5, 2);
-    
+
     // Halfway to level 20
     expect(xpProgressInSkillLevel(4_744)).toBeCloseTo(0.5, 2);
-    
+
     // Halfway to level 50
     expect(xpProgressInSkillLevel(106_639)).toBeCloseTo(0.5, 2);
-    
+
     // Max level
     expect(xpProgressInSkillLevel(14_000_000)).toBe(1);
   });
 
   test("xpToNextSkillLevel calculates correct XP needed for next level", () => {
     // XP needed to reach level 2
-    expect(xpToNextSkillLevel(0)).toBe(83); 
-    
+    expect(xpToNextSkillLevel(0)).toBe(83);
+
     // XP needed to reach level 2 with some XP already gained
-    expect(xpToNextSkillLevel(50)).toBe(33); 
-    
+    expect(xpToNextSkillLevel(50)).toBe(33);
+
     // XP to reach level 74 from 1M XP
     expect(xpToNextSkillLevel(1_000_000)).toBe(96_278);
-    
+
     // XP to reach level 90 from 5M XP
     expect(xpToNextSkillLevel(5_000_000)).toBe(346_332);
-    
+
     // Beyond max level should return 0
     expect(xpToNextSkillLevel(14_000_000)).toBe(0);
   });

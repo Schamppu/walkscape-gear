@@ -50,7 +50,7 @@ export const tokenValues: TokenValuesMap = {
   mysterious_chitin: {
     common: 10,
     fine: 50,
-  }
+  },
 };
 
 export default tokenValues;

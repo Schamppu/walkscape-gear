@@ -15,7 +15,8 @@ import { extracted, type ExtractionContext } from "./targets";
 
 export type Baseline = Map<string, number>;
 
-export const targetKey = ({ x, y }: Pick<Target, "x" | "y">): string => `${x}/${y}`;
+export const targetKey = ({ x, y }: Pick<Target, "x" | "y">): string =>
+  `${x}/${y}`;
 
 /** Extracts each distinct target once from the naked-gear context. */
 export const computeBaseline = (
@@ -25,7 +26,8 @@ export const computeBaseline = (
   const baseline: Baseline = new Map();
   for (const target of targets) {
     const key = targetKey(target);
-    if (!baseline.has(key)) baseline.set(key, extracted(target.x, target.y, nakedCtx));
+    if (!baseline.has(key))
+      baseline.set(key, extracted(target.x, target.y, nakedCtx));
   }
   return baseline;
 };
@@ -36,8 +38,11 @@ export const computeBaseline = (
  * reward rolls ×4 over naked) on one scale, so weights act as an exchange
  * rate between targets. Returns `null` when no gear improves the target.
  */
-export const shareOfBest = (base: number, best: number, value: number): number | null =>
-  best > base ? (value - base) / (best - base) : null;
+export const shareOfBest = (
+  base: number,
+  best: number,
+  value: number,
+): number | null => (best > base ? (value - base) / (best - base) : null);
 
 /**
  * How `value` compares with the naked baseline: `1 + (value − base) / |base|`.
@@ -46,7 +51,11 @@ export const shareOfBest = (base: number, best: number, value: number): number |
  * better. Returns `null` when the baseline is 0 or missing (the target can't
  * be compared, so it's left out of the score).
  */
-export const normalise = (baseline: Baseline, target: Target, value: number): number | null => {
+export const normalise = (
+  baseline: Baseline,
+  target: Target,
+  value: number,
+): number | null => {
   const base = baseline.get(targetKey(target));
   if (base === undefined || base === 0 || !Number.isFinite(base)) return null;
   return 1 + (value - base) / Math.abs(base);

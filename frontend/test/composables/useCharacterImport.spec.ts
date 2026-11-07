@@ -34,7 +34,10 @@ const SKILL_IDS = [
 ];
 
 /** A minimal ItemCatalogEntry map for items referenced by the fixture. */
-const minimalItems: Record<string, { type: string; quality?: string; gearType?: string }> = {
+const minimalItems: Record<
+  string,
+  { type: string; quality?: string; gearType?: string }
+> = {
   cape_of_achiever: { type: "other", quality: "common" },
   cooked_squid: { type: "consumable" },
   ring_of_homesickness: { type: "other", quality: "common" },
@@ -168,8 +171,12 @@ describe("useCharacterImport", () => {
       const { importCharacter } = useCharacterImport();
       importCharacter(JSON.stringify(fixtureData), false);
 
-      expect(itemsStore.ownedItems["amulet_of_the_animal_kingdom"]?.craftedTier).toBe("rare");
-      expect(itemsStore.ownedItems["farganite_pickaxe"]?.craftedTier).toBe("ethereal");
+      expect(
+        itemsStore.ownedItems["amulet_of_the_animal_kingdom"]?.craftedTier,
+      ).toBe("rare");
+      expect(itemsStore.ownedItems["farganite_pickaxe"]?.craftedTier).toBe(
+        "ethereal",
+      );
     });
 
     it("shows a success notification listing updated sections", () => {
@@ -177,7 +184,8 @@ describe("useCharacterImport", () => {
       importCharacter(JSON.stringify(fixtureData), false);
 
       expect(notificationStore.success).toHaveBeenCalledOnce();
-      const message = vi.mocked(notificationStore.success).mock.calls[0][0] as string;
+      const message = vi.mocked(notificationStore.success).mock
+        .calls[0][0] as string;
       expect(message).toContain("Successfully updated");
     });
 
@@ -190,7 +198,8 @@ describe("useCharacterImport", () => {
     });
 
     it("calls upsertFactionReputations when reputations change", async () => {
-      const { upsertFactionReputations } = await import("@/utils/axios/db_routes");
+      const { upsertFactionReputations } =
+        await import("@/utils/axios/db_routes");
       const { importCharacter } = useCharacterImport();
       importCharacter(JSON.stringify(fixtureData), false);
 
@@ -212,7 +221,8 @@ describe("useCharacterImport", () => {
     importCharacter(JSON.stringify(fixtureData), false);
 
     expect(notificationStore.success).toHaveBeenCalledOnce();
-    const message = vi.mocked(notificationStore.success).mock.calls[0][0] as string;
+    const message = vi.mocked(notificationStore.success).mock
+      .calls[0][0] as string;
     expect(message).toContain("nothing to update");
   });
 
@@ -289,7 +299,8 @@ describe("useCharacterImport", () => {
 
       // Nothing changed, so success with "nothing to update"
       expect(notificationStore.success).toHaveBeenCalledOnce();
-      const message = vi.mocked(notificationStore.success).mock.calls[0][0] as string;
+      const message = vi.mocked(notificationStore.success).mock
+        .calls[0][0] as string;
       expect(message).toContain("nothing to update");
       expect(notificationStore.error).not.toHaveBeenCalled();
     });
@@ -306,7 +317,9 @@ describe("useCharacterImport", () => {
       importCharacter(JSON.stringify(partial), false);
 
       expect(playerStore.skillLevels.agility).toBe(92);
-      expect(playerStore.skillLevels).not.toHaveProperty("completely_made_up_skill");
+      expect(playerStore.skillLevels).not.toHaveProperty(
+        "completely_made_up_skill",
+      );
     });
 
     it("ignores unknown factions not present in the factions map", () => {
@@ -321,7 +334,9 @@ describe("useCharacterImport", () => {
       importCharacter(JSON.stringify(partial), false);
 
       expect(playerStore.factionReputation["jarvonia"]).toBe(198);
-      expect(playerStore.factionReputation).not.toHaveProperty("made_up_faction");
+      expect(playerStore.factionReputation).not.toHaveProperty(
+        "made_up_faction",
+      );
     });
 
     it("ignores items not present in the item catalog", () => {
@@ -333,7 +348,9 @@ describe("useCharacterImport", () => {
       importCharacter(JSON.stringify(partial), false);
 
       expect(itemsStore.ownedItems["cape_of_achiever"]?.owned).toBe(true);
-      expect(itemsStore.ownedItems).not.toHaveProperty("completely_made_up_item");
+      expect(itemsStore.ownedItems).not.toHaveProperty(
+        "completely_made_up_item",
+      );
     });
   });
 });

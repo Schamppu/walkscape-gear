@@ -78,9 +78,9 @@ const contactEmail = computed(() => "falarikae.dev" + "@" + "gmail.com");
       <h3>5. Hosting</h3>
       <p>
         This tool is hosted on a server provided by Hetzner and paid for by Not
-        a Cult Oy, who kindly allow it to share their infrastructure. The hosting
-        environment may generate standard technical logs (e.g., IP addresses)
-        for security and operational purposes.
+        a Cult Oy, who kindly allow it to share their infrastructure. The
+        hosting environment may generate standard technical logs (e.g., IP
+        addresses) for security and operational purposes.
       </p>
     </section>
 

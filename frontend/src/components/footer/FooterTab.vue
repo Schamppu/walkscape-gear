@@ -23,7 +23,12 @@ const emit = defineEmits<{
     :aria-current="props.active ? 'page' : undefined"
     @click="emit('click')"
   >
-    <ws-icon v-if="props.icon" :icon-path="props.icon" size="sm" :decorative="true" />
+    <ws-icon
+      v-if="props.icon"
+      :icon-path="props.icon"
+      size="sm"
+      :decorative="true"
+    />
     <span>{{ props.name }}</span>
   </button>
 </template>

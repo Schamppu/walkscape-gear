@@ -38,14 +38,17 @@ type OwnedConsumable = {
 
 /** Reads stored settings back; unknown or invalid fields fall back to defaults. */
 export const parseOptimiserSettings = (raw: unknown): OptimiserSettings => {
-  const r = (raw && typeof raw === "object" ? raw : {}) as Partial<Record<keyof OptimiserSettings, unknown>>;
+  const r = (raw && typeof raw === "object" ? raw : {}) as Partial<
+    Record<keyof OptimiserSettings, unknown>
+  >;
   const stock = Number(r.minConsumableStock);
   return {
     allowFineConsumables:
       typeof r.allowFineConsumables === "boolean"
         ? r.allowFineConsumables
         : DEFAULT_OPTIMISER_SETTINGS.allowFineConsumables,
-    minConsumableStock: Number.isFinite(stock) && stock > 0 ? Math.floor(stock) : 0,
+    minConsumableStock:
+      Number.isFinite(stock) && stock > 0 ? Math.floor(stock) : 0,
   };
 };
 
@@ -66,7 +69,8 @@ export const suggestableConsumableQualities = (
   const { common, fine } = consumableCounts(owned);
   if (common + fine === 0) return null;
 
-  const enough = (stock: number) => stock > 0 && stock >= settings.minConsumableStock;
+  const enough = (stock: number) =>
+    stock > 0 && stock >= settings.minConsumableStock;
 
   const qualities: ConsumableQuality[] = [];
   if (settings.allowFineConsumables && enough(fine)) qualities.push("fine");

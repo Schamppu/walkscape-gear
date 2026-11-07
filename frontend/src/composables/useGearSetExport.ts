@@ -56,7 +56,10 @@ export function useGearSetExport(ctx: GearSetExportContext): {
         const slotName = toSlotName(item.slotType, item.slotIndex);
         return buildExportedSlot(
           slotName,
-          { id: item.itemId, quality: normalizeConsumableQuality(item.quality) },
+          {
+            id: item.itemId,
+            quality: normalizeConsumableQuality(item.quality),
+          },
           itemIdMap,
         );
       });
@@ -80,7 +83,11 @@ export function useGearSetExport(ctx: GearSetExportContext): {
     const { data: itemIdMap } = await getOldItemIds(itemIds);
 
     const slots = slotKeys.map((slotName) =>
-      buildExportedSlot(slotName, ctx.gearSlots.value[slotName] ?? null, itemIdMap),
+      buildExportedSlot(
+        slotName,
+        ctx.gearSlots.value[slotName] ?? null,
+        itemIdMap,
+      ),
     );
 
     return encodeGearSet(slots);

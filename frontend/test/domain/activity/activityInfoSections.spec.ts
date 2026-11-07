@@ -62,10 +62,10 @@ describe("computeStepsPerRep", () => {
 // ---------------------------------------------------------------------------
 
 const skillReq = (skill: string, level: number): Requirement =>
-  ({ type: "skillLevel", skill, level } as unknown as Requirement);
+  ({ type: "skillLevel", skill, level }) as unknown as Requirement;
 
 const otherReq = (type: string): Requirement =>
-  ({ type } as unknown as Requirement);
+  ({ type }) as unknown as Requirement;
 
 describe("classifyRequirements", () => {
   it("returns empty groups for null input", () => {
@@ -73,7 +73,10 @@ describe("classifyRequirements", () => {
   });
 
   it("returns empty groups for undefined input", () => {
-    expect(classifyRequirements(undefined)).toEqual({ skillLevel: [], other: [] });
+    expect(classifyRequirements(undefined)).toEqual({
+      skillLevel: [],
+      other: [],
+    });
   });
 
   it("returns empty groups for an empty array", () => {
@@ -81,7 +84,11 @@ describe("classifyRequirements", () => {
   });
 
   it("separates skillLevel from other requirements", () => {
-    const reqs = [skillReq("mining", 10), otherReq("questCompleted"), skillReq("crafting", 5)];
+    const reqs = [
+      skillReq("mining", 10),
+      otherReq("questCompleted"),
+      skillReq("crafting", 5),
+    ];
     const { skillLevel, other } = classifyRequirements(reqs);
     expect(skillLevel).toHaveLength(2);
     expect(other).toHaveLength(1);

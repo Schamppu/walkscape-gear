@@ -55,7 +55,10 @@ const statKey = (stat: Stat, requirementsKey: string): string => {
   return `${type}${skill}|${isPercent ? "%" : "flat"}|${requirementsKey}`;
 };
 
-const buildProfile = (item: WorkerItem, isUseful: (stat: Stat) => boolean): Profile => {
+const buildProfile = (
+  item: WorkerItem,
+  isUseful: (stat: Stat) => boolean,
+): Profile => {
   const stats = new Map<string, number>();
   for (const entry of item._attrEntries) {
     const requirementsKey = JSON.stringify(entry.requirements ?? []);
@@ -69,10 +72,15 @@ const buildProfile = (item: WorkerItem, isUseful: (stat: Stat) => boolean): Prof
   const abilities = (item.abilities ?? []).map(
     (a) => `ability:${typeof a === "object" ? a.ability : a}`,
   );
-  return { item, stats, tags: new Set([...(item.keywords ?? []), ...abilities]) };
+  return {
+    item,
+    stats,
+    tags: new Set([...(item.keywords ?? []), ...abilities]),
+  };
 };
 
-const isSubset = (a: Set<string>, b: Set<string>): boolean => [...a].every((t) => b.has(t));
+const isSubset = (a: Set<string>, b: Set<string>): boolean =>
+  [...a].every((t) => b.has(t));
 
 /**
  * True when `a` is never worse than `b` in any set. `sameTags` requires equal
@@ -101,7 +109,10 @@ const dominates = (a: Profile, b: Profile, sameTags: boolean): boolean => {
  * conditional ones, e.g. set bonuses or realm-only stats). Items with only
  * penalties or irrelevant stats can never improve a set.
  */
-export const hasUsefulStat = (item: WorkerItem, useful: ReadonlySet<string>): boolean =>
+export const hasUsefulStat = (
+  item: WorkerItem,
+  useful: ReadonlySet<string>,
+): boolean =>
   item._attrEntries.some(({ stats }) =>
     stats.some((stat) => useful.has(stat.stat) && statGoodness(stat) > 0),
   );
@@ -127,7 +138,11 @@ export const pruneDominated = (
       const kept = profiles.filter((b) => {
         let dominators = 0;
         for (const a of profiles) {
-          if (a !== b && dominates(a, b, slotCount > 1) && ++dominators >= slotCount) {
+          if (
+            a !== b &&
+            dominates(a, b, slotCount > 1) &&
+            ++dominators >= slotCount
+          ) {
             return false;
           }
         }

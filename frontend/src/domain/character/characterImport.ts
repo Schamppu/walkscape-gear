@@ -54,9 +54,12 @@ export type ItemCatalogEntry = {
      * Per-quality values; null when the item cannot be sold, and a plain
      * number on currency items.
      */
-    value: {
-      [key: string]: number;
-    } | number | null;
+    value:
+      | {
+          [key: string]: number;
+        }
+      | number
+      | null;
     currency: string;
   } | null;
 };

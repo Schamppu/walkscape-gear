@@ -5,8 +5,14 @@ import {
   type SkillModifiersContext,
 } from "@/composables/useSkillModifiers";
 import useBaseContext from "@/composables/context/useBaseContext";
-import { useRequirements, type RequirementContext } from "@/composables/useRequirements";
-import { useLevelBonus, type LevelBonusContext } from "@/composables/useLevelBonus";
+import {
+  useRequirements,
+  type RequirementContext,
+} from "@/composables/useRequirements";
+import {
+  useLevelBonus,
+  type LevelBonusContext,
+} from "@/composables/useLevelBonus";
 import { usePlayerStore } from "@/store/player";
 import { toDeepRaw } from "@/utils/rawData";
 import {
@@ -22,14 +28,24 @@ import {
   type SkillModifiersResult,
   type SkillModifiersSource,
 } from "@/domain/skillModifiers";
-import { getOutcomeOdds, type FineMaterialsMode } from "@/domain/quality/qualityOutcomeOdds";
+import {
+  getOutcomeOdds,
+  type FineMaterialsMode,
+} from "@/domain/quality/qualityOutcomeOdds";
 import { getLevelRequirementsMap } from "@/domain/requirements/requirementUtils";
-import type { GearSet, OptimiserItem, Candidate } from "@/domain/optimiser/types";
+import type {
+  GearSet,
+  OptimiserItem,
+  Candidate,
+} from "@/domain/optimiser/types";
 import type { ItemDetail } from "@/domain/types/item";
 import type { XpPerStep } from "@/domain/skillModifiers";
 import type { ActivityDetail } from "@/domain/types/activity";
 import type { RecipeDetail } from "@/domain/types/recipe";
-import { useFineMaterials, type FineMaterialsContext } from "@/composables/useFineMaterialsCalculations";
+import {
+  useFineMaterials,
+  type FineMaterialsContext,
+} from "@/composables/useFineMaterialsCalculations";
 import type {
   WorkerItem,
   StaticReqCtx,
@@ -55,7 +71,8 @@ const extractScore = (
     const xpValue = result.xpPerStep[result.xpPerStep.length - 1]?.value ?? 1;
     return result.stepsPerRewardRoll / Math.sqrt(xpValue > 0 ? xpValue : 1);
   }
-  if (prio === "xpPerStep") return result.xpPerStep[result.xpPerStep.length - 1]?.value ?? 0;
+  if (prio === "xpPerStep")
+    return result.xpPerStep[result.xpPerStep.length - 1]?.value ?? 0;
   if (prio === "craftsPerMaterial") return result.craftsPerMaterial;
   if (prio === "averageEternalCrafts") {
     if (!recipeQualityContext) return Infinity;
@@ -103,7 +120,9 @@ const enrichPets = (
  */
 const makeScorer = (): ((set: GearSet) => number) => {
   const baseCtx = useBaseContext();
-  const { checkRequirements } = useRequirements(baseCtx as unknown as RequirementContext);
+  const { checkRequirements } = useRequirements(
+    baseCtx as unknown as RequirementContext,
+  );
   const { workEfficiencyBonus, qualityOutcomeBonus } = useLevelBonus(
     baseCtx as unknown as LevelBonusContext,
   );
@@ -115,7 +134,9 @@ const makeScorer = (): ((set: GearSet) => number) => {
   const source = baseCtx.source.value as SkillModifiersSource | null;
   const activitySelected = baseCtx.activitySelected.value;
   const recipeDetail = baseCtx.recipe.value as RecipeDetail | null;
-  const { fineMode } = useFineMaterials(baseCtx as unknown as FineMaterialsContext);
+  const { fineMode } = useFineMaterials(
+    baseCtx as unknown as FineMaterialsContext,
+  );
   const recipeLevelReq = (() => {
     if (activitySelected || !recipeDetail) return 0;
     const levelMap = getLevelRequirementsMap(recipeDetail.requirements);
@@ -129,9 +150,7 @@ const makeScorer = (): ((set: GearSet) => number) => {
       };
 
   // Resolve collectibles once — they don't change during a run.
-  const collectibles = toDeepRaw(
-    baseCtx.ownedCollectibles.value,
-  );
+  const collectibles = toDeepRaw(baseCtx.ownedCollectibles.value);
   const staticEntries = buildAllAttrEntries(
     resolveItemAttrs(collectibles),
     weBonus,
@@ -146,9 +165,9 @@ const makeScorer = (): ((set: GearSet) => number) => {
   return (set: GearSet): number => {
     const { location, ...items } = set;
     const gearItems = toDeepRaw(
-      Object.values(items as Record<string, OptimiserItem | null | undefined>).filter(
-        Boolean,
-      ) as ItemDetail[],
+      Object.values(
+        items as Record<string, OptimiserItem | null | undefined>,
+      ).filter(Boolean) as ItemDetail[],
     );
 
     // Only resolve the variable gear items; static entries are pre-built.
@@ -216,7 +235,12 @@ const enrichItem = (
   );
   return {
     ...(toDeepRaw(item as unknown as Record<string, unknown>) as OptimiserItem),
-    _attrEntries: buildAllAttrEntries(resolveItemAttrs([raw]), null, null, null),
+    _attrEntries: buildAllAttrEntries(
+      resolveItemAttrs([raw]),
+      null,
+      null,
+      null,
+    ),
   };
 };
 
@@ -251,9 +275,7 @@ export const buildStaticEntries = () => {
   const { workEfficiencyBonus, qualityOutcomeBonus } = useLevelBonus(
     baseCtx as unknown as LevelBonusContext,
   );
-  const collectibles = toDeepRaw(
-    baseCtx.ownedCollectibles.value,
-  );
+  const collectibles = toDeepRaw(baseCtx.ownedCollectibles.value);
   return buildAllAttrEntries(
     resolveItemAttrs(collectibles),
     workEfficiencyBonus.value,
@@ -293,7 +315,10 @@ export const buildStaticReqCtx = (): StaticReqCtx => {
     selectedServiceKeywords: baseCtx.service.value?.keywords ?? [],
     skillLevels: { ...playerStore.skillLevels },
     skillsMap: Object.fromEntries(
-      Object.entries(playerStore.skillsMap).map(([k, v]) => [k, { type: v.type }]),
+      Object.entries(playerStore.skillsMap).map(([k, v]) => [
+        k,
+        { type: v.type },
+      ]),
     ),
     achievementPoints: baseCtx.achievementPoints.value,
     factionReputation: { ...(baseCtx.factionReputation.value ?? {}) },
@@ -328,12 +353,16 @@ export const getGearSetStats = (set: GearSet): number => {
 
   const stats = useSkillModifiers(gearCtx);
   const prio = priorityValue();
-  const { fineMode } = useFineMaterials(baseCtx as unknown as FineMaterialsContext);
+  const { fineMode } = useFineMaterials(
+    baseCtx as unknown as FineMaterialsContext,
+  );
   const recipeDetail = baseCtx.recipe.value as RecipeDetail | null;
   const recipeLevelReq = recipeDetail
-    ? Object.values(getLevelRequirementsMap(recipeDetail.requirements))[0] ?? 1
+    ? (Object.values(getLevelRequirementsMap(recipeDetail.requirements))[0] ??
+      1)
     : 1;
-  const recipeQualityContext: RecipeQualityContext | null = baseCtx.activitySelected.value
+  const recipeQualityContext: RecipeQualityContext | null = baseCtx
+    .activitySelected.value
     ? null
     : {
         levelReq: recipeLevelReq,
@@ -344,7 +373,9 @@ export const getGearSetStats = (set: GearSet): number => {
   if (prio === "balanced") {
     const xp = stats.xpPerStep.value as XpPerStep[];
     const xpValue = xp[xp.length - 1]?.value ?? 1;
-    return stats.stepsPerRewardRoll.value / Math.sqrt(xpValue > 0 ? xpValue : 1);
+    return (
+      stats.stepsPerRewardRoll.value / Math.sqrt(xpValue > 0 ? xpValue : 1)
+    );
   }
   if (prio === "xpPerStep") {
     const xp = stats.xpPerStep.value as XpPerStep[];

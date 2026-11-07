@@ -52,7 +52,10 @@ export function resolveSourceContextTables(
  *                           all the attribute's requirements are satisfied.
  */
 export function resolveGearContextTables(
-  filledGearSlots: [string, (GearItem | PetItem) & { quality: string | null }][],
+  filledGearSlots: [
+    string,
+    (GearItem | PetItem) & { quality: string | null },
+  ][],
   checkRequirements: (reqs: Requirement[]) => boolean,
 ): ContextLootTable[] {
   return filledGearSlots.flatMap(([slot, item]) =>

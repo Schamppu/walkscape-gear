@@ -11,7 +11,8 @@ const mountTip = () =>
   });
 
 const tooltipVisible = (wrapper: ReturnType<typeof mountTip>) =>
-  (wrapper.find('[role="tooltip"]').element as HTMLElement).style.display !== "none";
+  (wrapper.find('[role="tooltip"]').element as HTMLElement).style.display !==
+  "none";
 
 describe("HelpTip", () => {
   afterEach(() => {
@@ -23,7 +24,9 @@ describe("HelpTip", () => {
     const button = wrapper.find("button");
     const tooltip = wrapper.find('[role="tooltip"]');
     expect(tooltipVisible(wrapper)).toBe(false);
-    expect(button.attributes("aria-describedby")).toBe(tooltip.attributes("id"));
+    expect(button.attributes("aria-describedby")).toBe(
+      tooltip.attributes("id"),
+    );
     expect(button.attributes("aria-label")).toBe("Help: Setting");
     expect(tooltip.text()).toBe("Explains the setting");
   });

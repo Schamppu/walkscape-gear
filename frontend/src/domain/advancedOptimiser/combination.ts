@@ -22,11 +22,16 @@ export type CombinationStrategy = (entries: readonly ScoredTarget[]) => number;
 export const weightedSum: CombinationStrategy = (entries) =>
   entries.reduce(
     (sum, { target, normalised }) =>
-      normalised === null || target.weight <= 0 ? sum : sum + target.weight * normalised,
+      normalised === null || target.weight <= 0
+        ? sum
+        : sum + target.weight * normalised,
     0,
   );
 
-export const COMBINATION_STRATEGIES: Record<CombinationRule, CombinationStrategy> = {
+export const COMBINATION_STRATEGIES: Record<
+  CombinationRule,
+  CombinationStrategy
+> = {
   weightedSum,
 };
 

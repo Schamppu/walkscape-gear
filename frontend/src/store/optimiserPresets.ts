@@ -37,8 +37,10 @@ const HIDE_SETTING_PREFIX = "hideOptimiserPreset:";
 
 /** The backend's message for a rejected request (400 / 404), else `fallback`. */
 const errorMessage = (error: unknown, fallback: string): string => {
-  if (!isAxiosError(error) || !error.response || error.response.status >= 500) return fallback;
-  const message = (error.response.data as { error?: unknown } | undefined)?.error;
+  if (!isAxiosError(error) || !error.response || error.response.status >= 500)
+    return fallback;
+  const message = (error.response.data as { error?: unknown } | undefined)
+    ?.error;
   return typeof message === "string" ? message : fallback;
 };
 
@@ -77,7 +79,8 @@ export const useOptimiserPresetsStore = defineStore("optimiserPresetsStore", {
 
     /** Finds any preset by id, hidden ones included. */
     findPreset(): (presetId: string) => OptimiserPreset | null {
-      return (presetId) => this.allPresets.find((p) => p.id === presetId) ?? null;
+      return (presetId) =>
+        this.allPresets.find((p) => p.id === presetId) ?? null;
     },
   },
 
@@ -94,10 +97,15 @@ export const useOptimiserPresetsStore = defineStore("optimiserPresetsStore", {
     async _fetch(): Promise<void> {
       const notificationStore = useNotificationStore();
       try {
-        const [presets, settings] = await Promise.all([getOptimiserPresets(), getSettings()]);
+        const [presets, settings] = await Promise.all([
+          getOptimiserPresets(),
+          getSettings(),
+        ]);
         this.userPresets = presets.map(presetFromDb);
         this.hiddenBuiltins = Object.entries(settings)
-          .filter(([key, { value }]) => key.startsWith(HIDE_SETTING_PREFIX) && value)
+          .filter(
+            ([key, { value }]) => key.startsWith(HIDE_SETTING_PREFIX) && value,
+          )
           .map(([key]) => key.slice(HIDE_SETTING_PREFIX.length));
         this.isLoaded = true;
         void notificationStore.debug(
@@ -121,16 +129,24 @@ export const useOptimiserPresetsStore = defineStore("optimiserPresetsStore", {
     },
 
     /** Saves a new preset at the top of the list. Returns it, or `null` if saving failed. */
-    async saveAsNew(name: string, targets: Target[]): Promise<OptimiserPreset | null> {
+    async saveAsNew(
+      name: string,
+      targets: Target[],
+    ): Promise<OptimiserPreset | null> {
       return this._upsert({ name, targets });
     },
 
-    async renamePreset(presetId: string, name: string): Promise<OptimiserPreset | null> {
+    async renamePreset(
+      presetId: string,
+      name: string,
+    ): Promise<OptimiserPreset | null> {
       const preset = this.userPresets.find((p) => p.id === presetId);
       return preset ? this.savePreset(presetId, name, preset.targets) : null;
     },
 
-    async _upsert(payload: UpsertOptimiserPresetPayload): Promise<OptimiserPreset | null> {
+    async _upsert(
+      payload: UpsertOptimiserPresetPayload,
+    ): Promise<OptimiserPreset | null> {
       const notificationStore = useNotificationStore();
       try {
         const preset = presetFromDb(await upsertOptimiserPreset(payload));
@@ -159,7 +175,9 @@ export const useOptimiserPresetsStore = defineStore("optimiserPresetsStore", {
       } catch (error) {
         // Already deleted elsewhere (another browser with the same UUID).
         if (!isNotFound(error)) {
-          notificationStore.error(errorMessage(error, "Failed to delete preset"));
+          notificationStore.error(
+            errorMessage(error, "Failed to delete preset"),
+          );
           console.error("Failed to delete optimiser preset:", error);
           return false;
         }
@@ -181,10 +199,14 @@ export const useOptimiserPresetsStore = defineStore("optimiserPresetsStore", {
       [reordered[a], reordered[b]] = [reordered[b], reordered[a]];
       this.userPresets = reordered;
       try {
-        await reorderOptimiserPresets(reordered.map((p) => userPresetDbId(p.id)!));
+        await reorderOptimiserPresets(
+          reordered.map((p) => userPresetDbId(p.id)!),
+        );
       } catch (error) {
         // Likely out of sync with presets changed elsewhere: take the saved list.
-        useNotificationStore().error(errorMessage(error, "Failed to reorder presets"));
+        useNotificationStore().error(
+          errorMessage(error, "Failed to reorder presets"),
+        );
         console.error("Failed to reorder optimiser presets:", error);
         this.isLoaded = false;
         await this.ensureLoaded();
@@ -200,10 +222,18 @@ export const useOptimiserPresetsStore = defineStore("optimiserPresetsStore", {
         ? [...new Set([...previous, slug])]
         : previous.filter((s) => s !== slug);
       try {
-        await upsertSettings([{ setting: `${HIDE_SETTING_PREFIX}${slug}`, value: hidden, display: 0 }]);
+        await upsertSettings([
+          {
+            setting: `${HIDE_SETTING_PREFIX}${slug}`,
+            value: hidden,
+            display: 0,
+          },
+        ]);
       } catch (error) {
         this.hiddenBuiltins = previous;
-        useNotificationStore().error(errorMessage(error, "Failed to save preset visibility"));
+        useNotificationStore().error(
+          errorMessage(error, "Failed to save preset visibility"),
+        );
         console.error("Failed to save optimiser preset visibility:", error);
       }
     },

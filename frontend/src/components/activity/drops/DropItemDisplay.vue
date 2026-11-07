@@ -20,7 +20,9 @@ const settingsStore = useSettingsStore();
 const { activitySettings } = storeToRefs(settingsStore);
 
 const { dropItemInfoMap } = injectLootTables();
-const item = computed(() => props.dropInfo ?? dropItemInfoMap.value[props.itemId]);
+const item = computed(
+  () => props.dropInfo ?? dropItemInfoMap.value[props.itemId],
+);
 </script>
 
 <template>

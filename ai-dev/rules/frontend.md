@@ -4,6 +4,7 @@
 Frontend Architecture (Vue 3 + Pinia)
 
 Responsibilities:
+
 - Contains all game domain logic.
 - Computes gear effectiveness.
 - Performs optimization calculations.
@@ -34,9 +35,9 @@ Folder Rules:
 
 - /src/stores:
   Responsible for:
-    - Fetching from backend/API
-    - Caching
-    - Exposing reactive state
+  - Fetching from backend/API
+  - Caching
+  - Exposing reactive state
 
 - Vue components:
   - Must not contain complex game calculations.

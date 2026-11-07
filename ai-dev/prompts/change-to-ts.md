@@ -1,6 +1,7 @@
 Convert this file from JavaScript to TypeScript.
 
 Rules:
+
 - Do not change runtime behavior.
 - Do not refactor logic.
 - Add explicit types for all function parameters and return values.
@@ -13,4 +14,5 @@ Rules:
 - Update imports of the file
 
 Output:
+
 - Fully typed .ts file.

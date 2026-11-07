@@ -4,14 +4,19 @@ import {
   aggregateRouteStats,
   mapSegmentRequirements,
 } from "@/domain/travel/routeStepSummary";
-import type { SegmentForSummary, SegmentWithRequirements } from "@/domain/travel/routeStepSummary";
+import type {
+  SegmentForSummary,
+  SegmentWithRequirements,
+} from "@/domain/travel/routeStepSummary";
 import type { RouteSegmentStats } from "@/domain/types/route";
 
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
 
-function makeStats(overrides: Partial<RouteSegmentStats> = {}): RouteSegmentStats {
+function makeStats(
+  overrides: Partial<RouteSegmentStats> = {},
+): RouteSegmentStats {
   return {
     maxWorkEfficiency: 0,
     workEfficiency: 0,
@@ -53,13 +58,17 @@ describe("calculateRouteStepSummary — no double action", () => {
   it("totalMin equals totalMax when doubleAction is 0", () => {
     // distance=100, WE=0: stepsPerNode = ceil(max(10, 100/1/10)) = 10
     // totalMax = 10 * 10 = 100; totalMin = 10 * 10 = 100 (minCompletions=10)
-    const { totalMin, totalMax } = calculateRouteStepSummary([makeSegment(100)]);
+    const { totalMin, totalMax } = calculateRouteStepSummary([
+      makeSegment(100),
+    ]);
     expect(totalMin).toBe(totalMax);
   });
 
   it("totalAverage equals totalMax when doubleAction is 0", () => {
     // averageStepsPerRoute = ceil(stepsPerNode * 10/(1+0)) = stepsPerNode*10 = totalMax
-    const { totalAverage, totalMax } = calculateRouteStepSummary([makeSegment(100)]);
+    const { totalAverage, totalMax } = calculateRouteStepSummary([
+      makeSegment(100),
+    ]);
     expect(totalAverage).toBe(totalMax);
   });
 });
@@ -141,8 +150,8 @@ describe("calculateRouteStepSummary — multiple segments", () => {
       makeSegment(100, { doubleAction: 0 }),
       makeSegment(100, { doubleAction: 0.5 }),
     ]);
-    expect(result.totalMin).toBe(150);  // 100 + 50
-    expect(result.totalMax).toBe(200);  // 100 + 100
+    expect(result.totalMin).toBe(150); // 100 + 50
+    expect(result.totalMax).toBe(200); // 100 + 100
   });
 });
 
@@ -152,11 +161,16 @@ describe("calculateRouteStepSummary — multiple segments", () => {
 
 describe("aggregateRouteStats", () => {
   it("returns [0,0] ranges for empty segments", () => {
-    expect(aggregateRouteStats([])).toEqual({ weRange: [0, 0], daRange: [0, 0] });
+    expect(aggregateRouteStats([])).toEqual({
+      weRange: [0, 0],
+      daRange: [0, 0],
+    });
   });
 
   it("returns identical min/max for a single segment", () => {
-    const result = aggregateRouteStats([makeSegment(100, { workEfficiency: 0.4, doubleAction: 0.2 })]);
+    const result = aggregateRouteStats([
+      makeSegment(100, { workEfficiency: 0.4, doubleAction: 0.2 }),
+    ]);
     expect(result.weRange).toEqual([0.4, 0.4]);
     expect(result.daRange).toEqual([0.2, 0.2]);
   });
@@ -177,7 +191,11 @@ describe("aggregateRouteStats", () => {
 // ---------------------------------------------------------------------------
 
 describe("mapSegmentRequirements", () => {
-  const fakeReq = (id: string) => ({ type: "level", id } as unknown as import("@/domain/types/common").Requirement);
+  const fakeReq = (id: string) =>
+    ({
+      type: "level",
+      id,
+    }) as unknown as import("@/domain/types/common").Requirement;
 
   it("returns empty active arrays for segments with no requirements", () => {
     const segs: SegmentWithRequirements[] = [{ requirements: [], context: {} }];
@@ -189,7 +207,9 @@ describe("mapSegmentRequirements", () => {
     const checkFn = vi.fn().mockReturnValue(true);
     const ctx = { skills: {} };
     const req = fakeReq("agility");
-    const segs: SegmentWithRequirements[] = [{ requirements: [req], context: ctx }];
+    const segs: SegmentWithRequirements[] = [
+      { requirements: [req], context: ctx },
+    ];
     mapSegmentRequirements(segs, checkFn);
     expect(checkFn).toHaveBeenCalledWith(req, ctx);
   });
@@ -206,7 +226,10 @@ describe("mapSegmentRequirements", () => {
   });
 
   it("handles multiple segments independently", () => {
-    const checkFn = vi.fn().mockReturnValueOnce(true).mockReturnValueOnce(false);
+    const checkFn = vi
+      .fn()
+      .mockReturnValueOnce(true)
+      .mockReturnValueOnce(false);
     const segs: SegmentWithRequirements[] = [
       { requirements: [fakeReq("x")], context: {} },
       { requirements: [fakeReq("y")], context: {} },
@@ -225,16 +248,24 @@ describe("calculateRouteStepSummary — work efficiency", () => {
   it("higher work efficiency reduces stepsPerNode", () => {
     // WE=0: stepsPerNode=10 → max=100
     // WE=1: stepsPerNode = ceil(max(10, 100/2/10)) = ceil(5) = 10 (clamped to 10)
-    const noWE = calculateRouteStepSummary([makeSegment(100, { workEfficiency: 0 })]);
-    const highWE = calculateRouteStepSummary([makeSegment(100, { workEfficiency: 1 })]);
+    const noWE = calculateRouteStepSummary([
+      makeSegment(100, { workEfficiency: 0 }),
+    ]);
+    const highWE = calculateRouteStepSummary([
+      makeSegment(100, { workEfficiency: 1 }),
+    ]);
     expect(highWE.totalMax).toBeLessThanOrEqual(noWE.totalMax);
   });
 
   it("reduces steps for large distances where clamp does not apply", () => {
     // distance=500, WE=0: stepsPerNode = ceil(500/1/10) = 50 → max=500
     // distance=500, WE=1: stepsPerNode = ceil(500/2/10) = 25 → max=250
-    const noWE = calculateRouteStepSummary([makeSegment(500, { workEfficiency: 0 })]);
-    const halfWE = calculateRouteStepSummary([makeSegment(500, { workEfficiency: 1 })]);
+    const noWE = calculateRouteStepSummary([
+      makeSegment(500, { workEfficiency: 0 }),
+    ]);
+    const halfWE = calculateRouteStepSummary([
+      makeSegment(500, { workEfficiency: 1 }),
+    ]);
     expect(halfWE.totalMax).toBe(250);
     expect(noWE.totalMax).toBe(500);
   });

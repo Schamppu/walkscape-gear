@@ -102,7 +102,7 @@ export const getDataIdMapping = (
   };
 
   const mappedData = data.flatMap(({ actions }) =>
-    actions.map((action) => mapAction(action))
+    actions.map((action) => mapAction(action)),
   );
 
   return Object.fromEntries(mappedData);

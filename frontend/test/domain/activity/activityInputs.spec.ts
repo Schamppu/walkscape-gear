@@ -207,7 +207,13 @@ describe("resolveActivityInputs — multiple inputs", () => {
       type: "inputActivity",
       inputs: [
         { type: "keyword", keyword: "wood" },
-        { type: "specific", item: "iron_ore", quantity: 2, quality: null, isOptional: false },
+        {
+          type: "specific",
+          item: "iron_ore",
+          quantity: 2,
+          quality: null,
+          isOptional: false,
+        },
       ],
       enableAttributes: false,
       enableTierBenefit: false,

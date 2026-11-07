@@ -42,7 +42,9 @@ export const useHistoryStore = defineStore("historyStore", {
 
     redoDescription: (state): string | null => {
       if (state.currentIndex >= state.commandHistory.length - 1) return null;
-      return state.commandHistory[state.currentIndex + 1]?.description ?? "Redo";
+      return (
+        state.commandHistory[state.currentIndex + 1]?.description ?? "Redo"
+      );
     },
   },
 
@@ -57,7 +59,10 @@ export const useHistoryStore = defineStore("historyStore", {
 
       // Discard any future states when branching from mid-history
       if (this.currentIndex < this.commandHistory.length - 1) {
-        this.commandHistory = this.commandHistory.slice(0, this.currentIndex + 1);
+        this.commandHistory = this.commandHistory.slice(
+          0,
+          this.currentIndex + 1,
+        );
       }
 
       // Commands hold store references and previous state snapshots; keep them
@@ -103,7 +108,8 @@ export const useHistoryStore = defineStore("historyStore", {
 
       this.isUndoRedoInProgress = true;
       try {
-        const description = this.commandHistory[this.currentIndex + 1].description;
+        const description =
+          this.commandHistory[this.currentIndex + 1].description;
         await this.commandHistory[this.currentIndex + 1].execute();
         this.currentIndex++;
         const notificationStore = useNotificationStore();

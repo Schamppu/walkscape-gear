@@ -20,7 +20,10 @@
  * @param params URLSearchParams from the current location.
  * @param key    The query-string key to look up (e.g. "gs" or "gs2").
  */
-export function parseGearSetId(params: URLSearchParams, key: string): number | null {
+export function parseGearSetId(
+  params: URLSearchParams,
+  key: string,
+): number | null {
   const raw = params.get(key);
   if (!raw) return null;
   const id = parseInt(raw, 10);

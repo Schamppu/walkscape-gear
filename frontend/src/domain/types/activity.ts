@@ -15,7 +15,9 @@ export type ActivitySummary = Schemas["ActivityListItem"];
 
 export type ActivityDetail = Schemas["ActivityDetail"];
 
-export type ActivityRequiredKeyword = NonNullable<ActivityDetail["requiredKeywords"]>[number];
+export type ActivityRequiredKeyword = NonNullable<
+  ActivityDetail["requiredKeywords"]
+>[number];
 
 export type KeywordInputActivity = Schemas["KeywordInput"];
 
@@ -26,8 +28,14 @@ export type ActivityInput = KeywordInputActivity | SpecificInputActivity;
 /** Discriminated on `type` ("inputActivity", "limitedActivity"). */
 export type ActivityOption = Schemas["ActivityInput"];
 
-export type ActivityInputOption = Extract<ActivityOption, { type: "inputActivity" }>;
+export type ActivityInputOption = Extract<
+  ActivityOption,
+  { type: "inputActivity" }
+>;
 
-export type ActivityLimitedOption = Extract<ActivityOption, { type: "limitedActivity" }>;
+export type ActivityLimitedOption = Extract<
+  ActivityOption,
+  { type: "limitedActivity" }
+>;
 
 export type ActivityReward = Schemas["FactionReputationReward"];

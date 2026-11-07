@@ -4,7 +4,8 @@ import { mount } from "@vue/test-utils";
 import clickOutside from "@/directives/clickOutside";
 
 // The directive attaches its document listener on the next animation frame.
-const flushFrame = (): Promise<void> => new Promise((resolve) => requestAnimationFrame(() => resolve()));
+const flushFrame = (): Promise<void> =>
+  new Promise((resolve) => requestAnimationFrame(() => resolve()));
 
 describe("v-click-outside", () => {
   let handler: ReturnType<typeof vi.fn>;
@@ -24,7 +25,10 @@ describe("v-click-outside", () => {
         withDirectives(
           h("div", { class: "inside" }, [
             showButton.value
-              ? h("button", { class: "remove", onClick: () => (showButton.value = false) })
+              ? h("button", {
+                  class: "remove",
+                  onClick: () => (showButton.value = false),
+                })
               : null,
           ]),
           [[clickOutside, handler]],

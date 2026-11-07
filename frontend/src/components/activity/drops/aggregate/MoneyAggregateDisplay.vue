@@ -10,9 +10,18 @@ import {
   injectFineMaterials,
   type BaseContext,
 } from "@/composables/context/injectShared";
-import { useLootTables, type LootTablesContext } from "@/composables/useLootTables";
-import { useSkillModifiers, type SkillModifiersContext } from "@/composables/useSkillModifiers";
-import { useFineMaterials, type FineMaterialsContext } from "@/composables/useFineMaterialsCalculations";
+import {
+  useLootTables,
+  type LootTablesContext,
+} from "@/composables/useLootTables";
+import {
+  useSkillModifiers,
+  type SkillModifiersContext,
+} from "@/composables/useSkillModifiers";
+import {
+  useFineMaterials,
+  type FineMaterialsContext,
+} from "@/composables/useFineMaterialsCalculations";
 import type { RecipeDetail } from "@/domain/types/recipe";
 import { getOutcomeOdds } from "@/domain/quality/qualityOutcomeOdds";
 import { getRecipeLevel } from "@/domain/recipe/recipeUtils";
@@ -25,10 +34,9 @@ import {
 import { n } from "@/utils/number";
 import { icons } from "@/constants/iconPaths";
 
-const props = withDefaults(
-  defineProps<{ context?: BaseContext | null }>(),
-  { context: null },
-);
+const props = withDefaults(defineProps<{ context?: BaseContext | null }>(), {
+  context: null,
+});
 
 const ctx = props.context || injectBaseContext();
 const { dropItemInfoMap } = props.context
@@ -74,11 +82,15 @@ const recipeParams = computed((): RecipeValueParams | undefined => {
 });
 
 const recipeValue = computed(() =>
-  recipeParams.value ? computeRecipeValue(recipeParams.value) : 0
+  recipeParams.value ? computeRecipeValue(recipeParams.value) : 0,
 );
 
 const goldTotal = computed(() =>
-  computeGoldTotal(dropItemInfoMap.value, itemsStore.allGearItems, dataStore.itemValues)
+  computeGoldTotal(
+    dropItemInfoMap.value,
+    itemsStore.allGearItems,
+    dataStore.itemValues,
+  ),
 );
 
 const goldBreakdown = computed(() =>
@@ -88,7 +100,7 @@ const goldBreakdown = computed(() =>
     itemsStore.materials,
     dataStore.itemValues,
     recipeParams.value,
-  )
+  ),
 );
 
 const displayValue = computed(() => n(goldTotal.value + recipeValue.value, 2));

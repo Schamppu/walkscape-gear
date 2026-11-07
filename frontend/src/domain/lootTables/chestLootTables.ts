@@ -52,7 +52,10 @@ export function identifyChestItems(
 ): ChestItem[] {
   return Object.entries(dropItemInfoMap)
     .filter(([id]) => id in containers)
-    .map(([id, info]) => ({ chestItemId: id, stepsPerChest: info.stepsPerItem }));
+    .map(([id, info]) => ({
+      chestItemId: id,
+      stepsPerChest: info.stepsPerItem,
+    }));
 }
 
 // ---------------------------------------------------------------------------
@@ -91,7 +94,9 @@ function processRows(
 
     const canBeFine = !row.isMoney && id in fineMaterialIds;
     const stepsPerFine = canBeFine ? stepsPerItem / CHEST_FINE_CHANCE : 0;
-    const stepsPerNormal = canBeFine ? stepsPerItem / (1 - CHEST_FINE_CHANCE) : stepsPerItem;
+    const stepsPerNormal = canBeFine
+      ? stepsPerItem / (1 - CHEST_FINE_CHANCE)
+      : stepsPerItem;
 
     const info: DropItemInfo = {
       id,
@@ -181,18 +186,32 @@ export function buildChestDropInfoMap(
       const emptySubWeight = allSubs
         .filter((sub) => !sub.tableRows?.length)
         .reduce((sum, sub) => sum + sub.weight, 0);
-      mainTableFactor = CHEST_MAIN_CHANCE + CHEST_SUB_CHANCE * (emptySubWeight / totalSubWeight);
+      mainTableFactor =
+        CHEST_MAIN_CHANCE +
+        CHEST_SUB_CHANCE * (emptySubWeight / totalSubWeight);
     }
 
     if (table.tableRows?.length && mainTableFactor > 0) {
-      processRows(table.tableRows, mainTableFactor, stepsPerChest, fineMaterialIds, out);
+      processRows(
+        table.tableRows,
+        mainTableFactor,
+        stepsPerChest,
+        fineMaterialIds,
+        out,
+      );
     }
 
     if (totalSubWeight > 0) {
       for (const sub of allSubs) {
         if (!sub.tableRows?.length || sub.weight <= 0) continue;
         const subFactor = CHEST_SUB_CHANCE * (sub.weight / totalSubWeight);
-        processRows(sub.tableRows, subFactor, stepsPerChest, fineMaterialIds, out);
+        processRows(
+          sub.tableRows,
+          subFactor,
+          stepsPerChest,
+          fineMaterialIds,
+          out,
+        );
       }
     }
   }

@@ -6,7 +6,6 @@ import ConsumableEntry from "./ConsumableEntry.vue";
 import PetEntry from "./PetEntry.vue";
 import { itemQualityNameSort, levelReqNameSort } from "@/domain/gear/sorting";
 import { getItemEntryQualities } from "@/domain/gear/itemEntryQualities";
-import { consumableQualityOptions } from "@/domain/constants/quality";
 import {
   consumableCounts,
   consumableEntryFields,

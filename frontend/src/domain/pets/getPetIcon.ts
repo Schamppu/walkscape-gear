@@ -16,7 +16,11 @@ import type { PetItem } from "@/domain/types/item";
  * @param level    The current level of the pet. 0 returns the egg sprite.
  * @param isRare   Whether to use the rare/shiny look variant.
  */
-export function getPetIcon(pet: PetItem, level: number | string, isRare = false): string {
+export function getPetIcon(
+  pet: PetItem,
+  level: number | string | null,
+  isRare = false,
+): string {
   const numLevel = Number(level) || 0;
   if (numLevel === 0) return pet.egg.sprite;
   const { stage } = pet.levels[numLevel - 1];

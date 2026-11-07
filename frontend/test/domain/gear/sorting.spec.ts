@@ -1,8 +1,5 @@
 import { describe, it, expect } from "vitest";
-import {
-  itemQualityNameSort,
-  levelReqNameSort,
-} from "@/domain/gear/sorting";
+import { itemQualityNameSort, levelReqNameSort } from "@/domain/gear/sorting";
 import type { ItemDetail } from "@/domain/types/item";
 import type { SkillLevelRequirement } from "@/domain/types/requirement";
 
@@ -131,7 +128,10 @@ describe("levelReqNameSort", () => {
 
   it("uses the highest skill level when multiple requirements exist", () => {
     const items = [
-      makeItem("Multi", "common", [skillLevel("fishing", 10), skillLevel("mining", 40)]),
+      makeItem("Multi", "common", [
+        skillLevel("fishing", 10),
+        skillLevel("mining", 40),
+      ]),
       makeItem("Single35", "common", [skillLevel("crafting", 35)]),
       makeItem("Single20", "common", [skillLevel("agility", 20)]),
     ];
@@ -166,7 +166,9 @@ describe("levelReqNameSort", () => {
         },
       ],
     } as unknown as ItemDetail;
-    const withSkill = makeItem("Skilled", "common", [skillLevel("fishing", 20)]);
+    const withSkill = makeItem("Skilled", "common", [
+      skillLevel("fishing", 20),
+    ]);
     const items = [withSkill, withNonSkill];
     expect(sortByLevel(items)).toEqual(["Forest", "Skilled"]);
   });

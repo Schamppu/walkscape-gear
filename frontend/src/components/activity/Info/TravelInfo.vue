@@ -27,7 +27,9 @@ import type { LocationSummary } from "@/domain/types/location";
 const playerStore = usePlayerStore();
 const routeStore = useRouteStore();
 const ctx = injectBaseContext();
-const { getRoute, averageStepsPerRoute, stepsPerNode } = useRoutes(ctx as unknown as SkillModifiersContext);
+const { getRoute, averageStepsPerRoute } = useRoutes(
+  ctx as unknown as SkillModifiersContext,
+);
 const { checkRequirements, mapRequirementsText, mergeRequirements } =
   injectRequirements();
 
@@ -175,8 +177,12 @@ const statsRow = computed(() => {
 
 const reqs = computed(() => {
   const mapped = mapSegmentRequirements(
-    segments.value.map(({ requirements, context }) => ({ requirements, context })),
-    (req, ctx) => checkRequirements([req as Requirement], ctx as RequirementContext),
+    segments.value.map(({ requirements, context }) => ({
+      requirements,
+      context,
+    })),
+    (req, ctx) =>
+      checkRequirements([req as Requirement], ctx as RequirementContext),
   );
   return mapped.map(({ requirements, active }) =>
     requirements.length ? mapRequirementsText(requirements, active) : [],
@@ -210,7 +216,7 @@ const updateEnd = (location: { value: string } & Record<string, unknown>) => {
         <nested-dropdown
           label="Start"
           :data="locationsByFaction"
-          :model-value="(start as any)"
+          :model-value="start as any"
           @update:modelValue="start = $event"
           default-text="start location"
           @select="updateStart"
@@ -219,7 +225,7 @@ const updateEnd = (location: { value: string } & Record<string, unknown>) => {
         <nested-dropdown
           label="End"
           :data="locationsByFaction"
-          :model-value="(end as any)"
+          :model-value="end as any"
           @update:modelValue="end = $event"
           default-text="end location"
           @select="updateEnd"

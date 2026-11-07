@@ -22,7 +22,11 @@ import type {
   SearchResult,
   SearchSettings,
 } from "@/domain/advancedOptimiser/search";
-import type { StaticReqCtx, WorkerGearSet, WorkerItem } from "./optimiserWorkerTypes";
+import type {
+  StaticReqCtx,
+  WorkerGearSet,
+  WorkerItem,
+} from "./optimiserWorkerTypes";
 
 export type AdvancedOptimiserJob = {
   // --- Objective ---
@@ -72,7 +76,11 @@ export type AdvancedOptimiserJob = {
 // ---------------------------------------------------------------------------
 
 export type AdvancedOptimiserInbound =
-  | { type: "start"; job: AdvancedOptimiserJob; settings?: Partial<SearchSettings> }
+  | {
+      type: "start";
+      job: AdvancedOptimiserJob;
+      settings?: Partial<SearchSettings>;
+    }
   | { type: "cancel" };
 
 export type AdvancedOptimiserOutbound =

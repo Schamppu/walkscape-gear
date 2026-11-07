@@ -19,7 +19,12 @@ function skillLevel(
   level: number,
   opposite = false,
 ): SkillLevelRequirement {
-  return { type: "skillLevel", name: null, opposite, requirement: { skill, level } };
+  return {
+    type: "skillLevel",
+    name: null,
+    opposite,
+    requirement: { skill, level },
+  };
 }
 
 function keywordItems(

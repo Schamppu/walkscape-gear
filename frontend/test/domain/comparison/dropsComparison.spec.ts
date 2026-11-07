@@ -1,5 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { partitionDropKeys, compareDrops } from "@/domain/comparison/dropsComparison";
+import {
+  partitionDropKeys,
+  compareDrops,
+} from "@/domain/comparison/dropsComparison";
 import type { DropItemInfo } from "@/domain/lootTables/dropInfo";
 import type { MappedTableRow } from "@/domain/types/lootTable";
 
@@ -34,7 +37,11 @@ function makeDropInfo(
 
 describe("partitionDropKeys — edge cases", () => {
   it("returns all-empty arrays for two empty maps", () => {
-    expect(partitionDropKeys({}, {})).toEqual({ both: [], onlyA: [], onlyB: [] });
+    expect(partitionDropKeys({}, {})).toEqual({
+      both: [],
+      onlyA: [],
+      onlyB: [],
+    });
   });
 
   it("puts all keys of A in onlyA when B is empty", () => {
@@ -189,8 +196,14 @@ describe("compareDrops — row structure", () => {
   });
 
   it("both-items appear before A-only then B-only items", () => {
-    const A = { shared: makeDropInfo("shared", 100), aOnly: makeDropInfo("aOnly", 50) };
-    const B = { shared: makeDropInfo("shared", 200), bOnly: makeDropInfo("bOnly", 75) };
+    const A = {
+      shared: makeDropInfo("shared", 100),
+      aOnly: makeDropInfo("aOnly", 50),
+    };
+    const B = {
+      shared: makeDropInfo("shared", 200),
+      bOnly: makeDropInfo("bOnly", 75),
+    };
     const rows = compareDrops(A, B);
     expect(rows[0].id).toBe("shared");
     expect(rows[1].id).toBe("aOnly");
@@ -198,7 +211,11 @@ describe("compareDrops — row structure", () => {
   });
 
   it("g1 step values match source DropItemInfo", () => {
-    const info = makeDropInfo("iron", 100, { stepsPerNormal: 110, stepsPerFine: 500, stepsPerRare: 1000 });
+    const info = makeDropInfo("iron", 100, {
+      stepsPerNormal: 110,
+      stepsPerFine: 500,
+      stepsPerRare: 1000,
+    });
     const A = { iron: info };
     const [row] = compareDrops(A, {});
     expect(row.g1?.stepsPerItem).toBe(100);

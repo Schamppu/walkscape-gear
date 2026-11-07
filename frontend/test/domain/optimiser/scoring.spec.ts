@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect } from "vitest";
 import {
   isHighStat,
   startScore,
@@ -6,7 +6,6 @@ import {
   LOW_STATS,
   HIGH_STATS,
 } from "@/domain/optimiser/scoring";
-import { makeOptimiserItem } from "../../fixtures/optimiser";
 
 // ---------------------------------------------------------------------------
 // isHighStat

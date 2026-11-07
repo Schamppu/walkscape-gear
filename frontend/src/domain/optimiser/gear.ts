@@ -103,8 +103,5 @@ export const filterDirectUpgrades = (
       (item, i) =>
         !normalized.some((other, j) => i !== j && dominates(other, item)),
     )
-    .map(
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      ({ _stats, ...item }) => item,
-    );
+    .map(({ _stats, ...item }) => item);
 };

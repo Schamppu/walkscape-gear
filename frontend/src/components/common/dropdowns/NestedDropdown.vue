@@ -66,7 +66,8 @@ const filteredData = computed(() => {
 });
 
 const labelText = computed(() => {
-  if (!selected.value || selected.value?.id === "none") return props.defaultText;
+  if (!selected.value || selected.value?.id === "none")
+    return props.defaultText;
   return selected.value.value || selected.value.name;
 });
 

@@ -22,7 +22,9 @@ function dedupeIds(ids) {
 }
 
 function sortIds(ids) {
-  return [...ids].sort((left, right) => toIdKey(left).localeCompare(toIdKey(right)));
+  return [...ids].sort((left, right) =>
+    toIdKey(left).localeCompare(toIdKey(right)),
+  );
 }
 
 function isMultipleUnsupported(error) {
@@ -83,12 +85,15 @@ export default class BaseService {
   }
 
   async search(params) {
-    const response = await cachedApi.get(`/${this.resourceName}/search`, { params });
+    const response = await cachedApi.get(`/${this.resourceName}/search`, {
+      params,
+    });
     return response.data;
   }
 
   async fetchMissingMultiple(ids) {
-    const canUseBatch = multipleSupportByResource.get(this.resourceName) !== false;
+    const canUseBatch =
+      multipleSupportByResource.get(this.resourceName) !== false;
 
     if (!canUseBatch) {
       return this.fetchIndividually(ids);
@@ -121,7 +126,9 @@ export default class BaseService {
 
   indexMultipleResponse(requestedIds, response) {
     if (!Array.isArray(response.data)) {
-      throw new Error(`Unexpected /${this.resourceName}/multiple response shape`);
+      throw new Error(
+        `Unexpected /${this.resourceName}/multiple response shape`,
+      );
     }
 
     const byId = new Map();
@@ -130,15 +137,11 @@ export default class BaseService {
 
       const id = toIdKey(item.id);
       byId.set(id, item);
-      cachedApi.prime(
-        "get",
-        `/${this.resourceName}/${item.id}`,
-        {
-          data: item,
-          headers: response.headers,
-          status: response.status,
-        },
-      );
+      cachedApi.prime("get", `/${this.resourceName}/${item.id}`, {
+        data: item,
+        headers: response.headers,
+        status: response.status,
+      });
     }
 
     const missingIds = requestedIds.filter((id) => !byId.has(toIdKey(id)));

@@ -1,7 +1,13 @@
 import { provide } from "vue";
 import useBaseContext from "./useBaseContext";
-import { useEffectiveAttrs, type EffectiveAttrsContext } from "../useEffectiveAttrs";
-import { useSkillModifiers, type SkillModifiersContext } from "../useSkillModifiers";
+import {
+  useEffectiveAttrs,
+  type EffectiveAttrsContext,
+} from "../useEffectiveAttrs";
+import {
+  useSkillModifiers,
+  type SkillModifiersContext,
+} from "../useSkillModifiers";
 import { useRequirements, type RequirementContext } from "../useRequirements";
 import { useLootTables, type LootTablesContext } from "../useLootTables";
 import { useFineMaterials } from "../useFineMaterialsCalculations";
@@ -29,10 +35,14 @@ export function provideSharedComposables(): void {
 
   // BaseContext structurally satisfies these context types at runtime;
   // the narrow discriminated-union on `source` / missing `inputItem` requires a cast.
-  const effectiveAttrs = useEffectiveAttrs(ctx as unknown as EffectiveAttrsContext);
+  const effectiveAttrs = useEffectiveAttrs(
+    ctx as unknown as EffectiveAttrsContext,
+  );
   provide(EffectiveAttrsKey, effectiveAttrs);
 
-  const skillModifiers = useSkillModifiers(ctx as unknown as SkillModifiersContext);
+  const skillModifiers = useSkillModifiers(
+    ctx as unknown as SkillModifiersContext,
+  );
   provide(SkillModifiersKey, skillModifiers);
 
   const requirements = useRequirements(ctx as unknown as RequirementContext);

@@ -98,8 +98,7 @@ export type SharedFineMaterials = {
 // Injection Keys
 // ---------------------------------------------------------------------------
 
-export const BaseContextKey: InjectionKey<BaseContext> =
-  Symbol("BaseContext");
+export const BaseContextKey: InjectionKey<BaseContext> = Symbol("BaseContext");
 
 export const EffectiveAttrsKey: InjectionKey<SharedEffectiveAttrs> =
   Symbol("EffectiveAttrs");

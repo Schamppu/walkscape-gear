@@ -51,9 +51,7 @@ export const BUILTIN_PRESETS: readonly OptimiserPreset[] = [
     id: `${BUILTIN_PREFIX}eternal-per-material`,
     name: "Eternal crafts per material",
     description: "All out most eternal crafts per material.",
-    targets: [
-      { x: "eternalCrafts", y: "material", weight: MAX_WEIGHT },
-    ],
+    targets: [{ x: "eternalCrafts", y: "material", weight: MAX_WEIGHT }],
     builtin: true,
   },
   {

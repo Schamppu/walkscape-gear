@@ -6,7 +6,10 @@ import {
   normalizeAttr,
   type EffectiveAttrEntry,
 } from "@/domain/effectiveAttrs";
-import type { ActivityDetail, ActivityInputOption } from "@/domain/types/activity";
+import type {
+  ActivityDetail,
+  ActivityInputOption,
+} from "@/domain/types/activity";
 import type { ActivityNone } from "@/domain/constants/activityNone";
 
 // ---------------------------------------------------------------------------
@@ -54,12 +57,14 @@ export function useFineInputBenefit(ctx: FineInputBenefitContext): {
         if (input.type === "specific") {
           return input.item in itemsStore.fineMaterials;
         } else if (input.type === "keyword") {
-          const materialsWithKeyword = Object.values(itemsStore.materials).filter(
-            (m) => m.keywords?.includes(input.keyword),
-          );
+          const materialsWithKeyword = Object.values(
+            itemsStore.materials,
+          ).filter((m) => m.keywords?.includes(input.keyword));
           return (
             materialsWithKeyword.length > 0 &&
-            materialsWithKeyword.every(({ id }) => id in itemsStore.fineMaterials)
+            materialsWithKeyword.every(
+              ({ id }) => id in itemsStore.fineMaterials,
+            )
           );
         }
         return false;

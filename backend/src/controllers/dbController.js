@@ -49,15 +49,15 @@ export const upsertUserInfo = makeUpsertHandler(dbService.upsertUserStats);
 export const getUserOwnedItems = makeGetHandler(dbService.getUserOwnedItems);
 export const upsertUserOwnedItems = makeUpsertHandler(
   dbService.upsertUserOwnedItems,
-  (req) => req.body.items
+  (req) => req.body.items,
 );
 
 export const getUserFactionReputations = makeGetHandler(
-  dbService.getUserFactionReputations
+  dbService.getUserFactionReputations,
 );
 export const upsertUserFactionReputations = makeUpsertHandler(
   dbService.upsertUserFactionReputations,
-  (req) => req.body.reputations
+  (req) => req.body.reputations,
 );
 
 export const getUserBootstrap = async (req, res) => {
@@ -84,10 +84,10 @@ export const getGearSetTags = async (req, res) => {
 export const getGearSets = async (req, res) => {
   const userUuid = getUserUuid(req, res);
   if (!userUuid) return;
-  
+
   // Check if includeItems query parameter is present
-  const includeItems = req.query.includeItems === 'true';
-  
+  const includeItems = req.query.includeItems === "true";
+
   try {
     const result = await dbService.getGearSets(userUuid, includeItems);
     res.json(result || []);
@@ -111,7 +111,7 @@ export const exportGearSets = async (req, res) => {
 export const getGearSet = async (req, res) => {
   const userUuid = getUserUuid(req, res);
   if (!userUuid) return;
-  
+
   const gearSetId = parseInt(req.params.id);
   if (!gearSetId || isNaN(gearSetId)) {
     return res.status(400).json({ error: "Invalid gear set ID" });
@@ -149,7 +149,9 @@ export const deleteGearSet = async (req, res) => {
 };
 
 export const getUserSettings = makeGetHandler(dbService.getUserSettings);
-export const upsertUserSettings = makeUpsertHandler(dbService.upsertUserSettings);
+export const upsertUserSettings = makeUpsertHandler(
+  dbService.upsertUserSettings,
+);
 
 // Optimiser preset handler: only HttpError messages reach the client.
 function makeOptimiserPresetHandler(serviceFn, getArg) {
@@ -168,19 +170,19 @@ function makeOptimiserPresetHandler(serviceFn, getArg) {
 
 export const getOptimiserPresets = makeOptimiserPresetHandler(
   dbService.getOptimiserPresets,
-  () => undefined
+  () => undefined,
 );
 export const upsertOptimiserPreset = makeOptimiserPresetHandler(
   dbService.upsertOptimiserPreset,
-  (req) => req.body
+  (req) => req.body,
 );
 export const deleteOptimiserPreset = makeOptimiserPresetHandler(
   dbService.deleteOptimiserPreset,
-  (req) => (/^\d+$/.test(req.params.id) ? Number(req.params.id) : NaN)
+  (req) => (/^\d+$/.test(req.params.id) ? Number(req.params.id) : NaN),
 );
 export const reorderOptimiserPresets = makeOptimiserPresetHandler(
   dbService.reorderOptimiserPresets,
-  (req) => req.body?.ids
+  (req) => req.body?.ids,
 );
 
 export const deleteUserData = async (req, res) => {

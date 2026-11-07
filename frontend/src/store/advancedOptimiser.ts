@@ -26,11 +26,15 @@ import {
  * is wrapped so the optimiser still works in memory.
  */
 
-const readStored = (key: string, source: OptimiserSource): AdvancedOptimiserConfig | null => {
+const readStored = (
+  key: string,
+  source: OptimiserSource,
+): AdvancedOptimiserConfig | null => {
   try {
     const raw = localStorage.getItem(key);
     const config = raw ? parseConfig(JSON.parse(raw)) : null;
-    return config?.mode.kind === "singleActivity" && config.mode.activityId === source.id
+    return config?.mode.kind === "singleActivity" &&
+      config.mode.activityId === source.id
       ? config
       : null;
   } catch {
@@ -38,7 +42,10 @@ const readStored = (key: string, source: OptimiserSource): AdvancedOptimiserConf
   }
 };
 
-const writeStored = (source: OptimiserSource, config: AdvancedOptimiserConfig): void => {
+const writeStored = (
+  source: OptimiserSource,
+  config: AdvancedOptimiserConfig,
+): void => {
   try {
     localStorage.setItem(configStorageKey(source), JSON.stringify(config));
   } catch {
@@ -101,7 +108,11 @@ export const useAdvancedOptimiserStore = defineStore("advancedOptimiserStore", {
       this.getOrCreate(source).targets.push(target);
       this.save(source);
     },
-    updateTarget(source: OptimiserSource, index: number, patch: Partial<Target>): void {
+    updateTarget(
+      source: OptimiserSource,
+      index: number,
+      patch: Partial<Target>,
+    ): void {
       const targets = this.getOrCreate(source).targets;
       if (!targets[index]) return;
       targets[index] = { ...targets[index], ...patch };
@@ -132,7 +143,10 @@ export const useAdvancedOptimiserStore = defineStore("advancedOptimiserStore", {
     updateSettings(patch: Partial<OptimiserSettings>): void {
       this.settings = parseOptimiserSettings({ ...this.settings, ...patch });
       try {
-        localStorage.setItem(OPTIMISER_SETTINGS_STORAGE_KEY, JSON.stringify(this.settings));
+        localStorage.setItem(
+          OPTIMISER_SETTINGS_STORAGE_KEY,
+          JSON.stringify(this.settings),
+        );
       } catch {
         // Storage full or blocked: keep the in-memory settings.
       }

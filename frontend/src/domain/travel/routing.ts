@@ -109,8 +109,18 @@ export function buildGraph(
     const [from, to] = locs;
     const dist = distance;
     const opts = options ?? [];
-    addEdge(from, to, dist, resolveTerrainModifiers(from, opts, terrainModifiersMap));
-    addEdge(to, from, dist, resolveTerrainModifiers(to, opts, terrainModifiersMap));
+    addEdge(
+      from,
+      to,
+      dist,
+      resolveTerrainModifiers(from, opts, terrainModifiersMap),
+    );
+    addEdge(
+      to,
+      from,
+      dist,
+      resolveTerrainModifiers(to, opts, terrainModifiersMap),
+    );
   }
 
   return graph;
@@ -125,12 +135,16 @@ export function buildGraph(
  * Mirrors the in-game formula: ceil((distance / WE / 10) * stepsPercent + stepsFlat),
  * with a minimum of 10 steps.
  */
-export function stepsPerNode(distance: number, stats: RouteSegmentStats): number {
+export function stepsPerNode(
+  distance: number,
+  stats: RouteSegmentStats,
+): number {
   const we = 1 + stats.workEfficiency;
   return Math.ceil(
     Math.max(
       10,
-      (distance / we / 10) * stats.stepsRequiredPercent + stats.stepsRequiredFlat,
+      (distance / we / 10) * stats.stepsRequiredPercent +
+        stats.stepsRequiredFlat,
     ),
   );
 }
@@ -147,8 +161,13 @@ export function expectedNodeCompletions(stats: RouteSegmentStats): number {
  * Average steps to traverse a full route segment of the given distance,
  * accounting for double action.
  */
-export function averageStepsPerRoute(distance: number, stats: RouteSegmentStats): number {
-  return Math.ceil(stepsPerNode(distance, stats) * expectedNodeCompletions(stats));
+export function averageStepsPerRoute(
+  distance: number,
+  stats: RouteSegmentStats,
+): number {
+  return Math.ceil(
+    stepsPerNode(distance, stats) * expectedNodeCompletions(stats),
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -159,7 +178,8 @@ function isBetter<TSegment>(
   a: PathNode<TSegment>,
   b: PathNode<TSegment>,
 ): boolean {
-  if (a.missing.length !== b.missing.length) return a.missing.length < b.missing.length;
+  if (a.missing.length !== b.missing.length)
+    return a.missing.length < b.missing.length;
   return a.distance < b.distance;
 }
 
@@ -179,7 +199,9 @@ function isBetter<TSegment>(
  * @param isRequirementMet Returns true when a single `Requirement` is satisfied
  *                        by the current character context.
  */
-export function pathfind<TSegment extends { requirements: Requirement[]; stats: RouteSegmentStats }>(
+export function pathfind<
+  TSegment extends { requirements: Requirement[]; stats: RouteSegmentStats },
+>(
   graph: LocationGraph,
   start: string,
   goal: string,
@@ -195,7 +217,9 @@ export function pathfind<TSegment extends { requirements: Requirement[]; stats: 
     return undefined;
   }
 
-  const pq = new MinPriorityQueue<PathNode<TSegment>>(({ distance }) => distance);
+  const pq = new MinPriorityQueue<PathNode<TSegment>>(
+    ({ distance }) => distance,
+  );
   const bestValid = new Map<string, PathNode<TSegment>>();
   const best = new Map<string, PathNode<TSegment>>();
 
@@ -215,24 +239,31 @@ export function pathfind<TSegment extends { requirements: Requirement[]; stats: 
 
     for (const edge of graph.get(current.location) ?? []) {
       const segment = buildSegment(current.location, edge);
-      const unmetReqs = segment.requirements.filter((req) => !isRequirementMet(req));
+      const unmetReqs = segment.requirements.filter(
+        (req) => !isRequirementMet(req),
+      );
 
       const candidate: PathNode<TSegment> = {
         location: edge.to,
-        distance: current.distance + averageStepsPerRoute(edge.distance, segment.stats),
+        distance:
+          current.distance + averageStepsPerRoute(edge.distance, segment.stats),
         missing: [...current.missing, ...unmetReqs],
         prev: current.location,
         segment,
       };
 
-      if (!best.get(edge.to) || candidate.distance < best.get(edge.to)!.distance) {
+      if (
+        !best.get(edge.to) ||
+        candidate.distance < best.get(edge.to)!.distance
+      ) {
         best.set(edge.to, candidate);
         pq.enqueue(candidate);
       }
 
       if (
         !candidate.missing.length &&
-        (!bestValid.get(edge.to) || isBetter(candidate, bestValid.get(edge.to)!))
+        (!bestValid.get(edge.to) ||
+          isBetter(candidate, bestValid.get(edge.to)!))
       ) {
         bestValid.set(edge.to, candidate);
         pq.enqueue(candidate);
@@ -240,7 +271,9 @@ export function pathfind<TSegment extends { requirements: Requirement[]; stats: 
     }
   }
 
-  const constructPath = (map: Map<string, PathNode<TSegment>>): PathResult<TSegment> => {
+  const constructPath = (
+    map: Map<string, PathNode<TSegment>>,
+  ): PathResult<TSegment> => {
     const segments: TSegment[] = [];
     const path: string[] = [];
     const missing: Requirement[] = [];

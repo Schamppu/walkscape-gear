@@ -13,7 +13,10 @@
  * - Decide which sets to try (see `beam.ts`).
  */
 
-import { calculateStatTotals, type EffectiveAttrEntry } from "@/domain/effectiveAttrs";
+import {
+  calculateStatTotals,
+  type EffectiveAttrEntry,
+} from "@/domain/effectiveAttrs";
 import { calculateSkillModifiers } from "@/domain/skillModifiers";
 import {
   buildDynCtx,
@@ -21,7 +24,11 @@ import {
   requirementsMet,
 } from "@/domain/optimiser/setRequirements";
 import type { LocationSummary } from "@/domain/types/location";
-import type { StaticReqCtx, WorkerGearSet, WorkerItem } from "@/workers/optimiserWorkerTypes";
+import type {
+  StaticReqCtx,
+  WorkerGearSet,
+  WorkerItem,
+} from "@/workers/optimiserWorkerTypes";
 import type { AdvancedOptimiserJob } from "@/workers/advancedOptimiserWorkerTypes";
 import { COMBINATION_STRATEGIES } from "./combination";
 import {
@@ -82,7 +89,10 @@ export const setItems = (set: WorkerGearSet): WorkerItem[] =>
     .filter(isWorkerItem);
 
 /** The static requirement context with `location` as the current location. */
-const reqCtxAt = (reqCtx: StaticReqCtx, location: LocationSummary | null): StaticReqCtx =>
+const reqCtxAt = (
+  reqCtx: StaticReqCtx,
+  location: LocationSummary | null,
+): StaticReqCtx =>
   location
     ? {
         ...reqCtx,
@@ -93,7 +103,9 @@ const reqCtxAt = (reqCtx: StaticReqCtx, location: LocationSummary | null): Stati
     : reqCtx;
 
 /** Seed gear set holding the locked items. Every candidate starts from it. */
-export const applyLocks = (lockedItems: Record<string, WorkerItem>): WorkerGearSet => ({
+export const applyLocks = (
+  lockedItems: Record<string, WorkerItem>,
+): WorkerGearSet => ({
   ...lockedItems,
 });
 
@@ -114,7 +126,11 @@ export const createSetScorer = (
   const cache = new Map<string, LocationCache>();
 
   const modifiersFor = (entries: EffectiveAttrEntry[]) =>
-    calculateSkillModifiers(calculateStatTotals(entries), job.source, job.activitySelected);
+    calculateSkillModifiers(
+      calculateStatTotals(entries),
+      job.source,
+      job.activitySelected,
+    );
 
   const extractionCtx = (entries: EffectiveAttrEntry[]): ExtractionContext => ({
     ...job.extraction,
@@ -128,7 +144,10 @@ export const createSetScorer = (
     if (!entry) {
       const reqCtx = reqCtxAt(job.reqCtx, location);
       const staticEntries = preFilterStaticEntries(job.staticEntries, reqCtx);
-      const baseline = computeBaseline(job.targets, extractionCtx(staticEntries));
+      const baseline = computeBaseline(
+        job.targets,
+        extractionCtx(staticEntries),
+      );
       entry = { reqCtx, staticEntries, baseline };
       cache.set(key, entry);
     }
@@ -136,7 +155,9 @@ export const createSetScorer = (
   };
 
   return (set) => {
-    const location = (set.location as LocationSummary | null | undefined) ?? job.defaultLocation;
+    const location =
+      (set.location as LocationSummary | null | undefined) ??
+      job.defaultLocation;
     const { reqCtx, staticEntries, baseline } = atLocation(location);
 
     const items = setItems(set);
@@ -144,7 +165,9 @@ export const createSetScorer = (
     const valid = requirementsMet(job.activityRequirements, reqCtx, dynCtx);
 
     const gearEntries = items.flatMap((item) =>
-      item._attrEntries.filter((e) => requirementsMet(e.requirements, reqCtx, dynCtx)),
+      item._attrEntries.filter((e) =>
+        requirementsMet(e.requirements, reqCtx, dynCtx),
+      ),
     );
     const ctx = extractionCtx([...staticEntries, ...gearEntries]);
 
@@ -160,7 +183,9 @@ export const createSetScorer = (
       const base = baseline.get(key);
       const best = bestValues[key];
       shares[key] =
-        base === undefined || best === undefined ? null : shareOfBest(base, best, values[key]);
+        base === undefined || best === undefined
+          ? null
+          : shareOfBest(base, best, values[key]);
       return { target, normalised: shares[key] };
     });
 

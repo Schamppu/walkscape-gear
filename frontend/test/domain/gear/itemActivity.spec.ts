@@ -89,10 +89,7 @@ function keywordEquippedReq(keyword: string): Requirement {
   };
 }
 
-function distinctKeywordReq(
-  keywords: string[],
-  quantity: number,
-): Requirement {
+function distinctKeywordReq(keywords: string[], quantity: number): Requirement {
   return {
     type: "distinctKeywordItemsEquipped",
     name: null,
@@ -176,16 +173,14 @@ describe("filterUsefulAbilities", () => {
 describe("filterUsefulKeywords", () => {
   it("returns [] when item has no keywords", () => {
     const item = makeItem({ keywords: [] });
-    expect(
-      filterUsefulKeywords(item, [keywordEquippedReq("axe")]),
-    ).toEqual([]);
+    expect(filterUsefulKeywords(item, [keywordEquippedReq("axe")])).toEqual([]);
   });
 
   it("returns [] when no keyword-type requirements exist", () => {
     const item = makeItem({ keywords: ["axe"] });
-    expect(
-      filterUsefulKeywords(item, [abilityAvailableReq("haste")]),
-    ).toEqual([]);
+    expect(filterUsefulKeywords(item, [abilityAvailableReq("haste")])).toEqual(
+      [],
+    );
   });
 
   it("returns a truthy value for a satisfied keywordEquipped requirement", () => {
@@ -211,9 +206,7 @@ describe("filterUsefulKeywords", () => {
 
   it("returns [] when keywords is undefined", () => {
     const item = makeItem({ keywords: undefined });
-    expect(
-      filterUsefulKeywords(item, [keywordEquippedReq("axe")]),
-    ).toEqual([]);
+    expect(filterUsefulKeywords(item, [keywordEquippedReq("axe")])).toEqual([]);
   });
 });
 

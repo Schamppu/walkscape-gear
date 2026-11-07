@@ -37,7 +37,8 @@ export function resolveRowWeight(
   ) {
     return Math.floor(rowWeight * minWeightScale * 10 + 0.5) / 10;
   } else {
-    const weightIncrement = rowWeight / (levelMaxScaling - levelRequirement + 1);
+    const weightIncrement =
+      rowWeight / (levelMaxScaling - levelRequirement + 1);
     const weight = weightIncrement * (level - (levelRequirement - 1));
     return Math.floor(weight * 10 + 0.5) / 10;
   }
@@ -137,7 +138,12 @@ export function computeRollChance(
     1,
     combinedRollChance ?? rollChance ?? 1,
   );
-  return (1 - noDropChance) * effectiveRollChance * (rowWeight / tableWeight) * multiplier;
+  return (
+    (1 - noDropChance) *
+    effectiveRollChance *
+    (rowWeight / tableWeight) *
+    multiplier
+  );
 }
 
 export function computeSourceDropChance(
@@ -183,8 +189,14 @@ export function getStepsPerItem(
       const { rowMinimumAmount, rowMaximumAmount, rollAmount } = template;
       const avgAmount = (rowMaximumAmount + rowMinimumAmount) / 2;
       const combinedRollChance =
-        sourcesInGroup.length > 1 ? getCombinedRollChance(sourcesInGroup) : null;
-      const dropChance = computeRollChance(template, combinedRollChance, multiplier);
+        sourcesInGroup.length > 1
+          ? getCombinedRollChance(sourcesInGroup)
+          : null;
+      const dropChance = computeRollChance(
+        template,
+        combinedRollChance,
+        multiplier,
+      );
       const expectedItemsPerAction = rollAmount * dropChance * avgAmount;
       return stepsPerRewardRoll / expectedItemsPerAction;
     },

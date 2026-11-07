@@ -24,7 +24,12 @@ describe("itemsStore.toggleItem", () => {
       petRarity: null,
     };
 
-    store.toggleItem({ itemId: "ring", owned: true, hidden: true, craftedTier: "legendary" });
+    store.toggleItem({
+      itemId: "ring",
+      owned: true,
+      hidden: true,
+      craftedTier: "legendary",
+    });
 
     expect(store.ownedItems.ring).toMatchObject({
       hidden: true,
@@ -56,7 +61,11 @@ describe("itemsStore.toggleItem", () => {
     const store = useItemsStore();
     store.toggleItem({ itemId: "pie", quantity: 5, quantityFine: 2 });
     store.toggleItem({ itemId: "pie", quantity: undefined, hidden: true });
-    expect(store.ownedItems.pie).toMatchObject({ quantity: 5, quantityFine: 2, hidden: true });
+    expect(store.ownedItems.pie).toMatchObject({
+      quantity: 5,
+      quantityFine: 2,
+      hidden: true,
+    });
   });
 });
 
@@ -70,7 +79,10 @@ describe("itemsStore.ownedCollectibles", () => {
         {
           title: "Collectibles",
           categories: [
-            { key: "misc_collectibles", items: [{ id: "trophy" }, { id: "medal" }] },
+            {
+              key: "misc_collectibles",
+              items: [{ id: "trophy" }, { id: "medal" }],
+            },
             { key: "pets", items: [] },
           ],
         },
@@ -87,13 +99,19 @@ describe("itemsStore.ownedCollectibles", () => {
     const store = hydrate();
     store.toggleItem({ itemId: "trophy", owned: true });
     store.toggleItem({ itemId: "medal", owned: true });
-    expect(store.ownedCollectibles.map(({ id }) => id)).toEqual(["trophy", "medal"]);
+    expect(store.ownedCollectibles.map(({ id }) => id)).toEqual([
+      "trophy",
+      "medal",
+    ]);
 
     store.toggleItem({ itemId: "trophy", owned: false });
     expect(store.ownedCollectibles.map(({ id }) => id)).toEqual(["medal"]);
 
     store.toggleItem({ itemId: "trophy", owned: true });
-    expect(store.ownedCollectibles.map(({ id }) => id)).toEqual(["trophy", "medal"]);
+    expect(store.ownedCollectibles.map(({ id }) => id)).toEqual([
+      "trophy",
+      "medal",
+    ]);
   });
 
   it("excludes hidden entries that are not owned", () => {

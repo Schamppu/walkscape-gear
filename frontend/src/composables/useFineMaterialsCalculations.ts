@@ -45,7 +45,9 @@ export function useFineMaterials(ctx: FineMaterialsContext): {
     ctx.recipeSelected.value && activityStore.useFineMaterials ? 1.75 : 1,
   );
 
-  const useFine = computed<boolean>(() => ctx.recipeSelected.value && activityStore.useFineMaterials);
+  const useFine = computed<boolean>(
+    () => ctx.recipeSelected.value && activityStore.useFineMaterials,
+  );
 
   return { fineMode, xpRewardsMultiplier, useFine };
 }

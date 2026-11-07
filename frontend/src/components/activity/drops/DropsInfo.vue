@@ -25,7 +25,9 @@ const itemsStore = useItemsStore();
 const chestLootTables = useChestLootTables(dropItemInfoMap);
 const abilityLootTables = useAbilityLootTables(ctx);
 
-const showChests = computed(() => activitySettings.value.showChestLootTables?.value === true);
+const showChests = computed(
+  () => activitySettings.value.showChestLootTables?.value === true,
+);
 
 const visibleItemIds = computed(() => {
   const ids = Object.keys(dropItemInfoMap.value);
@@ -82,7 +84,10 @@ const visibleLootTables = computed(() => {
           />
         </template>
       </section>
-      <section v-if="showChests && chestLootTables.length > 0" class="chest-sections">
+      <section
+        v-if="showChests && chestLootTables.length > 0"
+        class="chest-sections"
+      >
         <chest-loot-table-section
           v-for="chestInfo in chestLootTables"
           :key="chestInfo.chestItemId"

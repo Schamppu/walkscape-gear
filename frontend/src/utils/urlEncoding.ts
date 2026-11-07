@@ -35,7 +35,10 @@ export type ReverseMapping = Record<string, Record<string, number>>;
  * Minimal shape required from each loadout entry during encoding.
  * Items only need to expose their `id`; gear stores carry extra fields.
  */
-export type LoadoutEntry = { id?: string | null; quality?: string | null } | null;
+export type LoadoutEntry = {
+  id?: string | null;
+  quality?: string | null;
+} | null;
 
 /** Decoded output: slot key → item ID or null (absent / index 0). */
 export type DecodedLoadout = Record<string, string | null>;

@@ -13,7 +13,7 @@
 export default function debounce<T extends unknown[]>(
   func: (...args: T) => void,
   delay: number,
-  context: object | null = null
+  context: object | null = null,
 ): (...args: T) => void {
   let timeout: ReturnType<typeof setTimeout>;
   return function (this: unknown, ...args: T) {

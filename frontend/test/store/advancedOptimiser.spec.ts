@@ -56,7 +56,9 @@ describe("advanced optimiser store", () => {
     store.setConfig(ACT_1, config);
     store.updateTarget(ACT_1, 0, { weight: 9 });
     expect(config.targets[0].weight).toBe(4);
-    expect(JSON.parse(localStorage.getItem(KEY)!).presetId).toBe("builtin:balanced");
+    expect(JSON.parse(localStorage.getItem(KEY)!).presetId).toBe(
+      "builtin:balanced",
+    );
   });
 
   it("setPresetId keeps the targets", () => {
@@ -71,13 +73,18 @@ describe("advanced optimiser store", () => {
   it("ignores unreadable saved data", () => {
     localStorage.setItem(KEY, "{not json");
     const store = useAdvancedOptimiserStore();
-    expect(store.getOrCreate(ACT_1).targets).toEqual([{ x: "xp", y: "step", weight: 10 }]);
+    expect(store.getOrCreate(ACT_1).targets).toEqual([
+      { x: "xp", y: "step", weight: 10 },
+    ]);
   });
 
   it("ignores a saved config for another activity", () => {
     localStorage.setItem(
       KEY,
-      JSON.stringify({ mode: { kind: "singleActivity", activityId: "other" }, targets: [] }),
+      JSON.stringify({
+        mode: { kind: "singleActivity", activityId: "other" },
+        targets: [],
+      }),
     );
     const store = useAdvancedOptimiserStore();
     store.load(ACT_1);
@@ -87,7 +94,9 @@ describe("advanced optimiser store", () => {
   it("keeps an activity and a recipe with the same id apart", () => {
     const store = useAdvancedOptimiserStore();
     store.removeTarget(ACT_1, 0);
-    expect(store.getOrCreate({ kind: "recipe", id: "act_1" }).targets).toHaveLength(1);
+    expect(
+      store.getOrCreate({ kind: "recipe", id: "act_1" }).targets,
+    ).toHaveLength(1);
     expect(store.configs["activity:act_1"].targets).toEqual([]);
   });
 
@@ -120,7 +129,10 @@ describe("optimiser settings", () => {
   });
 
   it("saves changes and loads them in a fresh store", () => {
-    useAdvancedOptimiserStore().updateSettings({ allowFineConsumables: false, minConsumableStock: 20 });
+    useAdvancedOptimiserStore().updateSettings({
+      allowFineConsumables: false,
+      minConsumableStock: 20,
+    });
     setActivePinia(createPinia());
     expect(useAdvancedOptimiserStore().settings).toEqual({
       allowFineConsumables: false,

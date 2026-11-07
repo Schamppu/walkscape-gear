@@ -4,9 +4,15 @@ import { useActivityStore } from "@/store/activity";
 import { useItemsStore } from "@/store/items";
 import ComparisonTableShell from "./table/ComparisonTableShell.vue";
 import EmitLocationBubble from "@/components/common/EmitLocationBubble.vue";
-import { useSkillModifiers, type SkillModifiersContext } from "@/composables/useSkillModifiers";
+import {
+  useSkillModifiers,
+  type SkillModifiersContext,
+} from "@/composables/useSkillModifiers";
 import { useComparisonRows } from "@/composables/useComparisonRows";
-import { useFineMaterials, type FineMaterialsContext } from "@/composables/useFineMaterialsCalculations";
+import {
+  useFineMaterials,
+  type FineMaterialsContext,
+} from "@/composables/useFineMaterialsCalculations";
 import { n } from "@/utils/number";
 import EmitServiceBubble from "@/components/common/EmitServiceBubble.vue";
 import type { BaseContext } from "@/composables/context/useBaseContext";
@@ -30,8 +36,16 @@ const emit = defineEmits<{
   "update:gs2Location": [location: LocationDetail | null];
 }>();
 
-type LocationChangeInfo = { location: LocationDetail; index: number; gearSetIndex: number };
-type ServiceChangeInfo = { service: ServiceDetail; index: number; gearSetIndex: number };
+type LocationChangeInfo = {
+  location: LocationDetail;
+  index: number;
+  gearSetIndex: number;
+};
+type ServiceChangeInfo = {
+  service: ServiceDetail;
+  index: number;
+  gearSetIndex: number;
+};
 type RowChangeInfo = LocationChangeInfo | ServiceChangeInfo;
 
 const activityStore = useActivityStore();
@@ -40,8 +54,10 @@ const itemsStore = useItemsStore();
 const gs1Locations = ref<LocationDetail[] | null>(null);
 const gs2Locations = ref<LocationDetail[] | null>(null);
 
-const findIdx = (list: { id: string }[] | null | undefined, id: string | undefined): number =>
-  Math.max(0, list?.findIndex((item) => item.id === id) ?? 0);
+const findIdx = (
+  list: { id: string }[] | null | undefined,
+  id: string | undefined,
+): number => Math.max(0, list?.findIndex((item) => item.id === id) ?? 0);
 
 const gs1ServiceIdx = ref(
   findIdx(activityStore.services, props.gs1Ctx.service.value?.id),
@@ -67,12 +83,13 @@ onMounted(async () => {
   gs2LocationIdx.value = findIdx(locs2, props.gs2Ctx.location.value?.id);
 });
 
-const { xpRewardsMultiplier, fineMode, useFine } = useFineMaterials(
+const { xpRewardsMultiplier, fineMode } = useFineMaterials(
   props.gs1Ctx as unknown as FineMaterialsContext,
 );
 
 const borderClass = computed(
-  () => `border-${(props.gs1Ctx.recipe.value as RecipeDetail)?.relatedSkills[0]}`,
+  () =>
+    `border-${(props.gs1Ctx.recipe.value as RecipeDetail)?.relatedSkills[0]}`,
 );
 
 const rewardCount = computed(() => {
@@ -84,7 +101,9 @@ const sm1 = useSkillModifiers(props.gs1Ctx as unknown as SkillModifiersContext);
 const sm2 = useSkillModifiers(props.gs2Ctx as unknown as SkillModifiersContext);
 
 const resultHasCO = computed(() => {
-  const [itemId] = Object.keys((props.gs1Ctx.recipe.value as RecipeDetail).itemRewards);
+  const [itemId] = Object.keys(
+    (props.gs1Ctx.recipe.value as RecipeDetail).itemRewards,
+  );
   return (
     itemId in itemsStore.allGearItems &&
     itemsStore.allGearItems[itemId].type === "crafted"
@@ -138,7 +157,11 @@ const xpPerStepRows = computed(() => {
 
 const tableRows = computed(() => [...basicRows.value, ...xpPerStepRows.value]);
 
-const updateLocation = ({ location, index, gearSetIndex }: LocationChangeInfo) => {
+const updateLocation = ({
+  location,
+  index,
+  gearSetIndex,
+}: LocationChangeInfo) => {
   if (gearSetIndex === 0) {
     gs1LocationIdx.value = index;
     emit("update:gs1Location", location);
@@ -149,7 +172,11 @@ const updateLocation = ({ location, index, gearSetIndex }: LocationChangeInfo) =
   }
 };
 
-const updateService = async ({ service, index, gearSetIndex }: ServiceChangeInfo) => {
+const updateService = async ({
+  service,
+  index,
+  gearSetIndex,
+}: ServiceChangeInfo) => {
   if (gearSetIndex === 0) {
     gs1ServiceIdx.value = index;
     emit("update:gs1Service", service);

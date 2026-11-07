@@ -40,7 +40,7 @@ describe("getOutcomeOdds", () => {
       // Eternal tier should become more likely with higher quality outcome
       const eternalIndex = lowQO.findIndex((r) => r.name === "Eternal");
       expect(highQO[eternalIndex].value).toBeGreaterThan(
-        lowQO[eternalIndex].value
+        lowQO[eternalIndex].value,
       );
     });
 
@@ -124,18 +124,53 @@ describe("getOutcomeOdds", () => {
       fineMode: "none" | "partial" | "all";
       craftsPerMaterial: number;
     }> = [
-      { levelReq: 1, qualityOutcome: 0, fineMode: "none", craftsPerMaterial: 1 },
-      { levelReq: 50, qualityOutcome: 300, fineMode: "none", craftsPerMaterial: 1 },
-      { levelReq: 50, qualityOutcome: 300, fineMode: "none", craftsPerMaterial: 1.5 },
-      { levelReq: 50, qualityOutcome: 300, fineMode: "partial", craftsPerMaterial: 1.25 },
-      { levelReq: 50, qualityOutcome: 500, fineMode: "all", craftsPerMaterial: 2 },
-      { levelReq: 100, qualityOutcome: 800, fineMode: "all", craftsPerMaterial: 1 },
+      {
+        levelReq: 1,
+        qualityOutcome: 0,
+        fineMode: "none",
+        craftsPerMaterial: 1,
+      },
+      {
+        levelReq: 50,
+        qualityOutcome: 300,
+        fineMode: "none",
+        craftsPerMaterial: 1,
+      },
+      {
+        levelReq: 50,
+        qualityOutcome: 300,
+        fineMode: "none",
+        craftsPerMaterial: 1.5,
+      },
+      {
+        levelReq: 50,
+        qualityOutcome: 300,
+        fineMode: "partial",
+        craftsPerMaterial: 1.25,
+      },
+      {
+        levelReq: 50,
+        qualityOutcome: 500,
+        fineMode: "all",
+        craftsPerMaterial: 2,
+      },
+      {
+        levelReq: 100,
+        qualityOutcome: 800,
+        fineMode: "all",
+        craftsPerMaterial: 1,
+      },
     ];
 
     it.each(cases)(
       "1 / materialsNeeded[eternal] === probability[eternal] * craftsPerMaterial for %o",
       ({ levelReq, qualityOutcome, fineMode, craftsPerMaterial }) => {
-        const odds = getOutcomeOdds(levelReq, qualityOutcome, fineMode, craftsPerMaterial);
+        const odds = getOutcomeOdds(
+          levelReq,
+          qualityOutcome,
+          fineMode,
+          craftsPerMaterial,
+        );
         const eternal = odds[odds.length - 1];
         expect(eternal.name).toBe("Eternal");
 

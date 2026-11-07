@@ -31,7 +31,9 @@ describe("gearStore._fetchMultipleItems", () => {
         { id: "hat", name: "Hat", icon: "hat.png" },
       ]),
     );
-    vi.mocked(api.getPet).mockResolvedValue(response({ id: "dog", name: "Dog" }));
+    vi.mocked(api.getPet).mockResolvedValue(
+      response({ id: "dog", name: "Dog" }),
+    );
     const store = useGearStore();
 
     const results = await store._fetchMultipleItems([
@@ -43,7 +45,12 @@ describe("gearStore._fetchMultipleItems", () => {
 
     expect(api.getMultipleItems).toHaveBeenCalledWith(["ring", "hat"]);
     expect(api.getPet).toHaveBeenCalledWith({ id: "dog" });
-    expect(results.map(({ data }) => data?.quality)).toEqual(["rare", "epic", "common", "3"]);
+    expect(results.map(({ data }) => data?.quality)).toEqual([
+      "rare",
+      "epic",
+      "common",
+      "3",
+    ]);
     expect(results[3].data?.icon).toBe("pet-icon-3");
     expect(store._getFromCache("ring", "epic")?.name).toBe("Ring");
   });
@@ -51,7 +58,11 @@ describe("gearStore._fetchMultipleItems", () => {
   it("skips the request for cached entries and returns null for unknown ids", async () => {
     vi.mocked(api.getMultipleItems).mockResolvedValue(response([null]));
     const store = useGearStore();
-    store._setInCache("ring", "rare", { id: "ring", quality: "rare", icon: "" } as never);
+    store._setInCache("ring", "rare", {
+      id: "ring",
+      quality: "rare",
+      icon: "",
+    } as never);
 
     const results = await store._fetchMultipleItems([
       { slot: "ring1", id: "ring", quality: "rare" },

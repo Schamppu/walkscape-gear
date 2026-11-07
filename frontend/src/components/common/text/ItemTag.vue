@@ -8,5 +8,4 @@ const props = defineProps({ tag: String });
   </span>
 </template>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>

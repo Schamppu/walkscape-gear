@@ -217,7 +217,13 @@ describe("Character Import Functionality", () => {
       },
     };
 
-    const result = parseOwnedItems(fixtureData, knownItems, currentOwned, {}, true);
+    const result = parseOwnedItems(
+      fixtureData,
+      knownItems,
+      currentOwned,
+      {},
+      true,
+    );
     expect(result["artificial_snowflake"]?.owned).toBe(false);
   });
 
@@ -237,7 +243,13 @@ describe("Character Import Functionality", () => {
       },
     };
 
-    const result = parseOwnedItems(fixtureData, knownItems, currentOwned, {}, true);
+    const result = parseOwnedItems(
+      fixtureData,
+      knownItems,
+      currentOwned,
+      {},
+      true,
+    );
     expect(result["artificial_snowflake"]?.hidden).toBe(true);
   });
 
@@ -266,7 +278,13 @@ describe("Character Import Functionality", () => {
       chicken: emptyEntry(),
     };
 
-    const result = parseOwnedItems(fixtureData, {}, currentOwned, fixturePetsMap, false);
+    const result = parseOwnedItems(
+      fixtureData,
+      {},
+      currentOwned,
+      fixturePetsMap,
+      false,
+    );
 
     // pets.pet: reindeer level=3, species is single word → common
     expect(result["reindeer"]?.owned).toBe(true);
@@ -284,7 +302,13 @@ describe("Character Import Functionality", () => {
       tiger: emptyEntry(),
     };
 
-    const result = parseOwnedItems(fixtureData, {}, currentOwned, fixturePetsMap, false);
+    const result = parseOwnedItems(
+      fixtureData,
+      {},
+      currentOwned,
+      fixturePetsMap,
+      false,
+    );
 
     // camel: available_pets level=2, common
     expect(result["camel"]?.owned).toBe(true);
@@ -303,7 +327,13 @@ describe("Character Import Functionality", () => {
     };
 
     // Fixture has two dolphins: level=2 and level=3 (both common)
-    const result = parseOwnedItems(fixtureData, {}, currentOwned, fixturePetsMap, false);
+    const result = parseOwnedItems(
+      fixtureData,
+      {},
+      currentOwned,
+      fixturePetsMap,
+      false,
+    );
 
     expect(result["dolphin"]?.petLevel).toBe(3);
     expect(result["dolphin"]?.petRarity).toBe("common");
@@ -316,7 +346,13 @@ describe("Character Import Functionality", () => {
     };
 
     // precious_tortoise (level=4, rare) beats tortoise (level=1, common)
-    const result = parseOwnedItems(fixtureData, {}, currentOwned, fixturePetsMap, false);
+    const result = parseOwnedItems(
+      fixtureData,
+      {},
+      currentOwned,
+      fixturePetsMap,
+      false,
+    );
     expect(result["tortoise"]?.petLevel).toBe(4);
     expect(result["tortoise"]?.petRarity).toBe("rare");
 
@@ -331,7 +367,13 @@ describe("Character Import Functionality", () => {
     };
 
     // golden_frog is a base species id, not a "golden" variant of "frog"
-    const result = parseOwnedItems(fixtureData, {}, currentOwned, fixturePetsMap, false);
+    const result = parseOwnedItems(
+      fixtureData,
+      {},
+      currentOwned,
+      fixturePetsMap,
+      false,
+    );
     expect(result["golden_frog"]?.owned).toBe(true);
     expect(result["golden_frog"]?.petLevel).toBe(2);
     expect(result["golden_frog"]?.petRarity).toBe("common");
@@ -343,7 +385,13 @@ describe("Character Import Functionality", () => {
     };
 
     // gleaming_pet_rock (level=5, rare) beats pet_rock (level=1, common)
-    const result = parseOwnedItems(fixtureData, {}, currentOwned, fixturePetsMap, false);
+    const result = parseOwnedItems(
+      fixtureData,
+      {},
+      currentOwned,
+      fixturePetsMap,
+      false,
+    );
     expect(result["pet_rock"]?.owned).toBe(true);
     expect(result["pet_rock"]?.petLevel).toBe(5);
     expect(result["pet_rock"]?.petRarity).toBe("rare");
@@ -392,7 +440,13 @@ describe("Character Import Functionality", () => {
     };
 
     // reindeer: pets.pet level=3 vs available_eggs level=0 → level=3 wins
-    const result = parseOwnedItems(fixtureData, {}, currentOwned, fixturePetsMap, false);
+    const result = parseOwnedItems(
+      fixtureData,
+      {},
+      currentOwned,
+      fixturePetsMap,
+      false,
+    );
     expect(result["reindeer"]?.petLevel).toBe(3);
   });
 
@@ -408,10 +462,22 @@ describe("Character Import Functionality", () => {
 
   it("should preserve hidden flag for pets when reset=true", () => {
     const currentOwned: Record<string, OwnedItemEntry> = {
-      reindeer: { ...emptyEntry(), owned: true, hidden: true, petLevel: 1, petRarity: "common" },
+      reindeer: {
+        ...emptyEntry(),
+        owned: true,
+        hidden: true,
+        petLevel: 1,
+        petRarity: "common",
+      },
     };
 
-    const result = parseOwnedItems(fixtureData, {}, currentOwned, fixturePetsMap, true);
+    const result = parseOwnedItems(
+      fixtureData,
+      {},
+      currentOwned,
+      fixturePetsMap,
+      true,
+    );
     // reindeer is in fixture pets.pet at level=3, so it should be re-owned
     expect(result["reindeer"]?.owned).toBe(true);
     expect(result["reindeer"]?.hidden).toBe(true);

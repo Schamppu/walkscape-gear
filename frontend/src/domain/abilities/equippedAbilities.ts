@@ -10,7 +10,8 @@
  */
 
 type AbilityEntry = string | { ability?: string; unlockLevel?: number };
-type EquippedLike = { abilities?: unknown; quality?: string | null } | null | undefined;
+type EquippedLike =
+  { abilities?: unknown; quality?: string | null } | null | undefined;
 
 /** Returns the de-duplicated ability ids unlocked across the given items. */
 export function collectEquippedAbilityIds(items: EquippedLike[]): string[] {

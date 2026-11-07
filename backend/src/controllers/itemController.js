@@ -11,7 +11,7 @@ export const getItem = wrapController(
   },
   {
     notFoundMessage: "Item not found",
-  }
+  },
 );
 
 export const fetchCollectibles = () => itemService.fetchCollectibles();

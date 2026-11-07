@@ -51,7 +51,10 @@ export type BuffObj = BuffData["buffs"][number];
 // Gear item types
 // ---------------------------------------------------------------------------
 
-export type GearItem = Pick<Schemas["CraftedItem"], "itemAttrs" | "itemQualityAttrs">;
+export type GearItem = Pick<
+  Schemas["CraftedItem"],
+  "itemAttrs" | "itemQualityAttrs"
+>;
 
 export type ConsumableItem = Pick<Schemas["ConsumableItem"], "buffs">;
 
@@ -69,7 +72,10 @@ export type PetSprite = PetLook["sprites"][number];
 
 export type PetLevel = PetDetail["levels"][number];
 
-export type PetItem = Pick<PetDetail, "egg" | "looks" | "rareLooks" | "levels"> & {
+export type PetItem = Pick<
+  PetDetail,
+  "egg" | "looks" | "rareLooks" | "levels"
+> & {
   /**
    * Resolved attributes from the pet's unlocked abilities, attached by the
    * composable layer (which has store access) before the item reaches

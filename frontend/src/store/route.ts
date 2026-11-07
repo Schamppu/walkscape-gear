@@ -12,7 +12,10 @@ import { useNotificationStore } from "@/store/notifications";
 
 export type { RouteSegmentStats };
 
-export type LocationInfo = Omit<LocationSummary, "id"> & { id: string; color: string };
+export type LocationInfo = Omit<LocationSummary, "id"> & {
+  id: string;
+  color: string;
+};
 
 export type LocationMapEntry = Omit<LocationSummary, "id">;
 
@@ -22,7 +25,11 @@ export type RouteSegment = {
   from: LocationInfo;
   to: LocationInfo;
   stats: RouteSegmentStats;
-  route: { to: string; distance: number; requirements: TerrainModifier[][] | null };
+  route: {
+    to: string;
+    distance: number;
+    requirements: TerrainModifier[][] | null;
+  };
   context: unknown;
   distance: number;
   terrainModifiers: TerrainModifier[][];
@@ -46,16 +53,21 @@ export const useRouteStore = defineStore("routeStore", {
       locations,
       routes,
       terrainModifiers,
-    }: Pick<StaticBootstrap, "locations" | "routes" | "terrainModifiers">): void {
+    }: Pick<
+      StaticBootstrap,
+      "locations" | "routes" | "terrainModifiers"
+    >): void {
       this.locations = markRaw(locations);
-      this.locationsMap = markRaw(Object.fromEntries(
-        locations.map(({ id, ...rest }) => [id, rest])
-      ));
+      this.locationsMap = markRaw(
+        Object.fromEntries(locations.map(({ id, ...rest }) => [id, rest])),
+      );
       this.routes = markRaw(routes);
       this.terrainModifiers = markRaw(terrainModifiers);
-      this.terrainModifiersMap = markRaw(Object.fromEntries(
-        terrainModifiers.map(({ id, ...rest }) => [id, rest])
-      ));
+      this.terrainModifiersMap = markRaw(
+        Object.fromEntries(
+          terrainModifiers.map(({ id, ...rest }) => [id, rest]),
+        ),
+      );
 
       this.isLoaded = true;
       const notificationStore = useNotificationStore();
@@ -80,7 +92,9 @@ export const useRouteStore = defineStore("routeStore", {
     setSegments(segments: RouteSegment[]): void {
       this.segments = segments;
       const notificationStore = useNotificationStore();
-      void notificationStore.debug(`Route: path set with ${segments.length} segment(s)`);
+      void notificationStore.debug(
+        `Route: path set with ${segments.length} segment(s)`,
+      );
     },
   },
 });

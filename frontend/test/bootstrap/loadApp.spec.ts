@@ -5,7 +5,9 @@ vi.mock("@/utils/axios/api_routes", () => ({ getStaticBootstrap: vi.fn() }));
 vi.mock("@/utils/axios/db_routes", () => ({ getUserBootstrap: vi.fn() }));
 
 const notifications = { error: vi.fn(), success: vi.fn(), debug: vi.fn() };
-vi.mock("@/store/notifications", () => ({ useNotificationStore: () => notifications }));
+vi.mock("@/store/notifications", () => ({
+  useNotificationStore: () => notifications,
+}));
 
 const staticBundle = {
   version: "v1",
@@ -17,11 +19,19 @@ const staticBundle = {
   lootTables: [],
   locations: [],
   factions: [
-    { id: "jarvonia", name: "Jarvonia", icon: "", color: "", reputation: "jarvoniaReputation" },
+    {
+      id: "jarvonia",
+      name: "Jarvonia",
+      icon: "",
+      color: "",
+      reputation: "jarvoniaReputation",
+    },
   ],
   globalVariables: [],
   itemValueMapping: {},
-  skills: [{ id: "agility", name: "Agility", icon: "", type: "", typeIcon: "" }],
+  skills: [
+    { id: "agility", name: "Agility", icon: "", type: "", typeIcon: "" },
+  ],
   urlMapping: {},
   categorizedItems: [{ categories: [{ key: "pets", items: [] }] }],
   materials: [],
@@ -69,7 +79,9 @@ describe("loadApp", () => {
       settings: await import("@/store/settings"),
     };
 
-    vi.mocked(api.getStaticBootstrap).mockResolvedValue({ data: staticBundle } as never);
+    vi.mocked(api.getStaticBootstrap).mockResolvedValue({
+      data: staticBundle,
+    } as never);
     vi.mocked(db.getUserBootstrap).mockResolvedValue(userBundle);
   });
 
@@ -81,7 +93,9 @@ describe("loadApp", () => {
     expect(player.factionReputation).toEqual({ jarvoniaReputation: 120 });
     expect(stores.items.useItemsStore().ownedItems).toHaveProperty("ring");
     const gearSet = stores.gearSet.useGearSetStore();
-    expect(gearSet.gearSets[0].tags).toEqual([{ id: "skilling", name: "Skilling" }]);
+    expect(gearSet.gearSets[0].tags).toEqual([
+      { id: "skilling", name: "Skilling" },
+    ]);
     expect(stores.settings.useSettingsStore().isLoaded).toBe(true);
   });
 
@@ -105,7 +119,9 @@ describe("loadApp", () => {
 
     await loadApp.loadUser();
 
-    expect(notifications.error).toHaveBeenCalledWith("Failed to load your saved data");
+    expect(notifications.error).toHaveBeenCalledWith(
+      "Failed to load your saved data",
+    );
     expect(stores.player.usePlayerStore().skillLevels).toEqual({ agility: 1 });
     expect(stores.settings.useSettingsStore().isLoaded).toBe(true);
   });
