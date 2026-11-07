@@ -16,6 +16,7 @@
 import { computed, watch, type ComputedRef } from "vue";
 import { useDataStore } from "@/store/data";
 import { useItemsStore } from "@/store/items";
+import { useAbilityToggleStore } from "@/store/abilityToggles";
 import {
   useRequirements,
   type RequirementContext,
@@ -93,6 +94,7 @@ export function useCompleteActionsAbilities(
 ): ComputedRef<CompleteActionsAbilityInfo[]> {
   const dataStore = useDataStore();
   const itemsStore = useItemsStore();
+  const toggleStore = useAbilityToggleStore();
 
   const { checkRequirements } = useRequirements(
     ctx as unknown as RequirementContext,
@@ -129,6 +131,8 @@ export function useCompleteActionsAbilities(
       .map((id) => dataStore.detailedAbilitiesMap[id])
       .map((detail): CompleteActionsAbilityInfo | null => {
         if (!detail) return null;
+        // Active abilities the user toggled off don't trigger (as in the optimiser).
+        if (toggleStore.disabledIds.has(detail.id)) return null;
         const spec = extractCompleteActionsSpec(detail);
         if (!spec) return null;
         if (!checkRequirements(abilityUsageRequirements(detail))) return null;

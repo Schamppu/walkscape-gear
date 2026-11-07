@@ -5,6 +5,10 @@ import {
   abilityAttributes,
   type AbilityAttrContext,
 } from "@/domain/abilities/petAbilityAttrs";
+import {
+  buildCompleteActionsAbility,
+  type CompleteActionsAbility,
+} from "@/domain/abilities/completeActions";
 
 /**
  * Assembles the plain `AbilityAttrContext` consumed by the pure
@@ -13,7 +17,8 @@ import {
  *
  * Reads:
  * - `abilitiesMap`         -> ability summaries (name/icon/type) for labelling
- * - `detailedAbilitiesMap` -> the (lazily fetched) ability attributes
+ * - `detailedAbilitiesMap` -> the (lazily fetched) ability attributes and
+ *                             complete-actions specs
  * - `abilityToggleStore`   -> active abilities toggled off (enabled by default)
  */
 export function buildAbilityAttrContext(): AbilityAttrContext {
@@ -21,14 +26,18 @@ export function buildAbilityAttrContext(): AbilityAttrContext {
   const toggleStore = useAbilityToggleStore();
 
   const attrsById: AbilityAttrContext["attrsById"] = {};
+  const completeActionsById: Record<string, CompleteActionsAbility> = {};
   for (const [id, detail] of Object.entries(dataStore.detailedAbilitiesMap)) {
     attrsById[id] = abilityAttributes(detail);
+    const completeActions = buildCompleteActionsAbility(detail);
+    if (completeActions) completeActionsById[id] = completeActions;
   }
 
   return {
     attrsById,
     summaryById: dataStore.abilitiesMap,
     disabledActiveAbilityIds: toggleStore.disabledIds,
+    completeActionsById,
   };
 }
 

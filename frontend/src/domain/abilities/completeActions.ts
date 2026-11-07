@@ -20,6 +20,11 @@ import type { Attribute } from "@/domain/types/item";
 import type { DropItemInfo } from "@/domain/lootTables/dropInfo";
 import type { XpPerStep } from "@/domain/skillModifiers";
 import { abilityAttributes } from "@/domain/abilities/petAbilityAttrs";
+import { collectEquippedAbilityIds } from "@/domain/abilities/equippedAbilities";
+import {
+  abilityStepsPerActivation,
+  abilityUsageRequirements,
+} from "@/domain/abilities/abilityLootTables";
 import {
   computeRecipeValue,
   type BreakdownLine,
@@ -306,4 +311,127 @@ export function completeActionsXpBreakdown(
       value: xpPerStep.reduce((sum, { value }) => sum + value, 0),
     }))
     .filter(({ value }) => value > 0);
+}
+
+// ---------------------------------------------------------------------------
+// Optimiser support (serialisable specs, per-set effect)
+// ---------------------------------------------------------------------------
+
+/**
+ * Plain, serialisable description of a complete-actions ability, baked into
+ * optimiser candidate items (`WorkerItem._completeActions`) so the worker can
+ * evaluate it per gear set without ability details or stores.
+ */
+export type CompleteActionsAbility = {
+  abilityId: string;
+  /** Actions completed per activation. */
+  count: number;
+  cooldown: AbilityDetail["cooldown"] | null;
+  /** Ability + cooldown requirements (`abilityUsageRequirements`). */
+  requirements: AbilityRequirements;
+  /** Fine recipe outcome chances, each gated by its attribute's requirements. */
+  fineChances: { value: number; requirements: Attribute["requirements"] }[];
+};
+
+type AbilityRequirements = ReturnType<typeof abilityUsageRequirements>;
+
+/** Builds the serialisable spec, or `null` if the ability doesn't complete actions. */
+export function buildCompleteActionsAbility(
+  detail: AbilityDetail | null | undefined,
+): CompleteActionsAbility | null {
+  const spec = extractCompleteActionsSpec(detail);
+  if (!detail || !spec) return null;
+  const fineChances = abilityAttributes(detail).flatMap((attr) =>
+    (attr.stats ?? [])
+      .filter(
+        (s): s is NonNullable<typeof s> => s?.type === FINE_RECIPE_OUTCOME_TYPE,
+      )
+      .map((s) => ({ value: s.value, requirements: attr.requirements ?? [] })),
+  );
+  return {
+    abilityId: detail.id,
+    count: spec.count,
+    cooldown: detail.cooldown ?? null,
+    requirements: abilityUsageRequirements(detail),
+    fineChances,
+  };
+}
+
+type AbilityHolder = {
+  abilities?: unknown;
+  quality?: string | null;
+} | null;
+
+/**
+ * The complete-actions abilities an item contributes: unlocked (pets by
+ * level), known in `byId`, and not toggled off by the user.
+ */
+export function itemCompleteActionsAbilities(
+  item: AbilityHolder,
+  byId: Record<string, CompleteActionsAbility>,
+  disabledAbilityIds: ReadonlySet<string>,
+): CompleteActionsAbility[] {
+  return collectEquippedAbilityIds([item])
+    .filter((id) => id in byId && !disabledAbilityIds.has(id))
+    .map((id) => byId[id]);
+}
+
+/** Combined effect of a gear set's usable complete-actions abilities. */
+export type CompleteActionsEffect = {
+  /** Summed per-step rate multiplier (`completeActionsScale`) of all abilities. */
+  scale: number;
+  /** Fine share of the completed actions' recipe output, scale-weighted. */
+  fineShare: number;
+};
+
+/**
+ * Evaluates a gear set's complete-actions abilities against its modifiers.
+ * Duplicate abilities count once.
+ *
+ * @param passes Requirement check for the set (requirements + location).
+ */
+export function completeActionsEffect(
+  abilities: readonly CompleteActionsAbility[],
+  modifiers: {
+    stepsPerAction: number;
+    stepsPerCompletion: number;
+    stepsPerRewardRoll: number;
+  },
+  passes: (
+    requirements: AbilityRequirements | Attribute["requirements"],
+  ) => boolean,
+): CompleteActionsEffect {
+  const seen = new Set<string>();
+  let scale = 0;
+  let weightedFine = 0;
+
+  for (const ability of abilities) {
+    if (seen.has(ability.abilityId)) continue;
+    seen.add(ability.abilityId);
+    if (!passes(ability.requirements)) continue;
+
+    const k = completeActionsScale(
+      ability.count,
+      modifiers.stepsPerCompletion,
+      abilityStepsPerActivation(ability.cooldown, modifiers.stepsPerAction),
+    );
+    if (k <= 0) continue;
+
+    const chance = Math.min(
+      1,
+      ability.fineChances
+        .filter(({ requirements }) => passes(requirements ?? []))
+        .reduce((sum, { value }) => sum + value, 0),
+    );
+    // In-game rule: once per completion (see the game design note above).
+    const share = fineRecipeOutputShare(
+      chance,
+      modifiers.stepsPerCompletion / modifiers.stepsPerRewardRoll,
+    );
+
+    scale += k;
+    weightedFine += k * share;
+  }
+
+  return { scale, fineShare: scale > 0 ? weightedFine / scale : 0 };
 }
