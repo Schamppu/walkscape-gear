@@ -18,7 +18,7 @@ import type { PetItem } from "@/domain/types/item";
  */
 export function getPetIcon(
   pet: PetItem,
-  level: number | string,
+  level: number | string | null,
   isRare = false,
 ): string {
   const numLevel = Number(level) || 0;
