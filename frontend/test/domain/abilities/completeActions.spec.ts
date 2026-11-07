@@ -7,6 +7,8 @@ import {
   buildRecipeOutputDropInfo,
   completeActionsGoldValue,
   completeActionsDropValue,
+  completeActionsXpPerStep,
+  completeActionsXpBreakdown,
 } from "@/domain/abilities/completeActions";
 import { abilityStepsPerActivation } from "@/domain/abilities/abilityLootTables";
 import {
@@ -272,5 +274,42 @@ describe("buildGoldBreakdown extra lines", () => {
     expect(lines).toEqual([
       { icon: "flambe.png", label: "Flambé", value: 12.8 },
     ]);
+  });
+});
+
+describe("completeActionsXpPerStep", () => {
+  const xpPerStep = [
+    { skill: "cooking", skillText: "Cooking", value: 0.5, displayedValue: 0.5 },
+    { skill: "agility", skillText: "Agility", value: 0, displayedValue: 0 },
+  ];
+
+  it("scales context XP per step by the ability rate and multiplier", () => {
+    // Flambé on a 100-step recipe: 3 × 100 / 2500 = 0.12; fine mats ×1.75
+    expect(completeActionsXpPerStep(0.12, xpPerStep, 1.75)).toEqual([
+      { skill: "cooking", skillText: "Cooking", value: 0.5 * 0.12 * 1.75 },
+    ]);
+  });
+
+  it("is empty without a valid scale", () => {
+    expect(completeActionsXpPerStep(0, xpPerStep)).toEqual([]);
+  });
+});
+
+describe("completeActionsXpBreakdown", () => {
+  it("gives one line per ability, summed over skills, skipping zero XP", () => {
+    const lines = completeActionsXpBreakdown([
+      {
+        name: "Flambé",
+        icon: "flambe.png",
+        xpPerStep: [
+          { skill: "cooking", skillText: "Cooking", value: 0.06 },
+          { skill: "agility", skillText: "Agility", value: 0.01 },
+        ],
+      },
+      { name: "Idle", icon: "idle.png", xpPerStep: [] },
+    ]);
+    expect(lines).toHaveLength(1);
+    expect(lines[0]).toMatchObject({ icon: "flambe.png", label: "Flambé" });
+    expect(lines[0].value).toBeCloseTo(0.07);
   });
 });

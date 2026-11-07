@@ -39,6 +39,8 @@ import {
   completeActionsScale,
   scaleDropInfoMap,
   buildRecipeOutputDropInfo,
+  completeActionsXpPerStep,
+  type CompleteActionsXp,
 } from "@/domain/abilities/completeActions";
 import type { DropItemInfo } from "@/domain/lootTables/dropInfo";
 import type { RecipeDetail } from "@/domain/types/recipe";
@@ -60,6 +62,8 @@ export type CompleteActionsAbilityInfo = {
   scale: number;
   /** Fine share of completed recipes' output (0–1); 0 for activities. */
   fineShare: number;
+  /** XP per step gained from the completed actions, per skill. */
+  xpPerStep: CompleteActionsXp[];
   dropInfoMap: Record<string, DropItemInfo>;
 };
 
@@ -83,9 +87,11 @@ export function useCompleteActionsAbilities(
   const { checkRequirements } = useRequirements(
     ctx as unknown as RequirementContext,
   );
-  const { stepsPerAction, stepsPerCompletion, stepsPerRewardRoll } =
+  const { stepsPerAction, stepsPerCompletion, stepsPerRewardRoll, xpPerStep } =
     useSkillModifiers(ctx as unknown as SkillModifiersContext);
-  const { useFine } = useFineMaterials(ctx as unknown as FineMaterialsContext);
+  const { useFine, xpRewardsMultiplier } = useFineMaterials(
+    ctx as unknown as FineMaterialsContext,
+  );
 
   // Ability ids from every equipped item; fetch their details on change.
   const abilityIds = computed(() =>
@@ -160,6 +166,11 @@ export function useCompleteActionsAbilities(
           stepsPerActivation,
           scale,
           fineShare,
+          xpPerStep: completeActionsXpPerStep(
+            scale,
+            xpPerStep.value,
+            xpRewardsMultiplier.value,
+          ),
           // Recipe output first in display order; it wins on an id clash.
           dropInfoMap: {
             ...outputs,

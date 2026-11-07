@@ -18,9 +18,11 @@
 import type { AbilityDetail } from "@/domain/types/ability";
 import type { Attribute } from "@/domain/types/item";
 import type { DropItemInfo } from "@/domain/lootTables/dropInfo";
+import type { XpPerStep } from "@/domain/skillModifiers";
 import { abilityAttributes } from "@/domain/abilities/petAbilityAttrs";
 import {
   computeRecipeValue,
+  type BreakdownLine,
   type RecipeValueParams,
 } from "@/domain/drops/aggregateDropValue";
 
@@ -210,4 +212,47 @@ export function completeActionsDropValue(
   contextValue: number,
 ): number {
   return scale > 0 ? scale * contextValue : 0;
+}
+
+export type CompleteActionsXp = {
+  skill: string;
+  skillText: string;
+  /** XP per step gained from the ability's completed actions. */
+  value: number;
+};
+
+/**
+ * XP per step gained from the ability's completed actions: the context's XP
+ * per step (which already includes double action) scaled by the ability's
+ * rate and the XP multiplier (e.g. fine materials). Zero entries are dropped.
+ */
+export function completeActionsXpPerStep(
+  scale: number,
+  xpPerStep: XpPerStep[],
+  multiplier = 1,
+): CompleteActionsXp[] {
+  if (scale <= 0) return [];
+  return xpPerStep
+    .map(({ skill, skillText, value }) => ({
+      skill,
+      skillText,
+      value: value * scale * multiplier,
+    }))
+    .filter(({ value }) => value > 0);
+}
+
+/**
+ * One XP-per-step breakdown line per ability (summed over skills), for the
+ * drops XP aggregate. Abilities without XP are omitted.
+ */
+export function completeActionsXpBreakdown(
+  abilities: { name: string; icon: string; xpPerStep: CompleteActionsXp[] }[],
+): BreakdownLine[] {
+  return abilities
+    .map(({ name, icon, xpPerStep }) => ({
+      icon,
+      label: name,
+      value: xpPerStep.reduce((sum, { value }) => sum + value, 0),
+    }))
+    .filter(({ value }) => value > 0);
 }
