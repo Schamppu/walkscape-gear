@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import { markRaw } from "vue";
 import {
   getActivity,
   getRecipe,
@@ -78,8 +79,8 @@ export const useActivityStore = defineStore("activityStore", {
       activities,
       recipes,
     }: Pick<StaticBootstrap, "activities" | "recipes">): void {
-      this.activities = activities;
-      this.activitiesMap = Object.fromEntries(
+      this.activities = markRaw(activities);
+      this.activitiesMap = markRaw(Object.fromEntries(
         activities.map(({ id, name, icon, requirements }) => [
           id,
           {
@@ -90,11 +91,11 @@ export const useActivityStore = defineStore("activityStore", {
               .map(({ requirement }) => requirement),
           },
         ]),
-      );
-      this.embargoedActivities = new Set(
+      ));
+      this.embargoedActivities = markRaw(new Set(
         activities.filter((item) => "embargo" in item).map(({ id }) => id),
-      );
-      this.recipes = recipes;
+      ));
+      this.recipes = markRaw(recipes);
 
       this.isLoaded = true;
       const notificationStore = useNotificationStore();

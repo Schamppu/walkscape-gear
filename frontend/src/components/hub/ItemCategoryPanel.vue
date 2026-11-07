@@ -35,7 +35,8 @@ const getSortFn = (group) => {
 };
 
 const itemsStore = useItemsStore();
-const items = itemsStore.itemsByCategory[props.itemCategory].sort(
+// Sort a copy: the store's category arrays are shared, non-reactive game data.
+const items = [...itemsStore.itemsByCategory[props.itemCategory]].sort(
   getSortFn(props.group),
 );
 

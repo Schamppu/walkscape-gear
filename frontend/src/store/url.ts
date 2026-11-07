@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import { markRaw } from "vue";
 import type { StaticBootstrap } from "@/domain/types/bootstrap";
 import { useUrlMap } from "@/composables/useUrlMap";
 import { useActivityStore } from "./activity";
@@ -45,8 +46,8 @@ export const useUrlStore = defineStore("url", {
 
   actions: {
     hydrate({ urlMapping }: Pick<StaticBootstrap, "urlMapping">): void {
-      this.mapping = urlMapping;
-      this.reverseMapping = buildReverseMapping(urlMapping);
+      this.mapping = markRaw(urlMapping);
+      this.reverseMapping = markRaw(buildReverseMapping(urlMapping));
       this.isLoaded = true;
       const notificationStore = useNotificationStore();
       void notificationStore.debug(`URL: loaded mapping with ${Object.keys(urlMapping).length} entries`);

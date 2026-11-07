@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import { markRaw } from "vue";
 import { upsertOwnedItems } from "@/utils/axios/db_routes";
 import type { StaticBootstrap, UserBootstrap } from "@/domain/types/bootstrap";
 import debounce from "@/utils/debounce";
@@ -86,37 +87,37 @@ export const useItemsStore = defineStore("itemStore", {
       | "fineMaterials"
       | "memospheres"
     >): void {
-      this.categorizedItems = categorizedItems;
+      this.categorizedItems = markRaw(categorizedItems);
 
       const categories = categorizedItems.flatMap(
         ({ categories }) => categories,
       );
-      this.itemsByCategory = Object.fromEntries(
+      this.itemsByCategory = markRaw(Object.fromEntries(
         categories.map(({ key, items }) => [key, items]),
-      );
-      this.allGearItems = Object.fromEntries(
+      ));
+      this.allGearItems = markRaw(Object.fromEntries(
         categories.flatMap(({ items }) => items).map((item) => [item.id, item]),
-      );
-      this.embargoedItems = new Set(
+      ));
+      this.embargoedItems = markRaw(new Set(
         Object.values(this.allGearItems)
           .filter((item) => "embargo" in item)
           .map(({ id }) => id),
-      );
-      this.materials = Object.fromEntries(
+      ));
+      this.materials = markRaw(Object.fromEntries(
         materials.map((item) => [item.id, item]),
-      );
-      this.containers = Object.fromEntries(
+      ));
+      this.containers = markRaw(Object.fromEntries(
         containers.map((item) => [item.id, item]),
-      );
-      this.memospheres = Object.fromEntries(
+      ));
+      this.memospheres = markRaw(Object.fromEntries(
         memospheres.map((item) => [item.id, item]),
-      );
-      this.fineMaterials = Object.fromEntries(
+      ));
+      this.fineMaterials = markRaw(Object.fromEntries(
         fineMaterials.map((id) => [id, true]),
-      );
-      this.petsMap = Object.fromEntries(
+      ));
+      this.petsMap = markRaw(Object.fromEntries(
         this.itemsByCategory["pets"].map((pet) => [pet.id, pet]),
-      );
+      ));
 
       this.isLoaded = true;
       const notificationStore = useNotificationStore();

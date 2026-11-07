@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import { markRaw } from "vue";
 import { useNotificationStore } from "@/store/notifications";
 import type { StaticBootstrap, UserBootstrap } from "@/domain/types/bootstrap";
 import {
@@ -89,7 +90,7 @@ export const useGearSetStore = defineStore("gearSetStore", {
 
   actions: {
     hydrate({ gearSetTags }: Pick<StaticBootstrap, "gearSetTags">): void {
-      this.gearSetTags = gearSetTags;
+      this.gearSetTags = markRaw(gearSetTags);
     },
     /** Applies the player's gear sets. Requires `hydrate` to have run first (tags). */
     hydrateUser({ gearSets }: Pick<UserBootstrap, "gearSets">): void {

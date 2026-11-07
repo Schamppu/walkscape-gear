@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import { markRaw } from "vue";
 import type { StaticBootstrap } from "@/domain/types/bootstrap";
 import type {
   LocationSummary,
@@ -46,15 +47,15 @@ export const useRouteStore = defineStore("routeStore", {
       routes,
       terrainModifiers,
     }: Pick<StaticBootstrap, "locations" | "routes" | "terrainModifiers">): void {
-      this.locations = locations;
-      this.locationsMap = Object.fromEntries(
+      this.locations = markRaw(locations);
+      this.locationsMap = markRaw(Object.fromEntries(
         locations.map(({ id, ...rest }) => [id, rest])
-      );
-      this.routes = routes;
-      this.terrainModifiers = terrainModifiers;
-      this.terrainModifiersMap = Object.fromEntries(
+      ));
+      this.routes = markRaw(routes);
+      this.terrainModifiers = markRaw(terrainModifiers);
+      this.terrainModifiersMap = markRaw(Object.fromEntries(
         terrainModifiers.map(({ id, ...rest }) => [id, rest])
-      );
+      ));
 
       this.isLoaded = true;
       const notificationStore = useNotificationStore();

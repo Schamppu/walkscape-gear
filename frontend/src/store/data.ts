@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import { markRaw } from "vue";
 import {
   getMultipleAbilities,
   getMultipleLootTables,
@@ -118,25 +119,25 @@ export const useDataStore = defineStore("dataStore", {
       | "factions"
       | "globalVariables"
     >): void {
-      this.abilities = abilities;
-      this.abilitiesMap = Object.fromEntries(
+      this.abilities = markRaw(abilities);
+      this.abilitiesMap = markRaw(Object.fromEntries(
         abilities.map((ability) => [ability.id, ability]),
-      );
+      ));
 
-      this.globalVariables = globalVariables;
-      this.globalVariablesMap = Object.fromEntries(
+      this.globalVariables = markRaw(globalVariables);
+      this.globalVariablesMap = markRaw(Object.fromEntries(
         globalVariables.map((variable) => [variable.id, variable]),
-      );
+      ));
 
-      this.keywords = keywords;
-      this.keywordsMap = Object.fromEntries(
+      this.keywords = markRaw(keywords);
+      this.keywordsMap = markRaw(Object.fromEntries(
         keywords.map(({ id, name, icon, bannedKeywords }) => [
           id,
           { id, name, icon, bannedKeywords },
         ]),
-      );
+      ));
 
-      this.locations = locations;
+      this.locations = markRaw(locations);
       const locationsByFaction = locations.reduce(
         (acc, loc) => {
           if (!acc[loc.faction]) acc[loc.faction] = 0;
@@ -158,13 +159,13 @@ export const useDataStore = defineStore("dataStore", {
           },
         ]),
       );
-      this.realmsMap = Array.from(
+      this.realmsMap = markRaw(Array.from(
         new Set(locations.map((loc) => loc.faction)),
       ).reduce<Record<string, Realm>>((acc, realmId) => {
         const realm = factionsMap[realmId];
         if (realm) acc[realmId] = realm;
         return acc;
-      }, {});
+      }, {}));
 
       const hiddenStatTypes = new Set([
         "skillLevel",
@@ -174,21 +175,21 @@ export const useDataStore = defineStore("dataStore", {
         "doubleItem",
         "dropAsFine",
       ]);
-      this.stats = statList;
-      this.mainStats = statList.filter(
+      this.stats = markRaw(statList);
+      this.mainStats = markRaw(statList.filter(
         ({ type }) => !hiddenStatTypes.has(type),
-      );
-      this.statsMap = Object.fromEntries(
+      ));
+      this.statsMap = markRaw(Object.fromEntries(
         statList.map(({ type, name, icon }) => [type, { name, icon }]),
-      );
+      ));
       for (const [alias, canonical] of Object.entries(STAT_REDIRECTS)) {
         if (canonical in this.statsMap) {
           this.statsMap[alias] = this.statsMap[canonical];
         }
       }
 
-      this.lootTables = lootTables;
-      this.itemValues = itemValues;
+      this.lootTables = markRaw(lootTables);
+      this.itemValues = markRaw(itemValues);
       this.isLoaded = true;
       const notificationStore = useNotificationStore();
       void notificationStore.debug(
