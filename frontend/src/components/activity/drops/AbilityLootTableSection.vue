@@ -17,6 +17,13 @@ const dropItems = computed(() => Object.values(props.section.dropInfoMap));
 
 // Time-based cooldowns have no meaningful steps figure.
 const hideSteps = computed(() => props.section.stepsPerActivation === null);
+
+// Complete-actions abilities carry `count` (actions completed per activation)
+// and optionally a partial fine share (e.g. Flambé's fine recipe outcome).
+const isCompleteActions = computed(() => props.section.count > 0);
+const showFineShare = computed(
+  () => props.section.fineShare > 0 && props.section.fineShare < 1,
+);
 </script>
 
 <template>
@@ -27,8 +34,14 @@ const hideSteps = computed(() => props.section.stepsPerActivation === null);
     <template #header>
       <ws-icon :icon-path="section.icon" size="sm" />
       <span class="ability-name">{{ section.name }}</span>
-      <span v-if="section.rollAmount > 1" class="roll-amount">
+      <span v-if="isCompleteActions" class="roll-amount">
+        ×{{ section.count }} actions
+      </span>
+      <span v-else-if="section.rollAmount > 1" class="roll-amount">
         ×{{ section.rollAmount }}
+      </span>
+      <span v-if="showFineShare" class="fine-share border-fine">
+        {{ n(section.fineShare * 100, 2) }}% fine
       </span>
       <span v-if="!hideSteps" class="steps-per-use">
         <ws-icon :icon-path="icons.steps" size="xs" />
@@ -73,6 +86,13 @@ const hideSteps = computed(() => props.section.stepsPerActivation === null);
 
 .roll-amount {
   margin-left: $xs;
+}
+
+.fine-share {
+  margin-left: $xs;
+  padding: 0 $xxxs;
+  border-radius: $sm;
+  font-size: 0.75rem;
 }
 
 .steps-per-use {
