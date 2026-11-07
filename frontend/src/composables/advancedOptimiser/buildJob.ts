@@ -160,7 +160,16 @@ export const buildAdvancedJob = ({
   // --- Item options ----------------------------------------------------------
   const slotKeys = [...new Set(searchSlots.map(slotKeyOf))];
   const useful = new Set<string>(unionUsefulStats(config.targets));
-  const usefulOptions = getAdvancedGearOptions(slotKeys, useful, abilityCtx);
+  // Complete-actions abilities only help per-step targets.
+  const hasStepTarget = config.targets.some(
+    ({ y, weight }) => y === "step" && weight > 0,
+  );
+  const usefulOptions = getAdvancedGearOptions(
+    slotKeys,
+    useful,
+    abilityCtx,
+    hasStepTarget,
+  );
 
   // --- Requirements ----------------------------------------------------------
   const requirements = (source.requirements ?? []).concat(

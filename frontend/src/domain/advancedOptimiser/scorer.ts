@@ -39,6 +39,8 @@ import {
   type Baseline,
 } from "./normalisation";
 import { extracted, type ExtractionContext } from "./targets";
+import { completeActionsEffect } from "@/domain/abilities/completeActions";
+import type { Requirement } from "@/domain/types/common";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -169,7 +171,17 @@ export const createSetScorer = (
         requirementsMet(e.requirements, reqCtx, dynCtx),
       ),
     );
-    const ctx = extractionCtx([...staticEntries, ...gearEntries]);
+    const baseCtx = extractionCtx([...staticEntries, ...gearEntries]);
+
+    // Complete-actions abilities (e.g. Flambé) of the set's items that are
+    // usable here: requirements checked against this set and location.
+    const completeActions = completeActionsEffect(
+      items.flatMap((item) => item._completeActions ?? []),
+      baseCtx.modifiers,
+      (reqs) => requirementsMet(reqs as Requirement[], reqCtx, dynCtx),
+    );
+    const ctx: ExtractionContext =
+      completeActions.scale > 0 ? { ...baseCtx, completeActions } : baseCtx;
 
     const values: Record<string, number> = {};
     const ratios: Record<string, number | null> = {};

@@ -17,6 +17,7 @@
 import type { Attribute } from "@/domain/types/item";
 import type { PetAbility } from "@/domain/types/pet";
 import type { AbilityDetail } from "@/domain/types/ability";
+import type { CompleteActionsAbility } from "@/domain/abilities/completeActions";
 
 /**
  * Extracts all stat attributes an ability grants. Passive abilities carry them
@@ -57,6 +58,12 @@ export type AbilityAttrContext = {
   summaryById: Record<string, AbilitySource>;
   /** active ability ids the user has toggled OFF (default state is enabled) */
   disabledActiveAbilityIds: Set<string>;
+  /**
+   * ability id -> complete-actions spec, for abilities that instantly complete
+   * actions (optimiser candidate enrichment). Optional: the display path
+   * doesn't need it.
+   */
+  completeActionsById?: Record<string, CompleteActionsAbility>;
 };
 
 type PetLike = { abilities?: PetAbility[] };
