@@ -16,6 +16,9 @@
  */
 
 import type { DropItemInfo } from "@/domain/lootTables/dropInfo";
+import { isOwned } from "@/domain/items/ownership";
+
+type OwnedItemsMap = Parameters<typeof isOwned>[0];
 
 /** Minimal shape of chest info needed for new-item calculations. */
 export type ChestDropMap = {
@@ -56,17 +59,17 @@ function isNewItemCandidate(
 }
 
 /** Returns true when the player already owns this item (or its hatched pet). */
-function isOwned(
+function ownsDrop(
   id: string,
   info: DropItemInfo,
-  ownedItems: Record<string, unknown>,
+  ownedItems: OwnedItemsMap,
 ): boolean {
   const isPetEgg = info.sources.some((s) => s.type.includes("petEgg"));
   if (isPetEgg) {
     const petId = id.replace(/_egg$/, "");
-    return petId in ownedItems;
+    return isOwned(ownedItems, petId);
   }
-  return id in ownedItems;
+  return isOwned(ownedItems, id);
 }
 
 // ---------------------------------------------------------------------------
@@ -85,7 +88,7 @@ function isOwned(
 export function computeNewItems(
   dropItemInfoMap: Record<string, DropItemInfo>,
   chestInfos: ChestDropMap[],
-  ownedItems: Record<string, unknown>,
+  ownedItems: OwnedItemsMap,
   allGearItems: Record<string, { type: string }>,
 ): NewItemEntry[] {
   const result: NewItemEntry[] = [];
@@ -93,7 +96,7 @@ export function computeNewItems(
   // Individual new items from the activity drop map.
   for (const [id, info] of Object.entries(dropItemInfoMap)) {
     if (!isNewItemCandidate(id, info, allGearItems)) continue;
-    if (isOwned(id, info, ownedItems)) continue;
+    if (ownsDrop(id, info, ownedItems)) continue;
     result.push({ id, icon: info.icon, stepsPerItem: info.stepsPerItem });
   }
 
@@ -104,7 +107,7 @@ export function computeNewItems(
     const chestNewItems: NewItemEntry[] = [];
     for (const [id, info] of Object.entries(chest.dropInfoMap)) {
       if (!isNewItemCandidate(id, info, allGearItems)) continue;
-      if (isOwned(id, info, ownedItems)) continue;
+      if (ownsDrop(id, info, ownedItems)) continue;
       chestNewItems.push({ id, icon: info.icon, stepsPerItem: info.stepsPerItem });
     }
     if (chestNewItems.length === 0) continue;

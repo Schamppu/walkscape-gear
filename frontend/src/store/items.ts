@@ -3,6 +3,7 @@ import { markRaw } from "vue";
 import { upsertOwnedItems } from "@/utils/axios/db_routes";
 import type { StaticBootstrap, UserBootstrap } from "@/domain/types/bootstrap";
 import debounce from "@/utils/debounce";
+import { isOwned } from "@/domain/items/ownership";
 import { useNotificationStore } from "@/store/notifications";
 import type {
   DbOwnedItem,
@@ -60,17 +61,20 @@ export const useItemsStore = defineStore("itemStore", {
     isLoaded: false,
   }),
   getters: {
-    ownedItemsByCategory:
-      (state) =>
-      (category: string): ItemDetail[] => {
-        return Object.entries(state.itemsByCategory)
-          .filter(([itemCategory]) =>
-            itemCategory.toLowerCase().includes(category),
-          )
-          .flatMap(([, items]) =>
-            items.filter((item) => item.id in state.ownedItems),
-          );
-      },
+    /**
+     * Owned collectibles. Cached, and only invalidated when a collectible's
+     * owned entry changes, so effect/requirement chains reading it stay cheap.
+     * Checks the `owned` flag: un-owned items keep their entry in `ownedItems`.
+     */
+    ownedCollectibles(state): ItemDetail[] {
+      return Object.entries(state.itemsByCategory)
+        .filter(([itemCategory]) =>
+          itemCategory.toLowerCase().includes("collectible"),
+        )
+        .flatMap(([, items]) =>
+          items.filter((item) => isOwned(state.ownedItems, item.id)),
+        );
+    },
   },
   actions: {
     hydrate({

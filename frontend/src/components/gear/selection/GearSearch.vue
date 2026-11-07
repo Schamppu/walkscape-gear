@@ -2,6 +2,7 @@
 import { ref, computed, watch } from "vue";
 import { storeToRefs } from "pinia";
 import { consumableCounts } from "@/domain/items/consumableCounts";
+import { isOwned } from "@/domain/items/ownership";
 import { useDataStore } from "@/store/data";
 import { useSettingsStore } from "@/store/settings";
 import {
@@ -105,7 +106,7 @@ const filteredItems = computed(() => {
   const filterSearch = ({ name }) =>
     (term && name.toLowerCase().includes(term)) || !term;
   const filterOwned = (item) =>
-    (showOwned && item.id in ctx.ownedItems.value) || !showOwned;
+    (showOwned && isOwned(ctx.ownedItems.value, item.id)) || !showOwned;
   const filterEquipped = (item) =>
     !(otherSlotIds.value.length && otherSlotIds.value.includes(item.id));
   const filterStat = (item) => {
@@ -126,7 +127,7 @@ const filteredItems = computed(() => {
   const filterEmbargo = (item) =>
     !(
       ctx.embargoedItems.value.has(item.id) &&
-      !(item.id in ctx.ownedItems.value)
+      !isOwned(ctx.ownedItems.value, item.id)
     );
 
   if (props.gearType === "activityInput") {
@@ -173,7 +174,7 @@ const filteredItems = computed(() => {
       const isPet = Boolean(egg);
       const isRing = gearType === "ring";
 
-      const owned = id in ctx.ownedItems.value;
+      const owned = isOwned(ctx.ownedItems.value, id);
       const entry = owned ? ctx.ownedItems.value[id] : null;
       const hidden = entry?.hidden ?? false;
       let quality = item.quality;

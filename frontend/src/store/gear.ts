@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { consumableCounts } from "@/domain/items/consumableCounts";
+import { isOwned } from "@/domain/items/ownership";
 import {
   getItem,
   getMultipleItems,
@@ -142,7 +143,7 @@ export const useGearStore = defineStore("gearStore", {
 
     determineQuality(id: string, q2 = false): string {
       const itemsStore = useItemsStore();
-      const owned = id in itemsStore.ownedItems;
+      const owned = isOwned(itemsStore.ownedItems, id);
       if (!owned)
         return id in itemsStore.allGearItems
           ? itemsStore.allGearItems[id].quality

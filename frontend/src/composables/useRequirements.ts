@@ -12,6 +12,7 @@ import type { LocationDetail } from "@/domain/types/location";
 import type { ServiceDetail } from "@/domain/types/service";
 import type { Keyword } from "@/domain/types/keyword";
 import { serviceTiers } from "@/domain/constants/services";
+import { isOwned } from "@/domain/items/ownership";
 import {
   getLevelRequirementsMap,
   mergeRequirements,
@@ -323,7 +324,7 @@ export function useRequirements(ctx: RequirementContext) {
 
       case "itemAnywhereWithYou":
       case "itemAnywhere":
-        value = req.requirement.item in itemsStore.ownedItems;
+        value = isOwned(itemsStore.ownedItems, req.requirement.item);
         break;
 
       case "keywordEquipped":

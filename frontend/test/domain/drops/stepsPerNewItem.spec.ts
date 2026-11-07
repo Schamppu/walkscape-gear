@@ -100,12 +100,19 @@ describe("computeNewItems - activity drops", () => {
 
   it("excludes items already in ownedItems", () => {
     const dropMap = { rusty_sword: makeInfo("rusty_sword", 500) };
-    expect(computeNewItems(dropMap, [], { rusty_sword: {} }, allItems)).toHaveLength(0);
+    expect(computeNewItems(dropMap, [], { rusty_sword: { owned: true } }, allItems)).toHaveLength(0);
+  });
+
+  it("includes items whose entry is kept but no longer owned", () => {
+    const dropMap = { rusty_sword: makeInfo("rusty_sword", 500) };
+    expect(
+      computeNewItems(dropMap, [], { rusty_sword: { owned: false } }, allItems),
+    ).toHaveLength(1);
   });
 
   it("excludes pet egg when the pet (without _egg) is owned", () => {
     const dropMap = { blue_dragon_egg: makeInfo("blue_dragon_egg", 50000, ["petEgg"]) };
-    expect(computeNewItems(dropMap, [], { blue_dragon: {} }, allItems)).toHaveLength(0);
+    expect(computeNewItems(dropMap, [], { blue_dragon: { owned: true } }, allItems)).toHaveLength(0);
   });
 
   it("includes pet egg when the pet (without _egg) is not owned", () => {
@@ -152,7 +159,7 @@ describe("computeNewItems - chest grouping", () => {
     const chest = makeChest("wood_chest", {
       chest_loot_a: makeInfo("chest_loot_a", 10000),
     });
-    const result = computeNewItems({}, [chest], { chest_loot_a: {} }, allItems);
+    const result = computeNewItems({}, [chest], { chest_loot_a: { owned: true } }, allItems);
     expect(result).toHaveLength(0);
   });
 
@@ -162,7 +169,7 @@ describe("computeNewItems - chest grouping", () => {
       chest_loot_a: makeInfo("chest_loot_a", 10000),
       chest_loot_b: makeInfo("chest_loot_b", 20000),
     });
-    const result = computeNewItems({}, [chest], { chest_loot_a: {} }, allItems);
+    const result = computeNewItems({}, [chest], { chest_loot_a: { owned: true } }, allItems);
     expect(result).toHaveLength(1);
     expect(result[0].stepsPerItem).toBeCloseTo(20000, 1);
   });
