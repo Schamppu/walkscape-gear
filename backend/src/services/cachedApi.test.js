@@ -14,6 +14,7 @@ const {
   stableStringify,
   parseMaxAgeMs,
   parseRetryAfterMs,
+  parseRateLimitHeaders,
   computeTtl,
 } = await import("./cachedApi.js");
 
@@ -47,11 +48,12 @@ function rateLimited(retryAfter) {
   return error;
 }
 
-beforeEach(() => {
+beforeEach(async () => {
   mockApi.get.mockReset();
   mockApi.post.mockReset();
   cachedApi.clearCache();
   cachedApi.resetStats();
+  await cachedApi.resetRateLimitState();
 });
 
 describe("cache hit/miss", () => {
@@ -306,5 +308,138 @@ describe("manual cache access", () => {
       fromCache: true,
     });
     expect(mockApi.get).not.toHaveBeenCalled();
+  });
+});
+
+function withRateLimit(data, { limit, remaining, reset, window = 60 }) {
+  return jsonResponse(data, {
+    ratelimit: `"${limit}-in-1min"; r=${remaining}; t=${reset}`,
+    "ratelimit-policy": `"${limit}-in-1min"; q=${limit}; w=${window}; pk=:abc123:`,
+  });
+}
+
+describe("parseRateLimitHeaders", () => {
+  it("parses draft-8 headers (tools server format)", () => {
+    expect(
+      parseRateLimitHeaders({
+        ratelimit: '"300-in-1min"; r=297; t=42',
+        "ratelimit-policy": '"300-in-1min"; q=300; w=60; pk=:abc:',
+      }),
+    ).toEqual({
+      remaining: 297,
+      resetMs: 42_000,
+      limit: 300,
+      windowMs: 60_000,
+    });
+  });
+
+  it("picks the tightest of several draft-8 policies", () => {
+    const info = parseRateLimitHeaders({
+      ratelimit: '"burst"; r=50; t=5, "minute"; r=10; t=30',
+      "ratelimit-policy": '"burst"; q=100; w=10, "minute"; q=300; w=60',
+    });
+    expect(info.remaining).toBe(10);
+    expect(info.resetMs).toBe(30_000);
+  });
+
+  it("parses draft-7 and draft-6 headers", () => {
+    expect(
+      parseRateLimitHeaders({
+        ratelimit: "limit=120, remaining=100, reset=30",
+        "ratelimit-policy": "120;w=60",
+      }),
+    ).toEqual({
+      remaining: 100,
+      resetMs: 30_000,
+      limit: 120,
+      windowMs: 60_000,
+    });
+    expect(
+      parseRateLimitHeaders({
+        "ratelimit-limit": "120",
+        "ratelimit-remaining": "5",
+        "ratelimit-reset": "10",
+      }),
+    ).toEqual({ remaining: 5, resetMs: 10_000, limit: 120, windowMs: null });
+  });
+
+  it("returns null without rate-limit headers", () => {
+    expect(parseRateLimitHeaders({})).toBeNull();
+    expect(parseRateLimitHeaders(undefined)).toBeNull();
+  });
+});
+
+describe("header-driven rate limiting", () => {
+  it("adopts the upstream limit and remaining budget", async () => {
+    mockApi.get.mockResolvedValueOnce(
+      withRateLimit({ id: 1 }, { limit: 300, remaining: 250, reset: 40 }),
+    );
+
+    await cachedApi.get("/items/iron");
+
+    const stats = await cachedApi.getCacheStats();
+    expect(stats.rateLimitPerMinute).toBe(300);
+    expect(stats.reservoir).toBe(250);
+    expect(stats.upstreamLimit.headerDriven).toBe(true);
+  });
+
+  it("keeps the lowest remaining when responses arrive out of order", async () => {
+    mockApi.get
+      .mockResolvedValueOnce(
+        withRateLimit({ id: 1 }, { limit: 300, remaining: 200, reset: 40 }),
+      )
+      .mockResolvedValueOnce(
+        withRateLimit({ id: 2 }, { limit: 300, remaining: 210, reset: 40 }),
+      );
+
+    await cachedApi.get("/items/iron");
+    await cachedApi.get("/items/copper");
+
+    expect((await cachedApi.getCacheStats()).reservoir).toBe(200);
+  });
+
+  it("follows a limit changed on the API side mid-window", async () => {
+    mockApi.get
+      .mockResolvedValueOnce(
+        withRateLimit({ id: 1 }, { limit: 120, remaining: 10, reset: 40 }),
+      )
+      .mockResolvedValueOnce(
+        withRateLimit({ id: 2 }, { limit: 500, remaining: 390, reset: 40 }),
+      );
+
+    await cachedApi.get("/items/iron");
+    await cachedApi.get("/items/copper");
+
+    const stats = await cachedApi.getCacheStats();
+    expect(stats.rateLimitPerMinute).toBe(500);
+    expect(stats.reservoir).toBe(390);
+  });
+
+  it("refills to the upstream limit when the window resets", async () => {
+    mockApi.get.mockResolvedValueOnce(
+      withRateLimit({ id: 1 }, { limit: 300, remaining: 0, reset: 0 }),
+    );
+
+    await cachedApi.get("/items/iron");
+    expect((await cachedApi.getCacheStats()).reservoir).toBe(0);
+
+    await new Promise((resolve) => setTimeout(resolve, 700));
+    expect((await cachedApi.getCacheStats()).reservoir).toBe(300);
+  });
+
+  it("drains the budget from a 429's headers", async () => {
+    const error = rateLimited(0);
+    error.response.headers = {
+      "retry-after": "0",
+      ratelimit: '"300-in-1min"; r=0; t=30',
+      "ratelimit-policy": '"300-in-1min"; q=300; w=60',
+    };
+    mockApi.get
+      .mockRejectedValueOnce(error)
+      .mockResolvedValueOnce(jsonResponse({ id: 1 }));
+
+    await cachedApi.get("/items/iron");
+
+    expect((await cachedApi.getCacheStats()).reservoir).toBe(0);
   });
 });

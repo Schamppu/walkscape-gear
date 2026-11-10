@@ -2,6 +2,9 @@ import { LRUCache } from "lru-cache";
 import Bottleneck from "bottleneck";
 import api from "./api.js";
 
+// Starting guess only. Once upstream responds, its RateLimit headers drive the
+// limiter (see applyRateLimitHeaders), so a per-key limit raised on the API
+// side is picked up automatically.
 const DEFAULT_RATE_LIMIT_PER_MINUTE = 120;
 const DEFAULT_BURST_CAPACITY = DEFAULT_RATE_LIMIT_PER_MINUTE;
 const DEFAULT_MAX_CONCURRENT_UPSTREAM = 8;
@@ -69,6 +72,26 @@ const limiter = new Bottleneck({
 });
 
 const inFlight = new Map();
+
+// Slack added to the upstream reset time before refilling, to cover clock
+// drift and the server rounding reset seconds up.
+const RESET_SLACK_MS = 500;
+// Two reports whose reset times are this close belong to the same window.
+const SAME_WINDOW_TOLERANCE_MS = 2000;
+
+function emptyUpstreamLimit() {
+  return {
+    headerDriven: false,
+    limit: null,
+    windowMs: null,
+    remaining: null,
+    resetAt: null,
+    updatedAt: null,
+  };
+}
+
+const upstreamLimit = emptyUpstreamLimit();
+let resetTimer = null;
 
 const stats = {
   hits: 0,
@@ -146,6 +169,149 @@ function parseRetryAfterMs(headers) {
   return null;
 }
 
+function readHeader(headers, name) {
+  if (!headers) return undefined;
+  const value =
+    typeof headers.get === "function" ? headers.get(name) : headers[name];
+  return value == null ? undefined : String(value);
+}
+
+function toInt(value) {
+  if (value == null) return null;
+  const n = Number.parseInt(String(value).trim(), 10);
+  return Number.isFinite(n) && n >= 0 ? n : null;
+}
+
+function readParam(text, names) {
+  if (!text) return null;
+  const re = new RegExp(`(?:^|[;,\\s])(?:${names.join("|")})=(\\d+)`, "i");
+  const match = text.match(re);
+  return match ? Number.parseInt(match[1], 10) : null;
+}
+
+// Splits draft-8 list items (`"a"; r=1; t=2, "b"; r=3; t=4`).
+function splitPolicyList(value) {
+  return /^\s*"/.test(value) ? value.split(/,(?=\s*")/) : [value];
+}
+
+/**
+ * Parses IETF RateLimit headers. Supports draft-8 (what the tools server
+ * sends: `RateLimit: "name"; r=119; t=60` + `RateLimit-Policy: "name"; q=120; w=60`),
+ * draft-7 (`RateLimit: limit=120, remaining=119, reset=60`) and
+ * draft-6 (`RateLimit-Limit` / `-Remaining` / `-Reset`).
+ * With several draft-8 policies, the one with the least remaining wins.
+ */
+function parseRateLimitHeaders(headers) {
+  const combined = readHeader(headers, "ratelimit");
+  const policyHeader = readHeader(headers, "ratelimit-policy");
+
+  let remaining = null;
+  let resetSec = null;
+  let limit = null;
+  let windowSec = null;
+
+  if (combined) {
+    for (const item of splitPolicyList(combined)) {
+      const r = readParam(item, ["r", "remaining"]);
+      if (r === null) continue;
+      if (remaining === null || r < remaining) {
+        remaining = r;
+        resetSec = readParam(item, ["t", "reset"]);
+        limit = readParam(item, ["limit"]);
+      }
+    }
+  } else {
+    remaining = toInt(readHeader(headers, "ratelimit-remaining"));
+    resetSec = toInt(readHeader(headers, "ratelimit-reset"));
+    limit = toInt(readHeader(headers, "ratelimit-limit"));
+  }
+
+  if (remaining === null || resetSec === null) return null;
+
+  if (policyHeader) {
+    // draft-8: `"name"; q=120; w=60`; draft-6/7: `120;w=60`.
+    const quotas = splitPolicyList(policyHeader)
+      .map((p) => ({
+        q: readParam(p, ["q"]) ?? toInt(p.split(";")[0]),
+        w: readParam(p, ["w"]),
+      }))
+      .filter((p) => p.q !== null);
+    if (quotas.length) {
+      const tightest = quotas.reduce((a, b) => (b.q < a.q ? b : a));
+      limit = limit ?? tightest.q;
+      windowSec = tightest.w;
+    }
+  }
+
+  return {
+    remaining,
+    resetMs: resetSec * 1000,
+    limit,
+    windowMs: windowSec !== null ? windowSec * 1000 : null,
+  };
+}
+
+function scheduleWindowReset(delayMs) {
+  if (resetTimer) clearTimeout(resetTimer);
+  resetTimer = setTimeout(() => {
+    resetTimer = null;
+    const refill = upstreamLimit.limit ?? RATE_LIMIT_PER_MINUTE;
+    upstreamLimit.remaining = refill;
+    upstreamLimit.resetAt = null;
+    limiter.updateSettings({ reservoir: refill }).catch(() => {});
+  }, delayMs);
+  resetTimer.unref?.();
+}
+
+/**
+ * Syncs the limiter with what upstream says is left in the current window.
+ * Called for every upstream response (including 429s) so the limiter follows
+ * the real per-key limit instead of the static configured one.
+ */
+function applyRateLimitHeaders(headers) {
+  const info = parseRateLimitHeaders(headers);
+  if (!info) return;
+
+  const now = Date.now();
+  const resetAt = now + info.resetMs;
+  const limitChanged =
+    info.limit !== null &&
+    upstreamLimit.limit !== null &&
+    info.limit !== upstreamLimit.limit;
+  const sameWindow =
+    !limitChanged &&
+    upstreamLimit.resetAt !== null &&
+    Math.abs(resetAt - upstreamLimit.resetAt) < SAME_WINDOW_TOLERANCE_MS;
+
+  // Responses can arrive out of order; within one window the lowest reported
+  // remaining is the freshest.
+  const remaining = sameWindow
+    ? Math.min(info.remaining, upstreamLimit.remaining)
+    : info.remaining;
+
+  const settings = {};
+  if (!upstreamLimit.headerDriven) {
+    // Upstream tells us when the window resets; stop guessing a refill rate.
+    settings.reservoirIncreaseAmount = null;
+    settings.reservoirIncreaseInterval = null;
+  }
+
+  upstreamLimit.headerDriven = true;
+  if (info.limit !== null) upstreamLimit.limit = info.limit;
+  if (info.windowMs !== null) upstreamLimit.windowMs = info.windowMs;
+  upstreamLimit.remaining = remaining;
+  if (!sameWindow) upstreamLimit.resetAt = resetAt;
+  upstreamLimit.updatedAt = now;
+
+  // Jobs already started may not be counted upstream yet. The job reporting
+  // these headers is itself still executing, hence the -1.
+  const othersExecuting = Math.max(0, (limiter.counts().EXECUTING ?? 0) - 1);
+  settings.reservoir = Math.max(0, remaining - othersExecuting);
+
+  limiter.updateSettings(settings).catch(() => {});
+  scheduleWindowReset(upstreamLimit.resetAt - now + RESET_SLACK_MS);
+}
+
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -192,14 +358,18 @@ async function performRequest(method, url, config, body) {
   for (let attempt = 0; attempt <= MAX_RETRIES_429; attempt++) {
     try {
       stats.upstreamCalls++;
+      let response;
       if (method === "get") {
-        return await api.get(url, config);
+        response = await api.get(url, config);
+      } else if (method === "post") {
+        response = await api.post(url, body, config);
+      } else {
+        throw new Error(`Unsupported method: ${method}`);
       }
-      if (method === "post") {
-        return await api.post(url, body, config);
-      }
-      throw new Error(`Unsupported method: ${method}`);
+      applyRateLimitHeaders(response?.headers);
+      return response;
     } catch (error) {
+      applyRateLimitHeaders(error?.response?.headers);
       const status = error?.response?.status;
       if (status === 429 && attempt < MAX_RETRIES_429) {
         const wait =
@@ -308,7 +478,9 @@ async function getCacheStats() {
     inFlight: inFlight.size,
     limiterCounts: limiter.counts(),
     reservoir: await limiter.currentReservoir(),
-    rateLimitPerMinute: RATE_LIMIT_PER_MINUTE,
+    rateLimitPerMinute: upstreamLimit.limit ?? RATE_LIMIT_PER_MINUTE,
+    configuredRateLimitPerMinute: RATE_LIMIT_PER_MINUTE,
+    upstreamLimit: { ...upstreamLimit },
     burstCapacity: BOTTLENECK_RESERVOIR,
     maxConcurrentUpstream: BOTTLENECK_MAX_CONCURRENT,
   };
@@ -318,6 +490,18 @@ function clearCache() {
   jsonCache.clear();
   iconCache.clear();
   inFlight.clear();
+}
+
+// Forget upstream-reported limits and go back to configured pacing (tests).
+async function resetRateLimitState() {
+  if (resetTimer) clearTimeout(resetTimer);
+  resetTimer = null;
+  Object.assign(upstreamLimit, emptyUpstreamLimit());
+  await limiter.updateSettings({
+    reservoir: BOTTLENECK_RESERVOIR,
+    reservoirIncreaseAmount: BOTTLENECK_INCREASE_AMOUNT,
+    reservoirIncreaseInterval: BOTTLENECK_INCREASE_INTERVAL_MS,
+  });
 }
 
 function resetStats() {
@@ -336,11 +520,13 @@ export default {
   getCacheStats,
   clearCache,
   resetStats,
+  resetRateLimitState,
 };
 export {
   stableStringify,
   parseMaxAgeMs,
   parseRetryAfterMs,
+  parseRateLimitHeaders,
   computeTtl,
   cacheKey,
   peek,
